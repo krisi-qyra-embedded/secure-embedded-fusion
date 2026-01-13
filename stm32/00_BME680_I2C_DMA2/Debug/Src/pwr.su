@@ -1,0 +1,6 @@
+../Src/pwr.c:11:6:PWR_ClearAllPendingIRQs	16	static
+../Src/pwr.c:21:6:PWR_ClearAllEXTIPending	4	static
+../Src/pwr.c:29:6:PWR_PrepareForSleep	8	static,ignoring_inline_asm
+../Src/pwr.c:49:6:sleep_mode_configure_once	4	static
+../Src/pwr.c:60:6:PWR_EnterSleep_WFI	8	static,ignoring_inline_asm
+../Src/pwr.c:74:6:PWR_EnterSleep_WFE	8	static,ignoring_inline_asm
