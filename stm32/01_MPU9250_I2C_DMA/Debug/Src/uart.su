@@ -1,0 +1,13 @@
+C:/Users/user/Documents/Advanced_BareMetal_Programming/MPU9250_I2C_DMA/chip_headers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
+C:/Users/user/Documents/Advanced_BareMetal_Programming/MPU9250_I2C_DMA/chip_headers/CMSIS/Include/core_cm4.h:1816:22:__NVIC_SetPriority	16	static
+../Inc/uart.h:52:24:log_used	4	static
+../Inc/uart.h:53:24:log_free	8	static
+../Src/uart.c:10:6:uart2_tx_rx_init	8	static
+../Src/uart.c:39:6:uart_set_baudrate	24	static
+../Src/uart.c:44:10:compute_uart_div	16	static
+../Src/uart.c:52:6:log_write_bytes	32	static,ignoring_inline_asm
+../Src/uart.c:88:6:log_puts	16	static
+../Src/uart.c:95:6:log_putc	16	static
+../Src/uart.c:102:6:log_printf	272	static
+../Src/uart.c:117:6:uart_log_irq_handler	16	static
+../Src/uart.c:150:6:USART2_IRQHandler	8	static

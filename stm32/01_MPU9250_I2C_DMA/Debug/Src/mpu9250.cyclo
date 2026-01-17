@@ -1,0 +1,9 @@
+../Src/mpu9250.c:40:5:mpu9250_accel_config	9
+../Src/mpu9250.c:119:5:MPU9250_beginGyro	9
+../Src/mpu9250.c:194:5:mpu9250_accel_update_blocking	6
+../Src/mpu9250.c:228:5:mpu9250_gyro_update_blocking	6
+../Src/mpu9250.c:269:5:MPU9250_accelGet	3
+../Src/mpu9250.c:289:5:MPU9250_gyroGet	3
+../Src/mpu9250.c:307:5:mpu9250_calibrateGyro	5
+../Src/mpu9250.c:355:5:MPU_readProcessedData	4
+../Src/mpu9250.c:403:6:MPU_calcAttitude	3

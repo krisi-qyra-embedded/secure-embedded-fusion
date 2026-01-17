@@ -1,0 +1,2 @@
+C:/Users/user/Documents/Advanced_BareMetal_Programming/MPU9250_I2C_DMA/chip_headers/CMSIS/Include/core_cm4.h:1939:34:__NVIC_SystemReset	4	static,ignoring_inline_asm
+../Src/main.c:36:5:main	24	static
