@@ -1,7 +1,0 @@
-C:/Users/user/Documents/Advanced_BareMetal_Programming/MPU9250_I2C_DMA/chip_headers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
-../Src/tim.c:6:6:tim2_3ms_delay	4	static
-../Src/tim.c:20:6:tim2_1s_init	8	static
-../Src/tim.c:41:7:tim2_1s_start	4	static
-../Src/tim.c:51:7:tim2_1s_stop	4	static
-../Src/tim.c:58:6:gpioa5_init	4	static
-../Src/tim.c:70:6:tim2_1hz_interrupt_init	8	static
