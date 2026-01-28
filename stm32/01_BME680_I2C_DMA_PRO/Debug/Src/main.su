@@ -1,0 +1,5 @@
+C:/Users/user/Documents/Advanced_BareMetal_Programming/BME680_I2C_DMA_PRO/chip_headers/CMSIS/Include/core_cm4.h:1939:34:__NVIC_SystemReset	4	static,ignoring_inline_asm
+../Src/main.c:37:5:main	16	static
+../Src/main.c:102:6:fnAPP_Init_Standard_Values	4	static
+../Src/main.c:116:21:app_bme680_peripherals_init	24	static,ignoring_inline_asm
+../Src/main.c:169:21:app_bme680_sensor_stack_init_	16	static

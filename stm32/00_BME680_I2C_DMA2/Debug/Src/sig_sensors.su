@@ -1,5 +1,0 @@
-../Src/sig_sensors.c:17:8:init_bme680	32	static
-../Src/sig_sensors.c:112:8:bme_GetGasReference	88	static
-../Src/sig_sensors.c:192:9:bme_GetGasScore	48	static
-../Src/sig_sensors.c:245:9:bme_GetHumidityScore	48	static
-../Src/sig_sensors.c:306:6:bme_calculateIAQ	16	static
