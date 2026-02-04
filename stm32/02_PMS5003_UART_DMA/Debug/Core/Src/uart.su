@@ -1,0 +1,7 @@
+../Drivers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
+../Core/Src/uart.c:16:6:uart2_tx_rx_init	8	static
+../Core/Src/uart.c:47:6:DMA1_Init	4	static
+../Core/Src/uart.c:52:6:DMA_channel4_Stream5_UART_RX_config	16	static
+../Core/Src/uart.c:87:6:DMA_channel4_Stream6_UART_TX_config	16	static
+../Core/Src/uart.c:122:13:uart_set_baudrate	24	static
+../Core/Src/uart.c:127:17:compute_uart_div	16	static
