@@ -1,3 +1,0 @@
-../Core/Src/uart.c:14:6:UART2_Init	40	static
-../Core/Src/uart.c:87:6:DMA2_Stream2_IRQHandler	8	static
-../Core/Src/uart.c:92:6:DMA2_Stream7_IRQHandler	8	static
