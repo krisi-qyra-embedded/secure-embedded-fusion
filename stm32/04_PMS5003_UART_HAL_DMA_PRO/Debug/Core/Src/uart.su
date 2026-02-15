@@ -1,4 +1,0 @@
-../Core/Src/uart.c:15:6:UART2_Init	40	static
-../Core/Src/uart.c:67:6:DMA2_Stream2_IRQHandler	8	static
-../Core/Src/uart.c:73:6:HAL_UART_RxCpltCallback	16	static
-../Core/Src/uart.c:81:6:HAL_UART_ErrorCallback	16	static

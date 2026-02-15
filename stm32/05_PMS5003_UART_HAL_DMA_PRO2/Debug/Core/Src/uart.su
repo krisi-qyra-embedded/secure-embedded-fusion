@@ -1,0 +1,10 @@
+../Drivers/CMSIS/Include/core_cm4.h:1777:22:__NVIC_ClearPendingIRQ	16	static
+../Core/Inc/pwr.h:31:20:cpu_sleep_until_irq	4	static,ignoring_inline_asm
+../Core/Src/uart.c:29:13:UART1_PM25_ResetHandles	8	static
+../Core/Src/uart.c:36:15:UART1_PM25_Init	40	static
+../Core/Src/uart.c:96:15:UART1_PM25_Recover	48	static
+../Core/Src/uart.c:154:15:UART1_RX_DMA_Receive	32	static
+../Core/Src/uart.c:200:6:DMA2_Stream5_IRQHandler	8	static
+../Core/Src/uart.c:208:10:UART1_PM25_GetLastRxActivityTick	4	static
+../Core/Src/uart.c:213:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/uart.c:222:6:HAL_UART_ErrorCallback	16	static
