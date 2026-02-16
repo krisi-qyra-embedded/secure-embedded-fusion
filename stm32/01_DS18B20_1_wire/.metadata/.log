@@ -1,0 +1,44 @@
+!SESSION 2024-06-05 10:57:52.635 -----------------------------------------------
+eclipse.buildId=Version 1.15.1
+java.version=17.0.8.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data C:\Users\krisi qyra\Documents\stm32_projects\General_purpose _timers
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-06-05 10:57:58.285
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-06-05 10:57:58.292
+!MESSAGE Log4j2 initialized with config file C:\Users\krisi qyra\Documents\stm32_projects\General_purpose _timers\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-06-05 10:58:01.198
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-06-05 10:59:56.764
+!MESSAGE Indexed 'gdkuyfyukkuyy7guigho87hg7h' (37 sources, 119 headers) in 3.68 sec: 11,070 declarations; 55,658 references; 2 unresolved inclusions; 42 syntax errors; 147 unresolved names (0.22%)
+!SESSION 2024-06-05 11:03:39.025 -----------------------------------------------
+eclipse.buildId=Version 1.15.1
+java.version=17.0.8.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Framework arguments:  C:\Users\krisi qyra\Documents\stm32_projects\General_purpose _timers\.cproject
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\krisi qyra\Documents\stm32_projects\General_purpose _timers\.cproject
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-06-05 11:03:49.810
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-06-05 11:03:49.810
+!MESSAGE Log4j2 initialized with config file C:\Users\krisi qyra\Documents\stm32_projects\General_purpose _timers\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-06-05 11:03:54.012
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-06-05 11:03:57.656
+!MESSAGE Indexed 'gdkuyfyukkuyy7guigho87hg7h' (37 sources, 119 headers) in 2.69 sec: 11,070 declarations; 55,658 references; 2 unresolved inclusions; 42 syntax errors; 147 unresolved names (0.22%)
+
+!ENTRY org.eclipse.core.resources 4 77 2024-06-05 11:07:27.224
+!MESSAGE Invalid project description.
+!SUBENTRY 1 unknown 0 0 2024-06-05 11:07:27.224
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2024-06-05 11:07:27.224
+!MESSAGE C:\Users\krisi qyra\Documents\stm32_projects overlaps the workspace location: C:\Users\krisi qyra\Documents\stm32_projects\General_purpose _timers

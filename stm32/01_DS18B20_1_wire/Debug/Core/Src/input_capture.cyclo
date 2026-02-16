@@ -1,0 +1,2 @@
+../Core/Src/input_capture.c:3:6:tim2_output_compare_PA5	1
+../Core/Src/input_capture.c:18:6:tim3_input_capture_PA6	1
