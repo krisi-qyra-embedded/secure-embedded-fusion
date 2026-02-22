@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := DS18B20_1_wire
+BUILD_ARTIFACT_NAME := DS18B20_1_wire_PRO
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-DS18B20_1_wire.elf \
+DS18B20_1_wire_PRO.elf \
 
 MAP_FILES += \
-DS18B20_1_wire.map \
+DS18B20_1_wire_PRO.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-DS18B20_1_wire.list \
+DS18B20_1_wire_PRO.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: DS18B20_1_wire.elf secondary-outputs
+main-build: DS18B20_1_wire_PRO.elf secondary-outputs
 
 # Tool invocations
-DS18B20_1_wire.elf DS18B20_1_wire.map: $(OBJS) $(USER_OBJS) C:\Users\user\Documents\stm32_projects\DS18B20_1_wire\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "DS18B20_1_wire.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\Documents\stm32_projects\DS18B20_1_wire\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DS18B20_1_wire.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+DS18B20_1_wire_PRO.elf DS18B20_1_wire_PRO.map: $(OBJS) $(USER_OBJS) C:\Users\user\Documents\stm32_projects\DS18B20_1_wire_PRO\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "DS18B20_1_wire_PRO.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\user\Documents\stm32_projects\DS18B20_1_wire_PRO\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DS18B20_1_wire_PRO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-DS18B20_1_wire.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "DS18B20_1_wire.list"
+DS18B20_1_wire_PRO.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "DS18B20_1_wire_PRO.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) DS18B20_1_wire.elf DS18B20_1_wire.list DS18B20_1_wire.map default.size.stdout
+	-$(RM) DS18B20_1_wire_PRO.elf DS18B20_1_wire_PRO.list DS18B20_1_wire_PRO.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

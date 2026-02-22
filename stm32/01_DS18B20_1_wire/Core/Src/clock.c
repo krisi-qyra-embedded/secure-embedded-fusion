@@ -1,5 +1,4 @@
-/* clock.c | Author: i fiksuari pas prog | Date: 17 February 2026 */
-
+/* clock.c | Author: i fiksuari pas prog | Date: 22 February 2026 */
 
 
 #include"clock.h"

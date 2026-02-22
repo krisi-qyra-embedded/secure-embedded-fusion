@@ -1,39 +1,68 @@
-/* tim.c | Author: i fiksuari pas prog | Date: 17 February 2026 */
+/* tim.c | Author: i fiksuari pas prog | Date: 22 February 2026 */
 #include "tim.h"
 
-#define TIM2EN (1U << 0)
-#define GPIOAEN     (1U << 0)
-TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 
-/* Initializes the MX TIM2 Init resources. */
-void MX_TIM2_Init(void){
-    __HAL_RCC_TIM2_CLK_ENABLE();  // Enable clock for TIM2
+/* Initializes the MX TIM3 Init resources. */
+tim_status_t MX_TIM3_Init(void)
+{
+    uint32_t tim_clk_hz;
+    uint32_t pclk1_hz;
 
-    htim2.Instance = TIM2;                          // Use TIM2
-    htim2.Init.Prescaler = 96 - 1;                  // Set prescaler to get a 1 MHz timer (assuming a 48 MHz clock)
-    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;    // Count up
-    htim2.Init.Period = 0xFFFFFFFF;                 // Max period (so it can run indefinitely)
-    htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
-        // Initialization Error
-        //Error_Handler();
-    	return -1;
+    __HAL_RCC_TIM3_CLK_ENABLE();
+
+    htim3.Instance = TIM3;
+
+    pclk1_hz = HAL_RCC_GetPCLK1Freq();
+
+    if ((RCC->CFGR & RCC_CFGR_PPRE1) == RCC_HCLK_DIV1)
+    {
+        tim_clk_hz = pclk1_hz;
     }
-    HAL_TIM_Base_Start(&htim2);  // Start TIM2
+    else
+    {
+        tim_clk_hz = pclk1_hz * 2U;
+    }
+
+    /* 1 MHz timer tick: 1 counter count = 1 us. */
+    htim3.Init.Prescaler         = (uint32_t)((tim_clk_hz / 1000000U) - 1U);
+    htim3.Init.CounterMode       = TIM_COUNTERMODE_UP;
+    htim3.Init.Period            = 0xFFFFU;
+    htim3.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
+    htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+
+    if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+    {
+        return TIM_STATUS_INIT_FAIL;
+    }
+
+    if (HAL_TIM_Base_Start(&htim3) != HAL_OK)
+    {
+        return TIM_STATUS_START_FAIL;
+    }
+
+    return TIM_STATUS_OK;
 }
 
 /* Implements the delay us operation. */
-void delay_us(uint32_t us){
-    // Microsecond delay using a timer
-    __HAL_TIM_SET_COUNTER(&htim2, 0);  // Assuming htim2 is your initialized timer
-    while (__HAL_TIM_GET_COUNTER(&htim2) < us);
+void delay_us(uint16_t us)
+{
+    if (us == 0U)
+    {
+        return;
+    }
+
+    __HAL_TIM_SET_COUNTER(&htim3, 0U);
+
+    while ((uint16_t)__HAL_TIM_GET_COUNTER(&htim3) < us)
+    {
+        /* Blocking microsecond delay. */
+    }
 }
 
 /* Implements the delay ms operation. */
 void delay_ms(uint32_t ms)
 {
     /* Wait the requested number of milliseconds. */
-	HAL_Delay(ms);
+    HAL_Delay(ms);
 }
-

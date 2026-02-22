@@ -27,7 +27,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/clock.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Core/Inc/tim.h ../Core/Inc/ds18b20.h ../Core/Inc/onewire.h \
- ../Core/Inc/onewire.h
+ ../Core/Inc/uart.h \
+ ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h \
+ ../Core/Inc/pwr.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h \
+ ../Core/Inc/systick.h
 ../Core/Inc/clock.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
@@ -59,4 +62,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/clock.h \
 ../Core/Inc/tim.h:
 ../Core/Inc/ds18b20.h:
 ../Core/Inc/onewire.h:
-../Core/Inc/onewire.h:
+../Core/Inc/uart.h:
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
+../Core/Inc/pwr.h:
+../Core/Inc/iwdg.h:
+../Core/Inc/systick.h:
+../Core/Inc/systick.h:

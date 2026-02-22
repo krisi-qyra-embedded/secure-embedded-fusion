@@ -1,376 +1,426 @@
-/* onewire.c | Author: i fiksuari pas prog | Date: 17 February 2026 */
-/**
-  ******************************************************************************
-  * @file    onewire.c
-  * @brief   This file includes the HAL/LL driver for OneWire devices
-  ******************************************************************************
-  */
+/* onewire.c | Author: i fiksuari pas prog | Date: 22 February 2026 */
 #include "onewire.h"
+#include "tim.h"
+#include <string.h>
 
-
-/**
-  * @brief  The internal function is used as gpio pin mode
-  * @param  OW		OneWire HandleTypedef
-  * @param  Mode	Input or Output
-  */
-static void OneWire_Pin_Mode(OneWire_t* OW, PinMode Mode)
+/* Checks the OneWire pin and port configuration. */
+static uint8_t OneWire_IsConfigValid(const OneWire_t *OW)
 {
-	 // Define GPIO_InitStruct as needed for HAL GPIO initialization
-	 GPIO_InitTypeDef GPIO_InitStruct = {0};
-	 GPIO_InitStruct.Pin = OW->DataPin; // Specify the pin to be configured
-	 // Check if the mode is Input or Output
-	 if(Mode == Input)
-	 {
-	   // Set the mode to Input (no pull-up or pull-down)
-	   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	   GPIO_InitStruct.Pull = GPIO_NOPULL;  // Can be changed to GPIO_PULLUP if needed
-	 }
-	 else
-	 {
-	  // Set the mode to Output with push-pull configuration
-	   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	   GPIO_InitStruct.Pull = GPIO_NOPULL;  // Optional: No pull resistors for output
-	   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;  // Adjust speed as per requirement
-	 }
-	  // Initialize the GPIO pin with the specified settings
-	   HAL_GPIO_Init(OW->DataPort, &GPIO_InitStruct);
+    /* Reject a missing port, pin or bus handle. */
+    return ((OW != NULL) &&
+            (OW->DataPort != NULL) &&
+            (OW->DataPin != 0U)) ? 1U : 0U;
 }
 
-/**
-  * @brief  The internal function is used as gpio pin level
-  * @param  OW		OneWire HandleTypedef
-  * @param  Mode	Level: Set/High = 1, Reset/Low = 0
-  */
-static void OneWire_Pin_Level(OneWire_t* OW, uint8_t Level)
+/* Switches the OneWire data pin between input and output mode. */
+static void OneWire_Pin_Mode(OneWire_t *OW, PinMode Mode)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    GPIO_InitStruct.Pin = OW->DataPin;
+
+    if (Mode == Input)
+    {
+        GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+    }
+    else
+    {
+        /* Correct 1-Wire drive mode: MCU only pulls low; external resistor pulls high. */
+        GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_OD;
+        GPIO_InitStruct.Pull  = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    }
+
+    HAL_GPIO_Init(OW->DataPort, &GPIO_InitStruct);
+}
+
+/* Sets the output level of the OneWire data pin. */
+static void OneWire_Pin_Level(OneWire_t *OW, uint8_t Level)
 {
     /* Drive the bus to the requested output level. */
-	HAL_GPIO_WritePin(OW->DataPort, OW->DataPin, (Level == 1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(OW->DataPort,
+                      OW->DataPin,
+                      (Level != 0U) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
-/**
-  * @brief  The internal function is used to read data pin
-  * @retval Pin level status
-  * @param  OW		OneWire HandleTypedef
-  */
-static uint8_t OneWire_Pin_Read(OneWire_t* OW)
+/* Reads the current level of the OneWire data pin. */
+static uint8_t OneWire_Pin_Read(OneWire_t *OW)
 {
     /* Sample the pin while the bus is released. */
-	return (HAL_GPIO_ReadPin(OW->DataPort, OW->DataPin) == GPIO_PIN_SET) ? 1 : 0;
+    return (HAL_GPIO_ReadPin(OW->DataPort, OW->DataPin) == GPIO_PIN_SET) ? 1U : 0U;
 }
 
-/* Writes one bit using OneWire timing. */
-static void OneWire_WriteBit(OneWire_t* OW, uint8_t bit)
+/* Writes one bit using the blocking OneWire timing routine. */
+static void OneWire_WriteBitBlocking(OneWire_t *OW, uint8_t bit)
 {
-	if(bit)
-	{
-		/* Set line low */
-		OneWire_Pin_Level(OW, 0);
-		OneWire_Pin_Mode(OW, Output);
-		delay_us(10);
+    /* Use bounded microsecond delays to form the write slot. */
+    if (bit != 0U)
+    {
+        OneWire_Pin_Level(OW, 0U);
+        OneWire_Pin_Mode(OW, Output);
+        delay_us(6U);
 
-		/* Bit high */
-		OneWire_Pin_Mode(OW, Input);
+        OneWire_Pin_Mode(OW, Input);
+        delay_us(64U);
+    }
+    else
+    {
+        OneWire_Pin_Level(OW, 0U);
+        OneWire_Pin_Mode(OW, Output);
+        delay_us(60U);
 
-		/* Wait for 55 us and release the line */
-		delay_us(55);
-		OneWire_Pin_Mode(OW, Input);
-	}else{
-		/* Set line low */
-		OneWire_Pin_Level(OW, 0);
-		OneWire_Pin_Mode(OW, Output);
-		delay_us(65);
-
-		/* Bit high */
-		OneWire_Pin_Mode(OW, Input);
-
-		/* Wait for 5 us and release the line */
-		delay_us(5);
-		OneWire_Pin_Mode(OW, Input);
-	}
+        OneWire_Pin_Mode(OW, Input);
+        delay_us(10U);
+    }
 }
 
-/**
-  * @brief  The function is used to read bit
-  * @retval bit
-  * @param  OW		OneWire HandleTypedef
-  */
-uint8_t OneWire_ReadBit(OneWire_t* OW)
+/* Reads one bit using OneWire timing. */
+OneWire_Status_t OneWire_ReadBit(OneWire_t *OW, uint8_t *bit)
 {
-	uint8_t bit = 0;
+    /* Release the line before sampling the read slot. */
+    uint8_t sample;
 
-	/* Line low */
-	OneWire_Pin_Level(OW, 0);
-	OneWire_Pin_Mode(OW, Output);
-	delay_us(3);
+    if ((OneWire_IsConfigValid(OW) == 0U) || (bit == NULL))
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
 
-	/* Release line */
-	OneWire_Pin_Mode(OW, Input);
-	delay_us(10);
+    OneWire_Pin_Level(OW, 0U);
+    OneWire_Pin_Mode(OW, Output);
+    delay_us(3U);
 
-	/* Read line value */
-	if (OneWire_Pin_Read(OW))
-	{
-		/* Bit is HIGH */
-		bit = 1;
-	}
+    OneWire_Pin_Mode(OW, Input);
+    delay_us(10U);
 
-	/* Wait 50us to complete 60us period */
-	delay_us(50);
+    sample = OneWire_Pin_Read(OW);
 
-	/* Return bit value */
-	return bit;
+    delay_us(50U);
+
+    *bit = sample;
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used to write byte
-  * @param  OW		OneWire HandleTypedef
-  * @param  byte	byte to write
-  */
-void OneWire_WriteByte(OneWire_t* OW, uint8_t byte)
+/* Transfers one byte onto the OneWire bus. */
+OneWire_Status_t OneWire_WriteByte(OneWire_t *OW, uint8_t byte)
 {
-	uint8_t bit = 8;
-	/* Write 8 bits */
-	while (bit--) {
-		/* LSB bit is first */
-		OneWire_WriteBit(OW, byte & 0x01);
-		byte >>= 1;
-	}
+    /* Send the bits least significant bit first. */
+    uint8_t bit = 8U;
+
+    if (OneWire_IsConfigValid(OW) == 0U)
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
+
+    while (bit-- != 0U)
+    {
+        OneWire_WriteBitBlocking(OW, (uint8_t)(byte & 0x01U));
+        byte >>= 1U;
+    }
+
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used to read byte
-  * @retval byte from device
-  * @param  OW		OneWire HandleTypedef
-  */
-uint8_t OneWire_ReadByte(OneWire_t* OW)
+/* Receives one byte from the OneWire bus. */
+OneWire_Status_t OneWire_ReadByte(OneWire_t *OW, uint8_t *byte)
 {
     /* Assemble the received bits into one byte. */
-	uint8_t bit = 8, byte = 0;
-	while (bit--) {
-		byte >>= 1;
-		byte |= (OneWire_ReadBit(OW) << 7);
-	}
+    uint8_t bit = 8U;
+    uint8_t local = 0U;
+    uint8_t sample;
+    OneWire_Status_t st;
 
-	return byte;
+    if ((OneWire_IsConfigValid(OW) == 0U) || (byte == NULL))
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
+
+    while (bit-- != 0U)
+    {
+        local >>= 1U;
+
+        st = OneWire_ReadBit(OW, &sample);
+        if (st != ONEWIRE_STATUS_OK)
+        {
+            return st;
+        }
+
+        local |= (uint8_t)(sample << 7U);
+    }
+
+    *byte = local;
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used to reset device
-  * @retval respond from device
-  * @param  OW		OneWire HandleTypedef
-  */
-uint8_t OneWire_Reset(OneWire_t* OW)
+/* Sends a reset pulse and checks for a presence response. */
+OneWire_Status_t OneWire_Reset(OneWire_t *OW)
 {
-	/* Line low, and wait 480us */
-	OneWire_Pin_Level(OW, 0);
-	OneWire_Pin_Mode(OW, Output);
-	delay_us(480);
+    /* Release the bus and check the presence pulse. */
+    uint8_t presence_sample;
 
-	/* Release line and wait for 70us */
-	OneWire_Pin_Mode(OW, Input);
-	delay_us(70);
+    if (OneWire_IsConfigValid(OW) == 0U)
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
 
-	/* Check bit value */
-	uint8_t rslt = OneWire_Pin_Read(OW);
+    OneWire_Pin_Level(OW, 0U);
+    OneWire_Pin_Mode(OW, Output);
+    delay_us(480U);
 
-	/* Delay for 410 us */
-	delay_us(410);
+    OneWire_Pin_Mode(OW, Input);
+    delay_us(70U);
 
-	return rslt;
+    presence_sample = OneWire_Pin_Read(OW);
+
+    delay_us(410U);
+
+    return (presence_sample == 0U) ? ONEWIRE_STATUS_OK : ONEWIRE_STATUS_NO_DEVICE;
 }
 
-/**
-  * @brief  The function is used to search device
-  * @retval Search result
-  * @param  OW		OneWire HandleTypedef
-  */
-uint8_t OneWire_Search(OneWire_t* OW, uint8_t Cmd)
+/* Scans the bus for connected device ROM codes. */
+OneWire_Status_t OneWire_Search(OneWire_t *OW, uint8_t Cmd)
 {
-	uint8_t id_bit_number 	= 1;
-	uint8_t last_zero 		= 0;
-	uint8_t rom_byte_number = 0;
-	uint8_t search_result 	= 0;
-	uint8_t rom_byte_mask 	= 1;
-	uint8_t id_bit, cmp_id_bit, search_direction;
+    /* Walk the ROM search tree to discover multiple devices. */
+    uint8_t id_bit_number   = 1U;
+    uint8_t last_zero       = 0U;
+    uint8_t rom_byte_number = 0U;
+    uint8_t search_result   = 0U;
+    uint8_t rom_byte_mask   = 1U;
+    uint8_t id_bit;
+    uint8_t cmp_id_bit;
+    uint8_t search_direction;
+    OneWire_Status_t st;
 
-	/* if the last call was not the last one */
-	if (!OW->LastDeviceFlag)
-	{
-		if (OneWire_Reset(OW))
-		{
-			OW->LastDiscrepancy = 0;
-			OW->LastDeviceFlag = 0;
-			OW->LastFamilyDiscrepancy = 0;
-			return 0;
-		}
+    if (OneWire_IsConfigValid(OW) == 0U)
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
 
-		// issue the search command
-		OneWire_WriteByte(OW, Cmd);
+    if (OW->LastDeviceFlag != 0U)
+    {
+        return ONEWIRE_STATUS_NOT_FOUND;
+    }
 
-		// loop to do the search
-		do {
-			// read a bit and its complement
-			id_bit = OneWire_ReadBit(OW);
-			cmp_id_bit = OneWire_ReadBit(OW);
+    st = OneWire_Reset(OW);
+    if (st != ONEWIRE_STATUS_OK)
+    {
+        OW->LastDiscrepancy = 0U;
+        OW->LastDeviceFlag = 0U;
+        OW->LastFamilyDiscrepancy = 0U;
+        return ONEWIRE_STATUS_NO_DEVICE;
+    }
 
-			// check for no devices on 1-wire
-			if ((id_bit == 1) && (cmp_id_bit == 1))
-			{
-				break;
-			} else {
-				// all devices coupled have 0 or 1
-				if (id_bit != cmp_id_bit)
-				{
-					search_direction = id_bit;  // bit write value for search
-				} else {
-					/* if this discrepancy if before the Last Discrepancy
-					 * on a previous next then pick the same as last time */
-					if (id_bit_number < OW->LastDiscrepancy)
-					{
-						search_direction = ((OW->RomByte[rom_byte_number] & rom_byte_mask) > 0);
-					} else {
-						// if equal to last pick 1, if not then pick 0
-						search_direction = (id_bit_number == OW->LastDiscrepancy);
-					}
+    st = OneWire_WriteByte(OW, Cmd);
+    if (st != ONEWIRE_STATUS_OK)
+    {
+        return st;
+    }
 
-					// if 0 was picked then record its position in LastZero
-					if (search_direction == 0)
-					{
-						last_zero = id_bit_number;
+    do
+    {
+        st = OneWire_ReadBit(OW, &id_bit);
+        if (st != ONEWIRE_STATUS_OK)
+        {
+            return st;
+        }
 
-						// check for Last discrepancy in family
-						if (last_zero < 9)
-						{
-							OW->LastFamilyDiscrepancy = last_zero;
-						}
-					}
-				}
+        st = OneWire_ReadBit(OW, &cmp_id_bit);
+        if (st != ONEWIRE_STATUS_OK)
+        {
+            return st;
+        }
 
-				/* set or clear the bit in the ROM byte rom_byte_number
-				 * with mask rom_byte_mask */
-				if (search_direction == 1)
-				{
-					OW->RomByte[rom_byte_number] |= rom_byte_mask;
-				} else {
-					OW->RomByte[rom_byte_number] &= ~rom_byte_mask;
-				}
+        if ((id_bit == 1U) && (cmp_id_bit == 1U))
+        {
+            break;
+        }
+        else
+        {
+            if (id_bit != cmp_id_bit)
+            {
+                search_direction = id_bit;
+            }
+            else
+            {
+                if (id_bit_number < OW->LastDiscrepancy)
+                {
+                    search_direction = ((OW->RomByte[rom_byte_number] & rom_byte_mask) != 0U) ? 1U : 0U;
+                }
+                else
+                {
+                    search_direction = (id_bit_number == OW->LastDiscrepancy) ? 1U : 0U;
+                }
 
-				// serial number search direction write bit
-				OneWire_WriteBit(OW, search_direction);
+                if (search_direction == 0U)
+                {
+                    last_zero = id_bit_number;
 
-				/* increment the byte counter id_bit_number and shift the
-				 * mask rom_byte_mask */
-				id_bit_number++;
-				rom_byte_mask <<= 1;
+                    if (last_zero < 9U)
+                    {
+                        OW->LastFamilyDiscrepancy = last_zero;
+                    }
+                }
+            }
 
-				/* if the mask is 0 then go to new SerialNum byte
-				 * rom_byte_number and reset mask */
-				if (rom_byte_mask == 0)
-				{
-					rom_byte_number++;
-					rom_byte_mask = 1;
-				}
-			}
-		} while (rom_byte_number < 8);  /* loop until through all ROM bytes 0-7
-		if the search was successful then */
+            if (search_direction == 1U)
+            {
+                OW->RomByte[rom_byte_number] |= rom_byte_mask;
+            }
+            else
+            {
+                OW->RomByte[rom_byte_number] &= (uint8_t)(~rom_byte_mask);
+            }
 
-		if (!(id_bit_number < 65))
-		{
-			/* search successful so set LastDiscrepancy, LastDeviceFlag,
-			 * search_result */
-			OW->LastDiscrepancy = last_zero;
-			// check for last device
-			if (OW->LastDiscrepancy == 0) {
-				OW->LastDeviceFlag = 1;
-			}
-			search_result = 1;
-		}
-	}
+            OneWire_WriteBitBlocking(OW, search_direction);
 
-	/* if no device found then reset counters so next 'search' will be like a
-	 * first */
-	if (!search_result || !OW->RomByte[0])
-	{
-		OW->LastDiscrepancy = 0;
-		OW->LastDeviceFlag = 0;
-		OW->LastFamilyDiscrepancy = 0;
-		search_result = 0;
-	}
+            id_bit_number++;
+            rom_byte_mask <<= 1U;
 
-	return search_result;
+            if (rom_byte_mask == 0U)
+            {
+                rom_byte_number++;
+                rom_byte_mask = 1U;
+            }
+        }
+    } while (rom_byte_number < 8U);
+
+    if (id_bit_number >= 65U)
+    {
+        OW->LastDiscrepancy = last_zero;
+
+        if (OW->LastDiscrepancy == 0U)
+        {
+            OW->LastDeviceFlag = 1U;
+        }
+
+        search_result = 1U;
+    }
+
+    if ((search_result == 0U) || (OW->RomByte[0] == 0U))
+    {
+        OW->LastDiscrepancy = 0U;
+        OW->LastDeviceFlag = 0U;
+        OW->LastFamilyDiscrepancy = 0U;
+        return ONEWIRE_STATUS_NOT_FOUND;
+    }
+
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used get ROM full address
-  * @param  OW		OneWire HandleTypedef
-  * @param  ROM		Pointer to device ROM
-  */
-void OneWire_GetDevRom(OneWire_t* OW, uint8_t *ROM)
+/* Copies a discovered device ROM code. */
+OneWire_Status_t OneWire_GetDevRom(OneWire_t *OW, uint8_t *ROM)
 {
     /* Copy the address of the requested discovered device. */
-	for (uint8_t i = 0; i < 8; i++) {
-		*(ROM + i) = OW->RomByte[i];
-	}
+    uint8_t i;
+
+    if ((OW == NULL) || (ROM == NULL))
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
+
+    for (i = 0U; i < 8U; i++)
+    {
+        ROM[i] = OW->RomByte[i];
+    }
+
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used to initialize OneWire Communication
-  * @param  OW		OneWire HandleTypedef
-  */
-void OneWire_Init(OneWire_t* OW)
+/* Sets up the OneWire bus and searches for devices. */
+OneWire_Status_t OneWire_Init(OneWire_t *OW)
 {
-	OneWire_Pin_Mode(OW, Output);
-	OneWire_Pin_Level(OW, 1);
-	delay_us(1000);
-	OneWire_Pin_Level(OW, 0);
-	delay_us(1000);
-	OneWire_Pin_Level(OW, 1);
-	delay_us(2000);
-	/* Reset the search state */
-	OW->LastDiscrepancy 		= 0;
-	OW->LastDeviceFlag 			= 0;
-	OW->LastFamilyDiscrepancy 	= 0;
-	OW->RomCnt 					= 0;
+    /* Initialize the bus state before searching for ROM addresses. */
+    if (OneWire_IsConfigValid(OW) == 0U)
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
+
+    OneWire_Pin_Mode(OW, Output);
+    OneWire_Pin_Level(OW, 1U);
+    delay_us(1000U);
+
+    OneWire_Pin_Level(OW, 0U);
+    delay_us(1000U);
+
+    OneWire_Pin_Level(OW, 1U);
+    OneWire_Pin_Mode(OW, Input);
+    delay_us(2000U);
+
+    OW->LastDiscrepancy = 0U;
+    OW->LastDeviceFlag = 0U;
+    OW->LastFamilyDiscrepancy = 0U;
+    OW->RomCnt = 0U;
+    memset(OW->RomByte, 0, sizeof(OW->RomByte));
+
+    OW->IrqDone = 0U;
+    OW->ReadSample = 1U;
+    OW->ResetPresence = 1U;
+    OW->WriteBitValue = 0U;
+    OW->OpPhase = 0U;
+    OW->ActiveOp = ONEWIRE_OP_NONE;
+
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used selected specific device ROM
-  * @param  OW		OneWire HandleTypedef
-  * @param  ROM		Pointer to device ROM
-  */
-void OneWire_SelectWithPointer(OneWire_t* OW, uint8_t *ROM)
+/* Selects a device using its ROM address. */
+OneWire_Status_t OneWire_SelectWithPointer(OneWire_t *OW, const uint8_t *ROM)
 {
     /* Send a Match ROM command for the requested device. */
-	OneWire_WriteByte(OW, ONEWIRE_CMD_MATCHROM);
+    uint8_t i;
+    OneWire_Status_t st;
 
-	for (uint8_t i = 0; i < 8; i++)
-	{
-		OneWire_WriteByte(OW, *(ROM + i));
-	}
+    if ((OW == NULL) || (ROM == NULL))
+    {
+        return ONEWIRE_STATUS_BAD_PARAM;
+    }
+
+    st = OneWire_WriteByte(OW, ONEWIRE_CMD_MATCHROM);
+    if (st != ONEWIRE_STATUS_OK)
+    {
+        return st;
+    }
+
+    for (i = 0U; i < 8U; i++)
+    {
+        st = OneWire_WriteByte(OW, ROM[i]);
+        if (st != ONEWIRE_STATUS_OK)
+        {
+            return st;
+        }
+    }
+
+    return ONEWIRE_STATUS_OK;
 }
 
-/**
-  * @brief  The function is used check CRC
-  * @param  Addr	Pointer to address
-  * @param  ROM		Number of byte
-  */
-uint8_t OneWire_CRC8(uint8_t *Addr, uint8_t Len)
+/* Handles OneWire timing callback events. */
+void OneWire_TimerElapsedCallback(OneWire_t *OW, TIM_HandleTypeDef *htim)
+{
+    (void)OW;
+    (void)htim;
+    /* Blocking OneWire driver does not use timer interrupts. Kept for compatibility. */
+}
+
+/* Calculates the OneWire CRC-8 checksum. */
+uint8_t OneWire_CRC8(const uint8_t *Addr, uint8_t Len)
 {
     /* Process each byte using the OneWire CRC polynomial. */
-	uint8_t crc = 0;
-	uint8_t inbyte, i, mix;
+    uint8_t crc = 0U;
+    uint8_t inbyte;
+    uint8_t i;
+    uint8_t mix;
 
-	while (Len--)
-	{
-		inbyte = *Addr++;
+    while (Len-- != 0U)
+    {
+        inbyte = *Addr++;
 
-		for (i = 8; i; i--)
-		{
-			mix = (crc ^ inbyte) & 0x01;
-			crc >>= 1;
-			crc ^= (mix) ? 0x8C : 0;
-			inbyte >>= 1;
-		}
-	}
-	return crc;
+        for (i = 8U; i != 0U; i--)
+        {
+            mix = (uint8_t)((crc ^ inbyte) & 0x01U);
+            crc >>= 1U;
+            crc ^= (mix != 0U) ? 0x8CU : 0x00U;
+            inbyte >>= 1U;
+        }
+    }
+
+    return crc;
 }

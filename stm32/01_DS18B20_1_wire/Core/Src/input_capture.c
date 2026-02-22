@@ -1,4 +1,4 @@
-/* input_capture.c | Author: i fiksuari pas prog | Date: 17 February 2026 */
+/* input_capture.c | Author: i fiksuari pas prog | Date: 22 February 2026 */
 #include "input_capture.h"
 
 /* Implements the tim2 output compare PA5 operation. */

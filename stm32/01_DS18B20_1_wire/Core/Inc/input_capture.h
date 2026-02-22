@@ -1,4 +1,4 @@
-/* input_capture.h | Author: i fiksuari pas prog | Date: 17 February 2026 */
+/* input_capture.h | Author: i fiksuari pas prog | Date: 22 February 2026 */
 
 #ifndef INC_INPUT_CAPTURE_H_
 #define INC_INPUT_CAPTURE_H_
