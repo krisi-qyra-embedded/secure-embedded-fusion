@@ -1,0 +1,8 @@
+C:/Users/user/Documents/Advanced_BareMetal_Programming/MAX31865_SPI_DMA_PRO/chip_headers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	2
+../Src/tim.c:14:6:tim2_3ms_delay	2
+../Src/tim.c:44:6:tim2_delay_ms	9
+../Src/tim.c:109:6:tim2_1s_init	1
+../Src/tim.c:126:6:tim2_1s_start	1
+../Src/tim.c:136:6:tim2_1s_stop	1
+../Src/tim.c:143:6:gpioa5_init	1
+../Src/tim.c:155:6:tim2_1hz_interrupt_init	1
