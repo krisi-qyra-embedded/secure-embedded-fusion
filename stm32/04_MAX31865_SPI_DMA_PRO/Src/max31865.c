@@ -516,15 +516,18 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
     }
 
     enum { MAX_ATTEMPTS = 3 };
+    max31865_status_t final_status = MAX31865_STATUS_INVALID_DATA;
 
     for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
         uint16_t raw = 0U;
         uint8_t fault = 0U;
         bool fault_valid = false;
+        bool sample_failed = true;
         max31865_status_t status;
 
         status = Max31865_readRTD(max31865, &raw);
         if (status != MAX31865_STATUS_OK) {
+            final_status = status;
             log_printf("ERR: readTempC: readRTD failed r=%d (attempt %d/%d)\r\n",
                        status, attempt, MAX_ATTEMPTS);
             log_printf("DIAG: No trustworthy RTD sample was produced. This points more to transaction/control/timing/recovery path issues than to a clean RTD threshold fault.\r\n");
@@ -578,26 +581,31 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
             }
 
             if (fault_valid && (fault != 0U)) {
-                log_printf("ERR: readTempC: sample looked numerically usable, but MAX31865 reports a fault\r\n");
+                final_status = MAX31865_STATUS_FAULT;
+                log_printf("ERR: readTempC: sample looked numerically usable, but MAX31865 reports fault=0x%02X (attempt %d/%d)\r\n",
+                           (unsigned)fault, attempt, MAX_ATTEMPTS);
                 tim2_delay_ms(20U);
                 Max31865_log_fault_diagnosis(raw, fault);
-                return MAX31865_STATUS_FAULT;
+            } else {
+                sample_failed = false;
+                *readTemp = temp;
+                log_printf("OK: TempC = %.4f °C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
+                           temp,
+                           raw,
+                           (unsigned long)raw,
+                           (((float)raw) / 32768.0f) * _MAX31865_RREF);
+                heartbeat_signal_main();
+                return MAX31865_STATUS_OK;
             }
-
-            *readTemp = temp;
-            log_printf("OK: TempC = %.4f °C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
-                       temp,
-                       raw,
-                       (unsigned long)raw,
-                       (((float)raw) / 32768.0f) * _MAX31865_RREF);
-            heartbeat_signal_main();
-            return MAX31865_STATUS_OK;
         }
 
-        if (status == MAX31865_STATUS_OK) {
+        if ((status == MAX31865_STATUS_OK) && (sample_failed != false) &&
+            ((raw == 0U) || (raw >= 0x7FFFU))) {
+            final_status = MAX31865_STATUS_INVALID_DATA;
             log_printf("ERR: readTempC: invalid RTD value raw=0x%04X (%lu) (attempt %d/%d)\r\n",
                        raw, (unsigned long)raw, attempt, MAX_ATTEMPTS);
             tim2_delay_ms(20U);
+
             if (raw == 0x7FFFU) {
                 log_printf("DIAG: Raw code hit FULL SCALE (32767). In the MAX31865 tables this corresponds to a saturated-high result.\r\n");
                 tim2_delay_ms(20U);
@@ -617,42 +625,54 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
             }
         }
 
-        if (attempt < MAX_ATTEMPTS) {
-            Max31865_log_recovery_action(attempt, MAX_ATTEMPTS);
+        if (attempt >= MAX_ATTEMPTS) {
+            log_printf("ACT: sample attempt %d/%d failed -> recovery budget exhausted, no further retry\r\n",
+                       attempt, MAX_ATTEMPTS);
+            tim2_delay_ms(20U);
+            log_printf("[FATAL] MAX31865 failed after retry %d/%d -> reporting fatal to caller (last_status=%d)\r\n",
+                       attempt, MAX_ATTEMPTS, (int)final_status);
+            tim2_delay_ms(20U);
+            log_printf("ERR: readTempC: all attempts exhausted; returning status=%d\r\n",
+                       (int)final_status);
+            tim2_delay_ms(20U);
+            return final_status;
+        }
 
-            if (spi4_recover() == SPI_DMA_STATUS_OK) {
-                log_printf("INFO: readTempC: spi4_recover() succeeded, doing full restore/init\r\n");
+        Max31865_log_recovery_action(attempt, MAX_ATTEMPTS);
 
-                if (spi4_restore_and_init() == SPI_DMA_STATUS_OK) {
-                    log_printf("INFO: readTempC: spi4_restore_and_init() succeeded, reinitializing device\r\n");
+        if (spi4_recover() == SPI_DMA_STATUS_OK) {
+            log_printf("INFO: readTempC: spi4_recover() succeeded, doing full restore/init\r\n");
 
-                    memset(max31865, 0, sizeof(*max31865));
-                    if (Max31865_init(max31865, 3U, 50U) != MAX31865_STATUS_OK) {
-                        log_printf("FATAL: Max31865_init failed after recovery -> restarting\r\n");
-                        tim2_delay_ms(20U);
-                        NVIC_SystemReset();
-                    }
+            if (spi4_restore_and_init() == SPI_DMA_STATUS_OK) {
+                log_printf("INFO: readTempC: spi4_restore_and_init() succeeded, reinitializing device\r\n");
 
-                    log_printf("ACT: recovery complete, retrying temperature conversion\r\n");
-                    spi4_short_delay_ms(5U);
-                    continue;
+                memset(max31865, 0, sizeof(*max31865));
+                if (Max31865_init(max31865, 3U, 50U) != MAX31865_STATUS_OK) {
+                    log_printf("FATAL: Max31865_init failed after recovery -> restarting\r\n");
+                    tim2_delay_ms(20U);
+                    NVIC_SystemReset();
                 }
 
-                log_printf("WARN: readTempC: spi4_restore_and_init() failed (attempt %d/%d)\r\n",
+                log_printf("ACT: recovery complete after attempt %d/%d, retrying temperature conversion\r\n",
                            attempt, MAX_ATTEMPTS);
-                tim2_delay_ms(20U);
-            } else {
-                log_printf("WARN: readTempC: spi4_recover() failed (attempt %d/%d)\r\n",
-                           attempt, MAX_ATTEMPTS);
-                tim2_delay_ms(20U);
+                spi4_short_delay_ms(5U);
+                continue;
             }
 
-            log_printf("ACT: short backoff before next retry\r\n");
-            spi4_short_delay_ms(10U);
+            log_printf("WARN: readTempC: spi4_restore_and_init() failed (attempt %d/%d)\r\n",
+                       attempt, MAX_ATTEMPTS);
+            tim2_delay_ms(20U);
+        } else {
+            log_printf("WARN: readTempC: spi4_recover() failed (attempt %d/%d)\r\n",
+                       attempt, MAX_ATTEMPTS);
+            tim2_delay_ms(20U);
         }
+
+        log_printf("ACT: short backoff before retry %d/%d\r\n", attempt + 1, MAX_ATTEMPTS);
+        spi4_short_delay_ms(10U);
     }
 
-    log_printf("ERR: readTempC: all attempts exhausted; returning INVALID_DATA\r\n");
+    log_printf("ERR: readTempC: unexpected fallthrough; returning INVALID_DATA\r\n");
     tim2_delay_ms(20U);
     return MAX31865_STATUS_INVALID_DATA;
 }

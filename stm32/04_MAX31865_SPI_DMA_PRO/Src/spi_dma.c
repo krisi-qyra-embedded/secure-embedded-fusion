@@ -95,6 +95,7 @@ spi_dma_diag_t g_spi_dma_diag = {0};
 
 static void gpio_config_spi4_pins(void);
 static void dma_clear_all_flags(void);
+static void spi4_log_diag_snapshot(const char *tag);
 static spi_dma_status_t wait_dma_stream_disabled(volatile __IO uint32_t *stream_cr,
                                                  volatile __IO uint32_t *flag_reg,
                                                  uint32_t cr_en_mask,
@@ -233,12 +234,14 @@ spi_dma_status_t spi4_dma_init(void)
 
     if (wait_dma_stream_disabled(&DMA2_Stream0->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM0) != SPI_DMA_STATUS_OK) {
         log_printf("spi4_dma_init: stream0 did not disable cleanly\r\n");
+        spi4_log_diag_snapshot("init_stream0_disable_timeout");
         tim2_delay_ms(20U);
         return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
     }
 
     if (wait_dma_stream_disabled(&DMA2_Stream1->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM1) != SPI_DMA_STATUS_OK) {
         log_printf("spi4_dma_init: stream1 did not disable cleanly\r\n");
+        spi4_log_diag_snapshot("init_stream1_disable_timeout");
         tim2_delay_ms(20U);
         return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
     }
@@ -278,6 +281,7 @@ spi_dma_status_t spi4_dma_init(void)
 
         if (ch0 != SPI4_DMA_CHANNEL || ch1 != SPI4_DMA_CHANNEL || dir1 != 1U) {
             log_printf("spi4_dma_init: DMA configuration mismatch\r\n");
+            spi4_log_diag_snapshot("init_dma_config_mismatch");
             tim2_delay_ms(20U);
             return SPI_DMA_STATUS_CONFIG_MISMATCH;
         }
@@ -403,6 +407,27 @@ static void dma_clear_all_flags(void)
     DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM1;
 }
 
+/* Logs diagnostic information from spi4 log diag snapshot. */
+static void spi4_log_diag_snapshot(const char *tag)
+{
+    /* Capture the available diagnostic values. */
+    log_printf("[SPI4][DIAG][%s] SR=0x%08lX CR1=0x%08lX CR2=0x%08lX LISR=0x%08lX S0CR=0x%08lX S1CR=0x%08lX RX_STATE=%u TX_STATE=%u RX_TC=%lu TX_TC=%lu RX_ERR=%lu TX_ERR=%lu\r\n",
+               tag ? tag : "unknown",
+               (unsigned long)SPI4->SR,
+               (unsigned long)SPI4->CR1,
+               (unsigned long)SPI4->CR2,
+               (unsigned long)DMA2->LISR,
+               (unsigned long)DMA2_Stream0->CR,
+               (unsigned long)DMA2_Stream1->CR,
+               (unsigned)max31865_spi_dma_rx_cmplt,
+               (unsigned)max31865_spi_dma_tx_cmplt,
+               (unsigned long)g_spi_dma_diag.rx_tc_count,
+               (unsigned long)g_spi_dma_diag.tx_tc_count,
+               (unsigned long)g_spi_dma_diag.rx_err_count,
+               (unsigned long)g_spi_dma_diag.tx_err_count);
+    tim2_delay_ms(2U);
+}
+
 /* Handles the spi4 dma transmit operation. */
 spi_dma_status_t spi4_dma_transmit(uint8_t *tx_buf, uint32_t len)
 {
@@ -484,11 +509,13 @@ spi_dma_status_t spi4_dma_transmit_receive(uint8_t *tx_buf, uint8_t *rx_buf, uin
 
     if (wait_dma_stream_disabled(&DMA2_Stream1->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM1) != SPI_DMA_STATUS_OK) {
         log_printf("spi4_dma_transmit_receive: stream1 disable failed\r\n");
+        spi4_log_diag_snapshot("txrx_stream1_disable_timeout");
         return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
     }
 
     if (wait_dma_stream_disabled(&DMA2_Stream0->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM0) != SPI_DMA_STATUS_OK) {
         log_printf("spi4_dma_transmit_receive: stream0 disable failed\r\n");
+        spi4_log_diag_snapshot("txrx_stream0_disable_timeout");
         return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
     }
 
@@ -554,11 +581,17 @@ static spi_dma_status_t spi_dma_wait_complete(volatile spi_dma_transfer_state_t 
         cpu_sleep_until_irq();
 
         if ((ms_get() - start_ms) >= timeout_ms) {
+            spi4_log_diag_snapshot("dma_wait_timeout");
             return SPI_DMA_STATUS_TIMEOUT;
         }
     }
 
-    return (*state == SPI_DMA_TRANSFER_SUCCESS) ? SPI_DMA_STATUS_OK : SPI_DMA_STATUS_TRANSFER_ERROR;
+    if (*state == SPI_DMA_TRANSFER_SUCCESS) {
+        return SPI_DMA_STATUS_OK;
+    }
+
+    spi4_log_diag_snapshot("dma_wait_transfer_error");
+    return SPI_DMA_STATUS_TRANSFER_ERROR;
 }
 
 /* Waits for spi dma stream0 wait complete with a bounded timeout. */
@@ -586,19 +619,16 @@ uint8_t tim2_1s_check_flag(void)
     return 0U;
 }
 
-/* Handles the interrupt state for TIM2 IRQHandler. */
-void TIM2_IRQHandler(void)
-{
-    /* Update the transfer state for handled interrupt flags. */
-    if ((TIM2->SR & TIM_SR_UIF) != 0U) {
-        TIM2->SR &= ~TIM_SR_UIF;
-        TIM2->CR1 &= ~TIM_CR1_CEN;
-        TIM2->DIER &= ~TIM_DIER_UIE;
-        tim2_1s_flag = 1U;
-    }
-}
+/* void TIM2_IRQHandler(void) */
+ 
+ 
+ 
+ 
+ 
+/* tim2_1s_flag = 1U; */
+/* } */
+/* } */
 
-/* Handles the interrupt state for DMA2 Stream0 IRQHandler. */
 void DMA2_Stream0_IRQHandler(void)
 {
     /* Update the transfer state for handled interrupt flags. */
@@ -715,6 +745,7 @@ spi_dma_status_t spi4_recover(void)
         log_printf("spi4_recover: graceful disable succeeded\r\n");
     } else {
         log_printf("spi4_recover: graceful disable failed -> toggling SPI APB reset\r\n");
+        spi4_log_diag_snapshot("recover_graceful_disable_failed");
 #ifdef RCC_APB2RSTR_SPI4RST
         RCC->APB2RSTR |= RCC_APB2RSTR_SPI4RST;
         spi4_short_delay_ms(1U);
@@ -748,11 +779,13 @@ spi_dma_status_t spi4_recover(void)
 
     if (spi4_device_reinit() != 0) {
         log_printf("spi4_recover: spi4_device_reinit() failed\r\n");
+        spi4_log_diag_snapshot("recover_device_reinit_failed");
         return SPI_DMA_STATUS_DEVICE_REINIT_FAILED;
     }
 
     if (spi4_selftest() != 0) {
         log_printf("spi4_recover: spi4_selftest() failed\r\n");
+        spi4_log_diag_snapshot("recover_selftest_failed");
         return SPI_DMA_STATUS_SELFTEST_FAILED;
     }
 
@@ -769,6 +802,7 @@ spi_dma_status_t spi4_restore_and_init(void)
 
     if (spi4_dma_init() != SPI_DMA_STATUS_OK) {
         log_printf("spi4_restore_and_init: spi4_dma_init() failed\r\n");
+        spi4_log_diag_snapshot("restore_spi4_dma_init_failed");
         return SPI_DMA_STATUS_INIT_FAILED;
     }
 

@@ -53,8 +53,8 @@ void escalate_to_iwdg_reset(const char *reason)
     backup_write_marker(INTENTIONAL_RESET_TAG);
 
      
-    log_printf("ESCALATE -> IWDG reset: %s\r\n", reason ? reason : "(no reason)");
-    tim2_delay_ms(2);
+    log_printf("[FATAL][IWDG] reset escalation requested: %s\r\n", reason ? reason : "(no reason)");
+    tim2_delay_ms(2U);
      
     __DSB();
     __ISB();
@@ -85,11 +85,11 @@ void check_reset_source(void)
 
         if (backup_read_marker() == INTENTIONAL_RESET_TAG) {
             log_printf("Boot: intentional supervisor reset (IWDG)\r\n");
-            tim2_delay_ms(2);
+            tim2_delay_ms(2U);
             backup_write_marker(0U);  
         } else {
             log_printf("Boot: unexpected watchdog reset (crash)\r\n");
-            tim2_delay_ms(2);
+            tim2_delay_ms(2U);
         }
     }
 }
@@ -105,7 +105,7 @@ void supervisor_check_and_kick(void)
     /* Check SPI heartbeat (DMA completion must call heartbeat_signal_spi()) */
     if (age_spi > HEARTBEAT_WINDOW_MS) {
         log_printf("SUPERVISOR: SPI heartbeat missed (age=%u ms)\r\n", (unsigned)age_spi);
-        tim2_delay_ms(2);
+        tim2_delay_ms(2U);
         /* we expect the driver's own recovery attempts to have been done already and returned error to main. */
         escalate_to_iwdg_reset("SPI heartbeat missed");
     }
@@ -113,7 +113,7 @@ void supervisor_check_and_kick(void)
      
     if (age_main > HEARTBEAT_WINDOW_MS) {
         log_printf("SUPERVISOR: main heartbeat missed (age=%u ms)\r\n", (unsigned)age_main);
-        tim2_delay_ms(2);
+        tim2_delay_ms(2U);
         escalate_to_iwdg_reset("main heartbeat missed");
     }
 
@@ -131,7 +131,7 @@ void IWDG_ErrorHandler(const char *msg, iwdg_status_t code)
     /* Update the transfer state for handled interrupt flags. */
      
     log_printf("IWDG Error: %s (code=%d)\r\n", msg ? msg : "NULL", (int)code);
-    tim2_delay_ms(2);
+    tim2_delay_ms(2U);
     __DSB();
     __ISB();
 
@@ -145,7 +145,7 @@ void on_fatal_init_error(const char *msg)
 {
     /* Set up the required peripheral configuration. */
     log_printf("FATAL: %s -> escalating\r\n", msg ? msg : "(no reason)");
-    tim2_delay_ms(2);
+    tim2_delay_ms(2U);
     escalate_to_iwdg_reset(msg);
 }
 

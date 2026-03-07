@@ -17,7 +17,7 @@ C:/Users/user/Documents/Advanced_BareMetal_Programming/MAX31865_SPI_DMA_PRO/chip
 ../Src/max31865.c:376:13:Max31865_log_recovery_action	16	static
 ../Src/max31865.c:388:13:Max31865_log_fault_diagnosis	48	static
 ../Src/max31865.c:488:19:Max31865_readTempC	104	static
-../Src/max31865.c:639:19:Max31865_readTempF	24	static
-../Src/max31865.c:657:7:Max31865_Filter	24	static
-../Src/max31865.c:662:19:Max31865_monitorLoop	32	static
-../Src/max31865.c:685:19:Max31865_debug_once	72	static
+../Src/max31865.c:659:19:Max31865_readTempF	24	static
+../Src/max31865.c:677:7:Max31865_Filter	24	static
+../Src/max31865.c:682:19:Max31865_monitorLoop	32	static
+../Src/max31865.c:705:19:Max31865_debug_once	72	static
