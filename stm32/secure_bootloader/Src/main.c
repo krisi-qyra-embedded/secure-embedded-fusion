@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 10 April 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 13 April 2026 */
 #include <stdio.h>
 #include "stm32f4xx.h"
 #include "fpu.h"
@@ -6,23 +6,19 @@
 #include "timebase.h"
 #include "bsp.h"
 #include "adc.h"
+#include "multiplicative_cipher.h"
 
-/*Modules:
- * FPU
- * UART
- * TIMEBASE
- * GPIO (BSP)
- * ADC
- * */
+
+#define ENCRYPT_TEXT_LEN 15   // +1 for the null-terminator
 
 
 
-#define  GPIOAEN		(1U<<0)
-#define  PIN5			(1U<<5)
-#define  LED_PIN		PIN5
+char encryptedtext[ENCRYPT_TEXT_LEN];
+char decryptedtext[ENCRYPT_TEXT_LEN];
 
-bool btn_state;
-uint32_t sensor_value;
+char plaintext[] = "EMBEDDED";
+int key =  3;
+
 /* Initializes the platform and runs this cryptographic test sequence. */
 int main()
 {
@@ -47,10 +43,15 @@ int main()
 	/*Start conversion*/
 	start_conversion();
 
+
+	encryt_multiplicative_cipher(plaintext,key,encryptedtext);
+	decryt_multiplicative_cipher(encryptedtext,key,decryptedtext);
+
 	while(1)
 	{
 
-		sensor_value = adc_read();
+
+
 	}
 }
 
