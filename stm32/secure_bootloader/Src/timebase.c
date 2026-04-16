@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 13 April 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 16 April 2026 */
 #include "timebase.h"
 #include "stm32f4xx.h"
 
@@ -8,6 +8,7 @@
 #define CTRL_COUNTFLAG	(1U<<16)
 
 #define ONE_SEC_LOAD	 16000000
+#define ONE_MSEC_LOAD	 16000
 
 #define MAX_DELAY		 0xFFFFFFFF
 
@@ -57,8 +58,8 @@ void timebase_init(void)
 	/*Disable global interrupts*/
 	__disable_irq();
 
-    /*Load the timer with number of clock cycles per second*/
-	SysTick->LOAD =  ONE_SEC_LOAD - 1;
+    /*Load the timer with number of clock cycles per msecond*/
+	SysTick->LOAD =  ONE_MSEC_LOAD - 1;
 
     /*Clear systick current value register*/
 	SysTick->VAL = 0;

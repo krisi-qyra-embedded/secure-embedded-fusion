@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 13 April 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 16 April 2026 */
 #include "adc.h"
 #include "stm32f4xx.h"
 
