@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 19 April 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 22 April 2026 */
 #include <stdio.h>
 #include "stm32f4xx.h"
 #include "fpu.h"
@@ -9,165 +9,137 @@
 #include "cmox_crypto.h"
 #include <string.h>
 
-#define  GPIOAEN        (1U<<0)
-#define  PIN5            (1U<<5)
-#define  LED_PIN        PIN5
 
-#define AES_256_KEY_SIZE        32  // 32 bytes = 256 bits
-#define AES_256_IV_SIZE         16  // 16 bytes (CTR counter block)
 
-#define ADC_SAMPLE_COUNT  8
-#define BYTES_PER_SAMPLE  sizeof(uint32_t)
 
-uint32_t adc_values[ADC_SAMPLE_COUNT];
-uint32_t decrypted_adc_values[ADC_SAMPLE_COUNT];
+#define  GPIOAEN		(1U<<0)
+#define  PIN5			(1U<<5)
+#define  LED_PIN		PIN5
 
-uint8_t plain_text_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE];
-uint8_t cipher_text_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_256_IV_SIZE]; // extra slack
-uint8_t decrypted_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_256_IV_SIZE];
 
-/* Converts ADC sample words into bytes for encryption. */
-void decompose_adc_values(void) {
-    /* Extract the bytes in the intended order for encryption. */
-    for (int i = 0; i < ADC_SAMPLE_COUNT; i++) {
-        uint32_t adc_value = adc_values[i];
-        plain_text_bytes[i * 4]     = (adc_value >> 24) & 0xFF;
-        plain_text_bytes[i * 4 + 1] = (adc_value >> 16) & 0xFF;
-        plain_text_bytes[i * 4 + 2] = (adc_value >> 8) & 0xFF;
-        plain_text_bytes[i * 4 + 3] = adc_value & 0xFF;
-    }
-}
-
-/* Reconstructs ADC sample words from decrypted bytes. */
-void recombine_adc_values(void) {
-    /* Recombine bytes in the same order as the original samples. */
-    for (int i = 0; i < ADC_SAMPLE_COUNT; i++) {
-        decrypted_adc_values[i] = (decrypted_bytes[i * 4] << 24) |
-                                  (decrypted_bytes[i * 4 + 1] << 16) |
-                                  (decrypted_bytes[i * 4 + 2] << 8) |
-                                  decrypted_bytes[i * 4 + 3];
-    }
-}
 
 /* Reports a failed operation through the debug output. */
 void handle_error(const char *message) {
-    /* Log the failure before stopping further processing. */
+
+    // Print the error message to the debug console
     printf("ERROR: %s\n\r", message);
+
     while (1) {
-        GPIOA->ODR ^= LED_PIN;
-        for (volatile int i = 0; i < 1000000; i++);
+        // Toggle an LED to indicate an error (assuming LED_PIN is configured)
+        GPIOA->ODR ^= LED_PIN;  // Toggle LED
+        for (volatile int i = 0; i < 1000000; i++);  // Delay loop
     }
+
 }
 
-/* ---------- DRBG-based key/IV generation (kept from your original) ---------- */
-uint8_t Key[AES_256_KEY_SIZE] = {0};
-uint8_t IV[AES_256_IV_SIZE] = {0};
 
-const uint8_t entropy[] = {
-    0x4C, 0xFB, 0x21, 0x86, 0x73, 0x34, 0x6D, 0x9D,
-    0x50, 0xC9, 0x22, 0xE4, 0x9B, 0x0D, 0xFC, 0xD0,
-    0x90, 0xAD, 0xF0, 0x4F, 0x5C, 0x3B, 0xA4, 0x73,
-    0x27, 0xDF, 0xCD, 0x6F, 0xA6, 0x3A, 0x78, 0x5C
+
+
+
+/*Len = 2096
+ *
+Msg = 6b918fb1a5ad1f9c5e5dbdf10a93a9c8f6bca89f37e79c9fe12a57227941b173ac79d8d440cde8c64c4ebc84a4c803
+d198a296f3de060900cc427f58ca6ec373084f95dd6c7c427ecfbf781f68be572a88dbcbb188581ab200bfb99a3a816407e7
+dd6dd21003554d4f7a99c93ebfce5c302ff0e11f26f83fe669acefb0c1bbb8b1e909bd14aa48ba3445c88b0e1190eef765ad
+898ab8ca2fe507015f1578f10dce3c11a55fb9434ee6e9ad6cc0fdc4684447a9b3b156b908646360f24fec2d8fa69e2c93db
+78708fcd2eef743dcb9353819b8d667c48ed54cd436fb1476598c4a1d7028e6f2ff50751db36ab6bc32435152a00abd3d58d
+9a8770d9a3e52d5a3628ae3c9e0325
+
+MD = 46500b6ae1ab40bde097ef168b0f3199049b55545a1588792d39d594f493dca7
+
+  */
+
+
+const uint8_t message[] =
+{
+  0x6b, 0x91, 0x8f, 0xb1, 0xa5, 0xad, 0x1f, 0x9c, 0x5e, 0x5d, 0xbd, 0xf1, 0x0a, 0x93, 0xa9, 0xc8,
+  0xf6, 0xbc, 0xa8, 0x9f, 0x37, 0xe7, 0x9c, 0x9f, 0xe1, 0x2a, 0x57, 0x22, 0x79, 0x41, 0xb1, 0x73,
+  0xac, 0x79, 0xd8, 0xd4, 0x40, 0xcd, 0xe8, 0xc6, 0x4c, 0x4e, 0xbc, 0x84, 0xa4, 0xc8, 0x03, 0xd1,
+  0x98, 0xa2, 0x96, 0xf3, 0xde, 0x06, 0x09, 0x00, 0xcc, 0x42, 0x7f, 0x58, 0xca, 0x6e, 0xc3, 0x73,
+  0x08, 0x4f, 0x95, 0xdd, 0x6c, 0x7c, 0x42, 0x7e, 0xcf, 0xbf, 0x78, 0x1f, 0x68, 0xbe, 0x57, 0x2a,
+  0x88, 0xdb, 0xcb, 0xb1, 0x88, 0x58, 0x1a, 0xb2, 0x00, 0xbf, 0xb9, 0x9a, 0x3a, 0x81, 0x64, 0x07,
+  0xe7, 0xdd, 0x6d, 0xd2, 0x10, 0x03, 0x55, 0x4d, 0x4f, 0x7a, 0x99, 0xc9, 0x3e, 0xbf, 0xce, 0x5c,
+  0x30, 0x2f, 0xf0, 0xe1, 0x1f, 0x26, 0xf8, 0x3f, 0xe6, 0x69, 0xac, 0xef, 0xb0, 0xc1, 0xbb, 0xb8,
+  0xb1, 0xe9, 0x09, 0xbd, 0x14, 0xaa, 0x48, 0xba, 0x34, 0x45, 0xc8, 0x8b, 0x0e, 0x11, 0x90, 0xee,
+  0xf7, 0x65, 0xad, 0x89, 0x8a, 0xb8, 0xca, 0x2f, 0xe5, 0x07, 0x01, 0x5f, 0x15, 0x78, 0xf1, 0x0d,
+  0xce, 0x3c, 0x11, 0xa5, 0x5f, 0xb9, 0x43, 0x4e, 0xe6, 0xe9, 0xad, 0x6c, 0xc0, 0xfd, 0xc4, 0x68,
+  0x44, 0x47, 0xa9, 0xb3, 0xb1, 0x56, 0xb9, 0x08, 0x64, 0x63, 0x60, 0xf2, 0x4f, 0xec, 0x2d, 0x8f,
+  0xa6, 0x9e, 0x2c, 0x93, 0xdb, 0x78, 0x70, 0x8f, 0xcd, 0x2e, 0xef, 0x74, 0x3d, 0xcb, 0x93, 0x53,
+  0x81, 0x9b, 0x8d, 0x66, 0x7c, 0x48, 0xed, 0x54, 0xcd, 0x43, 0x6f, 0xb1, 0x47, 0x65, 0x98, 0xc4,
+  0xa1, 0xd7, 0x02, 0x8e, 0x6f, 0x2f, 0xf5, 0x07, 0x51, 0xdb, 0x36, 0xab, 0x6b, 0xc3, 0x24, 0x35,
+  0x15, 0x2a, 0x00, 0xab, 0xd3, 0xd5, 0x8d, 0x9a, 0x87, 0x70, 0xd9, 0xa3, 0xe5, 0x2d, 0x5a, 0x36,
+  0x28, 0xae, 0x3c, 0x9e, 0x03, 0x25
+};
+const uint8_t expected_hash[] =
+{
+  0x46, 0x50, 0x0b, 0x6a, 0xe1, 0xab, 0x40, 0xbd, 0xe0, 0x97, 0xef, 0x16, 0x8b, 0x0f, 0x31, 0x99,
+  0x04, 0x9b, 0x55, 0x54, 0x5a, 0x15, 0x88, 0x79, 0x2d, 0x39, 0xd5, 0x94, 0xf4, 0x93, 0xdc, 0xa7
 };
 
-const uint8_t nonce[] = {
-    0x01, 0x69, 0x62, 0xA7, 0xFD, 0x27, 0x87, 0xA2,
-    0x4B, 0xF6, 0xBE, 0x47, 0xEF, 0x37, 0x83, 0xF1
-};
 
-const uint8_t personalization[] = {
-    0x88, 0xEE, 0xB8, 0xE0, 0xE8, 0x3B, 0xF3, 0x29,
-    0x4B, 0xDA, 0xCD, 0x60, 0x99, 0xEB, 0xE4, 0xBF,
-    0x55, 0xEC, 0xD9, 0x11, 0x3F, 0x71, 0xE5, 0xEB,
-    0xCB, 0x45, 0x75, 0xF3, 0xD6, 0xA6, 0x8A, 0x6B
-};
-
-cmox_ctr_drbg_handle_t con_drbg_ctx;
-
-/* Prepares or updates cryptographic key material. */
-void generate_key_and_iv(void) {
-    /* Validate the key data before using it in crypto operations. */
-    cmox_drbg_retval_t retval;
-    cmox_drbg_handle_t *drbg_ctx;
-
-    drbg_ctx = cmox_ctr_drbg_construct(&con_drbg_ctx, CMOX_CTR_DRBG_AES256);
-    if (drbg_ctx == NULL) handle_error("DRBG construct failed");
-
-    retval = cmox_drbg_init(drbg_ctx, entropy, sizeof(entropy), personalization, sizeof(personalization), nonce, sizeof(nonce));
-    if (retval != CMOX_DRBG_SUCCESS) handle_error("DRBG init failed");
-
-    retval = cmox_drbg_generate(drbg_ctx, NULL, 0, Key, AES_256_KEY_SIZE);
-    if (retval != CMOX_DRBG_SUCCESS) handle_error("Key generation failed");
-
-    retval = cmox_drbg_generate(drbg_ctx, NULL, 0, IV, AES_256_IV_SIZE);
-    if (retval != CMOX_DRBG_SUCCESS) handle_error("IV generation failed");
-
-    retval = cmox_drbg_cleanup(drbg_ctx);
-    if (retval != CMOX_DRBG_SUCCESS) handle_error("DRBG cleanup failed");
-}
+/*Computed data buffer*/
+uint8_t computed_hash[CMOX_SHA256_SIZE];
 
 /* Initializes the platform and runs this cryptographic test sequence. */
-int main(void)
+int main()
 {
-    cmox_cipher_retval_t retval;
-    size_t computed_size;
 
-    fpu_enable();
-    debug_uart_init();
-    timebase_init();
-    led_init();
-    button_init();
-    pa1_adc_init();
-    start_conversion();
+	cmox_cipher_retval_t  retval;
+	size_t computed_size;
 
-    if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS) handle_error("cmox init failed");
 
-    /* 1) Read ADC values */
-    for (int i = 0; i < ADC_SAMPLE_COUNT; ++i) {
-        adc_values[i] = adc_read();
-        delay(300);
-    }
+	/*Enable FPU*/
+	fpu_enable();
 
-    /* 2) Serialize */
-    decompose_adc_values();
-    size_t plain_len = sizeof(plain_text_bytes); /* exactly ADC_SAMPLE_COUNT * 4 */
+	/*Initialize debug UART*/
+	debug_uart_init();
 
-    /* 3) Generate Key and IV (or derive Key from ECDH/KDF in your final design) */
-    generate_key_and_iv();
+	/*Initialize timebase*/
+	timebase_init();
 
-    /* 4) Encrypt using AES-CTR (no padding)
-       Use the fast CTR variant constant; CTR produces ciphertext same length as plaintext.
-       Note: do NOT reuse IV with same Key across messages. */
-    retval = cmox_cipher_encrypt(CMOX_AESFAST_CTR_ENC_ALGO,
-                                plain_text_bytes, plain_len,
-                                Key, sizeof(Key),
-                                IV, sizeof(IV),
-                                cipher_text_bytes, &computed_size);
-    if (retval != CMOX_CIPHER_SUCCESS) handle_error("Encryption failed");
+	/*Initialize LED*/
+	led_init();
 
-    /* computed_size should equal plain_len for CTR */
-    if (computed_size != plain_len) handle_error("Unexpected cipher length");
+	/*Initialize Push button*/
+	button_init();
 
-    /* 5) Decrypt (CTR): use the CTR decrypt algorithm */
-    retval = cmox_cipher_decrypt(CMOX_AESFAST_CTR_DEC_ALGO,
-                                cipher_text_bytes, computed_size,
-                                Key, sizeof(Key),
-                                IV, sizeof(IV),
-                                decrypted_bytes, &computed_size);
-    if (retval != CMOX_CIPHER_SUCCESS) handle_error("Decryption failed");
+	/*1. Initialize ADC*/
+	pa1_adc_init();
 
-    /* 6) Verify */
-    if (memcmp(plain_text_bytes, decrypted_bytes, plain_len) != 0) handle_error("Decrypted mismatch");
+	/*2. Start conversion*/
+	start_conversion();
 
-    /* 7) Recombine */
-    recombine_adc_values();
 
-    printf("*************************************************************\r\n");
-    for (int i = 0; i < ADC_SAMPLE_COUNT; ++i) {
-        printf("Decrypted sensor value[%d]: %d\r\n", i, (int)decrypted_adc_values[i]);
-        printf("Original sensor value[%d]: %d\r\n", i, (int)adc_values[i]);
-    }
-    printf("*************************************************************\r\n");
+	/* Initialize cryptolib*/
+	if(cmox_initialize(NULL) !=  CMOX_INIT_SUCCESS)
+	{
+		handle_error("Initialization failed!");
+	}
 
-    while (1) { }
+
+	  retval = cmox_hash_compute(CMOX_SHA256_ALGO,         /* Use SHA256 algorithm */
+	                             message, sizeof(message), /* Message to digest */
+	                             computed_hash,            /* Data buffer to receive digest data */
+	                             CMOX_SHA256_SIZE,         /* Expected digest size */
+	                             &computed_size);          /* Size of computed digest */
+
+	  /* Verify API returned value */
+	  if (retval != CMOX_HASH_SUCCESS)
+	  {
+		  handle_error("Hash Error!");
+	  }
+
+
+	  /* Verify generated data are the expected ones */
+	  if (memcmp(expected_hash, computed_hash, computed_size) != 0)
+	  {
+		  handle_error("Hash Output Size Mismatch!");
+
+	  }
+
+	while(1)
+	{
+
+	}
 }
+
