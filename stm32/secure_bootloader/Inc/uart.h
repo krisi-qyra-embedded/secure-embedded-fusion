@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 22 April 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 25 April 2026 */
 #ifndef __UART_H__
 #define __UART_H__
 
