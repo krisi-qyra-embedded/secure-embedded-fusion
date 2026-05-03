@@ -1,4 +1,3 @@
-/* Author: i fiksuari pas prog | Documentation date: 2 May 2026 */
 #include "timebase.h"
 #include "stm32f4xx.h"
 
@@ -21,7 +20,6 @@ volatile uint32_t g_curr_tick_p;
 /*Delay in seconds*/
 void delay(uint32_t delay)
 {
-    /* Keep the wait bounded to avoid a stalled execution path. */
 	uint32_t tickstart =  get_tick();
 	uint32_t wait =  delay;
 
@@ -34,10 +32,8 @@ void delay(uint32_t delay)
 
 }
 
-/* Handles the get tick operation. */
 uint32_t get_tick(void)
 {
-    /* Check the return status before continuing to the next step. */
 	__disable_irq();
 	g_curr_tick_p = g_curr_tick;
 	__enable_irq();
@@ -45,13 +41,10 @@ uint32_t get_tick(void)
 	return g_curr_tick_p;
 
 }
-/* Handles the tick increment operation. */
 static void tick_increment(void)
 {
-    /* Check the return status before continuing to the next step. */
 	g_curr_tick += TICK_FREQ;
 }
-/* Configures the module for its next operation. */
 void timebase_init(void)
 {
 
@@ -77,9 +70,7 @@ void timebase_init(void)
 	__enable_irq();
 }
 
-/* Handles the related interrupt and transfer status. */
 void SysTick_Handler(void)
 {
-    /* Clear the handled interrupt flags and update the transfer state. */
 	tick_increment();
 }

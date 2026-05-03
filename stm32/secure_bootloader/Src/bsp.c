@@ -1,4 +1,3 @@
-/* Author: i fiksuari pas prog | Documentation date: 2 May 2026 */
 #include "bsp.h"
 #include "stm32f4xx.h"
 
@@ -11,7 +10,6 @@
 #define PIN13		(1U<<13)
 #define BTN_PIN		PIN13
 
-/* Configures the module for its next operation. */
 void led_init(void)
 {
 	/*Enable clock access to GPIOA*/
@@ -23,14 +21,12 @@ void led_init(void)
 }
 
 
-/* Handles the led on operation. */
 void led_on(void)
 {
 	/*Set PA5 high*/
 	GPIOA->ODR |=LED_PIN;
 }
 
-/* Handles the led off operation. */
 void led_off(void)
 {
 	/*Set PA5 low*/
@@ -38,7 +34,6 @@ void led_off(void)
 
 }
 
-/* Configures the module for its next operation. */
 void button_init(void)
 {
 	/*Enable clock access to PORTC*/
@@ -51,7 +46,6 @@ void button_init(void)
 }
 
 
-/* Handles the get btn state operation. */
 bool get_btn_state(void)
 {
 

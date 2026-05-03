@@ -1,4 +1,3 @@
-/* Author: i fiksuari pas prog | Documentation date: 2 May 2026 */
 #ifndef __TIMEBASE_H__
 #define __TIMEBASE_H__
 

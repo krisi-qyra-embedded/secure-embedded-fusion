@@ -1,4 +1,3 @@
-/* Author: i fiksuari pas prog | Documentation date: 2 May 2026 */
 #include <stdint.h>
 #include "uart.h"
 
@@ -16,15 +15,12 @@
 static void uart_set_baudrate(uint32_t periph_clk,uint32_t baudrate);
 static void uart_write(int ch);
 
-/* Handles the   io putchar operation. */
 int __io_putchar(int ch)
 {
-    /* Check the return status before continuing to the next step. */
 	uart_write(ch);
 	return ch;
 }
 
-/* Configures the module for its next operation. */
 void debug_uart_init(void)
 {
 	/*Enable clock access to GPIOA*/
@@ -55,7 +51,6 @@ void debug_uart_init(void)
 
 
 
-/* Writes data to the peripheral or stored buffer. */
 static void uart_write(int ch)
 {
 	/*Make sure transmit data register is empty*/
@@ -64,16 +59,12 @@ static void uart_write(int ch)
 	/*Write to transmit data register*/
 	USART2->DR =(ch & 0xFF);
 }
-/* Handles debug UART output or transport state. */
 static uint16_t compute_uart_bd(uint32_t periph_clk,uint32_t baudrate)
 {
-    /* Check the transport state before writing another message. */
 	return((periph_clk + (baudrate/2U))/baudrate);
 }
 
-/* Handles debug UART output or transport state. */
 static void uart_set_baudrate(uint32_t periph_clk,uint32_t baudrate)
 {
-    /* Check the transport state before writing another message. */
 	USART2->BRR = compute_uart_bd(periph_clk,baudrate);
 }
