@@ -1,3 +1,4 @@
+/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
 #include "adc.h"
 #include "stm32f4xx.h"
 
@@ -10,6 +11,7 @@
 #define CR2_SWSTART	  (1U<<30)
 #define SR_EOC		  (1U<<1)
 
+/* Configures the module for its next operation. */
 void pa1_adc_init(void)
 {
 	/****Configure the ADC GPIO Pin**/
@@ -36,6 +38,7 @@ void pa1_adc_init(void)
 }
 
 
+/* Handles the start conversion operation. */
 void start_conversion(void)
 {
 	/*Enable continuous conversion*/
@@ -46,6 +49,7 @@ void start_conversion(void)
 }
 
 
+/* Reads data from the peripheral or stored buffer. */
 uint32_t adc_read(void)
 {
 	/*Wait for conversion to be complete*/

@@ -1,3 +1,4 @@
+/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
 #ifndef __ADC_H__
 #define __ADC_H__
 
