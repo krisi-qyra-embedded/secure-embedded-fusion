@@ -21,7 +21,7 @@
  *  - transfer (IV || ciphertext || MAC) to peer
  *  - receiver calls receiver_init_ecdh_crypto(&ctx) and verify_mac_decrypt_recombine_receiver(&ctx)
  */
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 
 #include <stdint.h>
 #include <stddef.h>
@@ -39,11 +39,20 @@
 /* same size as plain_text_bytes */
  uint8_t decrypted_bytes[sizeof(plain_text_bytes)];
  uint8_t cipher_text_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_256_IV_SIZE]; // extra slack
-/*uint8_t decrypted_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_256_IV_SIZE];*/
+ uint8_t cipher_text_gcm_aead[
+     ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_GCM_TAG_SIZE
+ ];
+ /* Receiver combined buffer for AEAD input: ciphertext || tag */
+ uint8_t cipher_text_gcm_aead_receiver[
+     ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_GCM_TAG_SIZE
+ ];
+ /*uint8_t decrypted_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_256_IV_SIZE];*/
 
 /* ---------- DRBG-based key/IV generation (kept from your original) ---------- */
  uint8_t Key[AES_256_KEY_SIZE] = {0};
  uint8_t IV[AES_256_IV_SIZE] = {0};
+ uint8_t IV_GCM[AES_GCM_AEAD_IV_SIZE] = {0};
+
 /* ---------- DRBG-based private key ---------- */
 uint8_t private_key_sender[AES_256_KEY_SIZE] = {0};
 uint8_t private_key_receiver[AES_256_KEY_SIZE] = {0};
@@ -62,8 +71,9 @@ uint8_t public_key_receiver[AES_512_KEY_SIZE] = {0};
  uint8_t aes_key_receiver[32];
  uint8_t mac_key[32];
  uint8_t mac_key_receiver[32];
- size_t out_len;
+ uint8_t local_tag[GCM_GCM_TAG_SIZE];
 
+ size_t out_len;
 /* Computed data buffer */
  uint8_t computed_secret[CMOX_ECC_SECP256R1_SECRET_LEN];
  uint8_t computed_secret_receiver[CMOX_ECC_SECP256R1_SECRET_LEN];
@@ -88,6 +98,12 @@ uint8_t public_key_receiver[AES_512_KEY_SIZE] = {0};
  size_t dec_len = 0;
  uint8_t received_mac[32];
  size_t received_mac_len = 32;
+
+ /* AEAD output separated for sender: ciphertext and tag */
+ uint8_t ciphertext_sender[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE]; /* ciphertext only (no tag) */
+ size_t ciphertext_len = sizeof(ciphertext_sender);
+ uint8_t tag_sender[AES_GCM_TAG_SIZE];                            /* GCM authentication tag (16 bytes) */
+
  /* global, next to your other globals in ecdh.c */
  static uint8_t mac_sender_input[ sizeof(IV) + sizeof(cipher_text_bytes)];
  /* preallocated global for receiver HMAC input (IV || ciphertext) */
@@ -1039,8 +1055,14 @@ int generate_nonce_and_iv_per_transfer(void)
         return rc;
     }
 
-    /* 2) generate IV */
+    /* 2) generate DRBG IV (16 bytes) */
     rc = generate_iv();
+    if (rc != GEN_IV_SUCCESS) {
+        return rc;
+    }
+
+    /* 3) derive 12-byte GCM IV */
+    rc = derive_gcm_iv_from_drbg();
     if (rc != GEN_IV_SUCCESS) {
         return rc;
     }
@@ -1048,6 +1070,19 @@ int generate_nonce_and_iv_per_transfer(void)
     return GEN_IV_SUCCESS;
 }
 
+
+/* Processes authenticated AES-GCM encryption or decryption. */
+int derive_gcm_iv_from_drbg(void)
+{
+    if (IV == NULL) {
+        return GEN_IV_ERR_BAD_PARAM;
+    }
+
+    /* Take first 12 bytes (acceptable, DRBG output is uniform) */
+    memcpy(IV_GCM, IV, AES_GCM_AEAD_IV_SIZE);
+
+    return GEN_IV_SUCCESS;
+}
 
 /*
  * Uses globals declared in your ecdh.c:
@@ -1310,6 +1345,535 @@ int secure_clear_decrypted_adc_values(void)
     }
 
     return 0; /* success */
+}
+
+
+
+/* --- Streaming-style GCM encrypt (no mac[]) --- */
+int encrypt_aes_gcm_aead(void)
+{
+    cmox_cipher_retval_t cres;
+    size_t local_out_len = 0;
+    size_t tag_len = 0;
+
+    /* Basic input sanity */
+    if (plain_len == 0) {
+        return GCM_ENC_ERR_BAD_INPUT;
+    }
+
+    /* Ensure output buffer has space for ciphertext + tag */
+    if (plain_len > (sizeof(cipher_text_gcm_aead) - AES_GCM_TAG_SIZE)) {
+        /* not enough room for ciphertext + tag */
+        return GCM_ENC_ERR_BAD_INPUT;
+    }
+
+    /* Key / IV checks */
+    if (is_all_zero_bytes(aes_key, sizeof(aes_key)) ||
+        is_all_zero_bytes(IV_GCM, sizeof(IV_GCM))) {
+        return GCM_ENC_ERR_KEY_OR_IV;
+    }
+
+    computed_size = 0; /* defensive */
+
+    /* --- construct GCM handle (default fast impl) --- */
+    cmox_gcm_handle_t gcm_ctx;
+    cmox_cipher_handle_t *h = cmox_gcm_construct(&gcm_ctx, CMOX_AESFAST_GCMFAST_ENC);
+    if (h == NULL) {
+        return GCM_ENC_ERR_CONSTRUCT;
+    }
+
+    /* --- init handle --- */
+    cres = cmox_cipher_init(h);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_INIT;
+    }
+
+    /* --- set key --- */
+    cres = cmox_cipher_setKey(h, aes_key, (cmox_cipher_keyLen_t)sizeof(aes_key));
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_SETKEY;
+    }
+
+    /* Preconditions */
+    assert(h != NULL);
+    assert(IV_GCM != NULL);
+    assert(sizeof(IV_GCM) == 12);   /* AES-GCM recommended IV size */
+
+
+    /* --- set IV/nonce --- */
+    cres = cmox_cipher_setIV(h, IV_GCM, sizeof(IV_GCM));
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_SETIV;
+    }
+
+    /* --- set tag length (pro recommended = 16 bytes) --- */
+    cres = cmox_cipher_setTagLen(h, (size_t)AES_GCM_TAG_SIZE);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_SETTAGLEN;
+    }
+
+    /* --- append plaintext (encrypt) --- */
+    cres = cmox_cipher_append(h,
+                              plain_text_bytes,
+                              plain_len,
+                              cipher_text_gcm_aead,       /* ciphertext output */
+                              &local_out_len);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_APPEND;
+    }
+
+    /* CTR-like property: ciphertext length must equal plaintext length */
+    if (local_out_len != plain_len) {
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_LENGTH_MISM;
+    }
+
+    /* --- initialise with 0 the authentication tag --- */
+    memset(local_tag, 0, AES_GCM_TAG_SIZE);
+    /* use local_tag */
+    tag_len = 0;
+    cres = cmox_cipher_generateTag(h, local_tag, &tag_len);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        secure_zero(local_tag, sizeof(local_tag));
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_GENERATETAG;
+    }
+
+    if (tag_len != AES_GCM_TAG_SIZE) {
+        /* unexpected tag length */
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        secure_zero(local_tag, sizeof(local_tag));
+        (void)cmox_cipher_cleanup(h);
+        return GCM_ENC_ERR_LENGTH_MISM;
+    }
+
+    /* --- append tag to combined output buffer: ciphertext || tag --- */
+    memcpy(cipher_text_gcm_aead + local_out_len, local_tag, tag_len);
+
+    /* computed_size should represent ciphertext length (without tag) */
+    computed_size = local_out_len;
+
+    /* --- cleanup internal handle state --- */
+    cres = cmox_cipher_cleanup(h);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        /* cleanup failed; wipe outputs and report */
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        computed_size = 0;
+        return GCM_ENC_ERR_CLEANUP;
+    }
+
+    /* wipe temporaries */
+    secure_zero(local_tag, sizeof(local_tag));
+
+    return GCM_ENC_SUCCESS;
+}
+
+
+
+/* Single-call AEAD encrypt function (AES-GCM) - mirrors structure of encrypt_aes_ctr(...)
+ *
+ * Uses cmox_aead_encrypt(...) (single-call AEAD) instead of the streaming API.
+ * Outputs ciphertext||tag into `cipher_text_gcm_aead[]`, then splits the tag
+ * into the existing global `mac[]` so your existing packet layout (IV || ciphertext || tag)
+ * and receiver logic that expects tag in `received_mac[]` remains compatible.
+ *
+ * Globals used (must exist in your translation unit):
+ *  - uint8_t  plain_text_bytes[]        (input plaintext)
+ *  - size_t   plain_len                 (length of plaintext)
+ *  - uint8_t  aes_key[]                 (AEAD key, e.g. 32 bytes for AES-256)
+ *  - uint8_t  IV[]                      (IV/nonce, recommended 12 bytes)
+ *  - uint8_t  cipher_text_gcm_aead[]    (output buffer: ciphertext || tag)
+ *  - size_t   computed_size             (global to store ciphertext len w/o tag)
+ *  - uint8_t  mac[]                     (global tag buffer)
+ *  - size_t   mac_len                   (global tag length)
+ *
+ * Note: this function uses its own error codes (does not reuse CTR macros).
+ */
+
+/* --- Single-call AEAD encrypt (no mac[]) --- */
+int encrypt_aead_gcm_singlecall(void)
+{
+    cmox_cipher_retval_t cres;
+    size_t aead_out_len = 0;
+    size_t expected_out_len;
+    const size_t tag_len = (size_t)AES_GCM_TAG_SIZE;
+
+
+    /* Basic sanity */
+    if (plain_len == 0) {
+        return GCM_AEAD_SINGLE_ERR_BAD_INPUT;
+    }
+
+    /* Ensure output buffer has space for ciphertext + tag */
+    if (plain_len > (sizeof(cipher_text_gcm_aead) - tag_len)) {
+        return GCM_AEAD_SINGLE_ERR_BAD_INPUT;
+    }
+
+    /* Key / IV must be non-zero */
+    if (is_all_zero_bytes(aes_key, sizeof(aes_key)) ||
+        is_all_zero_bytes(IV_GCM, sizeof(IV_GCM))) {
+        return GCM_AEAD_SINGLE_ERR_KEY_OR_IV;
+    }
+
+    computed_size = 0;
+
+    /* Use single-call AEAD: output will be [ciphertext || tag] */
+    cres = cmox_aead_encrypt(
+                CMOX_AESFAST_GCMFAST_ENC_ALGO,  /* algorithm */
+                plain_text_bytes,               /* P_pInput */
+                plain_len,                      /* P_inputLen */
+                tag_len,                        /* P_tagLen */
+                aes_key,                        /* P_pKey */
+                (cmox_cipher_keyLen_t)sizeof(aes_key), /* P_keyLen */
+				IV_GCM,                             /* P_pIv */
+                sizeof(IV_GCM),                     /* P_ivLen */
+                NULL,                           /* P_pAddData (AAD) */
+                0,                              /* P_addDataLen */
+                cipher_text_gcm_aead,           /* P_pOutput (ciphertext||tag) */
+                &aead_out_len                    /* P_pOutputLen */
+           );
+
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        return GCM_AEAD_SINGLE_ERR_AEAD_FAIL;
+    }
+
+    expected_out_len = plain_len + tag_len;
+    if (aead_out_len != expected_out_len) {
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        return GCM_AEAD_SINGLE_ERR_LENGTH;
+    }
+
+    /* computed_size represents ciphertext length without tag */
+    computed_size = plain_len;
+
+    /* copy ciphertext into ciphertext_sender (ciphertext only) */
+    memcpy(ciphertext_sender, cipher_text_gcm_aead, computed_size);
+
+    /* copy tag into tag_sender (last AES_GCM_TAG_SIZE bytes) */
+    memcpy(tag_sender, cipher_text_gcm_aead + computed_size, tag_len);
+
+
+
+    return GCM_AEAD_SINGLE_SUCCESS;
+}
+
+
+/* Wrapper / "mother" encrypt function that exposes both implementations
+ * (streaming-style and single-call AEAD) and lets caller choose behavior.
+ *
+ * Behavior modes:
+ *   ENCRYPT_GCM_MODE_STREAM_ONLY    -> call streaming implementation only
+ *   ENCRYPT_GCM_MODE_SINGLE_ONLY    -> call single-call implementation only
+ *   ENCRYPT_GCM_MODE_TRY_STREAM_THEN_SINGLE
+ *                                   -> try streaming, if it fails try single-call
+ *
+ * It returns 0 on success, negative on error. If successful, *out_computed_size
+ * holds the ciphertext length (without tag).
+ *
+ * This wrapper assumes the lower-level functions already exist in the TU:
+ *   int encrypt_aes_gcm_aead(size_t *out_computed_size);       // streaming
+ *   int encrypt_aead_gcm_singlecall(size_t *out_computed_size);// single-call
+ *
+ * It also preserves the robust wiping behavior: when an attempt fails, it
+ * relies on the called function to have wiped sensitive buffers; if both fail
+ * the wrapper also clears the combined buffer.
+ */
+
+
+int generate_nonce_iv_encrypt_gcm_sender(void)
+{
+    int rc;
+
+    /* 1) generate nonce and IV for this transfer */
+    rc = generate_nonce_and_iv_per_transfer();
+    if (rc != GEN_IV_SUCCESS) {
+        log_printf("[ERROR] generate_nonce_iv_encrypt_gcm_sender: generate_nonce_and_iv_per_transfer failed (rc=%d)\r\n", rc);
+        return rc;
+    }
+
+    /* 2) encrypt using streaming-style AES-GCM */
+    rc = encrypt_aes_gcm_aead();
+    if (rc != GCM_ENC_SUCCESS) {
+        log_printf("[ERROR] generate_nonce_iv_encrypt_gcm_sender: encrypt_aes_gcm_aead failed (rc=%d)\r\n", rc);
+        secure_zero(IV, sizeof(IV));
+        return rc;
+    }
+
+    /* 3) encrypt again using single-call AEAD AES-GCM */
+    rc = encrypt_aead_gcm_singlecall();
+    if (rc != GCM_AEAD_SINGLE_SUCCESS) {
+        log_printf("[ERROR] generate_nonce_iv_encrypt_gcm_sender: encrypt_aead_gcm_singlecall failed (rc=%d)\r\n", rc);
+        secure_zero(IV, sizeof(IV));
+        secure_zero(cipher_text_gcm_aead, sizeof(cipher_text_gcm_aead));
+        computed_size = 0;
+        return rc;
+    }
+
+    log_printf(
+            "[SECURE] Payload encrypted: ECDH-derived key + AES-GCM AEAD\r\n"
+        );
+
+    return 0; /* success */
+}
+
+
+
+/* Receiver: streaming-style GCM decrypt + verify (expects separated ciphertext_sender & tag_sender)
+ *
+ * Globals assumed present in compilation unit:
+ *  - uint8_t  ciphertext_sender[]        (ciphertext only)
+ *  - uint8_t  tag_sender[AES_GCM_TAG_SIZE]  (tag from sender)
+ *  - uint8_t  IV[]                       (received IV/nonce)
+ *  - uint8_t  aes_key_receiver[]         (shared AEAD key for receiver)
+ *  - uint8_t  decrypted_bytes[]          (output plaintext buffer)
+ *  - size_t   computed_size              (will be set to ciphertext length on success)
+ *
+ * Uses the streaming API: cmox_gcm_construct -> cmox_cipher_init -> setKey -> setIV ->
+ * setTagLen -> cmox_cipher_append (ciphertext -> plaintext) -> cmox_cipher_verifyTag -> cleanup.
+ */
+
+int decrypt_verify_aes_gcm_receiver(void)
+{
+    cmox_cipher_retval_t cres;
+    size_t out_len = 0;
+
+    /* Defensive init */
+    computed_size = 0;
+
+    /* --- Basic sanity --- */
+    if (ciphertext_len == 0) {
+        return GCM_DEC_ERR_BAD_INPUT;
+    }
+
+    if (ciphertext_len > sizeof(ciphertext_sender)) {
+        return GCM_DEC_ERR_BAD_INPUT;
+    }
+
+    /* --- Key / IV sanity --- */
+    if (is_all_zero_bytes(aes_key_receiver, sizeof(aes_key_receiver)) ||
+        is_all_zero_bytes(IV_GCM, sizeof(IV_GCM))) {
+        return GCM_DEC_ERR_KEY_OR_IV;
+    }
+
+    /* --- Construct GCM decrypt handle --- */
+    cmox_gcm_handle_t gcm_ctx;
+    cmox_cipher_handle_t *h =
+        cmox_gcm_construct(&gcm_ctx, CMOX_AESFAST_GCMFAST_DEC);
+    if (h == NULL) {
+        return GCM_DEC_ERR_CONSTRUCT;
+    }
+
+    /* --- Init handle --- */
+    cres = cmox_cipher_init(h);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_DEC_ERR_INIT;
+    }
+
+    /* --- Set key --- */
+    cres = cmox_cipher_setKey(h,
+                              aes_key_receiver,
+                              (cmox_cipher_keyLen_t)sizeof(aes_key_receiver));
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_DEC_ERR_SETKEY;
+    }
+
+    /* --- Set IV (nonce) --- */
+    cres = cmox_cipher_setIV(h, IV_GCM, sizeof(IV_GCM));
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_DEC_ERR_SETIV;
+    }
+
+    /* --- Set expected tag length --- */
+    cres = cmox_cipher_setTagLen(h, (size_t)AES_GCM_TAG_SIZE);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        (void)cmox_cipher_cleanup(h);
+        return GCM_DEC_ERR_SETTAGLEN;
+    }
+
+    /* --- Decrypt: append ciphertext -> plaintext --- */
+    cres = cmox_cipher_append(h,
+                              ciphertext_sender,
+                              ciphertext_len,
+                              decrypted_bytes,
+                              &out_len);
+    if (cres != CMOX_CIPHER_SUCCESS) {
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        (void)cmox_cipher_cleanup(h);
+        return GCM_DEC_ERR_APPEND;
+    }
+
+    /* --- Verify authentication tag --- */
+    uint32_t fault_check = 0;
+    cres = cmox_cipher_verifyTag(h, tag_sender, &fault_check);
+
+    /* --- Cleanup handle (always) --- */
+    cmox_cipher_retval_t cleanup_ret = cmox_cipher_cleanup(h);
+
+    /* --- Verify results per CMOX rules --- */
+    if (cres != CMOX_CIPHER_AUTH_SUCCESS ||
+        fault_check != CMOX_CIPHER_AUTH_SUCCESS) {
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        return GCM_DEC_ERR_VERIFY;
+    }
+
+    if (cleanup_ret != CMOX_CIPHER_SUCCESS) {
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        return GCM_DEC_ERR_CLEANUP;
+    }
+
+    /* --- Success --- */
+    computed_size = out_len;   /* plaintext length */
+
+    return GCM_DEC_SUCCESS;
+}
+
+
+/* Single-call AEAD decrypt (AES-GCM) - receiver side
+ *
+ * Globals assumed:
+ *  - uint8_t  ciphertext_sender[]      (ciphertext only)
+ *  - uint8_t  tag_sender[AES_GCM_TAG_SIZE]
+ *  - uint8_t  IV[]                     (received IV/nonce)
+ *  - uint8_t  aes_key_receiver[]       (shared AEAD key for receiver)
+ *  - uint8_t  decrypted_bytes[]        (output plaintext buffer)
+ *  - uint8_t  cipher_text_gcm_aead[]   (scratch/combined buffer; must be >= ciphertext_len + tag)
+ *  - size_t   computed_size            (will be set to ciphertext length on success)
+ *
+ * Returns 0 on success, negative error on failure.
+ */
+
+
+int decrypt_aead_gcm_singlecall(void)
+{
+    cmox_cipher_retval_t cres;
+    size_t in_len = 0;
+    size_t plain_len_local = 0;
+    const size_t tag_len = (size_t)AES_GCM_TAG_SIZE;
+
+    computed_size = 0; /* defensive */
+
+    /* basic sanity */
+    if (ciphertext_len == 0) return GCM_AEAD_DEC_ERR_BAD_INPUT;
+    if (ciphertext_len > sizeof(ciphertext_sender)) return GCM_AEAD_DEC_ERR_BAD_INPUT;
+    if ((ciphertext_len + tag_len) > sizeof(cipher_text_gcm_aead_receiver)) return GCM_AEAD_DEC_ERR_BAD_INPUT;
+
+    /* key / IV sanity */
+    if (is_all_zero_bytes(aes_key_receiver, sizeof(aes_key_receiver)) ||
+        is_all_zero_bytes(IV_GCM, sizeof(IV_GCM))) {
+        return GCM_AEAD_DEC_ERR_KEY_OR_IV;
+    }
+
+    /* Build combined input in the receiver global: ciphertext || tag */
+    memcpy(cipher_text_gcm_aead_receiver, ciphertext_sender, ciphertext_len);
+    memcpy(cipher_text_gcm_aead_receiver + ciphertext_len, tag_sender, tag_len);
+    /* Initialize plaintext buffer defensively */
+    secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+    in_len = ciphertext_len + tag_len;
+
+    /* Single-call AEAD decrypt: input = ciphertext||tag, tag_len provided separately */
+    cres = cmox_aead_decrypt(
+                CMOX_AESFAST_GCMFAST_DEC_ALGO,  /* algorithm */
+                cipher_text_gcm_aead_receiver,  /* P_pInput (ciphertext || tag) */
+                in_len,                         /* P_inputLen */
+                tag_len,                        /* P_tagLen */
+                aes_key_receiver,               /* P_pKey */
+                (cmox_cipher_keyLen_t)sizeof(aes_key_receiver), /* P_keyLen */
+				IV_GCM,                             /* P_pIv */
+                sizeof(IV_GCM),                     /* P_ivLen */
+                NULL,                           /* P_pAddData (AAD) */
+                0,                              /* P_addDataLen */
+                decrypted_bytes,                /* P_pOutput (plaintext) */
+                &plain_len_local                /* P_pOutputLen */
+           );
+
+    /* On failure wipe outputs and combined buffer and return error */
+    if (cres != CMOX_CIPHER_AUTH_SUCCESS) {
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        secure_zero(cipher_text_gcm_aead_receiver, in_len);
+        return GCM_AEAD_DEC_ERR_AEAD_FAIL;
+    }
+
+    /* sanity: plaintext length must equal ciphertext length (GCM is length-preserving) */
+    if (plain_len_local != ciphertext_len) {
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        secure_zero(cipher_text_gcm_aead_receiver, in_len);
+        return GCM_AEAD_DEC_ERR_LENGTH;
+    }
+
+    /* success: set computed_size and out length */
+    computed_size = ciphertext_len;
+
+    /* wipe temporary combined input (optional, reduces sensitive copies) */
+    secure_zero(cipher_text_gcm_aead_receiver, in_len);
+
+
+    return GCM_AEAD_DEC_SUCCESS;
+}
+
+
+/* Processes authenticated AES-GCM encryption or decryption. */
+int decrypt_verify_recombine_gcm_receiver(void)
+{
+    int rc;
+
+    /* 1) Streaming-style AES-GCM decrypt + tag verify */
+    rc = decrypt_verify_aes_gcm_receiver();
+    if (rc != GCM_DEC_SUCCESS) {
+        log_printf("[ERROR] decrypt_verify_recombine_gcm_receiver: streaming GCM decrypt failed (rc=%d)\r\n", rc);
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        return rc;
+    }
+
+    /* 2) Single-call AEAD AES-GCM decrypt + tag verify */
+    rc = decrypt_aead_gcm_singlecall();
+    if (rc != GCM_AEAD_DEC_SUCCESS) {
+        log_printf("[ERROR] decrypt_verify_recombine_gcm_receiver: single-call GCM decrypt failed (rc=%d)\r\n", rc);
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        return rc;
+    }
+
+    /* 3) Sanity: decrypted length must be valid */
+    if (computed_size == 0) {
+        log_printf("[ERROR] decrypt_verify_recombine_gcm_receiver: decrypted size is zero\r\n");
+        secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+        return -2;
+    }
+
+    /* 4) Recombine ADC values from decrypted bytes */
+    recombine_adc_values();
+
+    /* 5) Verify recombined ADC values */
+    for (int i = 0; i < ADC_SAMPLE_COUNT; ++i) {
+        if (decrypted_adc_values[i] != adc_values[i]) {
+            log_printf("[ERROR] decrypt_verify_recombine_gcm_receiver: ADC mismatch at idx %d (got=0x%08X exp=0x%08X)\r\n",
+                       i,
+                       (unsigned)decrypted_adc_values[i],
+                       (unsigned)adc_values[i]);
+            secure_zero(decrypted_bytes, sizeof(decrypted_bytes));
+            return -3;
+        }
+    }
+
+    log_printf(
+        "[SECURE] Payload decrypted: ECDH-derived key + AES-GCM AEAD "
+        "(confidentiality, integrity & authenticity verified)\r\n"
+    );
+
+
+    /* Success */
+    return 0;
 }
 
 

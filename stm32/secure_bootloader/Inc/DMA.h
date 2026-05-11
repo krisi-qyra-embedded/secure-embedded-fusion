@@ -1,10 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
-/*
- * DMA.h
- *
- *  Created on: Aug 13, 2024
- *      Author: krisi qyra
- */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 
 #ifndef INC_DMA_H_
 #define INC_DMA_H_

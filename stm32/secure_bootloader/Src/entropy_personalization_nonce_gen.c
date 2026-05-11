@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 
 
 #include <entropy_personalization_nonce_gen.h>
@@ -704,9 +704,9 @@ int nonce_generation(void)
 
         /* OPTIONAL: print the raw nonce bytes (existing behavior) */
         for (uint32_t i = 0; i < NONCE_SIZE_BYTES; i++) {
-            log_printf("%d ", nonce_[i]);
+            /*log_printf("%d ", nonce_[i]);*/
         }
-        log_printf("\r\n");
+        /*log_printf("\r\n");*/
 
         /* small settle delay as before */
         for (volatile int i = 0; i < 100000; i++) {

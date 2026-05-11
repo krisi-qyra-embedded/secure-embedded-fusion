@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 #include "uart.h"
 
 /* ---------- ring buffer state (single producer, single consumer) ---------- */

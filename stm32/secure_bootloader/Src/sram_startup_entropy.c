@@ -1,26 +1,8 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 #include <sram_startup_entropy.h>
 #include "uart.h"  /* log_printf() */
 
 
-/* sram_startup_entropy.c - SRAM Startup State Entropy Collection
- *
- * Collects randomness from uninitialized SRAM at boot time.
- *
- * Theory:
- * - SRAM cells power up in unpredictable states (0 or 1)
- * - State depends on manufacturing variations, temperature, voltage
- * - Must be read BEFORE any initialization (.bss clearing, stack setup)
- *
- * Hardware: STM32F411 (128KB SRAM at 0x20000000)
- *
- * CRITICAL: This must be called VERY EARLY in startup, before:
- * - .bss section is cleared
- * - Stack is initialized
- * - Any C runtime initialization
- *
- * Typical integration: Call from Reset_Handler before SystemInit()
- */
 
 /* ========== Configuration ========== */
 
@@ -35,7 +17,6 @@
 /**
  * Sample uninitialized SRAM state.
  *
- * MUST be called from startup assembly BEFORE C runtime init!
  *
  * Safe calling location: Reset_Handler, before:
  * - SystemInit()
@@ -45,7 +26,7 @@
  * Assembly integration example:
  *
  *   Reset_Handler:
- *     bl  sram_sample_startup_state    ; Call BEFORE anything else
+ *     bl  sram_sample_startup_state    
  *     bl  SystemInit
  *     bl  __libc_init_array
  *     bl  main

@@ -1,10 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
-/*
- * entropy_gen.h
- *
- *  Created on: Jan 6, 2026
- *      Author: user
- */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 
 #ifndef ENTROPY_PERSONALIZATION_NONCE_GEN_H_
 #define ENTROPY_PERSONALIZATION_NONCE_GEN_H_

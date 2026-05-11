@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 #include <stdio.h>
 #include <stdint.h>
 #include "stm32f4xx.h"
@@ -128,17 +128,17 @@ int main(void)
     	/* -------- Generate DRBG-based IV -------- */
     	/*SENDER*/
     	 /* Call per transfer */
-    	ret = generate_nonce_iv_encrypt_hmac_sender();
+    	ret = generate_nonce_iv_encrypt_gcm_sender();
     	    if (ret != 0) {
-    	        log_printf("generate_nonce_iv_encrypt_hmac_sender failed (rc=%d)\r\n", ret);
-    	        handle_error("nonce/iv/encrypt/hmac failed");
+    	        log_printf("generate_nonce_iv_encrypt_hmac_senderGCM_AEAD failed (rc=%d)\r\n", ret);
+    	        handle_error("nonce/iv/encrypt GCM AEAD failed");
     	    }
 
     	     /*RECEIVER*/
     	    /* fill received_mac... and set computed_size, cipher_text_bytes, IV from incoming packet */
-    	     ret = verify_mac_decrypt_recombine_receiver();
+    	     ret = decrypt_verify_recombine_gcm_receiver();
     	    if (ret != 0) {
-    	        log_printf("verify_mac_decrypt_recombine_receiver failed (rc=%d)\r\n", ret);
+    	        log_printf("decrypt_recombine_receiver failed (rc=%d)\r\n", ret);
     	        handle_error("receive processing failed");
     	    }
 

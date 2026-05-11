@@ -1,10 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
-/*
- * ecdh.h
- *
- *  Created on: Jan 4, 2026
- *      Author: user
- */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
 
 #ifndef ECDH_H_
 #define ECDH_H_
@@ -23,9 +17,11 @@
 #define AES_512_KEY_SIZE        64
 #define AES_256_KEY_SIZE        32  // 32 bytes = 256 bits
 #define AES_256_IV_SIZE         16  // 16 bytes (CTR counter block)
-#define ADC_SAMPLE_COUNT  8
-#define BYTES_PER_SAMPLE  sizeof(uint32_t)
+#define AES_GCM_AEAD_IV_SIZE    12  // 16 bytes (CTR counter block)
 
+#define ADC_SAMPLE_COUNT        8
+#define BYTES_PER_SAMPLE        sizeof(uint32_t)
+#define AES_GCM_TAG_SIZE        16
 /* error codes */
 #define GEN_PRIV_SUCCESS           0
 #define GEN_PRIV_ERR_CONSTRUCT    -1
@@ -94,6 +90,59 @@
 #define RECEIVER_INIT_ERR_ECDH      -2
 #define RECEIVER_INIT_ERR_KDF       -3
 
+
+#define GCM_ENC_SUCCESS            0
+#define GCM_ENC_ERR_BAD_INPUT     -10
+#define GCM_ENC_ERR_KEY_OR_IV     -11
+#define GCM_ENC_ERR_CONSTRUCT     -12
+#define GCM_ENC_ERR_INIT          -13
+#define GCM_ENC_ERR_SETKEY        -14
+#define GCM_ENC_ERR_SETIV         -15
+#define GCM_ENC_ERR_SETTAGLEN     -16
+#define GCM_ENC_ERR_APPEND        -17
+#define GCM_ENC_ERR_GENERATETAG   -18
+#define GCM_ENC_ERR_LENGTH_MISM   -19
+#define GCM_ENC_ERR_CLEANUP       -20
+#define GCM_GCM_TAG_SIZE          16  /* pro recommended tag size (128-bit) */
+
+#define GCM_DEC_SUCCESS             0
+#define GCM_DEC_ERR_BAD_INPUT     -40
+#define GCM_DEC_ERR_KEY_OR_IV     -41
+#define GCM_DEC_ERR_CONSTRUCT     -42
+#define GCM_DEC_ERR_INIT          -43
+#define GCM_DEC_ERR_SETKEY        -44
+#define GCM_DEC_ERR_SETIV         -45
+#define GCM_DEC_ERR_SETTAGLEN     -46
+#define GCM_DEC_ERR_APPEND        -47
+#define GCM_DEC_ERR_VERIFY        -48
+#define GCM_DEC_ERR_CLEANUP       -49
+
+#define GCM_AEAD_SINGLE_SUCCESS        0
+#define GCM_AEAD_SINGLE_ERR_BAD_INPUT -30
+#define GCM_AEAD_SINGLE_ERR_KEY_OR_IV -31
+#define GCM_AEAD_SINGLE_ERR_AEAD_FAIL -32
+#define GCM_AEAD_SINGLE_ERR_LENGTH    -33
+
+#define GCM_AEAD_DEC_SUCCESS         0
+#define GCM_AEAD_DEC_ERR_BAD_INPUT  -60
+#define GCM_AEAD_DEC_ERR_KEY_OR_IV  -61
+#define GCM_AEAD_DEC_ERR_AEAD_FAIL  -62
+#define GCM_AEAD_DEC_ERR_LENGTH     -63
+
+#define ENCRYPT_GCM_MODE_STREAM_ONLY               0
+#define ENCRYPT_GCM_MODE_SINGLE_ONLY               1
+#define ENCRYPT_GCM_MODE_TRY_STREAM_THEN_SINGLE    2
+
+#define GCM_MASTER_SUCCESS           0
+#define GCM_MASTER_ERR_INVALID_MODE -100
+#define GCM_MASTER_ERR_ALL_FAILED   -101
+#define GEN_IV_ERR_BAD_PARAM        -201
+
+#ifndef AES_GCM_TAG_SIZE
+#define AES_GCM_TAG_SIZE 16 /* recommended 128-bit tag */
+#endif
+
+
 /* Public-key format validator for your codebase.
  *
  * Accepts:
@@ -152,6 +201,14 @@ int receiver_init_ecdh_crypto(void);
 int generate_nonce_iv_encrypt_hmac_sender(void);
 int verify_mac_decrypt_recombine_receiver(void);
 int secure_clear_decrypted_adc_values(void);
+int encrypt_aes_gcm_aead(void);
+int encrypt_aead_gcm_singlecall(void);
+int decrypt_verify_aes_gcm_receiver(void);
+int decrypt_aead_gcm_singlecall(void);
+int generate_nonce_iv_encrypt_gcm_sender(void);
+int decrypt_verify_recombine_gcm_receiver(void);
+int derive_gcm_iv_from_drbg(void);
+
 
 
 #endif /* ECDH_H_ */

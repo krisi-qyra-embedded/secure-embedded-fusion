@@ -1,10 +1,5 @@
-/* Author: i fiksuari pas prog | Documentation date: 8 May 2026 */
-/*
- * uart.h
- *
- *  Created on: May 8, 2022
- *      Author: i fiksuari mbas prog
- */
+/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
+
 #ifndef INC_UART_H_
 #define INC_UART_H_
 #include<stdio.h>
