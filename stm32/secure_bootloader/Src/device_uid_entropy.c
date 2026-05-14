@@ -1,10 +1,9 @@
-/* Author: i fiksuari pas prog | Documentation date: 11 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
 #include "device_uid_entropy.h"
 
 
 /* device_uid_entropy.c - STM32 Device Unique ID Collection
  *
- * Reads the factory-programmed 96-bit Unique Device ID (UID).
  *
  * Properties:
  * - 96 bits (12 bytes) unique per device
@@ -12,14 +11,6 @@
  * - Never changes (read-only)
  * - Located at fixed address 0x1FFF7A10 (STM32F411)
  *
- * Use Cases:
- * - Device fingerprinting
- * - Personalization string for DRBG
- * - Device-specific key derivation
- * - Anti-cloning protection
- *
- * NOT suitable as primary entropy source (static/predictable)
- * BUT excellent for adding uniqueness to entropy pool
  */
 
 
