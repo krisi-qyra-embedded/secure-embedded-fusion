@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 #ifndef __TIMEBASE_H__
 #define __TIMEBASE_H__
 
@@ -6,5 +6,7 @@
 uint32_t get_tick(void);
 void delay(uint32_t delay);
 void timebase_init(void);
+void delay_ms(uint32_t ms);
+#define MAX_DELAY		 0xFFFFFFFF
 
 #endif

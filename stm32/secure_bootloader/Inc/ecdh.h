@@ -1,12 +1,10 @@
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 
 #ifndef ECDH_H_
 #define ECDH_H_
 
 #include <stdio.h>
 #include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include "uart.h"
@@ -14,134 +12,16 @@
 #include "stm32f4xx.h"
 #include "cmox_crypto.h"
 #include <entropy_personalization_nonce_gen.h>
+#include "digital_signature.h"
 
-
-#define AES_512_KEY_SIZE            64
-#define AES_256_KEY_SIZE            32  // 32 bytes = 256 bits
-#define AES_256_IV_SIZE             16  // 16 bytes (CTR counter block)
-#define AES_GCM_AEAD_IV_SIZE        12  // 16 bytes (CTR counter block)
-#define GCM_GCM_TAG_SIZE            16  /* pro recommended tag size (128-bit) */
-#define ADC_SAMPLE_COUNT            8
-#define BYTES_PER_SAMPLE            sizeof(uint32_t)
-#define AES_GCM_TAG_SIZE       	    16
-#define GCM_NONCE_SIZE_BYTES  		12U
-#define GCM_COUNTER_START     		1ULL
-#define ECDH_CANONICAL_SECRET_LEN   32U
-
-/*
- * Debug-only pause between complete UART log lines.
- * The crypto source calls tim2_delay_ms() with this value.
- */
-
-#define CRYPTO_UART_LOG_DELAY_MS     20U
-
-/*
- * Development provisioning switch.
- *
- * 1:
- *   The four key arrays below are copied into crypto_ctx_t.
- *   generate_keypairs_cmox() does not initialize the DRBG, does not
- *   generate new keypairs and does not print any key material.
- *
- * 0:
- *   generate_keypairs_cmox() generates new sender/receiver keypairs
- *   and prints them over UART for development provisioning.
- *
- * SECURITY:
- * These private keys have already been printed over UART and exposed
- * during development. Do not use them as final production keys.
- */
-#define ECDH_PROVISIONED_KEYS_PRESENT    1
-
-#if ECDH_PROVISIONED_KEYS_PRESENT
-
-static const uint8_t ecdh_provisioned_sender_private_key[
-    AES_256_KEY_SIZE
-] = {
-    0xEA, 0xA6, 0xC0, 0x09, 0xD5, 0xD7, 0xFE, 0x76,
-    0x16, 0xC2, 0xD7, 0xAA, 0x56, 0x1C, 0x69, 0x8B,
-    0xFF, 0x99, 0xFF, 0x7A, 0xC6, 0xA3, 0x97, 0x39,
-    0x5C, 0xB3, 0xFD, 0x31, 0xAA, 0x36, 0xF4, 0x8C
-};
-
-static const uint8_t ecdh_provisioned_sender_public_key[
-    AES_512_KEY_SIZE
-] = {
-    0x0B, 0x5E, 0xC4, 0xE1, 0x69, 0xEE, 0xB5, 0xBF,
-    0x0F, 0x2F, 0xC3, 0x0A, 0xD8, 0xD3, 0xD3, 0x9E,
-    0x7A, 0x7F, 0x94, 0x2C, 0xF5, 0x0D, 0xA8, 0x81,
-    0x87, 0x50, 0xF8, 0xE4, 0x3E, 0x2F, 0xC3, 0xE7,
-    0xE7, 0x28, 0x95, 0xFF, 0x94, 0x1F, 0x29, 0x77,
-    0x85, 0x42, 0x4C, 0x88, 0xAC, 0x9F, 0x68, 0x56,
-    0xA3, 0x64, 0xAE, 0x3F, 0xF6, 0xC6, 0xBF, 0xC1,
-    0x68, 0x37, 0xCF, 0xD1, 0xAE, 0x29, 0x96, 0xD2
-};
-
-static const uint8_t ecdh_provisioned_receiver_private_key[
-    AES_256_KEY_SIZE
-] = {
-    0x6D, 0xD3, 0x72, 0xA1, 0x7C, 0x47, 0x38, 0xDE,
-    0xFE, 0x64, 0x95, 0x1D, 0x89, 0xB7, 0xD9, 0xFA,
-    0x1C, 0x08, 0x1C, 0x94, 0x4B, 0xEC, 0xA5, 0x9A,
-    0x8D, 0x21, 0x9A, 0x7A, 0x45, 0x08, 0xA0, 0x8D
-};
-
-static const uint8_t ecdh_provisioned_receiver_public_key[
-    AES_512_KEY_SIZE
-] = {
-    0x51, 0xEE, 0x6E, 0x4B, 0xF3, 0x8E, 0x36, 0x85,
-    0xF8, 0x06, 0x4F, 0xAB, 0x3C, 0x5E, 0x35, 0xA2,
-    0x55, 0x1D, 0xED, 0x22, 0x8E, 0x2E, 0xCC, 0xD6,
-    0xE7, 0x1A, 0xEE, 0x0B, 0x47, 0x39, 0x53, 0x39,
-    0xEE, 0xED, 0x29, 0xA4, 0x48, 0x31, 0x83, 0x5A,
-    0x2C, 0x4E, 0x18, 0x6B, 0x2B, 0x00, 0x05, 0xB3,
-    0xAD, 0x5D, 0x47, 0xDA, 0xEE, 0x38, 0x87, 0x25,
-    0x6D, 0xAE, 0x5A, 0x6F, 0x47, 0x8D, 0x06, 0x2B
-};
-
-#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
-
-#if ECDH_CANONICAL_SECRET_LEN != AES_256_KEY_SIZE
-#error "Canonical secp256r1 ECDH secret must be 32 bytes"
-#endif
-
-
-
-
-
-typedef enum
-{
-    GCM_NONCE_OK = 0,
-
-    GCM_NONCE_ERR_BAD_PARAM      = -1,
-    GCM_NONCE_ERR_NO_SESSION     = -2,
-    GCM_NONCE_ERR_BAD_KEY_STATE  = -3,
-    GCM_NONCE_ERR_HASH           = -4,
-    GCM_NONCE_ERR_EXHAUSTED      = -5
-
-} gcm_nonce_status_t;
-
-
-typedef struct
-{
-    /*
-     * First four bytes of every GCM nonce in this key session.
-     * Derived from the fresh ECDH public-key transcript.
-     */
-    uint32_t session_id;
-    /*
-     * Counter that will be assigned to the next encryption.
-     */
-    uint64_t next_counter;
-    /*
-     * Counter assigned to the most recently encrypted message.
-     */
-    uint64_t current_counter;
-    bool initialized;
-
-} gcm_nonce_state_t;
-
-
+#define AES_512_KEY_SIZE        64
+#define AES_256_KEY_SIZE        32  // 32 bytes = 256 bits
+#define AES_256_IV_SIZE         16  // 16 bytes (CTR counter block)
+#define AES_GCM_AEAD_IV_SIZE    12  // 16 bytes (CTR counter block)
+#define GCM_GCM_TAG_SIZE        16  /* pro recommended tag size (128-bit) */
+#define ADC_SAMPLE_COUNT        8
+#define BYTES_PER_SAMPLE        sizeof(uint32_t)
+#define AES_GCM_TAG_SIZE        16
 /* error codes */
 typedef enum {
     GEN_PRIV_SUCCESS            =  0,
@@ -359,8 +239,7 @@ typedef enum {
     GCM_SENDER_SUCCESS             =  0,
     GCM_SENDER_ERR_GEN_IV          = -1,
     GCM_SENDER_ERR_GCM_STREAM      = -2,
-    GCM_SENDER_ERR_GCM_SINGLECALL  = -3,
-	GCM_SENDER_ERR_BAD_PARAM       = -4
+    GCM_SENDER_ERR_GCM_SINGLECALL  = -3
 } gcm_sender_status_t;
 
 typedef enum {
@@ -368,8 +247,7 @@ typedef enum {
     GCM_RECEIVER_ERR_GCM_STREAM     = -1,
     GCM_RECEIVER_ERR_GCM_SINGLECALL = -2,
     GCM_RECEIVER_ERR_EMPTY_PLAINTEXT= -3,
-    GCM_RECEIVER_ERR_ADC_MISMATCH   = -4,
-	GCM_RECEIVER_ERR_BAD_PARAM      = -5
+    GCM_RECEIVER_ERR_ADC_MISMATCH   = -4
 } gcm_receiver_status_t;
 
 typedef enum {
@@ -437,27 +315,11 @@ typedef struct {
         size_t  mac_check_len;
     } auth;
 
-    /* temporary / computed values */
+    /* temporary / computed secrets */
     struct {
-        /*
-         * Canonical secp256r1 ECDH secrets used by the KDF.
-         *
-         * C-MOX may internally return a larger native representation,
-         * but both STM32 and ESP32 use exactly the first 32-byte
-         * big-endian ECDH value as the interoperability contract.
-         */
-        uint8_t computed_secret[ECDH_CANONICAL_SECRET_LEN];
-        size_t computed_secret_len;
-
-        uint8_t computed_secret_receiver[ECDH_CANONICAL_SECRET_LEN];
-        size_t computed_secret_receiver_len;
-
+        uint8_t computed_secret[CMOX_ECC_SECP256R1_SECRET_LEN];
+        uint8_t computed_secret_receiver[CMOX_ECC_SECP256R1_SECRET_LEN];
         uint8_t local_tag[GCM_GCM_TAG_SIZE];
-
-        /*
-         * Ciphertext/plaintext operation length.
-         * This is intentionally separate from both ECDH-secret lengths.
-         */
         size_t computed_size;
         size_t plain_len;
     } tmp;
@@ -466,7 +328,6 @@ typedef struct {
     uint8_t Key[AES_256_KEY_SIZE];
     uint8_t IV[AES_256_IV_SIZE];
     uint8_t IV_GCM[AES_GCM_AEAD_IV_SIZE];
-    gcm_nonce_state_t gcm_nonce;
 } crypto_ctx_t;
 
 
@@ -501,6 +362,7 @@ hmac_ivc_status_t compute_hmac_over_iv_cipher_receiver(crypto_ctx_t *ctx,
                                                        size_t mac_out_len,
                                                        size_t *out_mac_len);
 gen_iv_status_t generate_nonce_and_iv_per_transfer(crypto_ctx_t *ctx);
+sender_init_status_t generate_private_key_digital_signature(sig_keys_ctx_t *ctx);
 sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx);
 receiver_init_status_t receiver_init_ecdh_crypto(crypto_ctx_t *ctx);
 hmac_sender_status_t generate_nonce_iv_encrypt_hmac_sender(crypto_ctx_t *ctx);
@@ -513,9 +375,7 @@ gcm_aead_dec_status_t decrypt_aead_gcm_singlecall(crypto_ctx_t *ctx);
 gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(crypto_ctx_t *ctx);
 gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(crypto_ctx_t *ctx);
 gcm_master_status_t derive_gcm_iv_from_drbg(crypto_ctx_t *ctx);
-gcm_nonce_status_t gcm_nonce_allocate(
-    crypto_ctx_t *ctx);
-gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx);
+gen_keys_status_t generate_ed25519_signing_keypair(sig_keys_ctx_t *ctx);
 
 
 #endif /* ECDH_H_ */

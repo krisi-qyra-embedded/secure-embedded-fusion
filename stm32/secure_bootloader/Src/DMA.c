@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 #include "DMA.h"
 
 /* adc_dma_continuous.c - Continuous ADC sampling on PC4, PC5, PB0 with DMA2 Stream4

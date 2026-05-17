@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 #ifndef __DEVICE_UID_ENTROPY__
 #define __DEVICE_UID_ENTROPY__
 

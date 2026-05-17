@@ -34,7 +34,6 @@
 extern "C"
 {
 #endif /* __cplusplus */
-
 /** @addtogroup CMOX_ECC
   * @{
   */

@@ -1,27 +1,25 @@
 /*
  * ecdh_refactored.c
  *
- * Refactored from original ecdh.c — context-based, safer,
- * better error handling, constant-time checks, fewer globals.
- *
- *
+ * Usage:
+ *  - create a crypto_ctx_t (static or allocated)
+ *  - call crypto_ctx_init(&ctx)
+ *  - fill ctx.adc_values (or let DMA write into ctx.dma_adc_buffer)
+ *  - call sender_init_ecdh_crypto(&ctx) and/or receiver_init_ecdh_crypto(&ctx)
+ *  - call generate_nonce_iv_encrypt_hmac_sender(&ctx)
+ *  - transfer (IV || ciphertext || MAC) to peer
+ *  - receiver calls receiver_init_ecdh_crypto(&ctx) and verify_mac_decrypt_recombine_receiver(&ctx)
  */
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>
 #include <stdbool.h>
-#include "tim.h"
+
 #include "ecdh.h" /* your project header with macros & prototypes */
-
-#define KEY_PRINT_DELAY_MS       20U
-#define KEY_BYTES_PER_LINE        8U
-
-/* Constant-time comparison helper, implemented later in this file. */
-static int ct_memcmp(const void *a_, const void *b_, size_t n);
-
+#include "digital_signature.h"
 /*crypto_ctx_t ctx;*/
 
 // const uint8_t entropy[] = {
@@ -58,124 +56,7 @@ void handle_error(const char *message) {
 
 }
 
-/* Handles the store be32 operation. */
-static void store_be32(uint8_t out[4], uint32_t value)
-{
-    /* Check the return status before continuing to the next step. */
-    out[0] = (uint8_t)(value >> 24);
-    out[1] = (uint8_t)(value >> 16);
-    out[2] = (uint8_t)(value >> 8);
-    out[3] = (uint8_t)value;
-}
 
-/* Handles the store be64 operation. */
-static void store_be64(uint8_t out[8], uint64_t value)
-{
-    /* Check the return status before continuing to the next step. */
-    out[0] = (uint8_t)(value >> 56);
-    out[1] = (uint8_t)(value >> 48);
-    out[2] = (uint8_t)(value >> 40);
-    out[3] = (uint8_t)(value >> 32);
-    out[4] = (uint8_t)(value >> 24);
-    out[5] = (uint8_t)(value >> 16);
-    out[6] = (uint8_t)(value >> 8);
-    out[7] = (uint8_t)value;
-}
-
-/* Handles the load be32 operation. */
-static uint32_t load_be32(const uint8_t in[4])
-{
-    /* Check the return status before continuing to the next step. */
-    return ((uint32_t)in[0] << 24) |
-           ((uint32_t)in[1] << 16) |
-           ((uint32_t)in[2] << 8)  |
-           ((uint32_t)in[3]);
-}
-
-
-/*
- * Allow the UART logger/serial monitor to drain after each complete
- * debug line. This is intentionally used only by the verbose AES-GCM
- * bring-up logs.
- */
-static void crypto_uart_log_delay(void)
-{
-    /* Keep the wait bounded to avoid a stalled execution path. */
-    tim2_delay_ms(CRYPTO_UART_LOG_DELAY_MS);
-}
-
-
-/*
- * Print a binary buffer in a UART-friendly hexadecimal format.
- *
- * A line break is inserted after every 16 bytes so plaintext,
- * nonce, ciphertext and tag layouts remain easy to inspect.
- */
-static void log_hex_buffer(
-    const char *label,
-    const uint8_t *buffer,
-    size_t length)
-{
-    /* Check the transport state before writing another message. */
-    if ((label == NULL) || (buffer == NULL)) {
-        return;
-    }
-
-    log_printf(
-        "%s [%u bytes]:\r\n",
-        label,
-        (unsigned)length
-    );
-    crypto_uart_log_delay();
-
-    for (size_t i = 0U; i < length; ++i) {
-        log_printf(
-            "%02X",
-            (unsigned)buffer[i]
-        );
-
-        if ((((i + 1U) % 16U) == 0U) ||
-            ((i + 1U) == length)) {
-            log_printf("\r\n");
-            crypto_uart_log_delay();
-        } else {
-            log_printf(" ");
-        }
-    }
-}
-
-
-/*
- * Print the logical 32-bit ADC values represented by the encrypted
- * payload. This is useful during the current local STM32 self-test.
- */
-static void log_adc_values(
-    const char *label,
-    const uint32_t *values,
-    size_t count)
-{
-    /* Check the sampling result before using the values. */
-    if ((label == NULL) || (values == NULL)) {
-        return;
-    }
-
-    log_printf(
-        "%s [%u samples]:\r\n",
-        label,
-        (unsigned)count
-    );
-    crypto_uart_log_delay();
-
-    for (size_t i = 0U; i < count; ++i) {
-        log_printf(
-            "  sample[%u] = 0x%08lX (%lu)\r\n",
-            (unsigned)i,
-            (unsigned long)values[i],
-            (unsigned long)values[i]
-        );
-        crypto_uart_log_delay();
-    }
-}
 
 /* Converts ADC sample words into bytes for encryption. */
 decomp_adc_ret_t decompose_adc_values(crypto_ctx_t *ctx)
@@ -367,7 +248,7 @@ gen_priv_status_t generate_private_key(crypto_ctx_t *ctx)
 
 /* small helper to fill randomness via DRBG, returns 0 on success or GEN_KEYS_ERR_DRBG_GENERATE */
 /* small helper to fill randomness via DRBG, returns 0 on success or GEN_KEYS_ERR_DRBG_GENERATE */
-static int drbg_fill_bytes(crypto_ctx_t *ctx,
+static int drbg_fill_bytes(sig_keys_ctx_t *ctx,
                                uint8_t *out,
                                size_t outlen)
 {
@@ -387,108 +268,6 @@ static int drbg_fill_bytes(crypto_ctx_t *ctx,
 }
 
 
-/*
- * DEVELOPMENT ONLY.
- *
- * Prints a key as a directly copyable C array.
- * A 20 ms TIM2 delay is added after every complete UART line.
- */
-static void print_key_as_c_array_uart(
-    const char *key_name,
-    const uint8_t *key,
-    size_t key_len)
-{
-    /* Check the transport state before writing another message. */
-    char line[96];
-    size_t index = 0U;
-
-    if ((key_name == NULL) ||
-        (key == NULL) ||
-        (key_len == 0U)) {
-        return;
-    }
-
-    log_printf(
-        "\r\n[KEY EXPORT] %s [%u bytes]\r\n",
-        key_name,
-        (unsigned)key_len
-    );
-
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    log_printf(
-        "static const uint8_t %s[%u] = {\r\n",
-        key_name,
-        (unsigned)key_len
-    );
-
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    while (index < key_len) {
-        size_t line_position = 0U;
-        size_t line_end;
-        int written;
-
-        written = snprintf(
-            &line[line_position],
-            sizeof(line) - line_position,
-            "    "
-        );
-
-        if ((written < 0) ||
-            ((size_t)written >=
-             (sizeof(line) - line_position))) {
-            return;
-        }
-
-        line_position += (size_t)written;
-
-        line_end = index + KEY_BYTES_PER_LINE;
-
-        if (line_end > key_len) {
-            line_end = key_len;
-        }
-
-        while (index < line_end) {
-            written = snprintf(
-                &line[line_position],
-                sizeof(line) - line_position,
-                "0x%02X%s",
-                (unsigned)key[index],
-                ((index + 1U) < key_len) ? ", " : ""
-            );
-
-            if ((written < 0) ||
-                ((size_t)written >=
-                 (sizeof(line) - line_position))) {
-                return;
-            }
-
-            line_position += (size_t)written;
-            index++;
-        }
-
-        written = snprintf(
-            &line[line_position],
-            sizeof(line) - line_position,
-            "\r\n"
-        );
-
-        if ((written < 0) ||
-            ((size_t)written >=
-             (sizeof(line) - line_position))) {
-            return;
-        }
-
-        log_printf("%s", line);
-        tim2_delay_ms(KEY_PRINT_DELAY_MS);
-    }
-
-    log_printf("};\r\n");
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-}
-
-
 /**
  * Generate two ECDSA (secp256r1) keypairs (priv + pub) for sender and receiver.
  * Returns 0 on success, negative error code on failure. On failure both key buffers are zeroed.
@@ -496,217 +275,63 @@ static void print_key_as_c_array_uart(
  */
 gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
 {
+    cmox_ecc_retval_t  ecc_ret;
+    cmox_drbg_retval_t drbg_ret;
+    cmox_drbg_handle_t *drbg_ctx = NULL;
+    uint8_t random_buf[128];
+    size_t  random_len = AES_256_KEY_SIZE;
+
     if (ctx == NULL) {
         return GEN_KEYS_ERR_BAD_PARAM;
     }
 
-    /*
-     * Always start with a known context state.
-     */
-    memset(
-        ctx->keys.private_key_sender,
-        0,
-        sizeof(ctx->keys.private_key_sender)
-    );
+    /* zero outputs and lengths upfront */
+    memset(ctx->keys.private_key_sender,   0, sizeof(ctx->keys.private_key_sender));
+    memset(ctx->keys.private_key_receiver, 0, sizeof(ctx->keys.private_key_receiver));
+    memset(ctx->keys.public_key_sender,    0, sizeof(ctx->keys.public_key_sender));
+    memset(ctx->keys.public_key_receiver,  0, sizeof(ctx->keys.public_key_receiver));
+    /* ---------- DRBG / ECC ---------- */
+    ctx->keys.priv_len_sender   = 0;
+    ctx->keys.pub_len_sender    = 0;
+    ctx->keys.priv_len_receiver = 0;
+    ctx->keys.pub_len_receiver  = 0;
 
-    memset(
-        ctx->keys.public_key_sender,
-        0,
-        sizeof(ctx->keys.public_key_sender)
-    );
-
-    memset(
-        ctx->keys.private_key_receiver,
-        0,
-        sizeof(ctx->keys.private_key_receiver)
-    );
-
-    memset(
-        ctx->keys.public_key_receiver,
-        0,
-        sizeof(ctx->keys.public_key_receiver)
-    );
-
-    ctx->keys.priv_len_sender   = 0U;
-    ctx->keys.pub_len_sender    = 0U;
-    ctx->keys.priv_len_receiver = 0U;
-    ctx->keys.pub_len_receiver  = 0U;
-
-#if ECDH_PROVISIONED_KEYS_PRESENT
-
-    /*
-     * The four fixed keys are present in ecdh.h.
-     *
-     * Do not construct the DRBG.
-     * Do not generate replacement keypairs.
-     * Do not print private or public key bytes.
-     */
-    if (is_all_zero_buf(
-            ctx,
-            ecdh_provisioned_sender_private_key,
-            sizeof(ecdh_provisioned_sender_private_key)) ||
-        is_all_zero_buf(
-            ctx,
-            ecdh_provisioned_sender_public_key,
-            sizeof(ecdh_provisioned_sender_public_key)) ||
-        is_all_zero_buf(
-            ctx,
-            ecdh_provisioned_receiver_private_key,
-            sizeof(ecdh_provisioned_receiver_private_key)) ||
-        is_all_zero_buf(
-            ctx,
-            ecdh_provisioned_receiver_public_key,
-            sizeof(ecdh_provisioned_receiver_public_key))) {
-
-        log_printf(
-            "[KEYS][ERROR] Provisioned key arrays are present "
-            "but at least one key is all-zero.\r\n"
-        );
-        tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-        return GEN_KEYS_ERR_BAD_PARAM;
-    }
-
-    memcpy(
-        ctx->keys.private_key_sender,
-        ecdh_provisioned_sender_private_key,
-        sizeof(ecdh_provisioned_sender_private_key)
-    );
-
-    memcpy(
-        ctx->keys.public_key_sender,
-        ecdh_provisioned_sender_public_key,
-        sizeof(ecdh_provisioned_sender_public_key)
-    );
-
-    memcpy(
-        ctx->keys.private_key_receiver,
-        ecdh_provisioned_receiver_private_key,
-        sizeof(ecdh_provisioned_receiver_private_key)
-    );
-
-    memcpy(
-        ctx->keys.public_key_receiver,
-        ecdh_provisioned_receiver_public_key,
-        sizeof(ecdh_provisioned_receiver_public_key)
-    );
-
-    ctx->keys.priv_len_sender =
-        sizeof(ecdh_provisioned_sender_private_key);
-
-    ctx->keys.pub_len_sender =
-        sizeof(ecdh_provisioned_sender_public_key);
-
-    ctx->keys.priv_len_receiver =
-        sizeof(ecdh_provisioned_receiver_private_key);
-
-    ctx->keys.pub_len_receiver =
-        sizeof(ecdh_provisioned_receiver_public_key);
-
-    log_printf(
-        "[KEYS] All four provisioned secp256r1 keys were found "
-        "in ecdh.h.\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    log_printf(
-        "[KEYS] Key generation is not required. "
-        "Existing sender and receiver keypairs loaded.\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    log_printf(
-        "[KEYS] Key material will not be printed.\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    return GEN_KEYS_SUCCESS;
-
-#else
-
-    /*
-     * No provisioned keys are enabled in ecdh.h.
-     * Generate two new keypairs and export them once for development.
-     */
-    cmox_ecc_retval_t  ecc_ret;
-    cmox_drbg_retval_t drbg_ret;
-    uint8_t random_buf[128];
-    size_t random_len = AES_256_KEY_SIZE;
-
-    memset(random_buf, 0, sizeof(random_buf));
-
-    log_printf(
-        "[KEYS] No provisioned key set is enabled in ecdh.h.\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    log_printf(
-        "[KEYS] Generating new sender and receiver "
-        "secp256r1 keypairs.\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    ctx->drbg_ctx = cmox_ctr_drbg_construct(
-        &ctx->drbg,
-        CMOX_CTR_DRBG_AES256
-    );
-
+    /* construct + init DRBG */
+    ctx->drbg_ctx = cmox_ctr_drbg_construct(&ctx->drbg,CMOX_CTR_DRBG_AES256);
     if (ctx->drbg_ctx == NULL) {
         return GEN_KEYS_ERR_DRBG_CONSTRUCT;
     }
 
-    drbg_ret = cmox_drbg_init(
-        ctx->drbg_ctx,
-        entropy_hashed,
-        sizeof(entropy_hashed),
-        device_uid_buffer_hashed,
-        sizeof(device_uid_buffer_hashed),
-        nonce_hashed,
-        sizeof(nonce_hashed)
-    );
-
+    drbg_ret = cmox_drbg_init(ctx->drbg_ctx,
+    						  entropy_hashed, sizeof(entropy_hashed),
+							  device_uid_buffer_hashed, sizeof(device_uid_buffer_hashed),
+							  nonce_hashed, sizeof(nonce_hashed));
     if (drbg_ret != CMOX_DRBG_SUCCESS) {
         (void)cmox_drbg_cleanup(ctx->drbg_ctx);
         return GEN_KEYS_ERR_DRBG_INIT;
     }
 
-    /* ---------------- Generate sender keypair ---------------- */
+    /* ---------- GENERATE SENDER KEYPAIR ---------- */
     for (;;) {
-        int drbg_rc = drbg_fill_bytes(
-            ctx,
-            random_buf,
-            random_len
-        );
-
+        int drbg_rc = drbg_fill_bytes(ctx, random_buf, random_len);
         if (drbg_rc != 0) {
-            secure_zero(random_buf, sizeof(random_buf));
             (void)cmox_drbg_cleanup(ctx->drbg_ctx);
-            return (gen_keys_status_t)drbg_rc;
+            return drbg_rc;
         }
 
-        cmox_ecc_construct(
-            &ctx->ecc,
-            CMOX_ECC256_MATH_FUNCS,
-            ctx->working_buffer,
-            sizeof(ctx->working_buffer)
-        );
+        cmox_ecc_construct(&ctx->ecc,
+                           CMOX_ECC256_MATH_FUNCS,
+                           ctx->working_buffer,
+                           sizeof(ctx->working_buffer));
 
-        size_t local_priv_len =
-            sizeof(ctx->keys.private_key_sender);
+        size_t local_priv_len = sizeof(ctx->keys.private_key_sender);
+        size_t local_pub_len  = sizeof(ctx->keys.public_key_sender);
 
-        size_t local_pub_len =
-            sizeof(ctx->keys.public_key_sender);
-
-        ecc_ret = cmox_ecdsa_keyGen(
-            &ctx->ecc,
-            CMOX_ECC_SECP256R1_LOWMEM,
-            random_buf,
-            random_len,
-            ctx->keys.private_key_sender,
-            &local_priv_len,
-            ctx->keys.public_key_sender,
-            &local_pub_len
-        );
+        ecc_ret = cmox_ecdsa_keyGen(&ctx->ecc,
+                                    CMOX_ECC_SECP256R1_LOWMEM,
+                                    random_buf, random_len,
+                                    ctx->keys.private_key_sender, &local_priv_len,
+                                    ctx->keys.public_key_sender,  &local_pub_len);
 
         cmox_ecc_cleanup(&ctx->ecc);
 
@@ -718,100 +343,48 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
 
         if (ecc_ret == CMOX_ECC_ERR_WRONG_RANDOM) {
             size_t needed = local_priv_len;
-
             if (needed > sizeof(random_buf)) {
-                secure_zero(random_buf, sizeof(random_buf));
                 (void)cmox_drbg_cleanup(ctx->drbg_ctx);
-
-                memset(
-                    ctx->keys.private_key_sender,
-                    0,
-                    sizeof(ctx->keys.private_key_sender)
-                );
-
-                memset(
-                    ctx->keys.public_key_sender,
-                    0,
-                    sizeof(ctx->keys.public_key_sender)
-                );
-
+                memset(ctx->keys.private_key_sender, 0, sizeof(ctx->keys.private_key_sender));
+                memset(ctx->keys.public_key_sender,  0, sizeof(ctx->keys.public_key_sender));
                 return GEN_KEYS_ERR_RANDOM_TOO_LARGE;
             }
-
             random_len = needed;
             continue;
         }
 
-        secure_zero(random_buf, sizeof(random_buf));
         (void)cmox_drbg_cleanup(ctx->drbg_ctx);
-
-        memset(
-            ctx->keys.private_key_sender,
-            0,
-            sizeof(ctx->keys.private_key_sender)
-        );
-
-        memset(
-            ctx->keys.public_key_sender,
-            0,
-            sizeof(ctx->keys.public_key_sender)
-        );
-
+        memset(ctx->keys.private_key_sender, 0, sizeof(ctx->keys.private_key_sender));
+        memset(ctx->keys.public_key_sender,  0, sizeof(ctx->keys.public_key_sender));
         return GEN_KEYS_ERR_KEYGEN_SENDER;
     }
 
+    /* reset random preference for receiver */
     random_len = AES_256_KEY_SIZE;
 
-    /* ---------------- Generate receiver keypair ---------------- */
+    /* ---------- GENERATE RECEIVER KEYPAIR ---------- */
     for (;;) {
-        int drbg_rc = drbg_fill_bytes(
-            ctx,
-            random_buf,
-            random_len
-        );
-
+        int drbg_rc = drbg_fill_bytes(ctx, random_buf, random_len);
         if (drbg_rc != 0) {
-            secure_zero(random_buf, sizeof(random_buf));
-
-            memset(
-                ctx->keys.private_key_sender,
-                0,
-                sizeof(ctx->keys.private_key_sender)
-            );
-
-            memset(
-                ctx->keys.public_key_sender,
-                0,
-                sizeof(ctx->keys.public_key_sender)
-            );
-
+            memset(ctx->keys.private_key_sender, 0, sizeof(ctx->keys.private_key_sender));
+            memset(ctx->keys.public_key_sender,  0, sizeof(ctx->keys.public_key_sender));
             (void)cmox_drbg_cleanup(ctx->drbg_ctx);
-            return (gen_keys_status_t)drbg_rc;
+            return drbg_rc;
         }
 
-        cmox_ecc_construct(
-            &ctx->ecc,
-            CMOX_ECC256_MATH_FUNCS,
-            ctx->working_buffer,
-            sizeof(ctx->working_buffer)
-        );
+        cmox_ecc_construct(&ctx->ecc,
+                           CMOX_ECC256_MATH_FUNCS,
+                           ctx->working_buffer,
+                           sizeof(ctx->working_buffer));
 
-        size_t local_priv_len =
-            sizeof(ctx->keys.private_key_receiver);
+        size_t local_priv_len = sizeof(ctx->keys.private_key_receiver);
+        size_t local_pub_len  = sizeof(ctx->keys.public_key_receiver);
 
-        size_t local_pub_len =
-            sizeof(ctx->keys.public_key_receiver);
-
-        ecc_ret = cmox_ecdsa_keyGen(
-            &ctx->ecc,
-            CMOX_ECC_SECP256R1_LOWMEM,
-            random_buf,
-            random_len,
-            ctx->keys.private_key_receiver,
-            &local_priv_len,
-            ctx->keys.public_key_receiver,
-            &local_pub_len
-        );
+        ecc_ret = cmox_ecdsa_keyGen(&ctx->ecc,
+                                    CMOX_ECC_SECP256R1_LOWMEM,
+                                    random_buf, random_len,
+                                    ctx->keys.private_key_receiver, &local_priv_len,
+                                    ctx->keys.public_key_receiver,  &local_pub_len);
 
         cmox_ecc_cleanup(&ctx->ecc);
 
@@ -823,196 +396,255 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
 
         if (ecc_ret == CMOX_ECC_ERR_WRONG_RANDOM) {
             size_t needed = local_priv_len;
-
             if (needed > sizeof(random_buf)) {
-                secure_zero(random_buf, sizeof(random_buf));
-
-                memset(
-                    ctx->keys.private_key_sender,
-                    0,
-                    sizeof(ctx->keys.private_key_sender)
-                );
-
-                memset(
-                    ctx->keys.public_key_sender,
-                    0,
-                    sizeof(ctx->keys.public_key_sender)
-                );
-
-                memset(
-                    ctx->keys.private_key_receiver,
-                    0,
-                    sizeof(ctx->keys.private_key_receiver)
-                );
-
-                memset(
-                    ctx->keys.public_key_receiver,
-                    0,
-                    sizeof(ctx->keys.public_key_receiver)
-                );
-
+                memset(ctx->keys.private_key_sender,   0, sizeof(ctx->keys.private_key_sender));
+                memset(ctx->keys.public_key_sender,    0, sizeof(ctx->keys.public_key_sender));
+                memset(ctx->keys.private_key_receiver, 0, sizeof(ctx->keys.private_key_receiver));
+                memset(ctx->keys.public_key_receiver,  0, sizeof(ctx->keys.public_key_receiver));
                 (void)cmox_drbg_cleanup(ctx->drbg_ctx);
                 return GEN_KEYS_ERR_RANDOM_TOO_LARGE;
             }
-
             random_len = needed;
             continue;
         }
 
-        secure_zero(random_buf, sizeof(random_buf));
-
-        memset(
-            ctx->keys.private_key_sender,
-            0,
-            sizeof(ctx->keys.private_key_sender)
-        );
-
-        memset(
-            ctx->keys.public_key_sender,
-            0,
-            sizeof(ctx->keys.public_key_sender)
-        );
-
-        memset(
-            ctx->keys.private_key_receiver,
-            0,
-            sizeof(ctx->keys.private_key_receiver)
-        );
-
-        memset(
-            ctx->keys.public_key_receiver,
-            0,
-            sizeof(ctx->keys.public_key_receiver)
-        );
-
+        memset(ctx->keys.private_key_sender,   0, sizeof(ctx->keys.private_key_sender));
+        memset(ctx->keys.public_key_sender,    0, sizeof(ctx->keys.public_key_sender));
+        memset(ctx->keys.private_key_receiver, 0, sizeof(ctx->keys.private_key_receiver));
+        memset(ctx->keys.public_key_receiver,  0, sizeof(ctx->keys.public_key_receiver));
         (void)cmox_drbg_cleanup(ctx->drbg_ctx);
         return GEN_KEYS_ERR_KEYGEN_RECEIVER;
     }
 
-    secure_zero(random_buf, sizeof(random_buf));
-
+    /* cleanup DRBG */
     drbg_ret = cmox_drbg_cleanup(ctx->drbg_ctx);
-
     if (drbg_ret != CMOX_DRBG_SUCCESS) {
-        memset(
-            ctx->keys.private_key_sender,
-            0,
-            sizeof(ctx->keys.private_key_sender)
-        );
-
-        memset(
-            ctx->keys.public_key_sender,
-            0,
-            sizeof(ctx->keys.public_key_sender)
-        );
-
-        memset(
-            ctx->keys.private_key_receiver,
-            0,
-            sizeof(ctx->keys.private_key_receiver)
-        );
-
-        memset(
-            ctx->keys.public_key_receiver,
-            0,
-            sizeof(ctx->keys.public_key_receiver)
-        );
-
+        memset(ctx->keys.private_key_sender,   0, sizeof(ctx->keys.private_key_sender));
+        memset(ctx->keys.public_key_sender,    0, sizeof(ctx->keys.public_key_sender));
+        memset(ctx->keys.private_key_receiver, 0, sizeof(ctx->keys.private_key_receiver));
+        memset(ctx->keys.public_key_receiver,  0, sizeof(ctx->keys.public_key_receiver));
         return GEN_KEYS_ERR_DRBG_CLEANUP;
     }
 
-    /*
-     * Only newly generated keys are printed.
-     */
-    log_printf(
-        "\r\n"
-        "========== SECP256R1 KEY EXPORT BEGIN ==========\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    print_key_as_c_array_uart(
-        "sender_private_key",
-        ctx->keys.private_key_sender,
-        ctx->keys.priv_len_sender
-    );
-
-    print_key_as_c_array_uart(
-        "sender_public_key",
-        ctx->keys.public_key_sender,
-        ctx->keys.pub_len_sender
-    );
-
-    print_key_as_c_array_uart(
-        "receiver_private_key",
-        ctx->keys.private_key_receiver,
-        ctx->keys.priv_len_receiver
-    );
-
-    print_key_as_c_array_uart(
-        "receiver_public_key",
-        ctx->keys.public_key_receiver,
-        ctx->keys.pub_len_receiver
-    );
-
-    log_printf(
-        "========== SECP256R1 KEY EXPORT END ============\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
     return GEN_KEYS_SUCCESS;
-
-#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 }
 
+/*
+ * Generate a single Ed25519 keypair and store it into sig_keys_ctx_t->sig.
+ * Behavior mirrors your existing generate_keypairs_cmox(): uses CTR-DRBG, loops if
+ * random length was insufficient, zeros outputs on error.
+ */
+gen_keys_status_t generate_ed25519_signing_keypair(sig_keys_ctx_t *ctx)
+{
+    cmox_ecc_retval_t  ecc_ret;
+    cmox_drbg_retval_t drbg_ret;
+    uint8_t random_buf[64];
+    size_t  random_len = 32; /* initial preference */
 
+    if (ctx == NULL) {
+        return GEN_KEYS_ERR_BAD_PARAM;
+    }
+
+    /* zero outputs and lengths upfront */
+    memset(ctx->sig.private_key, 0, sizeof(ctx->sig.private_key));
+    memset(ctx->sig.public_key,  0, sizeof(ctx->sig.public_key));
+    ctx->sig.priv_len = 0;
+    ctx->sig.pub_len  = 0;
+    ctx->sig.provisioned = false;
+    ctx->sig.storage_flags = SIG_KEY_STORAGE_NONE;
+
+    /* construct + init DRBG in ctx (reuse same pattern as generate_keypairs_cmox) */
+    ctx->drbg_ctx = cmox_ctr_drbg_construct(&ctx->drbg, CMOX_CTR_DRBG_AES256);
+    if (ctx->drbg_ctx == NULL) {
+        return GEN_KEYS_ERR_DRBG_CONSTRUCT;
+    }
+
+    drbg_ret = cmox_drbg_init(ctx->drbg_ctx,
+                              entropy_hashed, sizeof(entropy_hashed),
+                              device_uid_buffer_hashed, sizeof(device_uid_buffer_hashed),
+                              nonce_hashed, sizeof(nonce_hashed));
+    if (drbg_ret != CMOX_DRBG_SUCCESS) {
+        (void)cmox_drbg_cleanup(ctx->drbg_ctx);
+        return GEN_KEYS_ERR_DRBG_INIT;
+    }
+
+    /* generate ED25519 keypair into ctx->sig */
+    for (;;) {
+        int drbg_rc = drbg_fill_bytes(ctx, random_buf, random_len);
+        if (drbg_rc != 0) {
+            (void)cmox_drbg_cleanup(ctx->drbg_ctx);
+            return drbg_rc;
+        }
+
+        /* construct ECC context for Ed25519 using ctx->ecc and working buffer */
+        cmox_ecc_construct(&ctx->ecc,
+        				   CMOX_ECC256_MATH_FUNCS,
+                           ctx->working_buffer,
+                           sizeof(ctx->working_buffer));
+
+        size_t local_priv_len = sizeof(ctx->sig.private_key); /* expected 64 */
+        size_t local_pub_len  = sizeof(ctx->sig.public_key);  /* expected 32 */
+
+        ecc_ret = cmox_eddsa_keyGen(&ctx->ecc,
+        							CMOX_ECC_ED25519_HIGHMEM,
+                                    random_buf, random_len,
+                                    ctx->sig.private_key, &local_priv_len,
+                                    ctx->sig.public_key,  &local_pub_len);
+
+        /*cmox_ecc_cleanup(&ctx->ecc);*/
+
+        if (ecc_ret == CMOX_ECC_SUCCESS) {
+            ctx->sig.priv_len = local_priv_len;
+            ctx->sig.pub_len  = local_pub_len;
+            break;
+        }
+
+        if (ecc_ret == CMOX_ECC_ERR_WRONG_RANDOM) {
+            size_t needed = local_priv_len;
+            if (needed > sizeof(random_buf)) {
+                (void)cmox_drbg_cleanup(ctx->drbg_ctx);
+                memset(ctx->sig.private_key, 0, sizeof(ctx->sig.private_key));
+                memset(ctx->sig.public_key,  0, sizeof(ctx->sig.public_key));
+                return GEN_KEYS_ERR_RANDOM_TOO_LARGE;
+            }
+            random_len = needed;
+            continue;
+        }
+
+        /* other errors: cleanup and zero outputs */
+        (void)cmox_drbg_cleanup(ctx->drbg_ctx);
+        memset(ctx->sig.private_key, 0, sizeof(ctx->sig.private_key));
+        memset(ctx->sig.public_key,  0, sizeof(ctx->sig.public_key));
+        return GEN_KEYS_ERR_KEYGEN_SENDER;
+    }
+
+    /* cleanup DRBG stored in ctx */
+    drbg_ret = cmox_drbg_cleanup(ctx->drbg_ctx);
+    if (drbg_ret != CMOX_DRBG_SUCCESS) {
+        memset(ctx->sig.private_key, 0, sizeof(ctx->sig.private_key));
+        memset(ctx->sig.public_key,  0, sizeof(ctx->sig.public_key));
+        return GEN_KEYS_ERR_DRBG_CLEANUP;
+    }
+
+    return GEN_KEYS_SUCCESS;
+}
 
 /**
- * Compute a C-MOX ECDH result and normalize it to the canonical
- * 32-byte representation used by the ESP32 Mbed TLS side.
+ * Compute ECDH shared secret as sender using only the previously-generated arrays.
+ * Uses global computed_secret[] and my_len as storage.
  *
- * C-MOX is allowed to write its native secp256r1 representation into
- * raw_secret[]. In this project that native result is 64 bytes. Only
- * bytes 0..31 are retained as the canonical ECDH KDF input.
+ * out_secret / out_len:
+ *  - If both non-NULL: copy result there and update *out_len
+ *  - If out_secret == NULL: result remains in computed_secret[] and my_len
  *
- * The permanent output is always:
- *
- *     out_secret[32] = fixed-width big-endian ECDH value
+ * Returns 0 on success, negative value on failure.
  */
-static ecdh_status_t compute_cmox_ecdh_canonical32(
-    crypto_ctx_t *ctx,
-    const uint8_t *private_key,
-    size_t private_key_len,
-    const uint8_t *peer_public_key,
-    size_t peer_public_key_len,
-    uint8_t out_secret[ECDH_CANONICAL_SECRET_LEN],
-    size_t *out_secret_len)
+ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx, uint8_t *out_secret, size_t *out_len)
 {
     cmox_ecc_retval_t retval;
-    uint8_t raw_secret[CMOX_ECC_SECP256R1_SECRET_LEN];
-    uint8_t public_key_prefixed[1U + AES_512_KEY_SIZE];
-    size_t raw_secret_len;
-    size_t prefixed_len;
+    size_t pub_raw_len;
 
-    if (ctx == NULL ||
-        private_key == NULL ||
-        peer_public_key == NULL ||
-        out_secret == NULL ||
-        out_secret_len == NULL) {
+    if (ctx == NULL) {
         return ECDH_ERR_ECDH_FAILED;
     }
 
-    if (private_key_len != AES_256_KEY_SIZE ||
-        peer_public_key_len != AES_512_KEY_SIZE) {
+    /* Determine receiver public-key raw length (X||Y). Fall back to AES_512_KEY_SIZE if unknown. */
+    pub_raw_len = (ctx->keys.pub_len_receiver != 0) ? ctx->keys.pub_len_receiver : AES_512_KEY_SIZE;
+
+    /* Try 1: raw X||Y public key */
+    ctx->tmp.computed_size = sizeof(ctx->tmp.computed_secret);
+
+    cmox_ecc_construct(&ctx->ecc,
+                       CMOX_ECC256_MATH_FUNCS,
+                       ctx->working_buffer, sizeof(ctx->working_buffer));
+
+    retval = cmox_ecdh(&ctx->ecc,
+                       CMOX_ECC_CURVE_SECP256R1,
+                       ctx->keys.private_key_sender, AES_256_KEY_SIZE,
+                       ctx->keys.public_key_receiver, pub_raw_len,
+                       ctx->tmp.computed_secret, &ctx->tmp.computed_size);
+
+    if (retval == CMOX_ECC_SUCCESS) {
+        cmox_ecc_cleanup(&ctx->ecc);
+
+        if (out_secret && out_len) {
+            size_t to_copy = (ctx->tmp.computed_size <= *out_len) ? ctx->tmp.computed_size : *out_len;
+            memcpy(out_secret, ctx->tmp.computed_secret, to_copy);
+            *out_len = to_copy;
+        } else if (out_len) {
+            *out_len = ctx->tmp.computed_size;
+        }
+        return ECDH_SUCCESS;
+    }
+
+    /* Try 2: uncompressed point 0x04 || X || Y */
+    {
+        uint8_t pub_prefixed[1 + AES_512_KEY_SIZE];
+        size_t prefixed_len;
+
+        /* ensure we don't read past the available public key array */
+        if (pub_raw_len > AES_512_KEY_SIZE) {
+            /* invalid public key size */
+            cmox_ecc_cleanup(&ctx->ecc);
+            memset(ctx->tmp.computed_secret, 0, sizeof(ctx->tmp.computed_secret));
+            ctx->tmp.computed_size = 0;
+            return ECDH_ERR_ECDH_FAILED;
+        }
+
+        pub_prefixed[0] = 0x04;
+        memcpy(&pub_prefixed[1], ctx->keys.public_key_receiver, pub_raw_len);
+        prefixed_len = 1 + pub_raw_len;
+
+        ctx->tmp.computed_size = sizeof(ctx->tmp.computed_secret);
+
+        retval = cmox_ecdh(&ctx->ecc,
+                           CMOX_ECC_CURVE_SECP256R1,
+                           ctx->keys.private_key_sender, AES_256_KEY_SIZE,
+                           pub_prefixed, prefixed_len,
+                           ctx->tmp.computed_secret, &ctx->tmp.computed_size);
+
+        cmox_ecc_cleanup(&ctx->ecc);
+
+        if (retval != CMOX_ECC_SUCCESS) {
+            /* clear secret on failure */
+            memset(ctx->tmp.computed_secret, 0, sizeof(ctx->tmp.computed_secret));
+            ctx->tmp.computed_size = 0;
+            return ECDH_ERR_ECDH_FAILED;
+        }
+
+        /* Success with prefixed form */
+        if (out_secret && out_len) {
+            size_t to_copy = (ctx->tmp.computed_size <= *out_len) ? ctx->tmp.computed_size : *out_len;
+            memcpy(out_secret, ctx->tmp.computed_secret, to_copy);
+            *out_len = to_copy;
+        } else if (out_len) {
+            *out_len = ctx->tmp.computed_size;
+        }
+
+        return ECDH_SUCCESS;
+    }
+}
+/* Compute ECDH shared secret as receiver (mirror of sender).
+ * Uses global computed_secret[] and my_len.
+ */
+ecdh_status_t compute_ecdh_shared_as_receiver(crypto_ctx_t *ctx,
+                                              uint8_t *out_secret,
+                                              size_t *out_len)
+{
+    cmox_ecc_retval_t retval;
+    size_t pub_raw_len;
+
+    if (ctx == NULL) {
         return ECDH_ERR_ECDH_FAILED;
     }
 
-    secure_zero(raw_secret, sizeof(raw_secret));
-    secure_zero(public_key_prefixed, sizeof(public_key_prefixed));
-    secure_zero(out_secret, ECDH_CANONICAL_SECRET_LEN);
-    *out_secret_len = 0U;
+    /* Determine sender public-key raw length (X||Y) */
+    pub_raw_len = (ctx->keys.pub_len_sender != 0)
+                    ? ctx->keys.pub_len_sender
+                    : AES_512_KEY_SIZE;
 
-    /* ---------- Try 1: raw peer public key X[32] || Y[32] ---------- */
-    raw_secret_len = sizeof(raw_secret);
+    /* ---------- Try 1: raw X||Y ---------- */
+    ctx->tmp.computed_size = sizeof(ctx->tmp.computed_secret_receiver);
 
     cmox_ecc_construct(&ctx->ecc,
                        CMOX_ECC256_MATH_FUNCS,
@@ -1021,322 +653,235 @@ static ecdh_status_t compute_cmox_ecdh_canonical32(
 
     retval = cmox_ecdh(&ctx->ecc,
                        CMOX_ECC_CURVE_SECP256R1,
-                       private_key,
-                       private_key_len,
-                       peer_public_key,
-                       peer_public_key_len,
-                       raw_secret,
-                       &raw_secret_len);
+                       ctx->keys.private_key_receiver, AES_256_KEY_SIZE,
+                       ctx->keys.public_key_sender, pub_raw_len,
+                       ctx->tmp.computed_secret_receiver,
+                       &ctx->tmp.computed_size);
 
-    cmox_ecc_cleanup(&ctx->ecc);
+    if (retval == CMOX_ECC_SUCCESS) {
+        cmox_ecc_cleanup(&ctx->ecc);
 
-    /* ---------- Try 2: 0x04 || X[32] || Y[32] ---------- */
-    if (retval != CMOX_ECC_SUCCESS) {
-        public_key_prefixed[0] = 0x04U;
-        memcpy(&public_key_prefixed[1],
-               peer_public_key,
-               peer_public_key_len);
+        if (out_secret && out_len) {
+            size_t to_copy = (ctx->tmp.computed_size <= *out_len)
+                               ? ctx->tmp.computed_size
+                               : *out_len;
+            memcpy(out_secret, ctx->tmp.computed_secret_receiver, to_copy);
+            *out_len = to_copy;
+        } else if (out_len) {
+            *out_len = ctx->tmp.computed_size;
+        }
 
-        prefixed_len = 1U + peer_public_key_len;
+        return ECDH_SUCCESS;
+    }
 
-        secure_zero(raw_secret, sizeof(raw_secret));
-        raw_secret_len = sizeof(raw_secret);
+    /* ---------- Try 2: uncompressed point 0x04 || X || Y ---------- */
+    {
+        uint8_t pub_prefixed[1 + AES_512_KEY_SIZE];
+        size_t  prefixed_len;
 
-        cmox_ecc_construct(&ctx->ecc,
-                           CMOX_ECC256_MATH_FUNCS,
-                           ctx->working_buffer,
-                           sizeof(ctx->working_buffer));
+        if (pub_raw_len > AES_512_KEY_SIZE) {
+            cmox_ecc_cleanup(&ctx->ecc);
+            memset(ctx->tmp.computed_secret_receiver, 0,
+                   sizeof(ctx->tmp.computed_secret_receiver));
+            ctx->tmp.computed_size = 0;
+            return ECDH_ERR_ECDH_FAILED;
+        }
+
+        pub_prefixed[0] = 0x04;
+        memcpy(&pub_prefixed[1],
+               ctx->keys.public_key_sender,
+               pub_raw_len);
+        prefixed_len = 1 + pub_raw_len;
+
+        ctx->tmp.computed_size = sizeof(ctx->tmp.computed_secret_receiver);
 
         retval = cmox_ecdh(&ctx->ecc,
                            CMOX_ECC_CURVE_SECP256R1,
-                           private_key,
-                           private_key_len,
-                           public_key_prefixed,
-                           prefixed_len,
-                           raw_secret,
-                           &raw_secret_len);
+                           ctx->keys.private_key_receiver, AES_256_KEY_SIZE,
+                           pub_prefixed, prefixed_len,
+                           ctx->tmp.computed_secret_receiver,
+                           &ctx->tmp.computed_size);
 
         cmox_ecc_cleanup(&ctx->ecc);
-    }
 
-    if (retval != CMOX_ECC_SUCCESS ||
-        raw_secret_len < ECDH_CANONICAL_SECRET_LEN) {
-        secure_zero(raw_secret, sizeof(raw_secret));
-        secure_zero(public_key_prefixed, sizeof(public_key_prefixed));
-        secure_zero(out_secret, ECDH_CANONICAL_SECRET_LEN);
-        *out_secret_len = 0U;
-        return ECDH_ERR_ECDH_FAILED;
-    }
-
-    /*
-     * Canonical STM32<->ESP32 representation:
-     * keep exactly the first 32 bytes returned by C-MOX.
-     */
-    memcpy(out_secret,
-           raw_secret,
-           ECDH_CANONICAL_SECRET_LEN);
-
-    if (is_all_zero_buf(ctx,
-                        out_secret,
-                        ECDH_CANONICAL_SECRET_LEN)) {
-        secure_zero(raw_secret, sizeof(raw_secret));
-        secure_zero(public_key_prefixed, sizeof(public_key_prefixed));
-        secure_zero(out_secret, ECDH_CANONICAL_SECRET_LEN);
-        *out_secret_len = 0U;
-        return ECDH_ERR_ECDH_FAILED;
-    }
-
-    *out_secret_len = ECDH_CANONICAL_SECRET_LEN;
-
-    log_printf(
-        "[INFO] C-MOX ECDH native_len=%u canonical_len=%u\r\n",
-        (unsigned)raw_secret_len,
-        (unsigned)*out_secret_len);
-
-    secure_zero(raw_secret, sizeof(raw_secret));
-    secure_zero(public_key_prefixed, sizeof(public_key_prefixed));
-
-    return ECDH_SUCCESS;
-}
-
-/**
- * Compute the sender-side ECDH secret:
- *
- *     sender private key x receiver public key
- *
- * The result is normalized to exactly 32 bytes and stored in:
- *
- *     ctx->tmp.computed_secret[32]
- *     ctx->tmp.computed_secret_len = 32
- */
-ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
-                                            uint8_t *out_secret,
-                                            size_t *out_len)
-{
-    /* Validate the key agreement result before deriving session keys. */
-    ecdh_status_t status;
-    size_t receiver_public_len;
-
-    if (ctx == NULL) {
-        return ECDH_ERR_ECDH_FAILED;
-    }
-
-    receiver_public_len =
-        (ctx->keys.pub_len_receiver != 0U)
-        ? ctx->keys.pub_len_receiver
-        : AES_512_KEY_SIZE;
-
-    secure_zero(ctx->tmp.computed_secret,
-                sizeof(ctx->tmp.computed_secret));
-    ctx->tmp.computed_secret_len = 0U;
-
-    status = compute_cmox_ecdh_canonical32(
-        ctx,
-        ctx->keys.private_key_sender,
-        AES_256_KEY_SIZE,
-        ctx->keys.public_key_receiver,
-        receiver_public_len,
-        ctx->tmp.computed_secret,
-        &ctx->tmp.computed_secret_len);
-
-    if (status != ECDH_SUCCESS) {
-        secure_zero(ctx->tmp.computed_secret,
-                    sizeof(ctx->tmp.computed_secret));
-        ctx->tmp.computed_secret_len = 0U;
-        return status;
-    }
-
-    if (out_secret != NULL) {
-        if (out_len == NULL ||
-            *out_len < ECDH_CANONICAL_SECRET_LEN) {
-            secure_zero(ctx->tmp.computed_secret,
-                        sizeof(ctx->tmp.computed_secret));
-            ctx->tmp.computed_secret_len = 0U;
+        if (retval != CMOX_ECC_SUCCESS) {
+            memset(ctx->tmp.computed_secret_receiver, 0,
+                   sizeof(ctx->tmp.computed_secret_receiver));
+            ctx->tmp.computed_size = 0;
             return ECDH_ERR_ECDH_FAILED;
         }
 
-        memcpy(out_secret,
-               ctx->tmp.computed_secret,
-               ECDH_CANONICAL_SECRET_LEN);
-    }
-
-    if (out_len != NULL) {
-        *out_len = ECDH_CANONICAL_SECRET_LEN;
-    }
-
-    return ECDH_SUCCESS;
-}
-
-/**
- * Compute the receiver-side ECDH secret:
- *
- *     receiver private key x sender public key
- *
- * The result is normalized to exactly 32 bytes and stored in:
- *
- *     ctx->tmp.computed_secret_receiver[32]
- *     ctx->tmp.computed_secret_receiver_len = 32
- */
-ecdh_status_t compute_ecdh_shared_as_receiver(crypto_ctx_t *ctx,
-                                              uint8_t *out_secret,
-                                              size_t *out_len)
-{
-    /* Validate the key agreement result before deriving session keys. */
-    ecdh_status_t status;
-    size_t sender_public_len;
-
-    if (ctx == NULL) {
-        return ECDH_ERR_ECDH_FAILED;
-    }
-
-    sender_public_len =
-        (ctx->keys.pub_len_sender != 0U)
-        ? ctx->keys.pub_len_sender
-        : AES_512_KEY_SIZE;
-
-    secure_zero(ctx->tmp.computed_secret_receiver,
-                sizeof(ctx->tmp.computed_secret_receiver));
-    ctx->tmp.computed_secret_receiver_len = 0U;
-
-    status = compute_cmox_ecdh_canonical32(
-        ctx,
-        ctx->keys.private_key_receiver,
-        AES_256_KEY_SIZE,
-        ctx->keys.public_key_sender,
-        sender_public_len,
-        ctx->tmp.computed_secret_receiver,
-        &ctx->tmp.computed_secret_receiver_len);
-
-    if (status != ECDH_SUCCESS) {
-        secure_zero(ctx->tmp.computed_secret_receiver,
-                    sizeof(ctx->tmp.computed_secret_receiver));
-        ctx->tmp.computed_secret_receiver_len = 0U;
-        return status;
-    }
-
-    if (out_secret != NULL) {
-        if (out_len == NULL ||
-            *out_len < ECDH_CANONICAL_SECRET_LEN) {
-            secure_zero(ctx->tmp.computed_secret_receiver,
-                        sizeof(ctx->tmp.computed_secret_receiver));
-            ctx->tmp.computed_secret_receiver_len = 0U;
-            return ECDH_ERR_ECDH_FAILED;
+        if (out_secret && out_len) {
+            size_t to_copy = (ctx->tmp.computed_size <= *out_len)
+                               ? ctx->tmp.computed_size
+                               : *out_len;
+            memcpy(out_secret, ctx->tmp.computed_secret_receiver, to_copy);
+            *out_len = to_copy;
+        } else if (out_len) {
+            *out_len = ctx->tmp.computed_size;
         }
 
-        memcpy(out_secret,
-               ctx->tmp.computed_secret_receiver,
-               ECDH_CANONICAL_SECRET_LEN);
+        return ECDH_SUCCESS;
     }
-
-    if (out_len != NULL) {
-        *out_len = ECDH_CANONICAL_SECRET_LEN;
-    }
-
-    return ECDH_SUCCESS;
 }
+/* Example usage:
+   size_t outlen = 64;
+   if (compute_ecdh_shared_as_sender(NULL, &outlen) == 0) {
+       // computed_secret[0..outlen-1] contains the shared secret
+   } else {
+       handle_error("ECDH failed");
+   }
+*/
 
 /**
- * Derive sender or receiver AES/MAC keys from exactly 32 canonical
- * ECDH-secret bytes.
+ * Derive AES and MAC keys from ECDH shared secret.
  *
- * AES key = SHA256(shared[32] || 0x01)
- * MAC key = SHA256(shared[32] || 0x02)
+ * AES key = SHA256(shared || 0x01)
+ * MAC key = SHA256(shared || 0x02)
+ *
+ * aes_key_len and mac_key_len must be 32 for SHA-256 output.
+ *
+ * Returns 0 on success, negative on failure.
  */
-kdf_status_t derive_keys_from_shared_secret(crypto_ctx_t *ctx,
-                                            bool receiver)
+kdf_status_t derive_keys_from_shared_secret(crypto_ctx_t *ctx, bool receiver)
 {
     cmox_hash_retval_t retval;
-    uint8_t buf[ECDH_CANONICAL_SECRET_LEN + 1U];
-    const uint8_t *shared;
-    size_t shared_len;
+    uint8_t buf[CMOX_ECC_SECP256R1_SECRET_LEN + 1];
+    size_t out_len;
+
+    uint8_t *shared;
     uint8_t *aes_key;
     uint8_t *mac_key;
-    size_t aes_key_len;
-    size_t mac_key_len;
+
+    if (ctx == NULL) {
+        return KDF_ERR_BAD_INPUT;
+    }
+
+    if (ctx->tmp.computed_size == 0 ||
+        ctx->tmp.computed_size > CMOX_ECC_SECP256R1_SECRET_LEN) {
+        return KDF_ERR_BAD_INPUT;
+    }
+
+    /* select sender vs receiver material */
+    if (receiver) {
+        shared  = ctx->tmp.computed_secret_receiver;
+        aes_key = ctx->derived.aes_key_receiver;
+        mac_key = ctx->derived.mac_key_receiver;
+    } else {
+        shared  = ctx->tmp.computed_secret;
+        aes_key = ctx->derived.aes_key;
+        mac_key = ctx->derived.mac_key;
+    }
+
+    /* ---------- AES key: SHA256(shared || 0x01) ---------- */
+    memcpy(buf, shared, ctx->tmp.computed_size);
+    buf[ctx->tmp.computed_size] = 0x01;
+
+    out_len = sizeof(ctx->derived.aes_key);
+    retval = cmox_hash_compute(CMOX_SHA256_ALGO,
+                               buf, ctx->tmp.computed_size + 1,
+                               aes_key, out_len,
+                               &out_len);
+
+    if (retval != CMOX_HASH_SUCCESS || out_len != sizeof(ctx->derived.aes_key)) {
+        memset(aes_key, 0, sizeof(ctx->derived.aes_key));
+        return KDF_ERR_HASH_FAILED;
+    }
+
+    /* ---------- MAC key: SHA256(shared || 0x02) ---------- */
+    buf[ctx->tmp.computed_size] = 0x02;
+
+    out_len = sizeof(ctx->derived.mac_key);
+    retval = cmox_hash_compute(CMOX_SHA256_ALGO,
+                               buf, ctx->tmp.computed_size + 1,
+                               mac_key, out_len,
+                               &out_len);
+
+    if (retval != CMOX_HASH_SUCCESS || out_len != sizeof(ctx->derived.mac_key)) {
+        memset(aes_key, 0, sizeof(ctx->derived.aes_key));
+        memset(mac_key, 0, sizeof(ctx->derived.mac_key));
+        return KDF_ERR_HASH_FAILED;
+    }
+
+    /* clear temporary buffer */
+    memset(buf, 0, sizeof(buf));
+
+    return KDF_SUCCESS;
+}
+
+/**
+ * Derive AES and MAC keys from receiver's ECDH shared secret.
+ *
+ * Uses computed_secret_receiver[] and my_len_receiver (populated by
+ * compute_ecdh_shared_as_receiver()).
+ *
+ * AES key = SHA256(shared || 0x01)
+ * MAC key = SHA256(shared || 0x02)
+ *
+ * aes_key_len and mac_key_len must be 32 for SHA-256 output.
+ *
+ * Returns 0 on success, negative on failure.
+ */
+kdf_status_t derive_keys_from_shared_secret_receiver(crypto_ctx_t *ctx)
+{
+    cmox_hash_retval_t retval;
+    uint8_t buf[CMOX_ECC_SECP256R1_SECRET_LEN + 1];
     size_t out_len;
 
     if (ctx == NULL) {
         return KDF_ERR_BAD_INPUT;
     }
 
-    if (receiver) {
-        shared = ctx->tmp.computed_secret_receiver;
-        shared_len = ctx->tmp.computed_secret_receiver_len;
-        aes_key = ctx->derived.aes_key_receiver;
-        mac_key = ctx->derived.mac_key_receiver;
-        aes_key_len = sizeof(ctx->derived.aes_key_receiver);
-        mac_key_len = sizeof(ctx->derived.mac_key_receiver);
-    } else {
-        shared = ctx->tmp.computed_secret;
-        shared_len = ctx->tmp.computed_secret_len;
-        aes_key = ctx->derived.aes_key;
-        mac_key = ctx->derived.mac_key;
-        aes_key_len = sizeof(ctx->derived.aes_key);
-        mac_key_len = sizeof(ctx->derived.mac_key);
-    }
-
-    if (shared_len != ECDH_CANONICAL_SECRET_LEN ||
-        aes_key_len != AES_256_KEY_SIZE ||
-        mac_key_len != AES_256_KEY_SIZE ||
-        is_all_zero_buf(ctx, shared, shared_len)) {
+    if (ctx->tmp.computed_size == 0 ||
+        ctx->tmp.computed_size > CMOX_ECC_SECP256R1_SECRET_LEN) {
         return KDF_ERR_BAD_INPUT;
     }
 
-    secure_zero(buf, sizeof(buf));
-    secure_zero(aes_key, aes_key_len);
-    secure_zero(mac_key, mac_key_len);
+    /* ---------- AES key derivation: SHA256(shared || 0x01) ---------- */
+    memcpy(buf,
+           ctx->tmp.computed_secret_receiver,
+           ctx->tmp.computed_size);
+    buf[ctx->tmp.computed_size] = 0x01;
 
-    memcpy(buf, shared, ECDH_CANONICAL_SECRET_LEN);
-
-    /* ---------- AES key: SHA256(shared[32] || 0x01) ---------- */
-    buf[ECDH_CANONICAL_SECRET_LEN] = 0x01U;
-    out_len = aes_key_len;
-
+    out_len = sizeof(ctx->derived.aes_key_receiver);
     retval = cmox_hash_compute(CMOX_SHA256_ALGO,
                                buf,
-                               ECDH_CANONICAL_SECRET_LEN + 1U,
-                               aes_key,
-                               aes_key_len,
+                               ctx->tmp.computed_size + 1,
+                               ctx->derived.aes_key_receiver,
+                               out_len,
                                &out_len);
 
     if (retval != CMOX_HASH_SUCCESS ||
-        out_len != aes_key_len) {
-        secure_zero(buf, sizeof(buf));
-        secure_zero(aes_key, aes_key_len);
-        secure_zero(mac_key, mac_key_len);
+        out_len != sizeof(ctx->derived.aes_key_receiver)) {
+        memset(ctx->derived.aes_key_receiver, 0,
+               sizeof(ctx->derived.aes_key_receiver));
         return KDF_ERR_HASH_FAILED;
     }
 
-    /* ---------- MAC key: SHA256(shared[32] || 0x02) ---------- */
-    buf[ECDH_CANONICAL_SECRET_LEN] = 0x02U;
-    out_len = mac_key_len;
+    /* ---------- MAC key derivation: SHA256(shared || 0x02) ---------- */
+    buf[ctx->tmp.computed_size] = 0x02;
 
+    out_len = sizeof(ctx->derived.mac_key_receiver);
     retval = cmox_hash_compute(CMOX_SHA256_ALGO,
                                buf,
-                               ECDH_CANONICAL_SECRET_LEN + 1U,
-                               mac_key,
-                               mac_key_len,
+                               ctx->tmp.computed_size + 1,
+                               ctx->derived.mac_key_receiver,
+                               out_len,
                                &out_len);
 
     if (retval != CMOX_HASH_SUCCESS ||
-        out_len != mac_key_len) {
-        secure_zero(buf, sizeof(buf));
-        secure_zero(aes_key, aes_key_len);
-        secure_zero(mac_key, mac_key_len);
+        out_len != sizeof(ctx->derived.mac_key_receiver)) {
+        memset(ctx->derived.aes_key_receiver, 0,
+               sizeof(ctx->derived.aes_key_receiver));
+        memset(ctx->derived.mac_key_receiver, 0,
+               sizeof(ctx->derived.mac_key_receiver));
         return KDF_ERR_HASH_FAILED;
     }
 
-    secure_zero(buf, sizeof(buf));
+    /* clear temporary buffer */
+    memset(buf, 0, sizeof(buf));
+
     return KDF_SUCCESS;
-}
-
-/**
- * Compatibility wrapper retained for existing callers.
- */
-kdf_status_t derive_keys_from_shared_secret_receiver(crypto_ctx_t *ctx)
-{
-    /* Check the digest result before using it in verification. */
-    return derive_keys_from_shared_secret(ctx, true);
 }
 
 /* robust AES-CTR encryption wrapper
@@ -1681,31 +1226,30 @@ hmac_ivc_status_t compute_hmac_over_iv_cipher_receiver(crypto_ctx_t *ctx,
  *   - GEN_IV_* on IV failure
  *   - GEN_IV_SUCCESS on success
  */
-gen_iv_status_t generate_nonce_and_iv_per_transfer(
-    crypto_ctx_t *ctx)
+gen_iv_status_t generate_nonce_and_iv_per_transfer(crypto_ctx_t *ctx)
 {
-    gcm_nonce_status_t nonce_ret;
+    int rc;
 
     if (ctx == NULL) {
         return GEN_IV_ERR_BAD_PARAM;
     }
 
-    /*
-     * No ADC/timer hashing and no DRBG reconstruction here.
-     * Allocate the next guaranteed-unique GCM nonce.
-     */
-    nonce_ret = gcm_nonce_allocate(ctx);
+    /* 1) generate nonce (must be ctx-aware) */
+    rc = nonce_generation();
+    if (rc != NONCE_GEN_SUCCESS) {
+        return rc;
+    }
 
-    if (nonce_ret != GCM_NONCE_OK) {
-        secure_zero(ctx->IV_GCM,
-                    sizeof(ctx->IV_GCM));
+    /* 2) generate DRBG IV (16 bytes) -> ctx->IV */
+    rc = generate_iv(ctx);
+    if (rc != GEN_IV_SUCCESS) {
+        return rc;
+    }
 
-        log_printf(
-            "[ERROR] GCM nonce allocation failed (rc=%d)\r\n",
-            nonce_ret
-        );
-
-        return GEN_IV_ERR_GENERATE;
+    /* 3) derive 12-byte GCM IV -> ctx->IV_GCM */
+    rc = derive_gcm_iv_from_drbg(ctx);
+    if (rc != GEN_IV_SUCCESS) {
+        return rc;
     }
 
     return GEN_IV_SUCCESS;
@@ -1756,22 +1300,16 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
         secure_zero(ctx->keys.public_key_sender,
                     sizeof(ctx->keys.public_key_sender));
 
-        ctx->keys.priv_len_sender = 0U;
-        ctx->keys.pub_len_sender = 0U;
+        ctx->keys.priv_len_sender = 0;
+        ctx->keys.pub_len_sender  = 0;
 
         return SENDER_INIT_ERR_GENKEY;
     }
 
-    /*
-     * ---------- 2) compute sender-side ECDH secret ----------
-     *
-     * sender private key x receiver public key
-     *
-     * The function stores exactly 32 canonical bytes internally.
-     */
-    ret = compute_ecdh_shared_as_sender(ctx, NULL, NULL);
+    /* ---------- 2) compute ECDH shared secret (sender side) ---------- */
+    ret = compute_ecdh_shared_as_sender(ctx,ctx->tmp.computed_secret,&ctx->tmp.computed_size);
     if (ret != ECDH_SUCCESS) {
-        log_printf("[ERROR] sender_init_ecdh_crypto: compute_ecdh_shared_as_sender failed (rc=%d)\r\n", ret);
+        log_printf("[ERROR] sender_init_ecdh_crypto: compute_ec-dh_shared_as_sender failed (rc=%d)\r\n", ret);
 
         secure_zero(ctx->keys.private_key_sender,
                     sizeof(ctx->keys.private_key_sender));
@@ -1780,13 +1318,13 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
         secure_zero(ctx->tmp.computed_secret,
                     sizeof(ctx->tmp.computed_secret));
 
-        ctx->tmp.computed_secret_len = 0U;
+        ctx->tmp.computed_size = 0;
 
         return SENDER_INIT_ERR_ECDH;
     }
 
-    /* ---------- 3) derive AES + MAC keys from 32-byte secret ---------- */
-    ret = derive_keys_from_shared_secret(ctx, false);
+    /* ---------- 3) derive AES + MAC keys from shared secret ---------- */
+    ret = derive_keys_from_shared_secret(ctx,false);
     if (ret != KDF_SUCCESS) {
         log_printf("[ERROR] sender_init_ecdh_crypto: derive_keys_from_shared_secret failed (rc=%d)\r\n", ret);
 
@@ -1801,17 +1339,59 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
         secure_zero(ctx->derived.mac_key,
                     sizeof(ctx->derived.mac_key));
 
-        ctx->tmp.computed_secret_len = 0U;
+        ctx->tmp.computed_size = 0;
 
         return SENDER_INIT_ERR_KDF;
     }
 
-    log_printf(
-        "[INFO] sender_init_ecdh_crypto: success (shared_len=%u)\r\n",
-        (unsigned)ctx->tmp.computed_secret_len);
+    log_printf("[INFO] sender_init_ecdh_crypto: success (shared_len=%u)\r\n",
+               (unsigned)ctx->tmp.computed_size);
 
     return SENDER_INIT_SUCCESS;
 }
+
+
+
+/*
+ * Uses globals declared in your ecdh.c:
+ *   uint8_t private_key_sender[], public_key_sender[], my_secret[], aes_key[], mac_key[], size_t my_len;
+ *
+ * Steps:
+ *  1) generate_keypairs_cmox()  -> fills priv/pub (sender & receiver pairs)
+ *  2) compute_ecdh_shared_as_sender(my_secret, &my_len)
+ *  3) derive_keys_from_shared_secret(aes_key, sizeof(aes_key), mac_key, sizeof(mac_key))
+ *
+ * On failure the function wipes sensitive outputs and returns a negative code.
+ */
+sender_init_status_t generate_private_key_digital_signature(sig_keys_ctx_t *ctx)
+{
+    int ret;
+
+    if (ctx == NULL) {
+        return SENDER_INIT_ERR_BAD_PARAM;
+    }
+
+    /* ---------- 1) generate Ed25519 signing keypair into ctx->sig ---------- */
+    ret = generate_ed25519_signing_keypair(ctx);
+    if (ret != GEN_KEYS_SUCCESS) {
+        log_printf("[ERROR] generate_ed25519_signing_keypair failed (rc=%d)\r\n", ret);
+
+        /* securely wipe outputs */
+        secure_zero(ctx->sig.private_key, sizeof(ctx->sig.private_key));
+        secure_zero(ctx->sig.public_key,  sizeof(ctx->sig.public_key));
+
+        /* clear lengths and provisioning flags */
+        ctx->sig.priv_len     = 0;
+        ctx->sig.pub_len      = 0;
+        ctx->sig.provisioned  = false;
+        ctx->sig.storage_flags = SIG_KEY_STORAGE_NONE;
+
+        return SENDER_INIT_ERR_GENKEY;
+    }
+
+    return SENDER_INIT_SUCCESS;
+}
+
 
 /*
  * Uses globals from ecdh.c:
@@ -1834,11 +1414,7 @@ receiver_init_status_t receiver_init_ecdh_crypto(crypto_ctx_t *ctx)
     }
 
     /* ---------- 1) Validate sender public key format ---------- */
-    ret = validate_public_key_sender_format_ctx(
-        ctx,
-        ctx->keys.public_key_sender,
-        ctx->keys.pub_len_sender);
-
+    ret = validate_public_key_sender_format_ctx(ctx,ctx->keys.public_key_sender, ctx->keys.pub_len_sender);
     if (ret != PUBKEY_OK) {
         if (ret == PUBKEY_ERR_NULL) {
             log_printf("[ERROR] receiver_init_ecdh_crypto: sender public key is NULL\r\n");
@@ -1849,68 +1425,35 @@ receiver_init_status_t receiver_init_ecdh_crypto(crypto_ctx_t *ctx)
         } else {
             log_printf("[ERROR] receiver_init_ecdh_crypto: validate_public_key_sender_format returned %d\r\n", ret);
         }
-
         return RECEIVER_INIT_ERR_PUBKEY;
     }
 
-    /*
-     * ---------- 2) compute receiver-side ECDH secret ----------
-     * receiver private key x sender public key
-     * The function stores exactly 32 canonical bytes internally.
-     */
+    /* ---------- 2) compute ECDH shared secret (receiver side) ---------- */
     ret = compute_ecdh_shared_as_receiver(ctx, NULL, NULL);
     if (ret != ECDH_SUCCESS) {
         log_printf("[ERROR] receiver_init_ecdh_crypto: compute_ecdh_shared_as_receiver failed (rc=%d)\r\n", ret);
 
-        secure_zero(ctx->tmp.computed_secret_receiver,
-                    sizeof(ctx->tmp.computed_secret_receiver));
-        ctx->tmp.computed_secret_receiver_len = 0U;
+        secure_zero(ctx->tmp.computed_secret_receiver, sizeof(ctx->tmp.computed_secret_receiver));
+        ctx->tmp.computed_size = 0;
 
         return RECEIVER_INIT_ERR_ECDH;
     }
 
-    /*
-     * Local bring-up verification. In the real two-device system each
-     * device keeps only its own secret, but both must produce the same
-     * 32-byte canonical value.
-     */
-    if (ctx->tmp.computed_secret_len == ECDH_CANONICAL_SECRET_LEN) {
-        if (ctx->tmp.computed_secret_receiver_len !=
-                ECDH_CANONICAL_SECRET_LEN ||
-            ct_memcmp(ctx->tmp.computed_secret,
-                      ctx->tmp.computed_secret_receiver,
-                      ECDH_CANONICAL_SECRET_LEN) != 0) {
-            log_printf("[ERROR] receiver_init_ecdh_crypto: sender/receiver 32-byte ECDH secrets do not match\r\n");
-
-            secure_zero(ctx->tmp.computed_secret_receiver,
-                        sizeof(ctx->tmp.computed_secret_receiver));
-            ctx->tmp.computed_secret_receiver_len = 0U;
-
-            return RECEIVER_INIT_ERR_ECDH;
-        }
-
-        log_printf("[INFO] sender and receiver canonical 32-byte ECDH secrets match\r\n");
-    }
-
-    /* ---------- 3) derive receiver AES + MAC keys ---------- */
-    ret = derive_keys_from_shared_secret(ctx, true);
+    /* ---------- 3) derive AES + MAC keys from shared secret (receiver) ---------- */
+    ret = derive_keys_from_shared_secret_receiver(ctx);
     if (ret != KDF_SUCCESS) {
-        log_printf("[ERROR] receiver_init_ecdh_crypto: derive_keys_from_shared_secret failed (rc=%d)\r\n", ret);
+        log_printf("[ERROR] receiver_init_ecdh_crypto: derive_keys_from_shared_secret_receiver failed (rc=%d)\r\n", ret);
 
-        secure_zero(ctx->tmp.computed_secret_receiver,
-                    sizeof(ctx->tmp.computed_secret_receiver));
-        secure_zero(ctx->derived.aes_key_receiver,
-                    sizeof(ctx->derived.aes_key_receiver));
-        secure_zero(ctx->derived.mac_key_receiver,
-                    sizeof(ctx->derived.mac_key_receiver));
-        ctx->tmp.computed_secret_receiver_len = 0U;
+        secure_zero(ctx->tmp.computed_secret_receiver, sizeof(ctx->tmp.computed_secret_receiver));
+        secure_zero(ctx->derived.aes_key_receiver, sizeof(ctx->derived.aes_key_receiver));
+        secure_zero(ctx->derived.mac_key_receiver, sizeof(ctx->derived.mac_key_receiver));
+        ctx->tmp.computed_size = 0;
 
         return RECEIVER_INIT_ERR_KDF;
     }
 
-    log_printf(
-        "[INFO] receiver_init_ecdh_crypto: success (receiver_shared_len=%u)\r\n",
-        (unsigned)ctx->tmp.computed_secret_receiver_len);
+    log_printf("[INFO] receiver_init_ecdh_crypto: success (receiver_shared_len=%u)\r\n",
+               (unsigned)ctx->tmp.computed_size);
 
     return RECEIVER_INIT_SUCCESS;
 }
@@ -2364,213 +1907,55 @@ gcm_aead_single_status_t encrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
  */
 
 
-gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
-    crypto_ctx_t *ctx)
+gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(crypto_ctx_t *ctx)
 {
     gen_iv_status_t iv_rc;
     gcm_enc_status_t gcm_rc;
-    size_t ciphertext_len;
+    gcm_aead_single_status_t aead_rc;
 
-    if (ctx == NULL) {
-        return GCM_SENDER_ERR_BAD_PARAM;
-    }
-
-    /*
-     * 1) Generate one nonce/IV for this new logical packet.
-     *
-     * Important for UART retries:
-     * Do not call this function again for each retry.
-     * Cache the encrypted frame and resend the exact same bytes.
-     */
+    /* 1) Generate nonce and IV */
     iv_rc = generate_nonce_and_iv_per_transfer(ctx);
     if (iv_rc != GEN_IV_SUCCESS) {
         log_printf(
-            "[ERROR] generate_nonce_iv_encrypt_gcm_sender: "
-            "IV generation failed (rc=%d)\r\n",
+            "[ERROR] generate_nonce_iv_encrypt_gcm_sender: IV generation failed (rc=%d)\r\n",
             iv_rc
         );
-
-        secure_zero(ctx->IV, sizeof(ctx->IV));
-        secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
-
         return GCM_SENDER_ERR_GEN_IV;
     }
 
-    /*
-     * 2) Perform AES-GCM encryption once using the streaming API.
-     *
-     * Output layout produced by encrypt_aes_gcm_aead():
-     *
-     * cipher_text_gcm_aead =
-     * [ciphertext][GCM authentication tag]
-     *
-     * ctx->tmp.computed_size contains ciphertext length only.
-     */
+    /* 2) Streaming-style AES-GCM encryption */
     gcm_rc = encrypt_aes_gcm_aead(ctx);
     if (gcm_rc != GCM_ENC_SUCCESS) {
         log_printf(
-            "[ERROR] generate_nonce_iv_encrypt_gcm_sender: "
-            "GCM streaming encryption failed (rc=%d)\r\n",
+            "[ERROR] generate_nonce_iv_encrypt_gcm_sender: GCM stream encrypt failed (rc=%d)\r\n",
             gcm_rc
         );
-
         secure_zero(ctx->IV, sizeof(ctx->IV));
-        secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
-
-        secure_zero(ctx->buffers.cipher_text_gcm_aead,
-                    sizeof(ctx->buffers.cipher_text_gcm_aead));
-
-        ctx->tmp.computed_size = 0U;
-        ctx->auth.ciphertext_len = 0U;
-        ctx->auth.mac_len = 0U;
-
         return GCM_SENDER_ERR_GCM_STREAM;
     }
 
-    ciphertext_len = ctx->tmp.computed_size;
-
-    /*
-     * 3) Validate destination buffer sizes before separating
-     * ciphertext and authentication tag.
-     */
-    if ((ciphertext_len == 0U) ||
-        (ciphertext_len > sizeof(ctx->auth.ciphertext_sender)) ||
-        (AES_GCM_TAG_SIZE > sizeof(ctx->auth.tag_sender)) ||
-        (ciphertext_len >
-         (sizeof(ctx->buffers.cipher_text_gcm_aead) -
-          AES_GCM_TAG_SIZE))) {
-
+    /* 3) Single-call AEAD AES-GCM encryption */
+    aead_rc = encrypt_aead_gcm_singlecall(ctx);
+    if (aead_rc != GCM_AEAD_SINGLE_SUCCESS) {
         log_printf(
-            "[ERROR] generate_nonce_iv_encrypt_gcm_sender: "
-            "invalid ciphertext/tag buffer size\r\n"
+            "[ERROR] generate_nonce_iv_encrypt_gcm_sender: GCM AEAD single-call failed (rc=%d)\r\n",
+            aead_rc
         );
-
+        secure_zero(ctx->IV, sizeof(ctx->IV));
         secure_zero(ctx->buffers.cipher_text_gcm_aead,
                     sizeof(ctx->buffers.cipher_text_gcm_aead));
-
-        secure_zero(ctx->auth.ciphertext_sender,
-                    sizeof(ctx->auth.ciphertext_sender));
-
-        secure_zero(ctx->auth.tag_sender,
-                    sizeof(ctx->auth.tag_sender));
-
-        ctx->tmp.computed_size = 0U;
-        ctx->auth.ciphertext_len = 0U;
-        ctx->auth.mac_len = 0U;
-
-        return GCM_SENDER_ERR_GCM_STREAM;
+        ctx->tmp.computed_size = 0;
+        return GCM_SENDER_ERR_GCM_SINGLECALL;
     }
 
-    /*
-     * 4) Separate ciphertext from the combined output.
-     */
-    memcpy(ctx->auth.ciphertext_sender,
-           ctx->buffers.cipher_text_gcm_aead,
-           ciphertext_len);
-
-    ctx->auth.ciphertext_len = ciphertext_len;
-
-    /*
-     * 5) Copy the GCM authentication tag located immediately
-     * after the ciphertext.
-     */
-    memcpy(ctx->auth.tag_sender,
-           ctx->buffers.cipher_text_gcm_aead + ciphertext_len,
-           AES_GCM_TAG_SIZE);
-
-    ctx->auth.mac_len = AES_GCM_TAG_SIZE;
-
-    {
-        const size_t combined_len =
-            ctx->auth.ciphertext_len +
-            ctx->auth.mac_len;
-
-        const uint32_t counter_hi =
-            (uint32_t)(
-                ctx->gcm_nonce.current_counter >> 32);
-
-        const uint32_t counter_lo =
-            (uint32_t)(
-                ctx->gcm_nonce.current_counter &
-                UINT64_C(0xFFFFFFFF));
-
-        log_printf(
-            "\r\n"
-            "========== STM32 AES-256-GCM ENCRYPT PACKET ==========\r\n"
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "[TX][META] session=%08lX "
-            "counter=%08lX%08lX\r\n",
-            (unsigned long)ctx->gcm_nonce.session_id,
-            (unsigned long)counter_hi,
-            (unsigned long)counter_lo
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "[TX][LENGTHS] plaintext=%u "
-            "ciphertext=%u tag=%u combined=%u\r\n",
-            (unsigned)ctx->tmp.plain_len,
-            (unsigned)ctx->auth.ciphertext_len,
-            (unsigned)ctx->auth.mac_len,
-            (unsigned)combined_len
-        );
-        crypto_uart_log_delay();
-
-        log_hex_buffer(
-            "[TX][ORIGINAL PLAINTEXT PAYLOAD]",
-            ctx->buffers.plain_text_bytes,
-            ctx->tmp.plain_len
-        );
-
-        log_adc_values(
-            "[TX][ORIGINAL ADC VALUES]",
-            ctx->buffers.adc_values,
-            ctx->cfg.adc_sample_count
-        );
-
-        log_hex_buffer(
-            "[TX][NONCE IV_GCM]",
-            ctx->IV_GCM,
-            sizeof(ctx->IV_GCM)
-        );
-
-        log_hex_buffer(
-            "[TX][CIPHERTEXT ONLY]",
-            ctx->auth.ciphertext_sender,
-            ctx->auth.ciphertext_len
-        );
-
-        log_hex_buffer(
-            "[TX][AUTHENTICATION TAG]",
-            ctx->auth.tag_sender,
-            ctx->auth.mac_len
-        );
-
-        log_hex_buffer(
-            "[TX][CIPHERTEXT || TAG]",
-            ctx->buffers.cipher_text_gcm_aead,
-            combined_len
-        );
-
-        log_printf(
-            "[TX][ENCRYPTED SUCCESSFULLY] "
-            "AES-256-GCM produced authenticated ciphertext "
-            "using a fresh per-packet nonce.\r\n"
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "=======================================================\r\n"
-        );
-        crypto_uart_log_delay();
-        crypto_uart_log_delay();
-    }
+    log_printf(
+        "[SECURE] Payload encrypted (confidentiality, integrity, authenticity): "
+        "ECDH-derived key + AES-GCM AEAD\r\n"
+    );
 
     return GCM_SENDER_SUCCESS;
 }
+
 
 
 /* Receiver: streaming-style GCM decrypt + verify (expects separated ciphertext_sender & tag_sender)
@@ -2792,112 +2177,55 @@ gcm_aead_dec_status_t decrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
 
 
 /* Processes authenticated AES-GCM encryption or decryption. */
-gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
-    crypto_ctx_t *ctx)
+gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(crypto_ctx_t *ctx)
 {
     gcm_dec_status_t gcm_rc;
+    gcm_aead_dec_status_t aead_rc;
 
-    if (ctx == NULL) {
-        return GCM_RECEIVER_ERR_BAD_PARAM;
-    }
-
-    /*
-     * Before this function is called, the received UART frame
-     * must already have populated:
-     *
-     * ctx->auth.ciphertext_sender
-     * ctx->auth.ciphertext_len
-     * ctx->auth.tag_sender
-     * ctx->auth.mac_len
-     * ctx->IV_GCM
-     *
-     * Later, it must also provide identical AAD to the sender.
-     */
-
-    /*
-     * 1) Validate received lengths before invoking AES-GCM.
-     */
-    if ((ctx->auth.ciphertext_len == 0U) ||
-        (ctx->auth.ciphertext_len >
-         sizeof(ctx->auth.ciphertext_sender)) ||
-        (ctx->auth.ciphertext_len >
-         sizeof(ctx->buffers.decrypted_bytes)) ||
-        (ctx->auth.mac_len != AES_GCM_TAG_SIZE)) {
-
-        log_printf(
-            "[ERROR] decrypt_verify_recombine_gcm_receiver: "
-            "invalid ciphertext/tag length\r\n"
-        );
-
-        secure_zero(ctx->buffers.decrypted_bytes,
-                    sizeof(ctx->buffers.decrypted_bytes));
-
-        return GCM_RECEIVER_ERR_EMPTY_PLAINTEXT;
-    }
-
-    /*
-     * 2) Perform streaming AES-GCM authentication and decryption once.
-     *
-     * decrypt_verify_aes_gcm_receiver() must verify the GCM tag
-     * before the resulting plaintext is accepted.
-     */
+    /* 1) Streaming-style AES-GCM decrypt + tag verify */
     gcm_rc = decrypt_verify_aes_gcm_receiver(ctx);
     if (gcm_rc != GCM_DEC_SUCCESS) {
         log_printf(
-            "[ERROR] decrypt_verify_recombine_gcm_receiver: "
-            "GCM authentication/decryption failed (rc=%d)\r\n",
+            "[ERROR] decrypt_verify_recombine_gcm_receiver: streaming GCM decrypt failed (rc=%d)\r\n",
             gcm_rc
         );
-
         secure_zero(ctx->buffers.decrypted_bytes,
                     sizeof(ctx->buffers.decrypted_bytes));
-
-        ctx->tmp.computed_size = 0U;
-
         return GCM_RECEIVER_ERR_GCM_STREAM;
     }
 
-    /*
-     * 3) Successful decryption must produce plaintext.
-     */
-    if (ctx->tmp.computed_size == 0U) {
+    /* 2) Single-call AEAD AES-GCM decrypt + tag verify */
+    aead_rc = decrypt_aead_gcm_singlecall(ctx);
+    if (aead_rc != GCM_AEAD_DEC_SUCCESS) {
         log_printf(
-            "[ERROR] decrypt_verify_recombine_gcm_receiver: "
-            "decrypted size is zero\r\n"
+            "[ERROR] decrypt_verify_recombine_gcm_receiver: single-call GCM decrypt failed (rc=%d)\r\n",
+            aead_rc
         );
-
         secure_zero(ctx->buffers.decrypted_bytes,
                     sizeof(ctx->buffers.decrypted_bytes));
+        return GCM_RECEIVER_ERR_GCM_SINGLECALL;
+    }
 
+    /* 3) Sanity: decrypted size must be non-zero */
+    if (ctx->tmp.computed_size == 0U) {
+        log_printf(
+            "[ERROR] decrypt_verify_recombine_gcm_receiver: decrypted size is zero\r\n"
+        );
+        secure_zero(ctx->buffers.decrypted_bytes,
+                    sizeof(ctx->buffers.decrypted_bytes));
         return GCM_RECEIVER_ERR_EMPTY_PLAINTEXT;
     }
 
-    /*
-     * 4) Convert decrypted byte representation back into
-     * the ADC-value representation.
-     */
+    /* 4) Recombine ADC values */
     recombine_adc_values(ctx);
 
-    /*
-     * 5) Local self-test only.
-     *
-     * This comparison is valid while sender and receiver are running
-     * inside the same STM32 test program because the original ADC
-     * values are still available.
-     *
-     * Remove this comparison on the real ESP32 receiver because the
-     * ESP32 will not possess the STM32's original adc_values array.
-     */
-    for (size_t i = 0U;
-         i < ctx->cfg.adc_sample_count;
-         ++i) {
-
+    /* 5) Verify recombined ADC values */
+    for (size_t i = 0; i < ctx->cfg.adc_sample_count; ++i) {
         if (ctx->buffers.decrypted_adc_values[i] !=
             ctx->buffers.adc_values[i]) {
 
             log_printf(
-                "[ERROR] decrypt_verify_recombine_gcm_receiver: "
-                "ADC mismatch idx=%u "
+                "[ERROR] decrypt_verify_recombine_gcm_receiver: ADC mismatch idx=%u "
                 "(got=0x%08X exp=0x%08X)\r\n",
                 (unsigned)i,
                 (unsigned)ctx->buffers.decrypted_adc_values[i],
@@ -2906,137 +2234,17 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
 
             secure_zero(ctx->buffers.decrypted_bytes,
                         sizeof(ctx->buffers.decrypted_bytes));
-
-            secure_zero(ctx->buffers.decrypted_adc_values,
-                        ctx->cfg.adc_sample_count *
-                        sizeof(ctx->buffers.decrypted_adc_values[0]));
-
             return GCM_RECEIVER_ERR_ADC_MISMATCH;
         }
     }
 
-    {
-        uint8_t received_ciphertext_and_tag[
-            sizeof(ctx->buffers.cipher_text_gcm_aead_receiver)
-        ];
-
-        const size_t combined_len =
-            ctx->auth.ciphertext_len +
-            ctx->auth.mac_len;
-
-        const uint32_t counter_hi =
-            (uint32_t)(
-                ctx->gcm_nonce.current_counter >> 32);
-
-        const uint32_t counter_lo =
-            (uint32_t)(
-                ctx->gcm_nonce.current_counter &
-                UINT64_C(0xFFFFFFFF));
-
-        secure_zero(
-            received_ciphertext_and_tag,
-            sizeof(received_ciphertext_and_tag)
-        );
-
-        memcpy(
-            received_ciphertext_and_tag,
-            ctx->auth.ciphertext_sender,
-            ctx->auth.ciphertext_len
-        );
-
-        memcpy(
-            received_ciphertext_and_tag +
-                ctx->auth.ciphertext_len,
-            ctx->auth.tag_sender,
-            ctx->auth.mac_len
-        );
-
-        log_printf(
-            "\r\n"
-            "========== STM32 AES-256-GCM DECRYPT PACKET ==========\r\n"
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "[RX][META] session=%08lX "
-            "counter=%08lX%08lX\r\n",
-            (unsigned long)ctx->gcm_nonce.session_id,
-            (unsigned long)counter_hi,
-            (unsigned long)counter_lo
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "[RX][LENGTHS] ciphertext=%u "
-            "tag=%u combined=%u recovered_plaintext=%u\r\n",
-            (unsigned)ctx->auth.ciphertext_len,
-            (unsigned)ctx->auth.mac_len,
-            (unsigned)combined_len,
-            (unsigned)ctx->tmp.computed_size
-        );
-        crypto_uart_log_delay();
-
-        log_hex_buffer(
-            "[RX][RECEIVED NONCE IV_GCM]",
-            ctx->IV_GCM,
-            sizeof(ctx->IV_GCM)
-        );
-
-        log_hex_buffer(
-            "[RX][RECEIVED CIPHERTEXT]",
-            ctx->auth.ciphertext_sender,
-            ctx->auth.ciphertext_len
-        );
-
-        log_hex_buffer(
-            "[RX][RECEIVED AUTHENTICATION TAG]",
-            ctx->auth.tag_sender,
-            ctx->auth.mac_len
-        );
-
-        log_hex_buffer(
-            "[RX][RECEIVED CIPHERTEXT || TAG]",
-            received_ciphertext_and_tag,
-            combined_len
-        );
-
-        log_hex_buffer(
-            "[RX][RECOVERED PLAINTEXT PAYLOAD]",
-            ctx->buffers.decrypted_bytes,
-            ctx->tmp.computed_size
-        );
-
-        log_adc_values(
-            "[RX][RECOVERED ADC VALUES]",
-            ctx->buffers.decrypted_adc_values,
-            ctx->cfg.adc_sample_count
-        );
-
-        log_printf(
-            "[RX][DECRYPTED SUCCESSFULLY] "
-            "GCM tag verified, payload authenticated, "
-            "plaintext recovered and ADC values matched.\r\n"
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "=======================================================\r\n"
-        );
-
-        secure_zero(
-            received_ciphertext_and_tag,
-            sizeof(received_ciphertext_and_tag)
-        );
-    }
+    log_printf(
+        "[SECURE] Payload decrypted (confidentiality, integrity, authenticity verified): "
+        "ECDH-derived key + AES-GCM AEAD\r\n"
+    );
 
     return GCM_RECEIVER_SUCCESS;
 }
-
-
-
-
-
-
 
 /* Reconstructs ADC sample words from decrypted bytes. */
 recombine_status_t recombine_adc_values(crypto_ctx_t *ctx)
@@ -3150,13 +2358,10 @@ void crypto_ctx_init(crypto_ctx_t *ctx)
     ctx->auth.mac_check_len   = 0U;
 
     /* ---------- temporary / computed ---------- */
-    for (size_t i = 0; i < ECDH_CANONICAL_SECRET_LEN; i++) {
+    for (size_t i = 0; i < CMOX_ECC_SECP256R1_SECRET_LEN; i++) {
         ctx->tmp.computed_secret[i]          = 0U;
         ctx->tmp.computed_secret_receiver[i] = 0U;
     }
-
-    ctx->tmp.computed_secret_len = 0U;
-    ctx->tmp.computed_secret_receiver_len = 0U;
 
     for (size_t i = 0; i < GCM_GCM_TAG_SIZE; i++) {
         ctx->tmp.local_tag[i] = 0U;
@@ -3180,218 +2385,6 @@ void crypto_ctx_init(crypto_ctx_t *ctx)
 }
 
 
-
-
-
-
-
-
-/* Processes authenticated AES-GCM encryption or decryption. */
-gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
-{
-    static const uint8_t domain_label[] =
-    {
-        'S', 'T', 'M', '3', '2',
-        '-', 'G', 'C', 'M',
-        '-', 'N', 'O', 'N', 'C', 'E',
-        '-', 'V', '1'
-    };
-
-    /*
-     * Accommodates two 65-byte uncompressed P-256 public keys,
-     * two encoded lengths and the domain label.
-     */
-    uint8_t material[
-        sizeof(domain_label) +
-        2U +
-        (AES_512_KEY_SIZE + 1U) +
-        (AES_512_KEY_SIZE + 1U)
-    ];
-
-    uint8_t digest[32];
-    size_t material_len = 0U;
-    size_t digest_len = sizeof(digest);
-    uint32_t session_id = 0U;
-    cmox_hash_retval_t hash_ret;
-
-    if (ctx == NULL) {
-        return GCM_NONCE_ERR_BAD_PARAM;
-    }
-
-    /*
-     * The function must be called only after both fresh ECDH
-     * public keys have been generated.
-     */
-    if ((ctx->keys.pub_len_sender == 0U) ||
-        (ctx->keys.pub_len_receiver == 0U) ||
-        (ctx->keys.pub_len_sender >
-            sizeof(ctx->keys.public_key_sender)) ||
-        (ctx->keys.pub_len_receiver >
-            sizeof(ctx->keys.public_key_receiver))) {
-
-        return GCM_NONCE_ERR_BAD_KEY_STATE;
-    }
-
-    secure_zero(material, sizeof(material));
-    secure_zero(digest, sizeof(digest));
-
-    /*
-     * Domain separation prevents this hash from being confused
-     * with another use of the same public keys.
-     */
-    memcpy(&material[material_len],
-           domain_label,
-           sizeof(domain_label));
-
-    material_len += sizeof(domain_label);
-
-    /*
-     * Include the public-key lengths so that the serialization
-     * is unambiguous.
-     */
-    material[material_len++] =
-        (uint8_t)ctx->keys.pub_len_sender;
-
-    memcpy(&material[material_len],
-           ctx->keys.public_key_sender,
-           ctx->keys.pub_len_sender);
-
-    material_len += ctx->keys.pub_len_sender;
-
-    material[material_len++] =
-        (uint8_t)ctx->keys.pub_len_receiver;
-
-    memcpy(&material[material_len],
-           ctx->keys.public_key_receiver,
-           ctx->keys.pub_len_receiver);
-
-    material_len += ctx->keys.pub_len_receiver;
-
-    hash_ret = cmox_hash_compute(
-        CMOX_SHA256_ALGO,
-        material,
-        material_len,
-        digest,
-        sizeof(digest),
-        &digest_len
-    );
-
-    secure_zero(material, sizeof(material));
-
-    if ((hash_ret != CMOX_HASH_SUCCESS) ||
-        (digest_len != sizeof(digest))) {
-
-        secure_zero(digest, sizeof(digest));
-        return GCM_NONCE_ERR_HASH;
-    }
-
-    /*
-     * Select the first nonzero 32-bit word from the digest.
-     * Zero is not cryptographically forbidden, but rejecting it
-     * works with your existing all-zero IV defensive check.
-     */
-    for (size_t offset = 0U;
-         offset < sizeof(digest);
-         offset += 4U) {
-
-        session_id = load_be32(&digest[offset]);
-
-        if (session_id != 0U) {
-            break;
-        }
-    }
-
-    secure_zero(digest, sizeof(digest));
-
-    if (session_id == 0U) {
-        return GCM_NONCE_ERR_HASH;
-    }
-
-    secure_zero(&ctx->gcm_nonce,
-                sizeof(ctx->gcm_nonce));
-
-    ctx->gcm_nonce.session_id = session_id;
-    ctx->gcm_nonce.next_counter = GCM_COUNTER_START;
-    ctx->gcm_nonce.current_counter = 0ULL;
-    ctx->gcm_nonce.initialized = true;
-
-    secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
-
-    log_printf(
-        "[NONCE] New GCM session initialized: "
-        "session_id=%08lX first_counter=%08lX%08lX\r\n",
-        (unsigned long)ctx->gcm_nonce.session_id,
-        (unsigned long)(
-            ctx->gcm_nonce.next_counter >> 32),
-        (unsigned long)(
-            ctx->gcm_nonce.next_counter &
-            UINT64_C(0xFFFFFFFF))
-    );
-
-    return GCM_NONCE_OK;
-}
-
-
-
-
-
-
-/* Processes authenticated AES-GCM encryption or decryption. */
-gcm_nonce_status_t gcm_nonce_allocate(
-    crypto_ctx_t *ctx)
-{
-    uint64_t counter;
-
-    if (ctx == NULL) {
-        return GCM_NONCE_ERR_BAD_PARAM;
-    }
-
-    if (!ctx->gcm_nonce.initialized) {
-        return GCM_NONCE_ERR_NO_SESSION;
-    }
-
-    /*
-     * Do not permit wraparound. A new ECDH session and new AES key
-     * must be created before counter exhaustion.
-     */
-    if (ctx->gcm_nonce.next_counter == UINT64_MAX) {
-        return GCM_NONCE_ERR_EXHAUSTED;
-    }
-
-    /*
-     * Consume the counter before encryption.
-     *
-     * If encryption fails, this counter remains consumed and is
-     * never reused under the same AES-GCM key.
-     */
-    counter = ctx->gcm_nonce.next_counter;
-    ctx->gcm_nonce.next_counter++;
-    ctx->gcm_nonce.current_counter = counter;
-
-    /*
-     * Construct the exact 96-bit GCM nonce:
-     *
-     * bytes 0..3  = session ID
-     * bytes 4..11 = monotonically increasing message counter
-     */
-    store_be32(&ctx->IV_GCM[0],
-               ctx->gcm_nonce.session_id);
-
-    store_be64(&ctx->IV_GCM[4],
-               counter);
-
-    log_printf(
-        "[NONCE] GCM nonce allocated: "
-        "session=%08lX counter=%08lX%08lX\r\n",
-        (unsigned long)ctx->gcm_nonce.session_id,
-        (unsigned long)(counter >> 32),
-        (unsigned long)(
-            counter &
-            UINT64_C(0xFFFFFFFF))
-    );
-
-    return GCM_NONCE_OK;
-}
 
 
 

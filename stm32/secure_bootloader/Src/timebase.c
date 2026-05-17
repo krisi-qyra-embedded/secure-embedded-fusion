@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 #include "timebase.h"
 #include "stm32f4xx.h"
 
@@ -33,6 +33,21 @@ void delay(uint32_t delay)
     while((get_tick() - tickstart) < wait){}
 
 }
+
+/* Approximate busy-wait delay using a for-loop */
+void delay_ms(uint32_t ms)
+{
+    /* Adjust this factor experimentally for your clock speed and optimization level */
+    const uint32_t count_per_ms = 12000; // Example for ~100 MHz core
+    volatile uint32_t i, j;
+
+    for (i = 0; i < ms; i++) {
+        for (j = 0; j < count_per_ms; j++) {
+            __asm__("nop");  // prevent compiler from optimizing the loop away
+        }
+    }
+}
+
 
 /* Handles the get tick operation. */
 uint32_t get_tick(void)

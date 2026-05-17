@@ -1,4 +1,4 @@
-/* Author: i fiksuari pas prog | Documentation date: 14 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
 #include <stdio.h>
 #include <stdint.h>
 #include "stm32f4xx.h"
@@ -9,13 +9,17 @@
 #include "ecdh.h"
 #include "DMA.h"
 #include <entropy_personalization_nonce_gen.h>
-#include "tim.h"
+#include "digital_signature.h"
+
+//extern crypto_ctx_t g_crypto_ctx; /* declaration provided by ecdh.h, harmless if duplicated */
 
 cmox_cipher_retval_t retval;
 int32_t ret = 0, rc;
 crypto_ctx_t g_crypto_ctx;
-
-
+cmox_ecc_handle_t g_crypto_ctx_;
+sign_manifest_status_t sret;
+/* bring the global signed manifest */
+size_t signature_len = sizeof(g_signed_manifest.signature);
 
 /* Initializes the platform and runs this cryptographic test sequence. */
 int main(void)
@@ -24,197 +28,104 @@ int main(void)
     uart2_tx_rx_init();
     adc_byte_buffers_init();
 
-    /*
-     * C-MOX must be initialized before any cmox_hash_compute(),
-     * DRBG, ECC or AES-GCM operation.
-     */
-    if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS)
-    {
-        handle_error("cmox_initialize failed!");
-    }
-
     rc = entropy_personalisation_HW_init();
-
-    if (rc != ENTROPY_HW_INIT_SUCCESS)
-    {
-        log_printf(
-            "main: entropy_personalisation_HW_init failed "
-            "(rc=%d)\r\n",
-            rc);
-
-        handle_error("Entropy HW init failed!");
-    }
-
-    rc = entropy_personalisation_hash();
-
-    if (rc != ENTROPY_CREATION_SUCCESS)
-    {
-        log_printf(
-            "main: entropy_personalisation_hash failed "
-            "(rc=%d)\r\n",
-            rc);
-
-        handle_error("Entropy personalisation hash failed!");
-    }
-
-    /*
-     * Initialize the old nonce subsystem once.
-     * This nonce is used only as DRBG/ECDH startup input.
-     */
-    nonce_status_t nonce_rc = nonce_simple_init();
-
-    if (nonce_rc != NONCE_OK)
-    {
-        log_printf(
-            "nonce_simple_init failed (rc=%d)\r\n",
-            (int)nonce_rc);
-
-        handle_error("Initialization of startup nonce failed!");
-    }
-
-    /*
-     * Populate nonce_hashed once for the ECDH key-generation DRBG.
-     */
-    rc = nonce_generation();
-
-    if (rc != NONCE_GEN_SUCCESS)
-    {
-        log_printf(
-            "nonce_generation failed (rc=%d)\r\n",
-            rc);
-
-        handle_error("Startup DRBG nonce generation failed!");
-    }
-
-    crypto_ctx_init(&g_crypto_ctx);
-
-    for (size_t i = 0U;
-         i < g_crypto_ctx.cfg.adc_sample_count;
-         ++i)
-    {
-        g_crypto_ctx.buffers.adc_values[i] = 1U;
-    }
-
-    ret = decompose_adc_values(&g_crypto_ctx);
-
-    if (ret != DECOMP_ADC_OK)
-    {
-        handle_error("decompose_adc_values failed");
-    }
-
-    /*
-     * Generate fresh sender keypair, calculate sender shared secret,
-     * and derive the sender AES key.
-     */
-    ret = sender_init_ecdh_crypto(&g_crypto_ctx);
-
-    if (ret != SENDER_INIT_SUCCESS)
-    {
-        handle_error("sender_init_ecdh_crypto failed");
-    }
-
-    /*
-     * Generate fresh receiver keypair, calculate receiver shared secret,
-     * and derive the receiver AES key.
-     */
-    ret = receiver_init_ecdh_crypto(&g_crypto_ctx);
-
-    if (ret != RECEIVER_INIT_SUCCESS)
-    {
-        handle_error("receiver_init_ecdh_crypto failed");
-    }
-
-    /*
-     * Both fresh ECDH public keys now exist.
-     *
-     * Initialize:
-     * IV_GCM = 32-bit session ID || 64-bit packet counter
-     */
-    ret = gcm_nonce_session_init(&g_crypto_ctx);
-
-    if (ret != GCM_NONCE_OK)
-    {
-        log_printf(
-            "gcm_nonce_session_init failed (rc=%d)\r\n",
-            ret);
-
-        handle_error("GCM nonce session initialization failed");
-    }
-
-    log_printf(
-        "\r\n"
-        "[CRYPTO] Runtime AES-GCM test started. "
-        "One packet will be processed approximately every 2 seconds.\r\n");
-
-    for (;;)
-    {
-        /*
-         * Allocate the next session+counter nonce and perform
-         * one streaming AES-GCM encryption.
-         *
-         * The encryption function prints:
-         * - original plaintext payload
-         * - original ADC values
-         * - nonce
-         * - ciphertext
-         * - authentication tag
-         * - ciphertext || tag
-         * - explicit encryption-success message
-         */
-        ret =
-            generate_nonce_iv_encrypt_gcm_sender(
-                &g_crypto_ctx);
-
-        if (ret != GCM_SENDER_SUCCESS)
-        {
-            log_printf(
-                "generate_nonce_iv_encrypt_gcm_sender failed "
-                "(rc=%d)\r\n",
-                ret);
-
-            handle_error("AES-GCM sender processing failed");
+        if (rc == ENTROPY_HW_INIT_SUCCESS) {
+            log_printf("main: entropy_personalisation_HW_init succeeded.\r\n");
+        } else {
+            log_printf("main: entropy_personalisation_HW_init failed (rc=%d)\r\n", rc);
+            handle_error("Entropy HW init failed!");
+            while (1) {
+                __NOP();
+            }
         }
 
-        /*
-         * Local receiver self-test:
-         * verify the authentication tag, decrypt the payload,
-         * reconstruct ADC values and print the recovered data.
-         */
-        ret =
-            decrypt_verify_recombine_gcm_receiver(
-                &g_crypto_ctx);
-
-        if (ret != GCM_RECEIVER_SUCCESS)
-        {
-            log_printf(
-                "decrypt_verify_recombine_gcm_receiver failed "
-                "(rc=%d)\r\n",
-                ret);
-
-            handle_error("AES-GCM receiver processing failed");
+        /* Run entropy hashing/personalisation pipeline */
+        rc = entropy_personalisation_hash();
+        if (rc == ENTROPY_CREATION_SUCCESS) {
+            log_printf("main: entropy_personalisation_hash succeeded.\r\n");
+        } else {
+            log_printf("main: entropy_personalisation_hash failed (rc=%d)\r\n", rc);
+            handle_error("Entropy personalisation hash failed!");
+            while (1) {
+                __NOP();
+            }
         }
 
-        /*
-         * Clear recovered plaintext and reconstructed ADC values
-         * before processing the next logical packet.
-         */
-        ret =
-            secure_clear_decrypted_adc_values(
-                &g_crypto_ctx);
-
-        if (ret != SECURE_CLEAR_SUCCESS)
-        {
-            log_printf(
-                "secure_clear_decrypted_adc_values failed "
-                "(rc=%d)\r\n",
-                ret);
-
-            handle_error("Failed to clear decrypted ADC values");
+        /* Simple usage where failure is fatal for crypto operations */
+        nonce_status_t s = nonce_simple_init();
+        if (s != NONCE_OK) {
+            log_printf("nonce_simple_init failed: %d\n", (int)s);
+            /* Actions: halt, fallback to alternative entropy, or enter safe mode */
+            handle_error("Initialization of Nonce failed!");
         }
 
-        log_printf(
-            "[CRYPTO] Packet cycle completed. "
-            "Waiting approximately 2 seconds...\r\n");
+        rc = nonce_generation();
+        if (rc == NONCE_GEN_SUCCESS) {
+           log_printf("some_init_routine_with_nonce: NONCE_GENERATION_INIT succeeded.\n");
+           } else {
+           log_printf("some_init_routine_with_nonce: NONCE_GENERATION_INIT failed (rc=%d)\n", rc);
+           /* handle error or propagate */
+          }
+
+    	 /* Small delay for the initialisation*/
+    	 for (volatile int i = 0; i < 2000000; i++) __NOP();
+    	 crypto_ctx_init(&g_crypto_ctx);
+    	 /* Fill ADC samples into the context buffer */
+    	 for (size_t i = 0; i < g_crypto_ctx.cfg.adc_sample_count; ++i) {
+    	    g_crypto_ctx.buffers.adc_values[i] = 1U;
+    	  }
+    	 /* Initialize cryptolib */
+    	     if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS) {
+    	         handle_error("cmox_initialize failed!");
+    	     }
+
+    /* 2) Serialize */
+    //SENDER
+    ///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
+    /* -------- Generate DRBG-based private keys -------- */
+#if 0
+    /* optional: DRBG-based private key generation */
+    ret = generate_private_key(&g_crypto_ctx);
+    if (ret != GEN_PRIV_SUCCESS) {
+        handle_error("generate_private_key failed");
+    }
+#endif
+        /* -------- Generate  keypairs (priv + pub) -------- */
+    	/* platform init... clocks, RNG, crypto libs, peripherals, etc. */
+    ret = generate_private_key_digital_signature(&g_sig_keys);
+        if (ret != GEN_KEYS_SUCCESS) {
+            handle_error("generate_private_key_digital_signature failed");
+        }
+
+        /* Call exactly like your other crypto function */
+        sret = sign_manifest_and_write_sig(&g_sig_keys,
+        								   g_sig_keys.sig.private_key,
+										   g_sig_keys.sig.priv_len,
+                                           &g_signed_manifest.manifest,
+                                           g_signed_manifest.signature,
+                                           &signature_len);
+        if (sret != SIGN_MANIFEST_SUCCESS) {
+                handle_error("sign_manifest_and_write_sig failed");
+            }
+
+        /* -------- NOW store to protected flash (AFTER data is ready) -------- */
+            manifest_store_status_t store_ret = store_signed_manifest_protected(&g_signed_manifest);
+            if (store_ret != MANIFEST_STORE_SUCCESS) {
+                log_printf("[FATAL] Failed to store manifest (rc=%d)\r\n", store_ret);
+                handle_error("Manifest storage failed");
+            }
+            log_printf("[SUCCESS] Secure boot manifest provisioned\r\n");
+
+            /* load signed manifest (boot path) */
+            manifest_store_status_t load_ret = load_signed_manifest(&g_signed_manifest);
+            if (load_ret != MANIFEST_STORE_SUCCESS) {
+                log_printf("[FATAL] Failed to load manifest (rc=%d)\r\n", load_ret);
+                handle_error("Manifest load failed");
+            }
+            log_printf("[SUCCESS] Signed manifest loaded from flash\r\n");
+
+    for(;;) {
 
 
     }
