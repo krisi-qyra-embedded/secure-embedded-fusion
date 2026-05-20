@@ -1,49 +1,42 @@
-/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
+/* Author: i fiksuari pas prog | Documentation date: 20 May 2026 */
+/**
+ * @file nonce.h
+ * @brief Nonce generation, entropy mixing and secure-clear declarations.
+ */
 #ifndef __NONCE_H__
 #define __NONCE_H__
-
 #include "stm32f4xx.h"
 #include "pwm_dma.h"
 #include "DMA.h"
 #include <entropy_personalization_nonce_gen.h>
-#include "uart.h"  /* log_printf() */
+#include "uart.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-
-/* Nonce size (8 bytes: 4 counter + 4 timer) */
+/* Nonce, static entropy and counter-string buffer sizes. */
 #define NONCE_SIZE_BYTES  16
 #define STATIC_ENTROPY_SIZE  32
 #define COUNTER_STRING_SIZE  21
-/* ========== Function Prototypes ========== */
-/* Message counter (increments with each data transmission) */
+/* Runtime nonce state. */
 extern volatile uint32_t message_counter;
-/* Generate nonce */
 //extern const uint8_t *nonce;
 extern uint8_t nonce_buffer[NONCE_SIZE_BYTES];
-
 extern  uint8_t static_entropy[8];
 extern uint8_t static_entropy_initialized;
-
-/* Status return codes for nonce subsystem */
+/** @brief Nonce subsystem status. */
 typedef enum {
-    NONCE_OK                    =  0, /* success */
-    NONCE_ERR_ALREADY_INIT      = -1, /* already initialised (use reseed if needed) */
-    NONCE_ERR_INVALID_CONSTANTS = -2, /* compile-time sizes are invalid */
-    NONCE_ERR_ENTROPY_INIT_FAIL = -3, /* failed to seed static entropy */
-    NONCE_ERR_BAD_INPUT         = -4  /* general / unexpected error */
+   NONCE_OK                    =  0,
+   NONCE_ERR_ALREADY_INIT      = -1,
+   NONCE_ERR_INVALID_CONSTANTS = -2,
+   NONCE_ERR_ENTROPY_INIT_FAIL = -3,
+   NONCE_ERR_BAD_INPUT         = -4
 } nonce_status_t;
-
-/* Optional platform hook: if defined by platform, used to seed static_entropy.
- * Prototype expected to return 0 on success, non-zero on failure.
- * Provide your own implementation in platform code and define PLATFORM_HAS_HW_RNG.
- */
+/* Optional weak platform entropy hook. */
 #ifdef __GNUC__
 #define WEAK_ATTR __attribute__((weak))
 #else
 #define WEAK_ATTR
 #endif
-
 #ifndef NONCE_SIZE_BYTES
 #error "NONCE_SIZE_BYTES must be defined"
 #endif
@@ -53,73 +46,78 @@ typedef enum {
 #ifndef COUNTER_STRING_SIZE
 #error "COUNTER_STRING_SIZE must be defined"
 #endif
-
-
-
-int platform_get_random_bytes(uint8_t *buf, size_t len) WEAK_ATTR;
-
 /**
- * Initialize nonce system
- * Call once at startup
+ * @brief Fill a buffer from an optional platform entropy source.
+ * @param buf Destination buffer.
+ * @param len Requested byte count.
+ * @return Platform result.
+ */
+int platform_get_random_bytes(uint8_t *buf, size_t len) WEAK_ATTR;
+/**
+ * @brief Initialize the nonce subsystem.
+ * @return Nonce status.
  */
 nonce_status_t nonce_simple_init(void);
-
 /**
- * Increment message counter
- * Call EVERY TIME data is sent
+ * @brief Increment the per-message nonce counter.
  */
 void nonce_increment_message_counter(void);
 /**
- * Get current message counter value
- * Returns: Message count (e.g., 1, 2, 3...)
+ * @brief Get the current message counter.
+ * @return Current counter value.
  */
 uint32_t nonce_get_message_counter(void);
 /**
- * Get counter as string format
- * Returns: String like \"message1_sent\", \"message2_sent\"
+ * @brief Get the current counter string.
+ * @return Pointer to the counter string.
  */
 const char* nonce_get_counter_string(void);
 /**
- * Generate 8-byte nonce
- *
- * [0-3]: Counter (from \"messageN_sent\" string)
- * [4-7]: TIM1 timer snapshot (continuous counter)
- *
- * Returns: Pointer to 8-byte nonce
+ * @brief Generate the next nonce into the shared buffer.
+ * @return Pointer to the generated nonce.
  */
- uint8_t* nonce_simple_generate(void);
+uint8_t* nonce_simple_generate(void);
 /**
- * Generate nonce and copy to buffer
- *
- * out_buffer: Must be at least 8 bytes
- * Returns: Bytes written (8)
+ * @brief Generate a nonce and copy it to a caller buffer.
+ * @param out_buffer Destination buffer.
+ * @return Number of bytes written.
  */
 uint32_t nonce_simple_generate_to_buffer(uint8_t *out_buffer);
 /**
- * Get last generated nonce
- * Returns: Pointer to 8-byte buffer
+ * @brief Get the most recently generated nonce.
+ * @return Pointer to the shared nonce buffer.
  */
 const uint8_t* nonce_simple_get_last(void);
 /**
- * Print nonce in hex
+ * @brief Print one nonce in hexadecimal.
+ * @param nonce Nonce buffer.
  */
 void nonce_simple_print(const uint8_t *nonce);
 /**
- * Print nonce with detailed breakdown
+ * @brief Print the current nonce breakdown.
  */
 void nonce_simple_print_detailed(void);
 /**
- * Verify nonce is unique (different from previous)
- * Returns: 1 if unique, 0 if collision
+ * @brief Compare the current nonce against the previous value.
+ * @return Non-zero when unique.
  */
 uint8_t nonce_simple_verify_unique(void);
-
+/**
+ * @brief Mix the ADC and jitter hashes into static nonce entropy.
+ * @param adc_pc4_hash PC4 ADC hash.
+ * @param adc_pc5_hash PC5 ADC hash.
+ * @param adc_pb0_hash PB0 ADC hash.
+ * @param jitter_hash Timer-jitter hash.
+ * @return Entropy-mixing result.
+ */
 int nonce_compute_static_entropy(const uint8_t *adc_pc4_hash,
-                                  const uint8_t *adc_pc5_hash,
-                                  const uint8_t *adc_pb0_hash,
-                                  const uint8_t *jitter_hash);
-
+                                 const uint8_t *adc_pc5_hash,
+                                 const uint8_t *adc_pb0_hash,
+                                 const uint8_t *jitter_hash);
+/**
+ * @brief Clear a sensitive buffer without allowing optimization away.
+ * @param ptr Buffer to clear.
+ * @param len Buffer size.
+ */
 void secure_zero(void *ptr, size_t len);
-
-
 #endif

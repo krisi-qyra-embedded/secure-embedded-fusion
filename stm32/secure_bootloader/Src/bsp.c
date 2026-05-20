@@ -1,8 +1,12 @@
-/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
+/**
+ * @file bsp.c
+ * @brief Nucleo LED and user-button GPIO helpers.
+ */
+/* Author: i fiksuari pas prog | Documentation date: 20 May 2026 */
 #include "bsp.h"
 #include "stm32f4xx.h"
 
-
+/* GPIO clocks and board pin assignments. */
 #define GPIOAEN		(1U<<0)
 #define GPIOCEN		(1U<<2)
 
@@ -11,53 +15,53 @@
 #define PIN13		(1U<<13)
 #define BTN_PIN		PIN13
 
-/* Configures the module for its next operation. */
+/**
+ * @brief Configure PA5 as the board LED output.
+ */
 void led_init(void)
 {
-	/*Enable clock access to GPIOA*/
+    /* Initialize the required state before enabling the peripheral. */
 	RCC->AHB1ENR |= GPIOAEN;
-
-	/*Set PA5 mode to output mode*/
 	GPIOA->MODER |=(1U<<10);
 	GPIOA->MODER &=~(1U<<11);
 }
 
-
-/* Handles the led on operation. */
+/**
+ * @brief Drive the board LED on.
+ */
 void led_on(void)
 {
-	/*Set PA5 high*/
+    /* Check the return status before continuing to the next step. */
 	GPIOA->ODR |=LED_PIN;
 }
 
-/* Handles the led off operation. */
+/**
+ * @brief Drive the board LED off.
+ */
 void led_off(void)
 {
-	/*Set PA5 low*/
+    /* Check the return status before continuing to the next step. */
 	GPIOA->ODR &=~LED_PIN;
-
 }
 
-/* Configures the module for its next operation. */
+/**
+ * @brief Configure PC13 as the user-button input.
+ */
 void button_init(void)
 {
-	/*Enable clock access to PORTC*/
+    /* Initialize the required state before enabling the peripheral. */
 	RCC->AHB1ENR |=GPIOCEN;
-
-	/*Set PC13 as an input pin*/
 	GPIOC->MODER &=~(1U<<26);
 	GPIOC->MODER &=~(1U<<27);
-
 }
 
-
-/* Handles the get btn state operation. */
+/**
+ * @brief Read the active-low user button.
+ * @return True when the button is pressed.
+ */
 bool get_btn_state(void)
 {
-
-	/*Note : BTN is active low*/
-
-	/*Check if button is pressed*/
+    /* Check the return status before continuing to the next step. */
 	if(GPIOC->IDR & BTN_PIN)
 	{
 		return false;
@@ -66,5 +70,4 @@ bool get_btn_state(void)
 	{
 		return true;
 	}
-
 }

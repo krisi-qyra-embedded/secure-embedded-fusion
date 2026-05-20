@@ -1,7 +1,12 @@
-/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
+/**
+ * @file adc.c
+ * @brief ADC1 setup and blocking conversion helpers for PA1.
+ */
+/* Author: i fiksuari pas prog | Documentation date: 20 May 2026 */
 #include "adc.h"
 #include "stm32f4xx.h"
 
+/* ADC1 clock, channel and control-bit definitions. */
 #define GPIOAEN		(1U<<0)
 #define ADC1EN		(1U<<8)
 #define ADC_CH1		(1U<<0)
@@ -11,50 +16,40 @@
 #define CR2_SWSTART	  (1U<<30)
 #define SR_EOC		  (1U<<1)
 
-/* Configures the module for its next operation. */
+/**
+ * @brief Configure PA1 as ADC1 channel 1.
+ */
 void pa1_adc_init(void)
 {
-	/****Configure the ADC GPIO Pin**/
-	/*Enable clock access to GPIOA*/
+	/* Enable GPIOA and switch PA1 to analog mode. */
 	RCC->AHB1ENR |= GPIOAEN;
-
-	/*Set PA1 mode to analog mode*/
 	GPIOA->MODER |=(1U<<2);
 	GPIOA->MODER |=(1U<<3);
 
-	/****Configure the ADC Module**/
-	/*Enable clock access to the ADC module*/
+	/* Configure ADC1 for a single-channel conversion sequence. */
 	RCC->APB2ENR |=ADC1EN;
-
-	/*Set conversion sequence start*/
 	ADC1->SQR3 = ADC_CH1;
-
-	/*Set conversion sequence length*/
 	ADC1->SQR1 = AD_SEQ_LEN_1;
-
-	/*Enable ADC module*/
 	ADC1->CR2 |=CR2_ADCON;
-
 }
 
-
-/* Handles the start conversion operation. */
+/**
+ * @brief Start continuous ADC1 conversions.
+ */
 void start_conversion(void)
 {
-	/*Enable continuous conversion*/
+    /* Check the return status before continuing to the next step. */
 	ADC1->CR2 |=CR2_CONT;
-
-	/*Start ADC conversion*/
 	ADC1->CR2 |=CR2_SWSTART;
 }
 
-
-/* Reads data from the peripheral or stored buffer. */
+/**
+ * @brief Wait for the current ADC1 conversion and return the sample.
+ * @return Raw ADC conversion value.
+ */
 uint32_t adc_read(void)
 {
-	/*Wait for conversion to be complete*/
+    /* Check the read status before using the returned data. */
 	while(!(ADC1->SR & SR_EOC)){}
-
-	/*Read converted value*/
 	return (ADC1->DR);
 }

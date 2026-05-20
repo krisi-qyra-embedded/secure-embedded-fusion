@@ -1,95 +1,48 @@
-/* Author: i fiksuari pas prog | Documentation date: 17 May 2026 */
+/* DMA synchronization helpers. */
+/**
+ * @file pwm_dma.c
+ * @brief TIM1 input-capture jitter collection through DMA2 Stream6.
+ */
+/* Author: i fiksuari pas prog | Documentation date: 20 May 2026 */
 #include "pwm_dma.h"
 #include <string.h>
-
-/*
- * ================================================================
- *  GLOBAL STATE
- * ================================================================
- *
- * These are intentionally simple, flat globals.
- * No dynamic allocation, no hidden ownership.
- */
-
+/* Capture state shared between the collection loop and DMA interrupt. */
 volatile uint32_t capture_buffer[JITTER_CAPTURE_SIZE];
 volatile uint32_t jitter_differences[JITTER_CAPTURE_SIZE];
 volatile uint8_t  g_jitter_capture_complete = 0;
 size_t idx_jitter = 0;
-
-
-/*
- * ================================================================
- *  INTERNAL SYNCHRONIZATION PRIMITIVES
- * ================================================================
- */
-
-/*
- * jitter_barrier()
- * ----------------
- * Enforces ordering of register writes.
- * Required when programming DMA / TIM registers on Cortex-M
- * to avoid out-of-order execution issues.
- */
+/* Order peripheral register writes before continuing. */
 static inline void jitter_barrier(void)
 {
     /* Check the return status before continuing to the next step. */
     __DSB();
     __ISB();
 }
-
-
-/*
- * ================================================================
- *  DMA CONTROL HELPERS
- * ================================================================
- *
- * These helpers centralize:
- *  - enable / disable sequencing
- *  - timeout protection
- *
- * This avoids duplicated fragile loops across the code.
- */
-
+/* Disable DMA2 Stream6 and wait for hardware acknowledgement. */
 static jitter_status_t jitter_wait_dma_disable(void)
 {
+    /* Keep the wait bounded to avoid a stalled execution path. */
     uint32_t timeout = JITTER_DMA_DISABLE_TIMEOUT;
-
-    /* Request disable */
     DMA2_Stream6->CR &= ~DMA_SxCR_EN;
-
-    /* Wait until hardware confirms */
     while ((DMA2_Stream6->CR & DMA_SxCR_EN) && timeout--)
     {
         __NOP();
     }
-
     return (timeout == 0U) ? JITTER_ERR_DMA_TIMEOUT : JITTER_OK;
 }
-
-/* Waits for the required operation or timing interval. */
+/* Enable DMA2 Stream6 and confirm that the stream started. */
 static jitter_status_t jitter_wait_dma_enable(void)
 {
+    /* Keep the wait bounded to avoid a stalled execution path. */
     uint32_t timeout = JITTER_DMA_ENABLE_TIMEOUT;
-
-    /* Request enable */
     DMA2_Stream6->CR |= DMA_SxCR_EN;
-
-    /* Wait until hardware confirms */
     while (!(DMA2_Stream6->CR & DMA_SxCR_EN) && timeout--)
     {
         __NOP();
     }
-
     return (timeout == 0U) ? JITTER_ERR_DMA_ENABLE : JITTER_OK;
 }
-
-/*
- * jitter_clear_dma_flags()
- * -----------------------
- * Clears all possible interrupt flags for Stream6.
- * Must be done before every new transfer to avoid
- * false-positive completions.
- */
+/* Clear all pending DMA2 Stream6 status flags. */
 static void jitter_clear_dma_flags(void)
 {
     /* Check the return status before continuing to the next step. */
@@ -99,38 +52,22 @@ static void jitter_clear_dma_flags(void)
                   DMA_HIFCR_CDMEIF6 |
                   DMA_HIFCR_CFEIF6;
 }
-
-
-/*
- * ================================================================
- *  INITIALIZATION
- * ================================================================
+/* TIM1/DMA jitter-capture hardware setup. */
+/**
+ * @brief Configure TIM1 channel 3 and DMA2 Stream6 for jitter capture.
+ * @return Jitter initialization status.
  */
-
 jitter_status_t jitter_init(void)
 {
-    /*
-     * We disable TIM1 first to ensure we configure in a clean state.
-     * This avoids capturing garbage during setup.
-     */
+    /* Configure TIM1 from a known stopped state. */
     TIM1->CR1 &= ~TIM_CR1_CEN;
-
-    /* Enable clocks */
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
     RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
     jitter_barrier();
-
-    /* Validate clocks actually enabled */
     if (!(RCC->AHB1ENR & RCC_AHB1ENR_GPIOAEN)) return JITTER_ERR_GPIO_CLK;
     if (!(RCC->APB2ENR & RCC_APB2ENR_TIM1EN))  return JITTER_ERR_TIM_CLK;
     if (!(RCC->AHB1ENR & RCC_AHB1ENR_DMA2EN))  return JITTER_ERR_DMA_CLK;
-
-    /*
-     * GPIO CONFIG
-     * -----------
-     * PA10 -> AF1 -> TIM1_CH3
-     */
     GPIOA->MODER   &= ~(3U << (10 * 2));
     GPIOA->MODER   |=  (2U << (10 * 2));
     GPIOA->AFR[1]  &= ~(0xFU << ((10 - 8) * 4));
@@ -138,49 +75,19 @@ jitter_status_t jitter_init(void)
     GPIOA->OSPEEDR |=  (3U << (10 * 2));
     GPIOA->PUPDR   &= ~(3U << (10 * 2));
     jitter_barrier();
-
-    /*
-     * TIM1 BASE CONFIG
-     * ---------------
-     * Free running 16-bit counter, no prescaler.
-     * We want raw clock jitter, not scaled.
-     */
     TIM1->PSC = 0U;
     TIM1->ARR = 0xFFFFU;
     TIM1->CNT = 0U;
     TIM1->EGR = TIM_EGR_UG;
-
-    /*
-     * CHANNEL 3 INPUT CAPTURE
-     * -----------------------
-     * CC3S = 01 -> map TI3 to IC3
-     */
     TIM1->CCMR2 &= ~((3U << 0) | (3U << 2) | (0xFU << 4));
     TIM1->CCMR2 |=  (1U << 0);
     TIM1->CCER  &= ~(TIM_CCER_CC3P | TIM_CCER_CC3NP);
     TIM1->CCER  |=  TIM_CCER_CC3E;
-
-    /*
-     * Enable DMA request on CC3 event.
-     * This is the core of the architecture:
-     *   CC3 event -> DMA request -> memory write
-     */
+    /* Each CC3 event generates the DMA request used for timestamp capture. */
     TIM1->DIER |= TIM_DIER_CC3DE;
     TIM1->DIER |= TIM_DIER_UIE;
-
-    /*
-     * DMA CONFIG
-     * ----------
-     * We use:
-     *  - Channel 6 (TIM1_CH3 mapping)
-     *  - Memory increment
-     *  - 32-bit transfers (matches CCR register)
-     *  - High priority
-     *  - TC interrupt enabled
-     */
     jitter_wait_dma_disable();
     jitter_clear_dma_flags();
-
     uint32_t cr = 0;
     cr |= (6U << DMA_SxCR_CHSEL_Pos);
     cr |= DMA_SxCR_MINC;
@@ -188,309 +95,203 @@ jitter_status_t jitter_init(void)
     cr |= (2U << DMA_SxCR_MSIZE_Pos);
     cr |= (2U << DMA_SxCR_PL_Pos);
     cr |= DMA_SxCR_TCIE;
-
     DMA2_Stream6->CR   = cr;
     DMA2_Stream6->PAR  = (uint32_t)&TIM1->CCR3;
+    /* Stream6 reads TIM1_CCR3 into the capture buffer. */
     DMA2_Stream6->M0AR = (uint32_t)capture_buffer;
     DMA2_Stream6->NDTR = 0U;
-
-    /*
-     * NVIC CONFIG
-     * -----------
-     * DMA IRQ priority higher than TIM update.
-     */
     NVIC_SetPriority(DMA2_Stream6_IRQn, 2);
     NVIC_ClearPendingIRQ(DMA2_Stream6_IRQn);
     NVIC_EnableIRQ(DMA2_Stream6_IRQn);
-
     NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 3);
     NVIC_ClearPendingIRQ(TIM1_UP_TIM10_IRQn);
     NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
-
-    /* Finally enable TIM1 */
     TIM1->CR1 |= TIM_CR1_CEN;
     TIM1->EGR  = TIM_EGR_UG;
-
     return JITTER_OK;
 }
-
-
-/*
- * ================================================================
- *  DMA ARMING
- * ================================================================
+/* Single-sample DMA arming and capture control. */
+/**
+ * @brief Arm DMA2 Stream6 for one TIM1 capture sample.
+ * @param index Destination sample index in the capture buffer.
+ * @return Jitter DMA setup status.
  */
-
 jitter_status_t jitter_prepare_dma_sample(uint32_t index)
 {
     if (index >= JITTER_CAPTURE_SIZE)
     {
         return JITTER_ERR_INVALID_PARAM;
     }
-
     jitter_status_t st;
-
-    /*
-     * We ALWAYS disable before reconfiguring.
-     * This avoids undefined behavior.
-     */
     st = jitter_wait_dma_disable();
     if (st != JITTER_OK) return st;
-
     jitter_clear_dma_flags();
-
-    /*
-     * Single transfer mode:
-     *  NDTR = 1
-     *  M0AR = &capture_buffer[index]
-     */
     DMA2_Stream6->M0AR = (uint32_t)&capture_buffer[index];
+    /* Arm exactly one capture transfer for this sample. */
     DMA2_Stream6->NDTR = 1U;
     jitter_barrier();
-
     st = jitter_wait_dma_enable();
     return st;
 }
-
-
-/*
- * ================================================================
- *  CAPTURE CONTROL
- * ================================================================
+/**
+ * @brief Trigger a TIM1 channel 3 capture event in software.
  */
-
 void jitter_trigger_capture_event(void)
 {
-    /*
-     * Software trigger of CC3 event.
-     * This feeds the DMA request line.
-     */
+    /* Check the return status before continuing to the next step. */
     TIM1->EGR |= TIM_EGR_CC3G;
     jitter_barrier();
 }
-
-
-/*
- * ================================================================
- *  HIGH LEVEL COLLECTION LOOP
- * ================================================================
+/* High-level jitter collection and post-processing. */
+/**
+ * @brief Collect the configured number of TIM1 capture samples through DMA.
+ * @return Jitter collection status.
  */
-
 jitter_status_t jitter_collect_samples(void)
 {
     uint32_t i;
     uint32_t timeout;
-
     idx_jitter = 0;
     memset((void*)jitter_differences, 0, sizeof(jitter_differences));
-
     for (i = 0; i < JITTER_CAPTURE_SIZE; i++)
     {
         g_jitter_capture_complete = 0;
-
         jitter_status_t st = jitter_prepare_dma_sample(i);
         if (st != JITTER_OK) return st;
-
-        /*
-         * Jitter source:
-         * --------------
-         * We intentionally insert variable delay to disturb
-         * execution timing and collect entropy.
-         */
+        /* Vary the software delay before each capture to perturb sampling time. */
         uint32_t seed = TIM1->CNT ^ (i * 0x45D9F3BU);
         seed ^= (seed << 13);
         seed ^= (seed >> 17);
         seed ^= (seed << 5);
-
         uint32_t delay = (seed & 0xFFU) + 1U;
         for (volatile uint32_t d = 0; d < delay * 50U; d++) { __NOP(); }
-
         jitter_trigger_capture_event();
-
-        /*
-         * Wait for DMA TC interrupt.
-         * This is the synchronization point.
-         */
         timeout = JITTER_SAMPLE_TIMEOUT;
+        /* Wait for the DMA transfer-complete interrupt with a bounded timeout. */
         while (!g_jitter_capture_complete && timeout--)
         {
             __NOP();
         }
-
         if (timeout == 0U)
         {
             jitter_wait_dma_disable();
             return JITTER_ERR_DMA_TRANSFER;
         }
-
-        /*
-         * Disable after each sample.
-         * This guarantees clean state for next iteration.
-         */
         jitter_wait_dma_disable();
     }
-
     return jitter_compute_differences();
 }
-
-
-/*
- * ================================================================
- *  POST PROCESSING
- * ================================================================
+/**
+ * @brief Convert successive TIM1 captures into wrap-safe timing differences.
+ * @return Jitter post-processing status.
  */
-
 jitter_status_t jitter_compute_differences(void)
 {
-    /* Check the return status before continuing to the next step. */
     if (JITTER_CAPTURE_SIZE < 2) return JITTER_ERR_NO_SAMPLES;
-
     for (uint32_t i = 0; i < (JITTER_CAPTURE_SIZE - 1); i++)
     {
         uint32_t t1 = capture_buffer[i]     & 0xFFFFU;
         uint32_t t2 = capture_buffer[i + 1] & 0xFFFFU;
-
         uint32_t diff;
+        /* Calculate the delta while accounting for the 16-bit timer wrap. */
         if (t2 >= t1) diff = t2 - t1;
         else diff = (0xFFFFU - t1) + t2 + 1U;
-
         jitter_differences[i] = diff;
     }
-
     jitter_differences[JITTER_CAPTURE_SIZE - 1] = 0;
     idx_jitter = JITTER_CAPTURE_SIZE - 1;
-
     return JITTER_OK;
 }
-
-
-/*
- * ================================================================
- *  RECOVERY / REARM
- * ================================================================
+/* DMA recovery and entropy diagnostics. */
+/**
+ * @brief Return DMA2 Stream6 to an idle capture-ready state.
+ * @return Jitter DMA status.
  */
-
 jitter_status_t jitter_rearm_dma(void)
 {
     /* Check the return status before continuing to the next step. */
     jitter_status_t st = jitter_wait_dma_disable();
     if (st != JITTER_OK) return st;
-
     jitter_clear_dma_flags();
     DMA2_Stream6->M0AR = (uint32_t)capture_buffer;
     DMA2_Stream6->NDTR = 0;
     jitter_barrier();
-
     return JITTER_OK;
 }
-
-
-/*
- * ================================================================
- *  ENTROPY HEURISTIC
- * ================================================================
+/**
+ * @brief Calculate a lightweight heuristic score from the captured timing differences.
+ * @return Heuristic jitter score from 0 to 100.
  */
-
 uint32_t jitter_assess_entropy(void)
 {
-    /* Check entropy acquisition before seeding the generator. */
     uint32_t zero = 0, one = 0, small = 0, large = 0;
-
     for (uint32_t i = 0; i < JITTER_CAPTURE_SIZE - 1; i++)
     {
         uint32_t d = jitter_differences[i];
         if (d == 0) continue;
-
         if (d & 1U) one++; else zero++;
         if (d < 10U) small++;
         if (d > 1000U) large++;
     }
-
     uint32_t samples = zero + one;
     if (samples == 0) return 0;
-
     int32_t diff = (int32_t)zero - (int32_t)one;
     if (diff < 0) diff = -diff;
-
+    /* Use bit balance as the base heuristic, then penalize extreme distributions. */
     uint32_t score = 100U - (100U * (uint32_t)diff) / samples;
-
     if (small > (samples / 2U)) score = (score > 20U) ? score - 20U : 0U;
     if (large > (samples / 10U)) score = (score > 10U) ? score - 10U : 0U;
-
     return score;
 }
-
-/* Handles the jitter get capture size operation. */
+/**
+ * @brief Return the configured jitter capture count.
+ * @return Number of capture samples.
+ */
 uint32_t jitter_get_capture_size(void)
 {
     /* Check the return status before continuing to the next step. */
     return JITTER_CAPTURE_SIZE;
 }
-
-
-/*
- * ================================================================
- *  HIGH LEVEL WRAPPER – JITTER_CAPTURE_INIT
- * ================================================================
- *
- * This function exists ONLY to provide a single-call API
- * for upper layers (entropy, security, etc.).
- *
- * It intentionally:
- *   - Initializes hardware
- *   - Collects jitter samples
- *   - Returns a single status code
- *
- * No logic, no policy, no retries hidden here.
- * Upper layer decides what to do on failure.
+/**
+ * @brief Initialize the jitter hardware and collect one complete sample set.
+ * @return Jitter capture status.
  */
-
 jitter_status_t JITTER_CAPTURE_INIT(void)
 {
+    /* Initialize the required state before enabling the peripheral. */
     jitter_status_t st;
-
-    /* Step 1: Initialize peripherals */
     st = jitter_init();
     if (st != JITTER_OK)
     {
         return st;
     }
-
-    /* Step 2: Collect jitter samples */
     st = jitter_collect_samples();
     if (st != JITTER_OK)
     {
         return st;
     }
-
     return JITTER_OK;
 }
-
-
-
-/*
- * ================================================================
- *  INTERRUPTS
- * ================================================================
+/* Interrupt handlers. */
+/**
+ * @brief Handle TIM1 capture DMA completion and DMA error flags.
  */
-
 void DMA2_Stream6_IRQHandler(void)
 {
     /* Clear the handled interrupt flags and update the transfer state. */
     uint32_t hisr = DMA2->HISR;
-
     if (hisr & DMA_HISR_TCIF6)
     {
         DMA2->HIFCR = DMA_HIFCR_CTCIF6;
         g_jitter_capture_complete = 1;
     }
-
     if (hisr & DMA_HISR_TEIF6) DMA2->HIFCR = DMA_HIFCR_CTEIF6;
     if (hisr & DMA_HISR_DMEIF6) DMA2->HIFCR = DMA_HIFCR_CDMEIF6;
     if (hisr & DMA_HISR_FEIF6)  DMA2->HIFCR = DMA_HIFCR_CFEIF6;
 }
-
-/* Handles the related interrupt and transfer status. */
+/**
+ * @brief Clear the TIM1 update interrupt flag.
+ */
 void TIM1_UP_TIM10_IRQHandler(void)
 {
     /* Clear the handled interrupt flags and update the transfer state. */
