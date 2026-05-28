@@ -1,4 +1,0 @@
-C:/Users/user/Documents/Advanced_BareMetal_Programming/MAX31865_SPI_DMA_PRO/chip_headers/CMSIS/Include/core_cm4.h:1939:34:__NVIC_SystemReset	4	static,ignoring_inline_asm
-../Src/main.c:29:5:main	24	static
-../Src/main.c:103:21:app_peripherals_init	16	static
-../Src/main.c:129:21:app_sensor_stack_init	16	static

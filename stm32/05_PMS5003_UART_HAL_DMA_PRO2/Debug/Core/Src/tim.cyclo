@@ -1,5 +1,0 @@
-../Core/Src/tim.c:5:14:MX_TIM2_Init	3
-../Core/Src/tim.c:42:14:tim2_start_oneshot_us	4
-../Core/Src/tim.c:68:14:tim2_stop_oneshot	2
-../Core/Src/tim.c:81:6:delay_ms	1
-../Core/Src/tim.c:86:6:TIM2_IRQHandler	1

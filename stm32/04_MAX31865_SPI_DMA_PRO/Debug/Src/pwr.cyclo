@@ -1,6 +1,0 @@
-../Src/pwr.c:11:6:PWR_ClearAllPendingIRQs	2
-../Src/pwr.c:21:6:PWR_ClearAllEXTIPending	1
-../Src/pwr.c:29:6:PWR_PrepareForSleep	1
-../Src/pwr.c:49:6:sleep_mode_configure_once	1
-../Src/pwr.c:60:6:PWR_EnterSleep_WFI	1
-../Src/pwr.c:74:6:PWR_EnterSleep_WFE	1

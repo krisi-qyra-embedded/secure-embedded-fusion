@@ -1,3 +1,0 @@
-../Core/Src/tim.c:5:14:MX_TIM3_Init	24	static
-../Core/Src/tim.c:45:6:delay_us	16	static
-../Core/Src/tim.c:60:6:delay_ms	16	static

@@ -1,8 +1,0 @@
-../Src/systick.c:16:28:systick_error_hook	1
-../Src/systick.c:24:6:SysTick_Handler	2
-../Src/systick.c:34:12:compute_reload	5
-../Src/systick.c:45:18:systick_init	4
-../Src/systick.c:96:6:systick_deinit	1
-../Src/systick.c:107:10:ms_get	1
-../Src/systick.c:117:6:systick_delay_ms	4
-../Src/systick.c:135:18:systick_selftest	4
