@@ -25,10 +25,33 @@ extern "C" {
 #define DMA1_STREAM1_TCIF (1U << 11)
 #define DMA1_STREAM4_TCIF (1U << 5)
 
+#define SYSTEM_FAULT_MASK_BME680    (1UL << 0)
+#define SYSTEM_FAULT_MASK_MPU9250   (1UL << 1)
+
 
 #define SYSTEM_FAULT_OWNER_NONE     0U
 #define SYSTEM_FAULT_OWNER_BME680   1U
 #define SYSTEM_FAULT_OWNER_MPU9250  2U
+
+#define SYSTEM_FAULT_MASK_BME680    (1UL << 0)
+#define SYSTEM_FAULT_MASK_MPU9250   (1UL << 1)
+
+#define SYSTEM_FAULT_MASK_CRITICAL  \
+    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250)
+
+
+extern volatile uint8_t  system_fault_logging_active;
+extern volatile uint8_t  system_fault_owner;
+extern volatile uint32_t system_fault_active_mask;
+extern volatile uint32_t system_fault_completed_mask;
+extern volatile uint32_t system_fault_in_progress_mask;
+
+void system_fault_mark_active(uint8_t owner);
+void system_fault_mark_completed(uint8_t owner);
+void system_fault_clear_active(uint8_t owner);
+void system_fault_mark_active_from_isr(uint8_t owner);
+void system_fault_mark_in_progress(uint8_t owner);
+uint32_t system_fault_mask_from_owner(uint8_t owner);
 
 extern SemaphoreHandle_t xSerialSemaphore;
 
@@ -131,6 +154,8 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
                                  uint8_t expect_set,
                                  uint8_t allow_restart);
 int i2c_dma_rtos_sync_init(void);
+
+void app_fault_delay_ms(uint32_t ms);
 
 #ifdef __cplusplus
 }

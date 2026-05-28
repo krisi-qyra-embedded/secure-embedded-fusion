@@ -112,7 +112,7 @@ int main(void)
         if (iwdg_status != IWDG_OK)
         {
             log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
-            tim2_delay_ms(2);
+            app_fault_delay_ms(2);
             NVIC_SystemReset();
         }
     }
@@ -222,24 +222,30 @@ int main(void)
 static void bme680_task(void *pvParameters)
 {
     /* Suspend the task after reporting an unrecoverable measurement failure. */
+    TickType_t last_wake;
+
     (void)pvParameters;
+
+    last_wake = xTaskGetTickCount();
 
     for (;;) {
         const app_bme680_runtime_status_t bme_rc =
             app_bme680_sensor_runtime_process();
 
         if (bme_rc != APP_BME680_RUNTIME_OK) {
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_BME680);
+
             BME680_LOG_PRINTF("[ERROR] bme680_task: app_bme680_sensor_runtime_process rc=%d\r\n",
                               (int)bme_rc);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
 
-            sensor_fault_log_completed(SYSTEM_FAULT_BIT_BME680,
-                                       "BME680 read sensor parameters unrecoverable");
+            request_iwdg_reset("BME680 read sensor parameters unrecoverable");
 
             vTaskSuspend(NULL);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
     }
 }
 
@@ -247,24 +253,30 @@ static void bme680_task(void *pvParameters)
 static void mpu9250_task(void *pvParameters)
 {
     /* Stop further measurements after reporting a fatal sensor error. */
+    TickType_t last_wake;
+
     (void)pvParameters;
+
+    last_wake = xTaskGetTickCount();
 
     for (;;) {
         const app_mpu9250_runtime_status_t mpu_rc =
             app_mpu9250_runtime_process();
 
         if (mpu_rc != APP_MPU9250_RUNTIME_OK) {
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_MPU9250);
+
             MPU9250_LOG_PRINTF("[ERROR] mpu9250_task: app_mpu9250_runtime_process rc=%d\r\n",
                                (int)mpu_rc);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
 
-            sensor_fault_log_completed(SYSTEM_FAULT_BIT_MPU9250,
-                                       "MPU9250 read sensor parameters unrecoverable");
+            request_iwdg_reset("MPU9250 read sensor parameters unrecoverable");
 
             vTaskSuspend(NULL);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
     }
 }
 
@@ -305,7 +317,7 @@ static void debug_log_bme680_task_state(void)
 
     if (bme680_task_handle == NULL) {
         MPU9250_LOG_PRINTF("[DBG][MPU9250] BME680 task handle is NULL\r\n");
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return;
     }
 
@@ -317,7 +329,7 @@ static void debug_log_bme680_task_state(void)
                        (unsigned long)age_bme680_main,
                        (unsigned long)age_bme680_i2c,
                        (unsigned long)bme_stack_left);
-    tim2_delay_ms(20U);
+    app_fault_delay_ms(20U);
 }
 
 /* Runs periodic heartbeat and watchdog supervision. */

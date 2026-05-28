@@ -94,7 +94,7 @@ static mpu9250_status_t mpu9250_wait_for_dma_completion(volatile i2c_dma_transfe
 
     if (p_flag == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] %s: NULL DMA completion flag pointer\r\n", context);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -107,7 +107,7 @@ static mpu9250_status_t mpu9250_wait_for_dma_completion(volatile i2c_dma_transfe
     if ((*p_flag) == I2C_DMA_TRANSFER_ERROR) {
         *p_flag = I2C_DMA_TRANSFER_IDLE;
         MPU9250_LOG_PRINTF("[ERROR] %s: DMA transfer error\r\n", context);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return (is_tx != 0U) ? MPU9250_STATUS_TX_TRANSFER_ERROR
                              : MPU9250_STATUS_RX_TRANSFER_ERROR;
     }
@@ -123,7 +123,7 @@ static mpu9250_status_t mpu9250_wait_for_dma_completion(volatile i2c_dma_transfe
             if ((*p_flag) == I2C_DMA_TRANSFER_ERROR) {
                 *p_flag = I2C_DMA_TRANSFER_IDLE;
                 MPU9250_LOG_PRINTF("[ERROR] %s: DMA transfer error\r\n", context);
-                tim2_delay_ms(20U);
+                app_fault_delay_ms(20U);
                 return (is_tx != 0U) ? MPU9250_STATUS_TX_TRANSFER_ERROR
                                      : MPU9250_STATUS_RX_TRANSFER_ERROR;
             }
@@ -142,7 +142,7 @@ static mpu9250_status_t mpu9250_wait_for_dma_completion(volatile i2c_dma_transfe
         if ((*p_flag) == I2C_DMA_TRANSFER_ERROR) {
             *p_flag = I2C_DMA_TRANSFER_IDLE;
             MPU9250_LOG_PRINTF("[ERROR] %s: DMA transfer error\r\n", context);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return (is_tx != 0U) ? MPU9250_STATUS_TX_TRANSFER_ERROR
                                  : MPU9250_STATUS_RX_TRANSFER_ERROR;
         }
@@ -150,7 +150,7 @@ static mpu9250_status_t mpu9250_wait_for_dma_completion(volatile i2c_dma_transfe
 
     *p_flag = I2C_DMA_TRANSFER_IDLE;
     MPU9250_LOG_PRINTF("[ERROR] %s: DMA completion timeout\r\n", context);
-    tim2_delay_ms(20U);
+    app_fault_delay_ms(20U);
     return (is_tx != 0U) ? MPU9250_STATUS_TX_TIMEOUT
                          : MPU9250_STATUS_RX_TIMEOUT;
 }
@@ -178,7 +178,7 @@ static mpu9250_status_t mpu9250_write_single_reg_blocking(uint8_t reg_addr,
     if (dma_status != I2C_DMA_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] %s: i2c_dma_write_reg failed, status=%d\r\n",
                    context, (int)dma_status);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_I2C_WRITE_START_FAILED;
     }
 
@@ -200,7 +200,7 @@ static mpu9250_status_t mpu9250_read_blocking(uint8_t start_reg,
 
     if ((p_dst == NULL) || (len == 0U)) {
     	MPU9250_LOG_PRINTF("[ERROR] %s: invalid buffer/length\r\n", context);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_INVALID_ARG;
     }
 
@@ -218,7 +218,7 @@ static mpu9250_status_t mpu9250_read_blocking(uint8_t start_reg,
     if (dma_status != I2C_DMA_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] %s: i2c_dma_read failed, status=%d\r\n",
                    context, (int)dma_status);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_I2C_READ_START_FAILED;
     }
 
@@ -242,7 +242,7 @@ mpu9250_status_t mpu9250_accel_config(uint8_t mode, MPU9250_t *pMPU9250)
 
     if (pMPU9250 == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] mpu9250_accel_config: NULL pointer\r\n");
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -274,7 +274,7 @@ mpu9250_status_t mpu9250_accel_config(uint8_t mode, MPU9250_t *pMPU9250)
         default:
         	MPU9250_LOG_PRINTF("[WARN] mpu9250_accel_config: unknown mode 0x%02X, falling back to +/-2g\r\n",
                        (unsigned)mode);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
             accel_range = 2.0f;
             ascale = 16384.0f;
             reg_val = 0x00U;
@@ -304,7 +304,7 @@ mpu9250_status_t MPU9250_beginGyro(uint8_t mode, MPU9250_t *pMPU9250)
 
     if (pMPU9250 == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] MPU9250_beginGyro: NULL pointer\r\n");
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -336,7 +336,7 @@ mpu9250_status_t MPU9250_beginGyro(uint8_t mode, MPU9250_t *pMPU9250)
         default:
         	MPU9250_LOG_PRINTF("[WARN] MPU9250_beginGyro: unknown mode 0x%02X, falling back to 500 DPS\r\n",
                        (unsigned)mode);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
             gyro_range = 500.0f;
             gscale = 65.5f;
             reg_val = 0x08U;
@@ -369,7 +369,7 @@ mpu9250_status_t mpu9250_accel_update_blocking(void)
     if (status != MPU9250_STATUS_OK) {
     	MPU9250_LOG_PRINTF("[WARN] mpu9250_accel_update_blocking: read failed, status=%d\r\n",
                    (int)status);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
 
         mpu9250_request_stop();
         return status;
@@ -394,7 +394,7 @@ mpu9250_status_t mpu9250_gyro_update_blocking(void)
     if (status != MPU9250_STATUS_OK) {
     	MPU9250_LOG_PRINTF("[WARN] mpu9250_gyro_update_blocking: read failed, status=%d\r\n",
                    (int)status);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
 
         mpu9250_request_stop();
         return status;
@@ -411,7 +411,7 @@ mpu9250_status_t MPU9250_accelGet(MPU9250_t *pMPU9250)
     /* Recombine each big-endian register pair as a signed 16-bit sample. */
     if (pMPU9250 == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] MPU9250_accelGet: NULL pointer passed\r\n");
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -420,7 +420,7 @@ mpu9250_status_t MPU9250_accelGet(MPU9250_t *pMPU9250)
         if (status != MPU9250_STATUS_OK) {
         	MPU9250_LOG_PRINTF("[ERROR] MPU9250_accelGet: accel DMA/read failed, status=%d\r\n",
                        (int)status);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
             return status;
         }
     }
@@ -440,7 +440,7 @@ mpu9250_status_t MPU9250_gyroGet(MPU9250_t *pMPU9250)
     /* Extract X, Y and Z from consecutive high/low byte pairs. */
     if (pMPU9250 == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] MPU9250_gyroGet: NULL pointer passed\r\n");
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -449,7 +449,7 @@ mpu9250_status_t MPU9250_gyroGet(MPU9250_t *pMPU9250)
         if (status != MPU9250_STATUS_OK) {
         	MPU9250_LOG_PRINTF("[ERROR] MPU9250_gyroGet: gyro DMA/read failed, status=%d\r\n",
                        (int)status);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
             return status;
         }
     }
@@ -473,14 +473,14 @@ mpu9250_status_t MPU9250_gyroGet(MPU9250_t *pMPU9250)
         if (i2c_recover(I2C3, &I2C3->SR2, I2C_SR2_BUSY, 0U, 0U) != I2C_RECOVER_OK) {
         	MPU9250_LOG_PRINTF("[WARN] app_mpu9250_sensor_stack_init: i2c_recover failed (attempt %d/%d)\r\n",
                        attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
         }
 
         mpu_rc = mpu9250_accel_config(ACC_FULL_SCALE_2_G, &MPU9250);
         if (mpu_rc != MPU9250_STATUS_OK) {
         	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_sensor_stack_init: mpu9250_accel_config failed rc=%d (attempt %d/%d)\r\n",
                        (int)mpu_rc, attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
 
             if (attempt < MAX_ATTEMPTS) {
                 continue;
@@ -493,7 +493,7 @@ mpu9250_status_t MPU9250_gyroGet(MPU9250_t *pMPU9250)
         if (mpu_rc != MPU9250_STATUS_OK) {
         	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_sensor_stack_init: MPU9250_beginGyro failed rc=%d (attempt %d/%d)\r\n",
                        (int)mpu_rc, attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
 
             if (attempt < MAX_ATTEMPTS) {
                 continue;
@@ -506,7 +506,7 @@ mpu9250_status_t MPU9250_gyroGet(MPU9250_t *pMPU9250)
         if (mpu_rc != MPU9250_STATUS_OK) {
         	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_sensor_stack_init: mpu9250_calibrateGyro failed rc=%d (attempt %d/%d)\r\n",
                        (int)mpu_rc, attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
 
             if (attempt < MAX_ATTEMPTS) {
                 continue;
@@ -519,7 +519,7 @@ mpu9250_status_t MPU9250_gyroGet(MPU9250_t *pMPU9250)
     }
 
     MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_sensor_stack_init: unexpected fallthrough\r\n");
-    tim2_delay_ms(20U);
+    app_fault_delay_ms(20U);
     return APP_STATUS_INIT_FAIL;
 }
 
@@ -535,7 +535,7 @@ mpu9250_status_t mpu9250_calibrateGyro(MPU9250_t *pMPU9250, uint16_t numCalPoint
 
     if (pMPU9250 == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] mpu9250_calibrateGyro: NULL pointer\r\n");
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -551,7 +551,7 @@ mpu9250_status_t mpu9250_calibrateGyro(MPU9250_t *pMPU9250, uint16_t numCalPoint
         if (status != MPU9250_STATUS_OK) {
         	MPU9250_LOG_PRINTF("[ERROR] mpu9250_calibrateGyro: gyro read failed at sample %u, status=%d\r\n",
                        (unsigned)i, (int)status);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20U);
             return status;
         }
 
@@ -574,17 +574,6 @@ mpu9250_status_t mpu9250_calibrateGyro(MPU9250_t *pMPU9250, uint16_t numCalPoint
     return MPU9250_STATUS_OK;
 }
 
-/* Allows MPU9250 fault diagnostics to drain. */
-static void mpu9250_fault_log_delay_20ms(void)
-{
-    /* Use a 20 ms task delay when FreeRTOS is running. */
-    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
-        vTaskDelay(pdMS_TO_TICKS(20U));
-    } else {
-        tim2_delay_ms(20U);
-    }
-}
-
 /* ----------------------------- Read and scale sensor data ----------------------------- */
 
 /* Reads calibrated acceleration and angular velocity. */
@@ -595,55 +584,36 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
 
     if (pMPU9250 == NULL) {
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+    	system_fault_logging_active = 1U;
+    	system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
-        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
-                                    "MPU9250 NULL pointer fault detected");
-
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: NULL pointer\r\n");
-        mpu9250_fault_log_delay_20ms();
-
+    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: NULL pointer\r\n");
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
     status = MPU9250_accelGet(pMPU9250);
     if (status != MPU9250_STATUS_OK) {
+    	system_fault_logging_active = 1U;
+    	system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
-
-        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
-                                    "MPU9250 accel read fault detected");
-
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accel read failed, status=%d\r\n",
-                           (int)status);
-        mpu9250_fault_log_delay_20ms();
-
+    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accel read failed, status=%d\r\n",
+                   (int)status);
+    	app_fault_delay_ms(20U);
         return status;
     }
 
     if (pMPU9250->sensorData.aScaleFactor == 0.0f) {
-
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
-
-        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
-                                    "MPU9250 accel scale factor fault detected");
-
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accelerometer scale factor is zero\r\n");
-        mpu9250_fault_log_delay_20ms();
-
-        return MPU9250_STATUS_SCALE_FACTOR_ZERO;
+    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accelerometer scale factor is zero\r\n");
+    	app_fault_delay_ms(20U);
+    	return MPU9250_STATUS_SCALE_FACTOR_ZERO;
     }
 
     pMPU9250->sensorData.ax = pMPU9250->rawData.ax / pMPU9250->sensorData.aScaleFactor;
     pMPU9250->sensorData.ay = pMPU9250->rawData.ay / pMPU9250->sensorData.aScaleFactor;
     pMPU9250->sensorData.az = pMPU9250->rawData.az / pMPU9250->sensorData.aScaleFactor;
 
-    if ((system_fault_logging_active == 0U) ||
-        (system_fault_owner != SYSTEM_FAULT_OWNER_MPU9250)) {
-
+    if (system_fault_logging_active == 0U) {
         MPU9250_LOG_PRINTF("ACCEL: X=%.3f g , Y=%.3f g , Z=%.3f g\r\n",
                            pMPU9250->sensorData.ax,
                            pMPU9250->sensorData.ay,
@@ -653,30 +623,18 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     status = MPU9250_gyroGet(pMPU9250);
     if (status != MPU9250_STATUS_OK) {
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+    	system_fault_logging_active = 1U;
+    	system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
-        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
-                                    "MPU9250 gyro read fault detected");
-
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyro read failed, status=%d\r\n",
-                           (int)status);
-        mpu9250_fault_log_delay_20ms();
-
+    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyro read failed, status=%d\r\n",
+                   (int)status);
+    	app_fault_delay_ms(20U);
         return status;
     }
 
     if (pMPU9250->sensorData.gScaleFactor == 0.0f) {
-
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
-
-        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
-                                    "MPU9250 gyro scale factor fault detected");
-
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyroscope scale factor is zero\r\n");
-        mpu9250_fault_log_delay_20ms();
-
+    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyroscope scale factor is zero\r\n");
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_SCALE_FACTOR_ZERO;
     }
 
@@ -688,9 +646,7 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     pMPU9250->sensorData.gy /= pMPU9250->sensorData.gScaleFactor;
     pMPU9250->sensorData.gz /= pMPU9250->sensorData.gScaleFactor;
 
-    if ((system_fault_logging_active == 0U) ||
-        (system_fault_owner != SYSTEM_FAULT_OWNER_MPU9250)) {
-
+    if (system_fault_logging_active == 0U) {
         MPU9250_LOG_PRINTF("GYRO:  X=%.3f dps , Y=%.3f dps , Z=%.3f dps\r\n",
                            pMPU9250->sensorData.gx,
                            pMPU9250->sensorData.gy,
@@ -707,15 +663,23 @@ static void app_mpu9250_log_runtime_error(const char *tag,
                                           int max_attempts)
 {
     /* Retain the signed status value in the diagnostic output. */
+    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MPU9250);
+
     if (rc > 0) {
-    	MPU9250_LOG_PRINTF("[WARN] %s returned warning code %ld (attempt %d/%d)\r\n",
-                   tag, (long)rc, attempt, max_attempts);
-        tim2_delay_ms(20U);
+        MPU9250_LOG_PRINTF("[WARN] %s returned warning code %ld (attempt %d/%d)\r\n",
+                           tag ? tag : "MPU9250 runtime",
+                           (long)rc,
+                           attempt,
+                           max_attempts);
     } else {
-    	MPU9250_LOG_PRINTF("[ERROR] %s failed with code %ld (attempt %d/%d)\r\n",
-                   tag, (long)rc, attempt, max_attempts);
-        tim2_delay_ms(20U);
+        MPU9250_LOG_PRINTF("[ERROR] %s failed with code %ld (attempt %d/%d)\r\n",
+                           tag ? tag : "MPU9250 runtime",
+                           (long)rc,
+                           attempt,
+                           max_attempts);
     }
+
+    app_fault_delay_ms(20U);
 }
 
 /* Configures the MPU9250 I2C3 and DMA interface. */
@@ -732,7 +696,7 @@ app_status_t app_mpu9250_peripherals_init(void)
     if (rc != I2C_SELECT_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_peripherals_init: i2c_init_select(I2C3, PA8/PB4) failed rc=%d\r\n",
                    (int)rc);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
 
@@ -750,7 +714,7 @@ app_status_t app_mpu9250_peripherals_init(void)
     if (st != DMA_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_peripherals_init: DMA1_Stream1 init failed rc=%d\r\n",
                    (int)st);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
 
@@ -763,7 +727,7 @@ app_status_t app_mpu9250_peripherals_init(void)
     if (st != DMA_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_peripherals_init: DMA1_Stream4 init failed rc=%d\r\n",
                    (int)st);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
 
@@ -781,14 +745,14 @@ static app_mpu9250_runtime_status_t app_mpu9250_recover_and_reinit(int attempt,
     if (recover_status != I2C_RECOVER_OK) {
     	MPU9250_LOG_PRINTF("[WARN] app_mpu9250: i2c_recover() failed (attempt %d/%d)\r\n",
                    attempt, max_attempts);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_MPU9250_RUNTIME_I2C_RECOVER_FAIL;
     }
 
     if (app_mpu9250_peripherals_init() != APP_STATUS_OK) {
     	MPU9250_LOG_PRINTF("[WARN] app_mpu9250: app_mpu9250_peripherals_init() failed (attempt %d/%d)\r\n",
                    attempt, max_attempts);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_MPU9250_RUNTIME_PERIPH_REINIT_FAIL;
     }
 
@@ -805,7 +769,7 @@ static app_status_t app_mpu9250_runtime_restore_config_only(void)
     if (mpu_rc != MPU9250_STATUS_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_runtime_restore_config_only: mpu9250_accel_config failed rc=%d\r\n",
                    (int)mpu_rc);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
 
@@ -813,7 +777,7 @@ static app_status_t app_mpu9250_runtime_restore_config_only(void)
     if (mpu_rc != MPU9250_STATUS_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_runtime_restore_config_only: MPU9250_beginGyro failed rc=%d\r\n",
                    (int)mpu_rc);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
 
@@ -834,24 +798,10 @@ app_mpu9250_runtime_status_t app_mpu9250_runtime_process(void)
 
             heartbeat_signal_mpu9250main();
 
-            if (system_fault_owner == SYSTEM_FAULT_OWNER_MPU9250) {
-                system_fault_logging_active = 0U;
-                system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
-            }
-
-            sensor_fault_recovered_clear(SYSTEM_FAULT_BIT_MPU9250,
-                                         "MPU9250 recovered before fatal completion");
+            system_fault_clear_active(SYSTEM_FAULT_OWNER_MPU9250);
 
             return APP_MPU9250_RUNTIME_OK;
         }
-
-        if (attempt == 1) {
-            sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
-                                        "MPU9250 I2C/read fault detected");
-        }
-
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
         app_mpu9250_log_runtime_error("MPU_readProcessedData",
                                       (int32_t)mpu_rc,
@@ -862,38 +812,22 @@ app_mpu9250_runtime_status_t app_mpu9250_runtime_process(void)
             app_mpu9250_runtime_status_t recovery_status;
 
             recovery_status = app_mpu9250_recover_and_reinit(attempt, MAX_ATTEMPTS);
-
-            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
-                vTaskDelay(pdMS_TO_TICKS(20U));
-            } else {
-                tim2_delay_ms(20U);
-            }
-
             if (recovery_status == APP_MPU9250_RUNTIME_OK) {
                 continue;
             }
 
             MPU9250_LOG_PRINTF("ACT: MPU9250 short backoff before retry\r\n");
-
-            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
-                vTaskDelay(pdMS_TO_TICKS(20U));
-            } else {
-                tim2_delay_ms(20U);
-            }
-
+            app_fault_delay_ms(20U);
             continue;
         }
 
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData failed after %d attempts\r\n",
-                           attempt);
-        tim2_delay_ms(20U);
-
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData failed after %d attempts\r\n", attempt);
+        app_fault_delay_ms(20U);
         return APP_MPU9250_RUNTIME_READ_FAIL;
     }
 
     MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_runtime_process: unexpected fallthrough\r\n");
-    tim2_delay_ms(20U);
-
+    app_fault_delay_ms(20U);
     return APP_MPU9250_RUNTIME_READ_FAIL;
 }
 
@@ -909,7 +843,7 @@ mpu9250_status_t MPU_calcAttitude(MPU9250_t *pMPU9250)
 
     if (pMPU9250 == NULL) {
     	MPU9250_LOG_PRINTF("[ERROR] MPU_calcAttitude: NULL pointer\r\n");
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return MPU9250_STATUS_NULL_PTR;
     }
 
@@ -917,7 +851,7 @@ mpu9250_status_t MPU_calcAttitude(MPU9250_t *pMPU9250)
     if (status != MPU9250_STATUS_OK) {
     	MPU9250_LOG_PRINTF("[ERROR] MPU_calcAttitude: failed to read processed sensor data, status=%d\r\n",
                    (int)status);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20U);
         return status;
     }
 

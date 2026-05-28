@@ -1,10 +1,10 @@
 ../Drivers/CMSIS/Include/core_cm4.h:1939:34:__NVIC_SystemReset	4	static,ignoring_inline_asm
 ../Core/Src/main.c:80:5:main	24	static
 ../Core/Src/main.c:235:13:bme680_task	24	static
-../Core/Src/main.c:259:13:mpu9250_task	24	static
-../Core/Src/main.c:283:20:task_state_to_str	16	static
-../Core/Src/main.c:297:13:debug_log_bme680_task_state	40	static
-../Core/Src/main.c:334:13:supervisor_task	24	static
-../Core/Src/main.c:354:6:fnAPP_Init_Standard_Values	4	static
-../Core/Src/main.c:369:21:app_bme680_peripherals_init	24	static,ignoring_inline_asm
-../Core/Src/main.c:422:21:app_bme680_sensor_stack_init_	16	static
+../Core/Src/main.c:264:13:mpu9250_task	24	static
+../Core/Src/main.c:295:20:task_state_to_str	16	static
+../Core/Src/main.c:309:13:debug_log_bme680_task_state	40	static
+../Core/Src/main.c:346:13:supervisor_task	24	static
+../Core/Src/main.c:366:6:fnAPP_Init_Standard_Values	4	static
+../Core/Src/main.c:381:21:app_bme680_peripherals_init	24	static,ignoring_inline_asm
+../Core/Src/main.c:434:21:app_bme680_sensor_stack_init_	16	static

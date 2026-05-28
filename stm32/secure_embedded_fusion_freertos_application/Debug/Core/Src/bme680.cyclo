@@ -30,7 +30,7 @@
 ../Core/Src/bme680.c:2152:15:get_mem_page	21
 ../Core/Src/bme680.c:2198:15:boundary_check	7
 ../Core/Src/bme680.c:2240:8:null_ptr_check	17
-../Core/Src/bme680.c:2296:13:app_bme680_log_runtime_error	8
-../Core/Src/bme680.c:2316:36:app_bme680_recover_and_reinit	4
-../Core/Src/bme680.c:2344:28:app_bme680_sensor_stack_init	9
-../Core/Src/bme680.c:2371:29:app_bme680_sensor_runtime_process	40
+../Core/Src/bme680.c:2297:13:app_bme680_log_runtime_error	6
+../Core/Src/bme680.c:2313:36:app_bme680_recover_and_reinit	4
+../Core/Src/bme680.c:2341:28:app_bme680_sensor_stack_init	9
+../Core/Src/bme680.c:2368:29:app_bme680_sensor_runtime_process	28
