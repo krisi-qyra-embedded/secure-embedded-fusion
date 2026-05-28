@@ -56,6 +56,14 @@ extern SemaphoreHandle_t xSerialSemaphore;
 /* Poll loop budget -- tune per system */
 #define IWDG_READY_POLL_MAX         1000000U
 
+#define SYSTEM_FAULT_BIT_NONE       (0U)
+#define SYSTEM_FAULT_BIT_BME680     (1U << 0)
+#define SYSTEM_FAULT_BIT_MPU9250    (1U << 1)
+#define SYSTEM_FAULT_ALL_SENSOR_BITS \
+    (SYSTEM_FAULT_BIT_BME680 | SYSTEM_FAULT_BIT_MPU9250)
+#define FAULT_CAPTURE_WINDOW_MS     (15000U)
+
+
 typedef enum
 {
     IWDG_OK = 0,
@@ -72,7 +80,7 @@ extern volatile uint32_t hb_bme680main_ts;
 
 extern volatile uint32_t hb_mpu9250_ts;
 extern volatile uint32_t hb_mpu9250main_ts;
-
+extern volatile uint32_t system_fault_last_progress_ms;
 /* ----------------------------- IWDG API ----------------------------- */
 
 /*
@@ -120,6 +128,11 @@ void heartbeat_signal_bme680main(void);
 
 void heartbeat_signal_mpu9250(void);
 void heartbeat_signal_mpu9250main(void);
+
+void sensor_fault_detected_early(uint8_t fault_bit, const char *reason);
+void sensor_fault_log_completed(uint8_t fault_bit, const char *reason);
+
+void sensor_fault_recovered_clear(uint8_t fault_bit, const char *reason);
 
 #ifdef __cplusplus
 }

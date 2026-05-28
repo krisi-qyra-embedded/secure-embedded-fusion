@@ -11,6 +11,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include <stdint.h>
 
 /*
  * Multi-sensor I2C DMA driver:
@@ -84,8 +85,8 @@
 #define BUSY_WAIT_COUNT             (100000U)
 #define POST_WAIT_COUNT             (2000U)
 #define I2C_WAIT_TIMEOUT_COUNT      (100000U)
+#define I2C_LONG_WAIT_TIMEOUT_MS    (1000U)
 
-#define USE_TIMER_FALLBACK
 
 #define I2C_IRQ_BTF_SPINS           (128U)
 
@@ -97,6 +98,8 @@ volatile i2c_dma_transfer_state_t mpu9250g_tx_cmplt = I2C_DMA_TRANSFER_IDLE;
 
 volatile uint8_t system_fault_logging_active = 0U;
 volatile uint8_t system_fault_owner = 0U;
+
+extern void sensor_fault_detected_early(uint8_t fault_bit, const char *reason);
 
 /* Routes an I2C fault to its owning sensor. */
 static void i2c_dma_mark_fault_owner(I2C_TypeDef *I2Cx)
@@ -110,8 +113,14 @@ static void i2c_dma_mark_fault_owner(I2C_TypeDef *I2Cx)
 
     if (I2Cx == I2C1) {
         system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
+
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_BME680,
+                                    "BME680 I2C bus fault detected");
     } else if (I2Cx == I2C3) {
         system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                    "MPU9250 I2C bus fault detected");
     }
 }
 
@@ -482,55 +491,69 @@ void TIM2_IRQHandler(void)
 /* ----------------------------- Generic wait helpers ----------------------------- */
 
 /* Polls register bits within a fixed iteration budget. */
-static int wait_reg_mask_state(volatile uint32_t *reg, uint32_t mask, uint8_t want_set, uint32_t max_count)
+static int wait_reg_mask_state(volatile uint32_t *reg,
+                               uint32_t mask,
+                               uint8_t want_set,
+                               uint32_t max_count)
 {
     /* Compare the masked state on every bounded polling pass. */
+    uint32_t spin_count = 0U;
+
     if (reg == NULL) {
         return 0;
     }
 
     while (max_count--) {
         uint8_t is_set = (((*reg) & mask) != 0U) ? 1U : 0U;
+
         if (is_set == want_set) {
             return 1;
         }
-        __asm__ volatile ("nop");
+
+        spin_count++;
+
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&
+            ((spin_count & 0xFFU) == 0U)) {
+            taskYIELD();
+        } else {
+            __asm__ volatile ("nop");
+        }
     }
 
     return 0;
 }
 
 /* Waits for a register state using the longer timeout path. */
-static int wait_reg_mask_state_long(volatile uint32_t *reg, uint32_t mask, uint8_t want_set)
+static int wait_reg_mask_state_long(volatile uint32_t *reg,
+                                    uint32_t mask,
+                                    uint8_t want_set)
 {
     /* Return only after the requested state or timeout check completes. */
+    uint32_t start;
+
     if (reg == NULL) {
         return 0;
     }
 
-#ifdef USE_TIMER_FALLBACK
-    tim2_1s_flag = 0U;
-    tim2_1s_start();
+    start = ms_get();
 
-    while (tim2__1s_check_flag() == 0U) {
+    for (;;) {
         uint8_t is_set = (((*reg) & mask) != 0U) ? 1U : 0U;
+
         if (is_set == want_set) {
-            tim2_1s_stop();
             return 1;
         }
-        __asm__ volatile ("nop");
-    }
 
-    tim2_1s_stop();
+        if ((uint32_t)(ms_get() - start) >= I2C_LONG_WAIT_TIMEOUT_MS) {
+            return 0;
+        }
 
-    /* timer expired -> decide by current state */
-    {
-        uint8_t is_set = (((*reg) & mask) != 0U) ? 1U : 0U;
-        return (is_set == want_set) ? 1 : 0;
+        if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+            taskYIELD();
+        } else {
+            __asm__ volatile ("nop");
+        }
     }
-#else
-    return wait_reg_mask_state(reg, mask, want_set, LONG_WAIT_COUNT);
-#endif
 }
 
 /* Provides the overridable BME680 reinitialization hook. */

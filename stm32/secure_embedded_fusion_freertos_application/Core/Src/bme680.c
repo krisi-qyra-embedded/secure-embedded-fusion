@@ -2251,7 +2251,6 @@ int8_t null_ptr_check(const struct bme680_dev *dev)
 
     if (dev->read == NULL) {
     	BME680_LOG_PRINTF("[ERROR] null_ptr_check: dev->read == NULL\r\n");
-    	tim2_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -2373,12 +2372,6 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
 {
     enum { MAX_ATTEMPTS = 3 };
 
-    /*
-     * Main/task heartbeat:
-     * Signal early that the BME680 task entered its runtime cycle.
-     * This prevents long BME680 measurement/gas-reference waits from looking
-     * like a dead task to the supervisor.
-     */
     heartbeat_signal_bme680main();
 
     for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
@@ -2392,49 +2385,98 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
 
         rslt = bme680_get_sensor_data(&data, &bme.gas_sensor);
         if (rslt != BME680_OK) {
-            app_bme680_log_runtime_error("bme680_get_sensor_data", rslt, attempt, MAX_ATTEMPTS);
+
+            if (attempt == 1) {
+                sensor_fault_detected_early(SYSTEM_FAULT_BIT_BME680,
+                                            "BME680 I2C/read fault detected");
+            }
+
+            system_fault_logging_active = 1U;
+            system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
+
+            app_bme680_log_runtime_error("bme680_get_sensor_data",
+                                         rslt,
+                                         attempt,
+                                         MAX_ATTEMPTS);
 
             if (attempt == MAX_ATTEMPTS) {
-                BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
+                BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d\r\n",
                                   attempt, MAX_ATTEMPTS);
-                tim2_delay_ms(20);
-                NVIC_SystemReset();
+                tim2_delay_ms(20U);
+
                 return APP_BME680_RUNTIME_SENSOR_DATA_FAIL;
             }
 
             (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-            user_delay_ms(10U);
+
+            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+                vTaskDelay(pdMS_TO_TICKS(20U));
+            } else {
+                user_delay_ms(10U);
+            }
+
             continue;
         }
 
-        /* Skip startup / invalid samples so 0.00 does not get published */
-        if ((data.temperature == 0) || (data.pressure == 0U) || (data.humidity == 0U)) {
+        if ((data.temperature == 0) ||
+            (data.pressure == 0U) ||
+            (data.humidity == 0U)) {
 
             if (bme.gas_sensor.power_mode == BME680_FORCED_MODE) {
                 rslt = bme680_set_sensor_mode(&bme.gas_sensor);
                 if (rslt != BME680_OK) {
-                    app_bme680_log_runtime_error("bme680_set_sensor_mode", rslt, attempt, MAX_ATTEMPTS);
+
+                    if (attempt == 1) {
+                        sensor_fault_detected_early(SYSTEM_FAULT_BIT_BME680,
+                                                    "BME680 set_sensor_mode fault detected");
+                    }
+
+                    system_fault_logging_active = 1U;
+                    system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
+
+                    app_bme680_log_runtime_error("bme680_set_sensor_mode",
+                                                 rslt,
+                                                 attempt,
+                                                 MAX_ATTEMPTS);
 
                     if (attempt == MAX_ATTEMPTS) {
-                        BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
+                        BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d\r\n",
                                           attempt, MAX_ATTEMPTS);
-                        tim2_delay_ms(20);
-                        NVIC_SystemReset();
+                        tim2_delay_ms(20U);
+
                         return APP_BME680_RUNTIME_SET_MODE_FAIL;
                     }
 
                     (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-                    user_delay_ms(10U);
+
+                    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+                        vTaskDelay(pdMS_TO_TICKS(20U));
+                    } else {
+                        user_delay_ms(10U);
+                    }
+
                     continue;
                 }
 
                 {
-                    uint32_t wait_ms = (bme.meas_period > 0U) ? (uint32_t)bme.meas_period : 2000U;
+                    uint32_t wait_ms = (bme.meas_period > 0U)
+                                     ? (uint32_t)bme.meas_period
+                                     : 2000U;
+
                     user_delay_ms(wait_ms);
                 }
             }
 
             heartbeat_signal_bme680main();
+
+            if (system_fault_owner == SYSTEM_FAULT_OWNER_BME680) {
+                system_fault_logging_active = 0U;
+                system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
+            }
+
+            sensor_fault_recovered_clear(SYSTEM_FAULT_BIT_BME680,
+                                         "BME680 recovered before fatal completion");
+
             return APP_BME680_RUNTIME_OK;
         }
 
@@ -2450,13 +2492,15 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
             bme.gas_resistance = data.gas_resistance;
         }
 
-        if (system_fault_logging_active == 0U) {
-            BME680_LOG_PRINTF("t:%.2f; p:%.0f; h:%.0f, ",
-                              bme.temperature, bme.pressure, bme.humidity);
+        if ((system_fault_logging_active == 0U) ||
+            (system_fault_owner != SYSTEM_FAULT_OWNER_BME680)) {
+
+            BME680_LOG_PRINTF("t:%.2f; p:%.0f; h:%.0f, \r\n",
+                              bme.temperature,
+                              bme.pressure,
+                              bme.humidity);
         }
 
-
-        /* Normal runtime IAQ calculation only */
         {
             int16_t hum_score;
             int16_t gas_score;
@@ -2466,32 +2510,44 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
             gas_score = bme_GetGasScore();
             raw_score = (int16_t)(hum_score + gas_score);
 
-
             bme_calculateIAQ(raw_score);
         }
 
         if (bme.gas_sensor.power_mode == BME680_FORCED_MODE) {
             rslt = bme680_set_sensor_mode(&bme.gas_sensor);
             if (rslt != BME680_OK) {
-                app_bme680_log_runtime_error("bme680_set_sensor_mode", rslt, attempt, MAX_ATTEMPTS);
+
+                if (attempt == 1) {
+                    sensor_fault_detected_early(SYSTEM_FAULT_BIT_BME680,
+                                                "BME680 set_sensor_mode fault detected");
+                }
+
+                system_fault_logging_active = 1U;
+                system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
+
+                app_bme680_log_runtime_error("bme680_set_sensor_mode",
+                                             rslt,
+                                             attempt,
+                                             MAX_ATTEMPTS);
 
                 if (attempt == MAX_ATTEMPTS) {
-                    BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
+                    BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d\r\n",
                                       attempt, MAX_ATTEMPTS);
-                    tim2_delay_ms(20);
-                    NVIC_SystemReset();
+                    tim2_delay_ms(20U);
+
                     return APP_BME680_RUNTIME_SET_MODE_FAIL;
                 }
 
                 (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-                user_delay_ms(10U);
+
+                if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+                    vTaskDelay(pdMS_TO_TICKS(20U));
+                } else {
+                    user_delay_ms(10U);
+                }
+
                 continue;
             }
-
-//            {
-//                uint32_t wait_ms = (bme.meas_period > 0U) ? (uint32_t)bme.meas_period : 2000U;
-//                user_delay_ms(wait_ms);
-//            }
         }
 
         heartbeat_signal_bme680main();
@@ -2501,14 +2557,16 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
             system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
         }
 
+        sensor_fault_recovered_clear(SYSTEM_FAULT_BIT_BME680,
+                                     "BME680 recovered before fatal completion");
+
         return APP_BME680_RUNTIME_OK;
     }
 
+    BME680_LOG_PRINTF("[ERROR] app_bme680_sensor_runtime_process: unexpected fallthrough\r\n");
+    tim2_delay_ms(20U);
+
     return APP_BME680_RUNTIME_SENSOR_DATA_FAIL;
 }
-
-
-
-
 
 

@@ -78,8 +78,7 @@ app_mpu9250_runtime_status_t mpu_runtime_rc;
 //typedef enum {
 //    APP_STATUS_OK = 0,
 //    APP_STATUS_INIT_FAIL = 1,
-//} app_status_t;
-
+//} app_status_t;
 
 /* Initializes the sensor application and starts FreeRTOS. */
 int main(void)
@@ -234,8 +233,9 @@ static void bme680_task(void *pvParameters)
                               (int)bme_rc);
             tim2_delay_ms(20U);
 
-            request_iwdg_reset("BME680 read sensor parameters unrecoverable");
-            //NVIC_SystemReset();
+            sensor_fault_log_completed(SYSTEM_FAULT_BIT_BME680,
+                                       "BME680 read sensor parameters unrecoverable");
+
             vTaskSuspend(NULL);
         }
 
@@ -253,15 +253,14 @@ static void mpu9250_task(void *pvParameters)
         const app_mpu9250_runtime_status_t mpu_rc =
             app_mpu9250_runtime_process();
 
-        /*debug_log_bme680_task_state();*/
-
         if (mpu_rc != APP_MPU9250_RUNTIME_OK) {
             MPU9250_LOG_PRINTF("[ERROR] mpu9250_task: app_mpu9250_runtime_process rc=%d\r\n",
                                (int)mpu_rc);
             tim2_delay_ms(20U);
 
-            request_iwdg_reset("MPU9250 read sensor parameters unrecoverable");
-            //NVIC_SystemReset();
+            sensor_fault_log_completed(SYSTEM_FAULT_BIT_MPU9250,
+                                       "MPU9250 read sensor parameters unrecoverable");
+
             vTaskSuspend(NULL);
         }
 

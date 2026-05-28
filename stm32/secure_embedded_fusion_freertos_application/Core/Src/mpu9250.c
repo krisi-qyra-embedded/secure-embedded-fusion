@@ -574,6 +574,17 @@ mpu9250_status_t mpu9250_calibrateGyro(MPU9250_t *pMPU9250, uint16_t numCalPoint
     return MPU9250_STATUS_OK;
 }
 
+/* Allows MPU9250 fault diagnostics to drain. */
+static void mpu9250_fault_log_delay_20ms(void)
+{
+    /* Use a 20 ms task delay when FreeRTOS is running. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+        vTaskDelay(pdMS_TO_TICKS(20U));
+    } else {
+        tim2_delay_ms(20U);
+    }
+}
+
 /* ----------------------------- Read and scale sensor data ----------------------------- */
 
 /* Reads calibrated acceleration and angular velocity. */
@@ -584,28 +595,45 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
 
     if (pMPU9250 == NULL) {
 
-    	system_fault_logging_active = 1U;
-    	system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+        system_fault_logging_active = 1U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
-    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: NULL pointer\r\n");
-        tim2_delay_ms(20U);
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                    "MPU9250 NULL pointer fault detected");
+
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: NULL pointer\r\n");
+        mpu9250_fault_log_delay_20ms();
+
         return MPU9250_STATUS_NULL_PTR;
     }
 
     status = MPU9250_accelGet(pMPU9250);
     if (status != MPU9250_STATUS_OK) {
-    	system_fault_logging_active = 1U;
-    	system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
-    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accel read failed, status=%d\r\n",
-                   (int)status);
-        tim2_delay_ms(20U);
+        system_fault_logging_active = 1U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                    "MPU9250 accel read fault detected");
+
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accel read failed, status=%d\r\n",
+                           (int)status);
+        mpu9250_fault_log_delay_20ms();
+
         return status;
     }
 
     if (pMPU9250->sensorData.aScaleFactor == 0.0f) {
-    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accelerometer scale factor is zero\r\n");
-        tim2_delay_ms(20U);
+
+        system_fault_logging_active = 1U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                    "MPU9250 accel scale factor fault detected");
+
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: accelerometer scale factor is zero\r\n");
+        mpu9250_fault_log_delay_20ms();
+
         return MPU9250_STATUS_SCALE_FACTOR_ZERO;
     }
 
@@ -613,7 +641,9 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     pMPU9250->sensorData.ay = pMPU9250->rawData.ay / pMPU9250->sensorData.aScaleFactor;
     pMPU9250->sensorData.az = pMPU9250->rawData.az / pMPU9250->sensorData.aScaleFactor;
 
-    if (system_fault_logging_active == 0U) {
+    if ((system_fault_logging_active == 0U) ||
+        (system_fault_owner != SYSTEM_FAULT_OWNER_MPU9250)) {
+
         MPU9250_LOG_PRINTF("ACCEL: X=%.3f g , Y=%.3f g , Z=%.3f g\r\n",
                            pMPU9250->sensorData.ax,
                            pMPU9250->sensorData.ay,
@@ -623,18 +653,30 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     status = MPU9250_gyroGet(pMPU9250);
     if (status != MPU9250_STATUS_OK) {
 
-    	system_fault_logging_active = 1U;
-    	system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+        system_fault_logging_active = 1U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
-    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyro read failed, status=%d\r\n",
-                   (int)status);
-        tim2_delay_ms(20U);
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                    "MPU9250 gyro read fault detected");
+
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyro read failed, status=%d\r\n",
+                           (int)status);
+        mpu9250_fault_log_delay_20ms();
+
         return status;
     }
 
     if (pMPU9250->sensorData.gScaleFactor == 0.0f) {
-    	MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyroscope scale factor is zero\r\n");
-        tim2_delay_ms(20U);
+
+        system_fault_logging_active = 1U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+
+        sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                    "MPU9250 gyro scale factor fault detected");
+
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData: gyroscope scale factor is zero\r\n");
+        mpu9250_fault_log_delay_20ms();
+
         return MPU9250_STATUS_SCALE_FACTOR_ZERO;
     }
 
@@ -646,7 +688,9 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     pMPU9250->sensorData.gy /= pMPU9250->sensorData.gScaleFactor;
     pMPU9250->sensorData.gz /= pMPU9250->sensorData.gScaleFactor;
 
-    if (system_fault_logging_active == 0U) {
+    if ((system_fault_logging_active == 0U) ||
+        (system_fault_owner != SYSTEM_FAULT_OWNER_MPU9250)) {
+
         MPU9250_LOG_PRINTF("GYRO:  X=%.3f dps , Y=%.3f dps , Z=%.3f dps\r\n",
                            pMPU9250->sensorData.gx,
                            pMPU9250->sensorData.gy,
@@ -791,12 +835,23 @@ app_mpu9250_runtime_status_t app_mpu9250_runtime_process(void)
             heartbeat_signal_mpu9250main();
 
             if (system_fault_owner == SYSTEM_FAULT_OWNER_MPU9250) {
-                    system_fault_logging_active = 0U;
-                    system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
-                }
+                system_fault_logging_active = 0U;
+                system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
+            }
+
+            sensor_fault_recovered_clear(SYSTEM_FAULT_BIT_MPU9250,
+                                         "MPU9250 recovered before fatal completion");
 
             return APP_MPU9250_RUNTIME_OK;
         }
+
+        if (attempt == 1) {
+            sensor_fault_detected_early(SYSTEM_FAULT_BIT_MPU9250,
+                                        "MPU9250 I2C/read fault detected");
+        }
+
+        system_fault_logging_active = 1U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
 
         app_mpu9250_log_runtime_error("MPU_readProcessedData",
                                       (int32_t)mpu_rc,
@@ -807,24 +862,41 @@ app_mpu9250_runtime_status_t app_mpu9250_runtime_process(void)
             app_mpu9250_runtime_status_t recovery_status;
 
             recovery_status = app_mpu9250_recover_and_reinit(attempt, MAX_ATTEMPTS);
+
+            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+                vTaskDelay(pdMS_TO_TICKS(20U));
+            } else {
+                tim2_delay_ms(20U);
+            }
+
             if (recovery_status == APP_MPU9250_RUNTIME_OK) {
                 continue;
             }
 
             MPU9250_LOG_PRINTF("ACT: MPU9250 short backoff before retry\r\n");
-            tim2_delay_ms(20U);
+
+            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+                vTaskDelay(pdMS_TO_TICKS(20U));
+            } else {
+                tim2_delay_ms(20U);
+            }
+
             continue;
         }
 
-        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData failed after %d attempts\r\n", attempt);
+        MPU9250_LOG_PRINTF("[ERROR] MPU_readProcessedData failed after %d attempts\r\n",
+                           attempt);
         tim2_delay_ms(20U);
+
         return APP_MPU9250_RUNTIME_READ_FAIL;
     }
 
     MPU9250_LOG_PRINTF("[ERROR] app_mpu9250_runtime_process: unexpected fallthrough\r\n");
     tim2_delay_ms(20U);
+
     return APP_MPU9250_RUNTIME_READ_FAIL;
 }
+
 /* ----------------------------- Attitude calculation ----------------------------- */
 
 /* Updates the MPU9250 attitude estimate from processed samples. */
