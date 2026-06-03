@@ -15,14 +15,7 @@
 
 extern volatile uint8_t system_fault_logging_active;
 extern volatile uint8_t system_fault_owner;
-volatile uint8_t bme680_gas_reference_active;
-
-#ifndef BME680_STARTUP_GAS_REF_REGULATION_SAMPLES
-#define BME680_STARTUP_GAS_REF_REGULATION_SAMPLES    (10U)
-#endif
-
-static uint8_t bme680_gas_ref_startup_regulation_left =
-    BME680_STARTUP_GAS_REF_REGULATION_SAMPLES;
+extern volatile uint8_t bme680_gas_reference_active;
 
 /* Configures BME680 measurement and gas-heater settings. */
 int8_t init_bme680(void)
@@ -137,7 +130,6 @@ int8_t bme_GetGasReference(void)
     uint8_t valid_count = 0U;
     uint16_t attempts = 0U;
     uint32_t start_ms = ms_get();
-    uint32_t last_valid_gas = 0U;
 
     bme680_gas_reference_active = 1U;
     heartbeat_signal_bme680main();
@@ -225,10 +217,7 @@ int8_t bme_GetGasReference(void)
         }
 
         if ((data.status & BME680_GASM_VALID_MSK) != 0U) {
-            last_valid_gas = (uint32_t)data.gas_resistance;
-            bme.gas_resistance = last_valid_gas;
-
-            acc += (uint64_t)last_valid_gas;
+            acc += (uint64_t)data.gas_resistance;
             valid_count++;
         }
 
@@ -237,7 +226,7 @@ int8_t bme_GetGasReference(void)
 
     heartbeat_signal_bme680main();
 
-    if ((valid_count == 0U) || (last_valid_gas == 0U)) {
+    if (valid_count == 0U) {
         BME680_LOG_PRINTF("[ERROR] bme_GetGasReference: no valid gas readings attempts=%u\r\n",
                           (unsigned)attempts);
         tim2_delay_ms(20U);
@@ -247,19 +236,14 @@ int8_t bme_GetGasReference(void)
 
     {
         uint32_t avg = (uint32_t)(acc / (uint64_t)valid_count);
-
-        bme.gas_reference = last_valid_gas;
-
-        BME680_LOG_PRINTF("[INFO] bme_GetGasReference: valid=%u attempts=%u gas_ref=%lu avg=%lu\r\n",
-                          (unsigned)valid_count,
-                          (unsigned)attempts,
-                          (unsigned long)bme.gas_reference,
-                          (unsigned long)avg);
-        tim2_delay_ms(20U);
+        bme.gas_reference = avg;
     }
 
-    bme680_gas_ref_startup_regulation_left =
-        BME680_STARTUP_GAS_REF_REGULATION_SAMPLES;
+    BME680_LOG_PRINTF("[INFO] bme_GetGasReference: valid=%u attempts=%u gas_ref=%lu\r\n",
+                      (unsigned)valid_count,
+                      (unsigned)attempts,
+                      (unsigned long)bme.gas_reference);
+    tim2_delay_ms(20U);
 
     heartbeat_signal_bme680main();
     heartbeat_signal_bme680();
@@ -269,7 +253,7 @@ int8_t bme_GetGasReference(void)
 gas_ref_exit:
     bme680_gas_reference_active = 0U;
     return final_status;
-}
+} 
 /* Calculates the gas contribution to the air-quality score. */
 int16_t bme_GetGasScore(void)
 {
@@ -281,39 +265,34 @@ int16_t bme_GetGasScore(void)
     gas_ref = (uint32_t)bme.gas_reference;
     gas_res = (uint32_t)bme.gas_resistance;
 
+    if (gas_ref == 0U) {
+        BME680_LOG_PRINTF("[ERROR] bme_GetGasScore: gas_reference is zero\r\n");
+        tim2_delay_ms(20U);
+        return -1;
+    }
+
     if (gas_res == 0U) {
         BME680_LOG_PRINTF("[ERROR] bme_GetGasScore: gas_resistance is zero\r\n");
         tim2_delay_ms(20U);
         return -1;
     }
 
-    if (gas_ref == 0U) {
-        bme.gas_reference = gas_res;
-        gas_ref = gas_res;
-    }
-
-    if (bme680_gas_ref_startup_regulation_left > 0U) {
-        if (gas_res < gas_ref) {
-            bme.gas_reference = gas_res;
-            gas_ref = gas_res;
-        }
-
-        bme680_gas_ref_startup_regulation_left--;
-    }
-
-    if (gas_ref == 0U) {
-        BME680_LOG_PRINTF("[ERROR] bme_GetGasScore: gas_reference is zero after regulation\r\n");
-        tim2_delay_ms(20U);
-        return -1;
-    }
-
     /*
-     * Gas contribution max = 75.
-     * If current gas resistance is equal/better than reference, return full gas score.
+     * Gas score max = 75 because gas_weighting = 0.75.
+     *
+     * If current gas resistance is equal or better than the reference,
+     * air quality gas contribution is full score.
      */
     if (gas_res >= gas_ref) {
         gas_score = 75U;
     } else {
+        /*
+         * Scale current gas resistance against gas reference:
+         *
+         * gas_score = (gas_res / gas_ref) * 75
+         *
+         * Use uint64_t to avoid overflow.
+         */
         gas_score = (uint32_t)(((uint64_t)gas_res * 75ULL) / (uint64_t)gas_ref);
     }
 
@@ -421,4 +400,5 @@ void bme_calculateIAQ(int16_t score)
     }
 
     BME680_LOG_PRINTF("IAQ: %d IAQ %s\r\n", score, iaq_label);
+    tim2_delay_ms(20);
 }

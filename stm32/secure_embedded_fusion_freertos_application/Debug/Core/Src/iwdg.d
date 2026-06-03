@@ -35,13 +35,13 @@ Core/Src/iwdg.o: ../Core/Src/iwdg.c ../Core/Inc/iwdg.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
- ../Core/Inc/i2c_dma.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/spi_dma.h ../Core/Inc/bme680_defs.h ../Core/Inc/tim.h
+ ../Core/Inc/spi_dma.h ../Core/Inc/bme680_defs.h ../Core/Inc/i2c_dma.h \
+ ../Core/Inc/tim.h
 ../Core/Inc/iwdg.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
@@ -79,7 +79,6 @@ Core/Src/iwdg.o: ../Core/Src/iwdg.c ../Core/Inc/iwdg.h \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
-../Core/Inc/i2c_dma.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
@@ -87,4 +86,5 @@ Core/Src/iwdg.o: ../Core/Src/iwdg.c ../Core/Inc/iwdg.h \
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/spi_dma.h:
 ../Core/Inc/bme680_defs.h:
+../Core/Inc/i2c_dma.h:
 ../Core/Inc/tim.h:

@@ -41,7 +41,7 @@ Core/Src/sig_sensors.o: ../Core/Src/sig_sensors.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/bme680.h ../Core/Inc/pwr.h
+ ../Core/Inc/bme680.h ../Core/Inc/fault_log.h ../Core/Inc/pwr.h
 ../Core/Inc/sig_sensors.h:
 ../Core/Inc/bme680_defs.h:
 ../Core/Inc/i2c_dma.h:
@@ -86,4 +86,5 @@ Core/Src/sig_sensors.o: ../Core/Src/sig_sensors.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
 ../Core/Inc/bme680.h:
+../Core/Inc/fault_log.h:
 ../Core/Inc/pwr.h:

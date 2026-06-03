@@ -7,8 +7,6 @@
 #include "spi_dma.h"
 #include "bme680_defs.h"
 #include "tim.h"
-#include "FreeRTOS.h"
-#include "task.h"
 
 
 #ifndef READ_BIT
@@ -47,28 +45,13 @@ static inline uint32_t backup_read_marker(void)
 #endif
 }
 
-extern volatile uint32_t system_fault_active_mask;
-extern volatile uint32_t system_fault_completed_mask;
-extern volatile uint8_t  system_fault_owner;
-extern volatile uint32_t system_fault_in_progress_mask;
+/* ----------------------------- Heartbeat state ----------------------------- */
 
-#ifndef SYSTEM_FAULT_MASK_BME680
-#define SYSTEM_FAULT_MASK_BME680    (1UL << 0)
-#endif
-
-#ifndef SYSTEM_FAULT_MASK_MPU9250
-#define SYSTEM_FAULT_MASK_MPU9250   (1UL << 1)
-#endif
-
-#ifndef SYSTEM_FAULT_MASK_CRITICAL
-#define SYSTEM_FAULT_MASK_CRITICAL  \
-    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250)
-#endif
-
-#ifndef FAULT_CAPTURE_GRACE_MS
-#define FAULT_CAPTURE_GRACE_MS      (6000U)
-#endif
-
+volatile uint32_t hb_bme680_ts;
+volatile uint32_t hb_bme680main_ts;
+volatile uint8_t iwdg_reset_requested = 0U;
+volatile uint32_t hb_mpu9250_ts;
+volatile uint32_t hb_mpu9250main_ts;
 
 /* escalation helper: persist marker then stop kicking -> IWDG will reset */
 /* Stops normal execution so the watchdog can reset the device. */
@@ -77,25 +60,27 @@ void escalate_to_iwdg_reset(const char *reason)
     /* Store the intentional-reset tag before entering the reset wait. */
     backup_write_marker(INTENTIONAL_RESET_TAG);
 
-    log_printf("ESCALATE -> IWDG reset: %s\r\n", reason ? reason : "(no reason)");
-    app_fault_delay_ms(2);
+    iwdg_reset_requested = 1U;
+
+    SYSTEM_LOG_PRINTF("ESCALATE -> IWDG reset armed: %s\r\n",
+                      reason ? reason : "(no reason)");
+    tim2_delay_ms(20U);
 
     __DSB();
     __ISB();
+
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+        vTaskSuspend(NULL);
+
+        for (;;) {
+            vTaskDelay(pdMS_TO_TICKS(1000U));
+        }
+    }
 
     for (;;) {
         __WFI();
     }
 }
-
-/* ----------------------------- Heartbeat state ----------------------------- */
-
-volatile uint32_t hb_bme680_ts;
-volatile uint32_t hb_bme680main_ts;
-volatile uint8_t iwdg_reset_requested = 0U;
-volatile uint32_t iwdg_reset_request_ms = 0U;
-volatile uint32_t hb_mpu9250_ts;
-volatile uint32_t hb_mpu9250main_ts;
 
 /* Seeds the supervised heartbeat timestamps. */
 void supervisor_heartbeats_init(void)
@@ -141,18 +126,32 @@ void heartbeat_signal_mpu9250main(void)
 void check_reset_source(void)
 {
     /* Compare the retained marker with the IWDG reset flag. */
-    if ((RCC->CSR & RCC_CSR_IWDGRSTF) != 0U) {
-        RCC->CSR |= RCC_CSR_RMVF;
+    const uint32_t csr = RCC->CSR;
+    const uint32_t marker = backup_read_marker();
 
-        if (backup_read_marker() == INTENTIONAL_RESET_TAG) {
-            log_printf("Boot: intentional supervisor reset (IWDG)\r\n");
-            app_fault_delay_ms(2);
-            backup_write_marker(0U);  
+    if ((csr & RCC_CSR_IWDGRSTF) != 0U) {
+        if (marker == INTENTIONAL_RESET_TAG) {
+            SYSTEM_LOG_PRINTF("Boot: intentional supervisor reset via IWDG\r\n");
+            tim2_delay_ms(20U);
+            backup_write_marker(0U);
         } else {
-            log_printf("Boot: unexpected watchdog reset (crash)\r\n");
-            app_fault_delay_ms(2);
+            SYSTEM_LOG_PRINTF("Boot: unexpected watchdog reset (crash)\r\n");
+            tim2_delay_ms(20U);
         }
     }
+
+    if ((csr & RCC_CSR_SFTRSTF) != 0U) {
+        if (marker == INTENTIONAL_RESET_TAG) {
+            SYSTEM_LOG_PRINTF("Boot: intentional supervisor software reset\r\n");
+            tim2_delay_ms(20U);
+            backup_write_marker(0U);
+        } else {
+            SYSTEM_LOG_PRINTF("Boot: unexpected software reset\r\n");
+            tim2_delay_ms(20U);
+        }
+    }
+
+    RCC->CSR |= RCC_CSR_RMVF;
 }
 
 /* Requests a supervised watchdog reset. */
@@ -161,102 +160,63 @@ void request_iwdg_reset(const char *reason)
     /* Preserve the first reset-request timestamp for the capture deadline. */
     backup_write_marker(INTENTIONAL_RESET_TAG);
 
-    if (iwdg_reset_requested == 0U) {
-        iwdg_reset_request_ms = ms_get();
-    }
-
     iwdg_reset_requested = 1U;
 
     SYSTEM_LOG_PRINTF("ESCALATE -> IWDG reset requested: %s\r\n",
                       reason ? reason : "(no reason)");
-    app_fault_delay_ms(20U);
+    tim2_delay_ms(20);
 }
 
 /* Checks system progress before refreshing the watchdog. */
 void supervisor_check_and_kick(void)
 {
     /* Escalate when a supervised heartbeat exceeds its allowed age. */
-    uint32_t now = ms_get();
+    uint32_t now;
+    uint32_t age_bme680;
+    uint32_t age_bme680main;
+    uint32_t age_mpu9250;
+    uint32_t age_mpu9250main;
 
     if (iwdg_reset_requested != 0U) {
-        uint32_t age = now - iwdg_reset_request_ms;
-
-        uint32_t active =
-            system_fault_active_mask & SYSTEM_FAULT_MASK_CRITICAL;
-
-        uint32_t completed =
-            system_fault_completed_mask & SYSTEM_FAULT_MASK_CRITICAL;
-
-        uint32_t in_progress =
-            system_fault_in_progress_mask & SYSTEM_FAULT_MASK_CRITICAL;
-
-        if ((active != 0U) &&
-            ((completed & active) == active) &&
-            (in_progress == 0U)) {
-
-            SYSTEM_LOG_PRINTF("[FAULT] active_mask=0x%08lX in_progress_mask=0x%08lX completed_mask=0x%08lX last_owner=%u\r\n",
-                              (unsigned long)system_fault_active_mask,
-                              (unsigned long)system_fault_in_progress_mask,
-                              (unsigned long)system_fault_completed_mask,
-                              (unsigned)system_fault_owner);
-            app_fault_delay_ms(20U);
-
-            escalate_to_iwdg_reset("fault capture complete");
-        }
-
-        if (age >= FAULT_CAPTURE_ABSOLUTE_MAX_MS) {
-            SYSTEM_LOG_PRINTF("[FAULT][TIMEOUT] active_mask=0x%08lX in_progress_mask=0x%08lX completed_mask=0x%08lX last_owner=%u\r\n",
-                              (unsigned long)system_fault_active_mask,
-                              (unsigned long)system_fault_in_progress_mask,
-                              (unsigned long)system_fault_completed_mask,
-                              (unsigned)system_fault_owner);
-            app_fault_delay_ms(20U);
-
-            escalate_to_iwdg_reset("fault capture absolute timeout");
-        }
-
-        if (iwdg_refresh() != IWDG_OK) {
-            IWDG_ErrorHandler("iwdg_refresh failed during fault capture", IWDG_ERR_HW);
-            escalate_to_iwdg_reset("iwdg_refresh failed during fault capture");
-        }
-
+        escalate_to_iwdg_reset("reset already requested");
         return;
     }
 
-    uint32_t age_bme680      = now - hb_bme680_ts;        
-    uint32_t age_bme680main  = now - hb_bme680main_ts;
-    uint32_t age_mpu9250     = now - hb_mpu9250_ts;
-    uint32_t age_mpu9250main = now - hb_mpu9250main_ts;
+    now = ms_get();
+
+    age_bme680      = now - hb_bme680_ts;
+    age_bme680main  = now - hb_bme680main_ts;
+    age_mpu9250     = now - hb_mpu9250_ts;
+    age_mpu9250main = now - hb_mpu9250main_ts;
 
     if (age_bme680 > HEARTBEAT_WINDOW_MS) {
-        log_printf("SUPERVISOR: BME680 I2C heartbeat missed (age=%u ms)\r\n",
-                   (unsigned)age_bme680);
-        app_fault_delay_ms(2);
+        SYSTEM_LOG_PRINTF("SUPERVISOR: BME680 I2C heartbeat missed (age=%u ms)\r\n",
+                          (unsigned)age_bme680);
+        tim2_delay_ms(20U);
         escalate_to_iwdg_reset("BME680 I2C heartbeat missed");
     }
 
     if (age_bme680main > HEARTBEAT_WINDOW_MS) {
-        log_printf("SUPERVISOR: BME680 main/task heartbeat missed (age=%u ms)\r\n",
-                   (unsigned)age_bme680main);
-        app_fault_delay_ms(2);
+        SYSTEM_LOG_PRINTF("SUPERVISOR: BME680 main/task heartbeat missed (age=%u ms)\r\n",
+                          (unsigned)age_bme680main);
+        tim2_delay_ms(20U);
         escalate_to_iwdg_reset("BME680 main/task heartbeat missed");
     }
 
     if (age_mpu9250 > HEARTBEAT_WINDOW_MS) {
-        log_printf("SUPERVISOR: MPU9250 I2C heartbeat missed (age=%u ms)\r\n",
-                   (unsigned)age_mpu9250);
-        app_fault_delay_ms(2);
+        SYSTEM_LOG_PRINTF("SUPERVISOR: MPU9250 I2C heartbeat missed (age=%u ms)\r\n",
+                          (unsigned)age_mpu9250);
+        tim2_delay_ms(20U);
         escalate_to_iwdg_reset("MPU9250 I2C heartbeat missed");
     }
 
     if (age_mpu9250main > HEARTBEAT_WINDOW_MS) {
-        log_printf("SUPERVISOR: MPU9250 main/task heartbeat missed (age=%u ms)\r\n",
-                   (unsigned)age_mpu9250main);
-        app_fault_delay_ms(2);
+        SYSTEM_LOG_PRINTF("SUPERVISOR: MPU9250 main/task heartbeat missed (age=%u ms)\r\n",
+                          (unsigned)age_mpu9250main);
+        tim2_delay_ms(20U);
         escalate_to_iwdg_reset("MPU9250 main/task heartbeat missed");
     }
 
-    /* Everything OK -> kick watchdog */
     if (iwdg_refresh() != IWDG_OK) {
         IWDG_ErrorHandler("iwdg_refresh failed", IWDG_ERR_HW);
         escalate_to_iwdg_reset("iwdg_refresh failed");
@@ -266,9 +226,9 @@ void supervisor_check_and_kick(void)
 /* Halts after an unrecoverable watchdog setup or refresh error. */
 void IWDG_ErrorHandler(const char *msg, iwdg_status_t code)
 {
-    /* Order memory accesses before waiting for the watchdog reset. */
-    log_printf("IWDG Error: %s (code=%d)\r\n", msg ? msg : "NULL", (int)code);
-    app_fault_delay_ms(2);
+	/* Order memory accesses before waiting for the watchdog reset. */
+	SYSTEM_LOG_PRINTF("IWDG Error: %s (code=%d)\r\n", msg ? msg : "NULL", (int)code);
+	tim2_delay_ms(20);
 
     __DSB();
     __ISB();
@@ -281,9 +241,9 @@ void IWDG_ErrorHandler(const char *msg, iwdg_status_t code)
 /* Reports a fatal application initialization error. */
 void on_fatal_init_error(const char *msg)
 {
-    /* Pass the failure reason to the watchdog escalation path. */
-    log_printf("FATAL: %s -> escalating\r\n", msg ? msg : "(no reason)");
-    app_fault_delay_ms(2);
+	/* Pass the failure reason to the watchdog escalation path. */
+	SYSTEM_LOG_PRINTF("FATAL: %s -> escalating\r\n", msg ? msg : "(no reason)");
+	tim2_delay_ms(20);
     escalate_to_iwdg_reset(msg);
 }
 

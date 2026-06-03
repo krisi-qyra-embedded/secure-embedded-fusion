@@ -12,10 +12,10 @@
 ../Core/Src/mpu9250.c:419:18:MPU9250_gyroGet	9
 ../Core/Src/mpu9250.c:445:15:app_mpu9250_sensor_stack_init	24
 ../Core/Src/mpu9250.c:513:18:mpu9250_calibrateGyro	17
-../Core/Src/mpu9250.c:562:18:MPU_readProcessedData	29
-../Core/Src/mpu9250.c:641:13:app_mpu9250_log_runtime_error	12
-../Core/Src/mpu9250.c:666:14:app_mpu9250_peripherals_init	13
-../Core/Src/mpu9250.c:721:37:app_mpu9250_recover_and_reinit	9
-../Core/Src/mpu9250.c:746:21:app_mpu9250_runtime_restore_config_only	9
-../Core/Src/mpu9250.c:770:30:app_mpu9250_runtime_process	14
-../Core/Src/mpu9250.c:817:18:MPU_calcAttitude	9
+../Core/Src/mpu9250.c:564:18:MPU_readProcessedData	29
+../Core/Src/mpu9250.c:644:13:app_mpu9250_log_runtime_error	8
+../Core/Src/mpu9250.c:661:14:app_mpu9250_peripherals_init	13
+../Core/Src/mpu9250.c:716:37:app_mpu9250_recover_and_reinit	9
+../Core/Src/mpu9250.c:741:21:app_mpu9250_runtime_restore_config_only	9
+../Core/Src/mpu9250.c:765:30:app_mpu9250_runtime_process	15
+../Core/Src/mpu9250.c:814:18:MPU_calcAttitude	9

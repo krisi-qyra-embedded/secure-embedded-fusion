@@ -1,5 +1,5 @@
-../Core/Src/sig_sensors.c:37:8:init_bme680	25
-../Core/Src/sig_sensors.c:137:8:bme_GetGasReference	35
-../Core/Src/sig_sensors.c:307:9:bme_GetGasScore	14
-../Core/Src/sig_sensors.c:376:9:bme_GetHumidityScore	25
-../Core/Src/sig_sensors.c:441:6:bme_calculateIAQ	10
+../Core/Src/sig_sensors.c:22:8:init_bme680	25
+../Core/Src/sig_sensors.c:122:8:bme_GetGasReference	34
+../Core/Src/sig_sensors.c:281:9:bme_GetGasScore	11
+../Core/Src/sig_sensors.c:340:9:bme_GetHumidityScore	25
+../Core/Src/sig_sensors.c:405:6:bme_calculateIAQ	10

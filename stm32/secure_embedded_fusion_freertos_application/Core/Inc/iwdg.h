@@ -12,7 +12,6 @@
 #include "systick.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "i2c_dma.h"
 #include "semphr.h"
 #include "cmsis_os.h"
 
@@ -44,6 +43,10 @@ extern SemaphoreHandle_t xSerialSemaphore;
 #define HEARTBEAT_WINDOW_MS         5000U
 #define INTENTIONAL_RESET_TAG       0xDEADBEEFU
 
+#define FAULT_SRC_BME680      		 (1U << 0)
+#define FAULT_SRC_MPU9250     		 (1U << 1)
+#define FAULT_COLLECTION_WINDOW_MS 	 15000U
+
 #define IWDG_PRESCALER_4            0x00000000U
 #define IWDG_PRESCALER_8            0x00000001U
 #define IWDG_PRESCALER_16           0x00000002U
@@ -56,9 +59,6 @@ extern SemaphoreHandle_t xSerialSemaphore;
 
 /* Poll loop budget -- tune per system */
 #define IWDG_READY_POLL_MAX         1000000U
-
-#define FAULT_CAPTURE_GRACE_MS          (6000U)
-#define FAULT_CAPTURE_ABSOLUTE_MAX_MS   (10000U)
 
 typedef enum
 {
@@ -77,6 +77,12 @@ extern volatile uint32_t hb_bme680main_ts;
 extern volatile uint32_t hb_mpu9250_ts;
 extern volatile uint32_t hb_mpu9250main_ts;
 
+extern volatile uint8_t system_fault_observed_mask;
+extern volatile uint8_t system_fault_diag_done_mask;
+
+void system_fault_observed_mark(uint8_t fault_src);
+
+void system_fault_diag_mark_done(uint8_t fault_src);
 /* ----------------------------- IWDG API ----------------------------- */
 
 /*
@@ -112,6 +118,8 @@ void supervisor_heartbeats_init(void);
 void supervisor_check_and_kick(void);
 
 void request_iwdg_reset(const char *reason);
+
+void request_iwdg_reset_from_source(uint8_t fault_src, const char *reason);
 
 void escalate_to_iwdg_reset(const char *reason);
 
