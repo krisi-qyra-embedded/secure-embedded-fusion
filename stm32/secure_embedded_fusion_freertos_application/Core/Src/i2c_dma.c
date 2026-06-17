@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-05-28
+ * Documentation date: 2026-06-17
  */
 
 #include "i2c_dma.h"
@@ -96,29 +96,156 @@ volatile i2c_dma_transfer_state_t mpu9250g_rx_cmplt = I2C_DMA_TRANSFER_IDLE;
 volatile i2c_dma_transfer_state_t mpu9250g_tx_cmplt = I2C_DMA_TRANSFER_IDLE;
 
 volatile uint8_t system_fault_logging_active = 0U;
-volatile uint8_t system_fault_owner = 0U;
-volatile uint8_t bme680_gas_reference_active = 0U;
+volatile uint8_t system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
 
-volatile uint32_t dbg_bme680_dma_rx_tc_count = 0U;
-volatile uint32_t dbg_bme680_dma_rx_te_count = 0U;
-volatile uint32_t dbg_bme680_dma_tx_tc_count = 0U;
-volatile uint32_t dbg_bme680_dma_tx_te_count = 0U;
+volatile uint32_t system_fault_active_mask = 0U;
+volatile uint32_t system_fault_completed_mask = 0U;
+volatile uint32_t system_fault_in_progress_mask = 0U;
+
+ /* Delays fault handling before or after scheduler startup. */
+ void app_fault_delay_ms(uint32_t ms)
+{
+    /* Use a task delay when FreeRTOS is running. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+        vTaskDelay(pdMS_TO_TICKS(ms));
+    } else {
+        tim2_delay_ms(ms);
+    }
+}
+
+ /* Marks an owner's fault capture as active and in progress. */
+ void system_fault_mark_in_progress(uint8_t owner)
+ {
+     /* Update shared fault masks inside a critical section. */
+     uint32_t mask = system_fault_mask_from_owner(owner);
+
+     if (mask == 0U) {
+         return;
+     }
+
+     taskENTER_CRITICAL();
+
+     system_fault_logging_active = 1U;
+     system_fault_active_mask |= mask;
+     system_fault_in_progress_mask |= mask;
+     system_fault_owner = owner;
+
+     taskEXIT_CRITICAL();
+ }
+
+ /* Marks the sensor owning an I2C failure from task context. */
+ static void i2c_dma_mark_fault_owner_task(I2C_TypeDef *I2Cx)
+ {
+     /* Map I2C1 to BME680 and I2C3 to MPU9250. */
+     if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+         return;
+     }
+
+     if (I2Cx == I2C1) {
+         system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
+     } else if (I2Cx == I2C3) {
+         system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MPU9250);
+     }
+ }
+
+ /* Maps a fault owner to its configured mask. */
+ uint32_t system_fault_mask_from_owner(uint8_t owner)
+ {
+     /* Return zero for an unsupported owner. */
+     switch (owner) {
+         case SYSTEM_FAULT_OWNER_BME680:
+             return SYSTEM_FAULT_MASK_BME680;
+
+         case SYSTEM_FAULT_OWNER_MPU9250:
+             return SYSTEM_FAULT_MASK_MPU9250;
+
+         case SYSTEM_FAULT_OWNER_MAX31865:
+             return SYSTEM_FAULT_MASK_MAX31865;
+
+         default:
+             return 0U;
+     }
+ }
+
+/* Latches the fault bit for an owner. */
+void system_fault_mark_active(uint8_t owner)
+{
+    /* Record the active mask and last owner under task protection. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+    system_fault_logging_active = 1U;
+    system_fault_active_mask |= mask;
+    system_fault_owner = owner;    
+    taskEXIT_CRITICAL();
+}
+
+/* Marks an owner's fault diagnostics as complete. */
+void system_fault_mark_completed(uint8_t owner)
+{
+    /* Clear its in-progress bit while retaining the completed mask. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+
+    system_fault_completed_mask |= mask;
+    system_fault_in_progress_mask &= ~mask;
+
+    taskEXIT_CRITICAL();
+}
+
+/* Clears an owner's active and captured fault state. */
+void system_fault_clear_active(uint8_t owner)
+{
+    /* Release the logging gate when no active faults remain. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+
+    system_fault_active_mask &= ~mask;
+    system_fault_in_progress_mask &= ~mask;
+    system_fault_completed_mask &= ~mask;
+
+    if (system_fault_active_mask == 0U) {
+        system_fault_logging_active = 0U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
+    }
+
+    taskEXIT_CRITICAL();
+}
+
+/* Latches a fault owner from interrupt context. */
+void system_fault_mark_active_from_isr(uint8_t owner)
+{
+    /* Update the shared mask without entering a task-only critical section. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    system_fault_logging_active = 1U;
+    system_fault_active_mask |= mask;
+    system_fault_owner = owner;
+}
 
 /* Routes an I2C fault to its owning sensor. */
 static void i2c_dma_mark_fault_owner(I2C_TypeDef *I2Cx)
 {
     /* Associate the bus with the corresponding fault-reporting path. */
-    if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
-        return;
-    }
-
-    system_fault_logging_active = 1U;
-
-    if (I2Cx == I2C1) {
-        system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
-    } else if (I2Cx == I2C3) {
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
-    }
+    i2c_dma_mark_fault_owner_task(I2Cx);
 }
 
 /*
@@ -137,6 +264,7 @@ SemaphoreHandle_t bme680_rx_sem  = NULL;
 SemaphoreHandle_t bme680_tx_sem  = NULL;
 SemaphoreHandle_t mpu9250_rx_sem = NULL;
 SemaphoreHandle_t mpu9250_tx_sem = NULL;
+
 SemaphoreHandle_t xSerialSemaphore = NULL;
 
 typedef struct {
@@ -644,15 +772,15 @@ static void i2c_toggle_apb_reset(I2C_TypeDef *I2Cx)
     /* Release the reset bit after the peripheral-settling delay. */
     if (I2Cx == I2C1) {
         RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
-        tim2_delay_ms(1);
+        app_fault_delay_ms(1);
         RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C1RST;
     } else if (I2Cx == I2C2) {
         RCC->APB1RSTR |= RCC_APB1RSTR_I2C2RST;
-        tim2_delay_ms(1);
+        app_fault_delay_ms(1);
         RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C2RST;
     } else if (I2Cx == I2C3) {
         RCC->APB1RSTR |= RCC_APB1RSTR_I2C3RST;
-        tim2_delay_ms(1);
+        app_fault_delay_ms(1);
         RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C3RST;
     }
 
@@ -672,7 +800,7 @@ i2c_dma_init_status_t i2c_dma_bme680_peripherals_init(void)
 
         I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][INIT] GPIO/I2C select failed | rc=%d pins=SCL:PB8 SDA:PB9 AF=4\r\n",
                            (int)rc);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_I2C_SELECT;
     }
 
@@ -699,7 +827,7 @@ i2c_dma_init_status_t i2c_dma_bme680_peripherals_init(void)
 
         I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_RX_INIT] DMA stream init failed | stream=DMA1_Stream5 channel=1 rc=%d\r\n",
                            (int)status);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_RX_INIT;
     }
 
@@ -722,7 +850,7 @@ i2c_dma_init_status_t i2c_dma_bme680_peripherals_init(void)
 
         I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_TX_INIT] DMA stream init failed | stream=DMA1_Stream6 channel=1 rc=%d\r\n",
                            (int)status);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_TX_INIT;
     }
 
@@ -744,7 +872,7 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
 
         I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][INIT] GPIO/I2C select failed | rc=%d pins=SCL:PA8 SDA:PB4 AF_SCL=4 AF_SDA=9\r\n",
                            (int)rc);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_I2C_SELECT;
     }
 
@@ -767,7 +895,7 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
 
         I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_RX_INIT] DMA stream init failed | stream=DMA1_Stream1 channel=1 rc=%d\r\n",
                            (int)status);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_RX_INIT;
     }
 
@@ -790,7 +918,7 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
 
         I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_TX_INIT] DMA stream init failed | stream=DMA1_Stream4 channel=3 rc=%d\r\n",
                            (int)status);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_TX_INIT;
     }
 
@@ -820,7 +948,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
     }
 
     i2c_force_stop_and_clear(I2Cx);
-    tim2_delay_ms(2);
+    app_fault_delay_ms(2);
 
     if (wait_reg_mask_state(&I2Cx->SR2, I2C_SR2_BUSY, 0U, BUSY_WAIT_COUNT)) {
         bus_released = 1U;
@@ -832,7 +960,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if ((bus_released != 0U) && (allow_restart != 0U)) {
@@ -851,7 +979,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
                    (unsigned int)expect_set,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     I2Cx->CR1 |= I2C_CR1_SWRST;
@@ -862,7 +990,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
     short_delay(2000U);
 
     i2c_restore_config(I2Cx);
-    tim2_delay_ms(2);
+    app_fault_delay_ms(2);
 
     if (I2Cx == I2C1) {
         i2c_bme680_dma_quiesce();
@@ -880,7 +1008,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1,
                    (unsigned long)I2Cx->CR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
 
         i2c_toggle_apb_reset(I2Cx);
 
@@ -892,7 +1020,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
 
         i2c_force_stop_and_clear(I2Cx);
         i2c_restore_config(I2Cx);
-        tim2_delay_ms(2);
+        app_fault_delay_ms(2);
     }
 
     if (I2Cx == I2C1) {
@@ -900,7 +1028,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
             i2c_dma_mark_fault_owner(I2Cx);
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][RECOVER] device lightweight reinit failed after bus recovery\r\n");
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
 
@@ -908,18 +1036,18 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
             i2c_dma_mark_fault_owner(I2Cx);
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][RECOVER] post-recovery self-test failed\r\n");
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
 
         I2C_DMA_LOG_PRINTF("[INFO][I2C_DMA][I2C1][BME680][RECOVER] lightweight restore completed | DMA=quiesced I2C=config-restored selftest=OK\r\n");
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     } else if (I2Cx == I2C3) {
         if (i2c3_mpu9250_device_reinit() != 0) {
             i2c_dma_mark_fault_owner(I2Cx);
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][RECOVER] device lightweight reinit failed after bus recovery\r\n");
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
 
@@ -927,7 +1055,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
             i2c_dma_mark_fault_owner(I2Cx);
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][RECOVER] post-recovery self-test failed\r\n");
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
     }
@@ -948,7 +1076,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
                    (unsigned int)expect_set,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_RECOVER_FAIL;
     }
 
@@ -974,7 +1102,7 @@ static int wait_flag_txe_or_btf(I2C_TypeDef *I2Cx, uint32_t flag_mask)
                            (unsigned long)I2Cx->SR1,
                            (unsigned long)I2Cx->SR2,
                            (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&I2Cx->SR1, flag_mask, 1U)) {
@@ -986,7 +1114,7 @@ static int wait_flag_txe_or_btf(I2C_TypeDef *I2Cx, uint32_t flag_mask)
                            (unsigned long)I2Cx->SR1,
                            (unsigned long)I2Cx->SR2,
                            (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if ((I2Cx->SR1 & flag_mask) == 0U) {
@@ -999,7 +1127,7 @@ static int wait_flag_txe_or_btf(I2C_TypeDef *I2Cx, uint32_t flag_mask)
                                (unsigned long)I2Cx->SR1,
                                (unsigned long)I2Cx->SR2,
                                (unsigned long)I2Cx->CR1);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1024,7 +1152,7 @@ static int wait_flag_busy_clear(I2C_TypeDef *I2Cx)
                    (unsigned long)I2Cx,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&I2Cx->SR2, I2C_SR2_BUSY, 0U)) {
@@ -1034,7 +1162,7 @@ static int wait_flag_busy_clear(I2C_TypeDef *I2Cx)
                    (unsigned long)I2Cx,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if ((I2Cx->SR2 & I2C_SR2_BUSY) != 0U) {
@@ -1047,7 +1175,7 @@ static int wait_flag_busy_clear(I2C_TypeDef *I2Cx)
                        (unsigned long)I2Cx->SR2,
                        (unsigned long)I2Cx->CR1,
                        (unsigned long)I2Cx->CR2);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
     }
@@ -1072,7 +1200,7 @@ static int wait_flag_addr_or_sb(I2C_TypeDef *I2Cx, uint32_t flag_mask)
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&I2Cx->SR1, flag_mask, 1U)) {
@@ -1084,7 +1212,7 @@ static int wait_flag_addr_or_sb(I2C_TypeDef *I2Cx, uint32_t flag_mask)
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if ((I2Cx->SR1 & flag_mask) == 0U) {
@@ -1097,7 +1225,7 @@ static int wait_flag_addr_or_sb(I2C_TypeDef *I2Cx, uint32_t flag_mask)
                        (unsigned long)I2Cx->SR1,
                        (unsigned long)I2Cx->SR2,
                        (unsigned long)I2Cx->CR1);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1140,7 +1268,7 @@ static int wait_dma_stream_disabled(DMA_Stream_TypeDef *stream,
                    (unsigned long)stream,
                    (unsigned long)stream->CR,
                    (unsigned long)stream->NDTR);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&stream->CR, en_mask, 0U)) {
@@ -1150,7 +1278,7 @@ static int wait_dma_stream_disabled(DMA_Stream_TypeDef *stream,
                    (unsigned long)stream,
                    (unsigned long)stream->CR,
                    (unsigned long)stream->NDTR);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
     }
 
     if ((stream->CR & en_mask) != 0U) {
@@ -1287,7 +1415,7 @@ dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
                    (unsigned long)stream,
                    (unsigned long)flag_reg,
                    (unsigned long)channel);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return DMA_ERR_DISABLE_TIMEOUT;
     }
 
@@ -1303,7 +1431,7 @@ dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
                    (unsigned long)channel,
                    (unsigned long)stream->CR,
                    (unsigned long)stream->NDTR);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return DMA_ERR_DISABLE_TIMEOUT;
     }
 
@@ -1362,7 +1490,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
                    (unsigned int)dir,
                    (unsigned long)msg,
                    (unsigned long)len);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
@@ -1376,7 +1504,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_MAP] invalid RX stream | expected=DMA1_Stream5 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1385,7 +1513,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_MAP] invalid TX stream | expected=DMA1_Stream6 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1400,7 +1528,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_MAP] invalid RX stream | expected=DMA1_Stream1 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1409,7 +1537,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
 
             I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_MAP] invalid TX stream | expected=DMA1_Stream4 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1424,7 +1552,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
                    (unsigned long)I2Cx,
                    (unsigned int)dir,
                    (unsigned long)len);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
@@ -1438,7 +1566,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
                    (unsigned long)hw.stream->NDTR,
                    (unsigned int)dir,
                    (unsigned long)len);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
@@ -1471,7 +1599,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
                    (unsigned long)hw.stream->NDTR,
                    (unsigned long)hw.stream->PAR,
                    (unsigned long)hw.stream->M0AR);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
@@ -1502,7 +1630,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned int)data_len);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_UNSUPPORTED_INSTANCE;
     }
 
@@ -1514,7 +1642,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned int)data_len);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_NULL_BUFFER;
     }
 
@@ -1528,7 +1656,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)data_len,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_BUSY_TIMEOUT;
     }
 
@@ -1542,7 +1670,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_SB_TIMEOUT;
     }
@@ -1558,7 +1686,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_ADDR_TIMEOUT;
     }
@@ -1573,7 +1701,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
@@ -1587,7 +1715,7 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
@@ -1655,7 +1783,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_NULL_BUFFER;
     }
 
@@ -1666,7 +1794,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_ZERO_LEN;
     }
 
@@ -1678,7 +1806,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_UNSUPPORTED_INSTANCE;
     }
 
@@ -1692,7 +1820,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_BUSY_TIMEOUT;
     }
 
@@ -1707,7 +1835,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_SB_TIMEOUT;
     }
@@ -1724,7 +1852,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_ADDR_TIMEOUT;
     }
@@ -1739,7 +1867,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
@@ -1759,7 +1887,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
@@ -1775,7 +1903,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_SB_TIMEOUT;
     }
@@ -1792,7 +1920,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_ADDR_TIMEOUT;
     }
@@ -1811,7 +1939,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                        (unsigned int)slave_addr,
                        (unsigned int)reg_addr,
                        (unsigned long)I2Cx->SR1);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
         }
 
@@ -1839,7 +1967,7 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
                        (unsigned int)slave_addr,
                        (unsigned int)reg_addr,
                        (unsigned long)I2Cx->SR1);
-            tim2_delay_ms(20);
+            app_fault_delay_ms(20U);
             I2Cx->CR1 |= I2C_CR1_STOP;
             return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
         }
@@ -1899,7 +2027,7 @@ void DMA1_Stream6_IRQHandler(void) /* I2C1_TX complete/error -> bme680g_tx_cmplt
 
     if ((hisr & DMA_HISR_TCIF6) != 0U) {
         DMA1->HIFCR = DMA_HIFCR_CTCIF6;
-        dbg_bme680_dma_tx_tc_count++;
+
         DMA1_Stream6->CR &= ~DMA_SxCR_EN;
         reg_barrier();
 
@@ -1916,14 +2044,13 @@ void DMA1_Stream6_IRQHandler(void) /* I2C1_TX complete/error -> bme680g_tx_cmplt
 
     if ((hisr & DMA_HISR_TEIF6) != 0U) {
         DMA1->HIFCR = DMA_HIFCR_CTEIF6;
-        dbg_bme680_dma_tx_te_count++;
+
         DMA1_Stream6->CR &= ~DMA_SxCR_EN;
         reg_barrier();
 
         i2c_force_stop_and_clear(I2C1);
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_BME680);
 
         bme680g_tx_cmplt = I2C_DMA_TRANSFER_ERROR;
         i2c_dma_give_sem_from_isr(bme680_tx_sem);
@@ -1940,7 +2067,7 @@ void DMA1_Stream5_IRQHandler(void) /* I2C1_RX complete/error -> bme680g_rx_cmplt
 
     if ((hisr & DMA_HISR_TCIF5) != 0U) {
         DMA1->HIFCR = DMA_HIFCR_CTCIF5;
-        dbg_bme680_dma_rx_tc_count++;
+
         DMA1_Stream5->CR &= ~DMA_SxCR_EN;
         heartbeat_signal_bme680();
         reg_barrier();
@@ -1956,14 +2083,13 @@ void DMA1_Stream5_IRQHandler(void) /* I2C1_RX complete/error -> bme680g_rx_cmplt
 
     if ((hisr & DMA_HISR_TEIF5) != 0U) {
         DMA1->HIFCR = DMA_HIFCR_CTEIF5;
-        dbg_bme680_dma_rx_te_count++;
+
         DMA1_Stream5->CR &= ~DMA_SxCR_EN;
         reg_barrier();
 
         i2c_force_stop_and_clear(I2C1);
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_BME680;
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_BME680);
 
         bme680g_rx_cmplt = I2C_DMA_TRANSFER_ERROR;
         i2c_dma_give_sem_from_isr(bme680_rx_sem);
@@ -2002,8 +2128,7 @@ void DMA1_Stream1_IRQHandler(void) /* I2C3_RX complete/error -> mpu9250g_rx_cmpl
 
         i2c_force_stop_and_clear(I2C3);
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_MPU9250);
 
         mpu9250g_rx_cmplt = I2C_DMA_TRANSFER_ERROR;
         i2c_dma_give_sem_from_isr(mpu9250_rx_sem);
@@ -2043,8 +2168,7 @@ void DMA1_Stream4_IRQHandler(void) /* I2C3_TX complete/error -> mpu9250g_tx_cmpl
 
         i2c_force_stop_and_clear(I2C3);
 
-        system_fault_logging_active = 1U;
-        system_fault_owner = SYSTEM_FAULT_OWNER_MPU9250;
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_MPU9250);
 
         mpu9250g_tx_cmplt = I2C_DMA_TRANSFER_ERROR;
         i2c_dma_give_sem_from_isr(mpu9250_tx_sem);

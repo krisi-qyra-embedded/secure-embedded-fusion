@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-05-28
+ * Documentation date: 2026-06-17
  */
 
 #include "stm32f4xx.h"
@@ -16,6 +16,8 @@
 #include "pwr.h"
 #include "sig_sensors.h"
 #include "bme680.h"
+#include "max31865.h"
+#include "spi_dma.h"
 #include "main.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -23,29 +25,32 @@
 #include "cmsis_os.h"
 
 /* ---------------- app status enum (declare in main.c as requested) ---------------- */
-
 static app_status_t app_bme680_sensor_stack_init_(void);
 static app_status_t app_bme680_peripherals_init(void);
+static app_status_t app_max31865_sensor_stack_init(void);
+static app_status_t app_max31865_peripherals_init(void);
 
 /* ---------------- FreeRTOS sensor task configuration ---------------- */
 #define BME680_TASK_STACK_WORDS      		(1536U)
 #define MPU9250_TASK_STACK_WORDS     		(1536U)
-#define SENSOR_TASK_PERIOD_MS_BME680        (1000U)
-#define SENSOR_TASK_PERIOD_MS_MPU9250       (1000U)
+#define SENSOR_TASK_PERIOD_MS        		(1000U)
 #define BME680_SENSOR_TASK_PRIORITY         (tskIDLE_PRIORITY + 3U)
 #define MPU9250_SENSOR_TASK_PRIORITY        (tskIDLE_PRIORITY + 3U)
 #define SUPERVISOR_TASK_STACK_WORDS  		(768U)
 #define SUPERVISOR_TASK_PERIOD_MS    		(250U)
 #define SUPERVISOR_TASK_PRIORITY     		(tskIDLE_PRIORITY + 4U)
+#define MAX31865_TASK_STACK_WORDS        	(1536U)
+#define MAX31865_SENSOR_TASK_PRIORITY       (tskIDLE_PRIORITY + 3U)
 
 static void bme680_task(void *pvParameters);
 static void mpu9250_task(void *pvParameters);
+static void max31865_task(void *argument);
 static void supervisor_task(void *pvParameters);
 static void debug_log_bme680_task_state(void);
 
-static uint8_t mpu9250_suspended_by_bme680 = 0U;
 static TaskHandle_t bme680_task_handle = NULL;
 static TaskHandle_t mpu9250_task_handle = NULL;
+static TaskHandle_t max31865_task_handle = NULL;
 static TaskHandle_t supervisor_task_handle = NULL;
 
 extern SemaphoreHandle_t xSerialSemaphore;
@@ -60,11 +65,8 @@ extern SemaphoreHandle_t bme680_rx_sem;
 extern SemaphoreHandle_t bme680_tx_sem;
 extern SemaphoreHandle_t mpu9250_rx_sem;
 extern SemaphoreHandle_t mpu9250_tx_sem;
-
-extern volatile uint32_t dbg_bme680_dma_rx_tc_count;
-extern volatile uint32_t dbg_bme680_dma_rx_te_count;
-extern volatile uint32_t dbg_bme680_dma_tx_tc_count;
-extern volatile uint32_t dbg_bme680_dma_tx_te_count;
+extern SemaphoreHandle_t max31865_spi_rx_sem;
+extern SemaphoreHandle_t max31865_spi_tx_sem;
 
 int rslt;
 uint8_t retries = 3;
@@ -81,6 +83,8 @@ float pres;
 float hum;
 
 app_mpu9250_runtime_status_t mpu_runtime_rc;
+float temperatureC = 0.0f;
+Max31865_t max31865_dev;
 /* ---------------- app status enum ---------------- */
 //typedef enum {
 //    APP_STATUS_OK = 0,
@@ -119,37 +123,47 @@ int main(void)
         if (iwdg_status != IWDG_OK)
         {
             log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(2);
             NVIC_SystemReset();
         }
     }
 
     if (app_bme680_peripherals_init() != APP_STATUS_OK) {
-    	 	    //on_fatal_init_error("app_bme680_peripherals_init failed");
-    			NVIC_SystemReset();
+    	 	    on_fatal_init_error("app_bme680_peripherals_init failed");
+    			//NVIC_SystemReset();
     	 	}
 
     	 	if (app_bme680_sensor_stack_init_() != APP_STATUS_OK) {
-    	 	    //on_fatal_init_error("app_bme680_sensor_stack_init failed");
-    	 		 NVIC_SystemReset();
+    	 	    on_fatal_init_error("app_bme680_sensor_stack_init failed");
+    	 		 //NVIC_SystemReset();
     	 	}
 
     if (app_mpu9250_peripherals_init() != APP_STATUS_OK) {
-        //on_fatal_init_error("app_mpu9250_peripherals_init failed");
-    	NVIC_SystemReset();
+        on_fatal_init_error("app_mpu9250_peripherals_init failed");
+    	//NVIC_SystemReset();
     }
 
     if (app_mpu9250_sensor_stack_init() != APP_STATUS_OK) {
-        //on_fatal_init_error("app_mpu9250_sensor_stack_init failed");
-    	NVIC_SystemReset();
+        on_fatal_init_error("app_mpu9250_sensor_stack_init failed");
+    	//NVIC_SystemReset();
+    }
+
+    if (app_max31865_peripherals_init() != APP_STATUS_OK) {
+        on_fatal_init_error("app_max31865_peripherals_init failed");
+        /*NVIC_SystemReset();*/
+    }
+
+    if (app_max31865_sensor_stack_init() != APP_STATUS_OK) {
+        on_fatal_init_error("app_max31865_sensor_stack_init failed");
+        /*NVIC_SystemReset();*/
     }
 
     supervisor_heartbeats_init();
 
     xSerialSemaphore = xSemaphoreCreateMutex();
     if (xSerialSemaphore == NULL) {
-        //on_fatal_init_error("xSerialSemaphore create failed");
-        NVIC_SystemReset();
+        on_fatal_init_error("xSerialSemaphore create failed");
+        /*NVIC_SystemReset();*/
     }
 
     /* Binary semaphores for BME680 I2C1 DMA IRQ completion.
@@ -159,14 +173,14 @@ int main(void)
      */
     bme680_rx_sem = xSemaphoreCreateBinary();
     if (bme680_rx_sem == NULL) {
-        //on_fatal_init_error("bme680_rx_sem create failed");
-        NVIC_SystemReset();
+        on_fatal_init_error("bme680_rx_sem create failed");
+        /*NVIC_SystemReset();*/
     }
 
     bme680_tx_sem = xSemaphoreCreateBinary();
     if (bme680_tx_sem == NULL) {
-    	NVIC_SystemReset();
-        //on_fatal_init_error("bme680_tx_sem create failed");
+    	/*NVIC_SystemReset();*/
+        on_fatal_init_error("bme680_tx_sem create failed");
     }
 
     /* Binary semaphores for MPU9250 I2C3 DMA IRQ completion.
@@ -176,14 +190,31 @@ int main(void)
      */
     mpu9250_rx_sem = xSemaphoreCreateBinary();
     if (mpu9250_rx_sem == NULL) {
-    	NVIC_SystemReset();
-        //on_fatal_init_error("mpu9250_rx_sem create failed");
+    	/*NVIC_SystemReset();*/
+        on_fatal_init_error("mpu9250_rx_sem create failed");
     }
 
     mpu9250_tx_sem = xSemaphoreCreateBinary();
     if (mpu9250_tx_sem == NULL) {
-    	NVIC_SystemReset();
-        //on_fatal_init_error("mpu9250_tx_sem create failed");
+    	/*NVIC_SystemReset();*/
+        on_fatal_init_error("mpu9250_tx_sem create failed");
+    }
+
+    /* Binary semaphores for MAX31865 SPI4 DMA IRQ completion.
+     * These objects are defined in spi_dma.c and given from:
+     *   RX -> DMA2_Stream0_IRQHandler
+     *   TX -> DMA2_Stream1_IRQHandler
+     */
+    max31865_spi_rx_sem = xSemaphoreCreateBinary();
+    if (max31865_spi_rx_sem == NULL) {
+        on_fatal_init_error("max31865_spi_rx_sem create failed");
+        /*NVIC_SystemReset();*/
+    }
+
+    max31865_spi_tx_sem = xSemaphoreCreateBinary();
+    if (max31865_spi_tx_sem == NULL) {
+        on_fatal_init_error("max31865_spi_tx_sem create failed");
+        /*NVIC_SystemReset();*/
     }
 
     if (xTaskCreate(bme680_task,
@@ -192,8 +223,8 @@ int main(void)
                     NULL,
                     BME680_SENSOR_TASK_PRIORITY,
                     &bme680_task_handle) != pdPASS) {
-        //on_fatal_init_error("bme680_task create failed");
-    	NVIC_SystemReset();
+        on_fatal_init_error("bme680_task create failed");
+    	/*NVIC_SystemReset();*/
     }
 
     if (xTaskCreate(mpu9250_task,
@@ -202,8 +233,18 @@ int main(void)
                     NULL,
                     MPU9250_SENSOR_TASK_PRIORITY,
                     &mpu9250_task_handle) != pdPASS) {
-        //on_fatal_init_error("mpu9250_task create failed");
-    	NVIC_SystemReset();
+        on_fatal_init_error("mpu9250_task create failed");
+    	/*NVIC_SystemReset();*/
+    }
+
+    if (xTaskCreate(max31865_task,
+                    "max31865_task",
+                    MAX31865_TASK_STACK_WORDS,
+                    NULL,
+                    MAX31865_SENSOR_TASK_PRIORITY,
+                    &max31865_task_handle) != pdPASS) {
+        on_fatal_init_error("max31865_task create failed");
+        /*NVIC_SystemReset();*/
     }
 
     if (xTaskCreate(supervisor_task,
@@ -212,8 +253,8 @@ int main(void)
                     NULL,
                     SUPERVISOR_TASK_PRIORITY,
                     &supervisor_task_handle) != pdPASS) {
-        //on_fatal_init_error("supervisor_task create failed");
-    	NVIC_SystemReset();
+        on_fatal_init_error("supervisor_task create failed");
+    	//NVIC_SystemReset();
     }
 
     vTaskStartScheduler();
@@ -229,23 +270,30 @@ int main(void)
 static void bme680_task(void *pvParameters)
 {
     /* Suspend the task after reporting an unrecoverable measurement failure. */
+    TickType_t last_wake;
+
     (void)pvParameters;
+
+    last_wake = xTaskGetTickCount();
 
     for (;;) {
         const app_bme680_runtime_status_t bme_rc =
             app_bme680_sensor_runtime_process();
 
         if (bme_rc != APP_BME680_RUNTIME_OK) {
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_BME680);
+
             BME680_LOG_PRINTF("[ERROR] bme680_task: app_bme680_sensor_runtime_process rc=%d\r\n",
                               (int)bme_rc);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
 
             request_iwdg_reset("BME680 read sensor parameters unrecoverable");
 
             vTaskSuspend(NULL);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS_BME680));
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
     }
 }
 
@@ -253,44 +301,61 @@ static void bme680_task(void *pvParameters)
 static void mpu9250_task(void *pvParameters)
 {
     /* Stop further measurements after reporting a fatal sensor error. */
+    TickType_t last_wake;
+
     (void)pvParameters;
+
+    last_wake = xTaskGetTickCount();
 
     for (;;) {
         const app_mpu9250_runtime_status_t mpu_rc =
             app_mpu9250_runtime_process();
 
-        /*debug_log_bme680_task_state();*/
-
         if (mpu_rc != APP_MPU9250_RUNTIME_OK) {
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_MPU9250);
+
             MPU9250_LOG_PRINTF("[ERROR] mpu9250_task: app_mpu9250_runtime_process rc=%d\r\n",
                                (int)mpu_rc);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
 
             request_iwdg_reset("MPU9250 read sensor parameters unrecoverable");
 
             vTaskSuspend(NULL);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS_MPU9250));
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
     }
 }
 
-/* Runs periodic heartbeat and watchdog supervision. */
-static void supervisor_task(void *pvParameters)
+/* Runs periodic MAX31865 temperature measurements. */
+static void max31865_task(void *pvParameters)
 {
-    /* Allow a startup interval before the first supervisor check. */
+    /* Suspend sampling when the runtime recovery budget is exhausted. */
     TickType_t last_wake;
 
     (void)pvParameters;
 
-    vTaskDelay(pdMS_TO_TICKS(500U));
-
     last_wake = xTaskGetTickCount();
 
     for (;;) {
-        supervisor_check_and_kick();
+        const app_max31865_runtime_status_t max_rc =
+            app_max31865_runtime_process();
 
-        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
+        if (max_rc != APP_MAX31865_RUNTIME_OK) {
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_MAX31865);
+
+            MAX31865_LOG_PRINTF("[ERROR] max31865_task: app_max31865_runtime_process rc=%d\r\n",
+                                (int)max_rc);
+            app_fault_delay_ms(20U);
+
+            request_iwdg_reset("MAX31865 read temperature unrecoverable");
+
+            vTaskSuspend(NULL);
+        }
+
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
     }
 }
 
@@ -323,13 +388,6 @@ static void debug_log_bme680_task_state(void)
     eTaskState bme_state;
     UBaseType_t bme_stack_left;
 
-    UBaseType_t bme_prio = 0U;
-    UBaseType_t mpu_prio = 0U;
-    UBaseType_t sup_prio = 0U;
-    UBaseType_t cur_prio = 0U;
-
-    const char *bme_active_state = "UNKNOWN";
-
     if ((now_tick - last_debug_tick) < pdMS_TO_TICKS(2000U)) {
         return;
     }
@@ -338,57 +396,38 @@ static void debug_log_bme680_task_state(void)
 
     if (bme680_task_handle == NULL) {
         MPU9250_LOG_PRINTF("[DBG][MPU9250] BME680 task handle is NULL\r\n");
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return;
     }
 
     bme_state = eTaskGetState(bme680_task_handle);
     bme_stack_left = uxTaskGetStackHighWaterMark(bme680_task_handle);
 
-    bme_prio = uxTaskPriorityGet(bme680_task_handle);
+    MPU9250_LOG_PRINTF("[DBG][MPU9250] BME680 task state=%s main_age=%lu ms i2c_age=%lu ms stack_left=%lu words\r\n",
+                       task_state_to_str(bme_state),
+                       (unsigned long)age_bme680_main,
+                       (unsigned long)age_bme680_i2c,
+                       (unsigned long)bme_stack_left);
+    app_fault_delay_ms(20U);
+}
 
-    if (mpu9250_task_handle != NULL) {
-        mpu_prio = uxTaskPriorityGet(mpu9250_task_handle);
+/* Runs periodic heartbeat and watchdog supervision. */
+static void supervisor_task(void *pvParameters)
+{
+    /* Allow a startup interval before the first supervisor check. */
+    TickType_t last_wake;
+
+    (void)pvParameters;
+
+    vTaskDelay(pdMS_TO_TICKS(500U));
+
+    last_wake = xTaskGetTickCount();
+
+    for (;;) {
+        supervisor_check_and_kick();
+
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
     }
-
-    if (supervisor_task_handle != NULL) {
-        sup_prio = uxTaskPriorityGet(supervisor_task_handle);
-    }
-
-    cur_prio = uxTaskPriorityGet(NULL);
-
-    if ((bme_state == eReady) || (bme_state == eRunning) || (bme_state == eBlocked)) {
-        bme_active_state = "ACTIVE";
-    } else if (bme_state == eSuspended) {
-        bme_active_state = "SUSPENDED";
-    } else if (bme_state == eDeleted) {
-        bme_active_state = "DELETED";
-    } else {
-        bme_active_state = "INVALID/UNKNOWN";
-    }
-
-    MPU9250_LOG_PRINTF(
-        "[DBG][MPU9250] BME680 state=%s active=%s prio=%lu | MPU prio=%lu | SUP prio=%lu | CUR prio=%lu | main_age=%lu ms | i2c_age=%lu ms | stack_left=%lu words\r\n",
-        task_state_to_str(bme_state),
-        bme_active_state,
-        (unsigned long)bme_prio,
-        (unsigned long)mpu_prio,
-        (unsigned long)sup_prio,
-        (unsigned long)cur_prio,
-        (unsigned long)age_bme680_main,
-        (unsigned long)age_bme680_i2c,
-        (unsigned long)bme_stack_left
-    );
-    tim2_delay_ms(20U);
-
-    MPU9250_LOG_PRINTF(
-        "[DBG][MPU9250] BME680 DMA IRQ counts: RX_TC=%lu RX_TE=%lu TX_TC=%lu TX_TE=%lu\r\n",
-        (unsigned long)dbg_bme680_dma_rx_tc_count,
-        (unsigned long)dbg_bme680_dma_rx_te_count,
-        (unsigned long)dbg_bme680_dma_tx_tc_count,
-        (unsigned long)dbg_bme680_dma_tx_te_count
-    );
-    tim2_delay_ms(20U);
 }
 
 /* USER CODE BEGIN 4 */
@@ -406,33 +445,6 @@ void fnAPP_Init_Standard_Values(void){
 
 }
 
-/* Pauses MPU9250 sampling during BME680 gas-reference collection. */
-void mpu9250_pause_for_bme680_gas_ref(void)
-{
-    /* Remember only a suspension performed by this helper. */
-    if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&
-        (mpu9250_task_handle != NULL)) {
-
-        if (eTaskGetState(mpu9250_task_handle) != eSuspended) {
-            vTaskSuspend(mpu9250_task_handle);
-            mpu9250_suspended_by_bme680 = 1U;
-        }
-    }
-}
-
-/* Resumes MPU9250 sampling after BME680 gas-reference collection. */
-void mpu9250_resume_after_bme680_gas_ref(void)
-{
-    /* Resume only when this path previously suspended the task. */
-    if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&
-        (mpu9250_task_handle != NULL) &&
-        (mpu9250_suspended_by_bme680 != 0U)) {
-
-        vTaskResume(mpu9250_task_handle);
-        mpu9250_suspended_by_bme680 = 0U;
-    }
-}
-
 /* ---------------- static init functions for BME680 (like MAX31865 pattern) ---------------- */
 
 /* Initializes the BME680 I2C1 bus and DMA streams. */
@@ -442,7 +454,6 @@ static app_status_t app_bme680_peripherals_init(void)
     i2c_select_status_t rc = i2c_init_select(1U, 8U, 9U);
     if (rc != I2C_SELECT_OK) {
         log_printf("[ERROR] app_bme680_peripherals_init: i2c_init_select failed rc=%d\r\n", (int)rc);
-        tim2_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
 
@@ -463,7 +474,6 @@ static app_status_t app_bme680_peripherals_init(void)
                              DMA1_Stream5_IRQn);
         if (st != DMA_OK) {
             log_printf("[ERROR] app_bme680_peripherals_init: DMA1_Stream5 init failed rc=%d\r\n", (int)st);
-            tim2_delay_ms(20U);
             return APP_STATUS_INIT_FAIL;
         }
 
@@ -476,7 +486,6 @@ static app_status_t app_bme680_peripherals_init(void)
                              DMA1_Stream6_IRQn);
         if (st != DMA_OK) {
             log_printf("[ERROR] app_bme680_peripherals_init: DMA1_Stream6 init failed rc=%d\r\n", (int)st);
-            tim2_delay_ms(20U);
             return APP_STATUS_INIT_FAIL;
         }
     }
@@ -493,9 +502,42 @@ static app_status_t app_bme680_sensor_stack_init_(void)
     int8_t rslt = init_bme680();
     if (rslt != 0) {
         log_printf("[ERROR] app_bme680_sensor_stack_init: init_bme680 failed rc=%d\r\n", (int)rslt);
-        tim2_delay_ms(20U);
         return APP_STATUS_INIT_FAIL;
     }
+    return APP_STATUS_OK;
+}
+
+/* Initializes the MAX31865 chip select and SPI4 DMA. */
+static app_status_t app_max31865_peripherals_init(void)
+{
+    /* Stop initialization if either GPIO or SPI setup fails. */
+    if (gpio_pb6_cs_init() != 0) {
+        MAX31865_LOG_PRINTF("[ERROR] app_max31865_peripherals_init: gpio_pb6_cs_init failed\r\n");
+        app_fault_delay_ms(20U);
+        return APP_STATUS_INIT_FAIL;
+    }
+
+    if (spi4_dma_init() != SPI_DMA_STATUS_OK) {
+        MAX31865_LOG_PRINTF("[ERROR] app_max31865_peripherals_init: spi4_dma_init failed\r\n");
+        app_fault_delay_ms(20U);
+        return APP_STATUS_INIT_FAIL;
+    }
+
+    return APP_STATUS_OK;
+}
+
+/* Initializes the application's MAX31865 device. */
+static app_status_t app_max31865_sensor_stack_init(void)
+{
+    /* Clear device state before selecting three-wire, 50 Hz operation. */
+    memset(&max31865_dev, 0, sizeof(max31865_dev));
+
+    if (Max31865_init(&max31865_dev, 3U, 50U) != MAX31865_STATUS_OK) {
+        MAX31865_LOG_PRINTF("[ERROR] app_max31865_sensor_stack_init: Max31865_init failed\r\n");
+        app_fault_delay_ms(20U);
+        return APP_STATUS_INIT_FAIL;
+    }
+
     return APP_STATUS_OK;
 }
 

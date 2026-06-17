@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-05-28
+ * Documentation date: 2026-06-17
  */
 
 #ifndef INC_CLOCK_H_

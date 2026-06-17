@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-05-28
+ * Documentation date: 2026-06-17
  */
 
 #ifndef __MPU9250_H__
@@ -7,11 +7,6 @@
 
 #include <stdint.h>
 #include "i2c_dma.h"
-#include "fault_log.h"
-
-#ifdef MPU9250_LOG_PRINTF
-#undef MPU9250_LOG_PRINTF
-#endif
 
 /* ----------------------------- Constants ----------------------------- */
 
@@ -22,11 +17,11 @@ extern SemaphoreHandle_t xSerialSemaphore;
         if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
             (xSerialSemaphore != NULL)) {                                          \
             if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
-                fault_log_printf(FAULT_LOG_SRC_MPU9250, __VA_ARGS__);              \
+                log_printf(__VA_ARGS__);                                           \
                 xSemaphoreGive(xSerialSemaphore);                                  \
             }                                                                      \
         } else {                                                                   \
-            fault_log_printf(FAULT_LOG_SRC_MPU9250, __VA_ARGS__);                  \
+            log_printf(__VA_ARGS__);                                               \
         }                                                                          \
     } while (0)
 

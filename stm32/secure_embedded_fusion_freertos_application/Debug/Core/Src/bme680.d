@@ -40,8 +40,8 @@ Core/Src/bme680.o: ../Core/Src/bme680.c ../Core/Inc/bme680.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/bme680_defs.h ../Core/Inc/fault_log.h ../Core/Inc/tim.h \
- ../Core/Inc/i2c_dma.h ../Core/Inc/uart.h \
+ ../Core/Inc/bme680_defs.h ../Core/Inc/tim.h ../Core/Inc/i2c_dma.h \
+ ../Core/Inc/uart.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h \
  ../Core/Inc/iwdg.h ../Core/Inc/systick.h ../Core/Inc/pwr.h \
  ../Core/Inc/sig_sensors.h
@@ -88,7 +88,6 @@ Core/Src/bme680.o: ../Core/Src/bme680.c ../Core/Inc/bme680.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/bme680_defs.h:
-../Core/Inc/fault_log.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/i2c_dma.h:
 ../Core/Inc/uart.h:

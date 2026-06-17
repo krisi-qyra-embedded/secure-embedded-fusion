@@ -41,7 +41,8 @@ Core/Src/i2c_dma.o: ../Core/Src/i2c_dma.c ../Core/Inc/i2c_dma.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Inc/tim.h ../Core/Inc/uart.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h \
- ../Core/Inc/pwr.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h
+ ../Core/Inc/pwr.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h \
+ ../Core/Inc/i2c_dma.h
 ../Core/Inc/i2c_dma.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
@@ -89,3 +90,4 @@ Core/Src/i2c_dma.o: ../Core/Src/i2c_dma.c ../Core/Inc/i2c_dma.h \
 ../Core/Inc/pwr.h:
 ../Core/Inc/iwdg.h:
 ../Core/Inc/systick.h:
+../Core/Inc/i2c_dma.h:

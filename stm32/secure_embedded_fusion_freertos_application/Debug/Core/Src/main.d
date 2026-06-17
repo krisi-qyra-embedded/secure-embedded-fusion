@@ -41,11 +41,12 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/fault_log.h ../Core/Inc/i2c_dma.h ../Core/Inc/uart.h \
+ ../Core/Inc/i2c_dma.h ../Core/Inc/uart.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h \
  ../Core/Inc/tim.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h \
  ../Core/Inc/pwr.h ../Core/Inc/sig_sensors.h ../Core/Inc/bme680_defs.h \
- ../Core/Inc/bme680.h ../Core/Inc/main.h
+ ../Core/Inc/bme680.h ../Core/Inc/max31865.h ../Core/Inc/spi_dma.h \
+ ../Core/Inc/uart.h ../Core/Inc/spi_dma.h ../Core/Inc/main.h
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
 ../Drivers/CMSIS/Include/core_cm4.h:
@@ -91,7 +92,6 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
-../Core/Inc/fault_log.h:
 ../Core/Inc/i2c_dma.h:
 ../Core/Inc/uart.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
@@ -102,4 +102,8 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Core/Inc/sig_sensors.h:
 ../Core/Inc/bme680_defs.h:
 ../Core/Inc/bme680.h:
+../Core/Inc/max31865.h:
+../Core/Inc/spi_dma.h:
+../Core/Inc/uart.h:
+../Core/Inc/spi_dma.h:
 ../Core/Inc/main.h:

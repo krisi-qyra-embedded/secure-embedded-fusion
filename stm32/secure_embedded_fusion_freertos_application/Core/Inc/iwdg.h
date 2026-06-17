@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-05-28
+ * Documentation date: 2026-06-17
  */
 
 #ifndef __IWDG_H__
@@ -12,9 +12,9 @@
 #include "systick.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "i2c_dma.h"
 #include "semphr.h"
 #include "cmsis_os.h"
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,12 +40,8 @@ extern SemaphoreHandle_t xSerialSemaphore;
 #define IWDG_KEY_RELOAD             0x0000AAAAU
 
 #define SUPERVISOR_PERIOD_MS        50U
-#define HEARTBEAT_WINDOW_MS         5000U
+#define HEARTBEAT_WINDOW_MS         10000U
 #define INTENTIONAL_RESET_TAG       0xDEADBEEFU
-
-#define FAULT_SRC_BME680      		 (1U << 0)
-#define FAULT_SRC_MPU9250     		 (1U << 1)
-#define FAULT_COLLECTION_WINDOW_MS 	 15000U
 
 #define IWDG_PRESCALER_4            0x00000000U
 #define IWDG_PRESCALER_8            0x00000001U
@@ -60,6 +56,23 @@ extern SemaphoreHandle_t xSerialSemaphore;
 /* Poll loop budget -- tune per system */
 #define IWDG_READY_POLL_MAX         1000000U
 
+#define FAULT_CAPTURE_GRACE_MS          (6000U)
+#define FAULT_CAPTURE_ABSOLUTE_MAX_MS   (10000U)
+
+#ifndef FAULT_CAPTURE_MIN_GRACE_MS
+#define FAULT_CAPTURE_MIN_GRACE_MS      (2000U)
+#endif
+
+
+#ifndef FAULT_CAPTURE_ENROLL_MS
+#define FAULT_CAPTURE_ENROLL_MS       (8000U)
+#endif
+
+#ifndef FAULT_CAPTURE_HARD_MAX_MS
+#define FAULT_CAPTURE_HARD_MAX_MS     (60000U)
+#endif
+
+
 typedef enum
 {
     IWDG_OK = 0,
@@ -71,22 +84,22 @@ typedef enum
 
 /* ----------------------------- Heartbeat globals ----------------------------- */
 
+extern volatile uint32_t hb_spi_ts;
+extern volatile uint32_t hb_main_ts;
+
 extern volatile uint32_t hb_bme680_ts;
 extern volatile uint32_t hb_bme680main_ts;
 
 extern volatile uint32_t hb_mpu9250_ts;
 extern volatile uint32_t hb_mpu9250main_ts;
 
-extern volatile uint8_t system_fault_observed_mask;
-extern volatile uint8_t system_fault_diag_done_mask;
+extern volatile uint8_t  iwdg_reset_requested;
+extern volatile uint32_t iwdg_reset_request_ms;
 
-void system_fault_observed_mark(uint8_t fault_src);
-
-void system_fault_diag_mark_done(uint8_t fault_src);
 /* ----------------------------- IWDG API ----------------------------- */
 
 /*
- * Initialize IWDG.*
+ * Initialize IWDG.
  * Safe to call multiple times; subsequent calls return IWDG_ERR_ALREADY_INIT.
  *
  * prescaler: one of the IWDG_PRESCALER_* macros.
@@ -119,13 +132,14 @@ void supervisor_check_and_kick(void);
 
 void request_iwdg_reset(const char *reason);
 
-void request_iwdg_reset_from_source(uint8_t fault_src, const char *reason);
-
 void escalate_to_iwdg_reset(const char *reason);
 
 void on_fatal_init_error(const char *msg);
 
 /* ----------------------------- Heartbeat signal API ----------------------------- */
+
+void heartbeat_signal_spi(void);
+void heartbeat_signal_main(void);
 
 void heartbeat_signal_bme680(void);
 void heartbeat_signal_bme680main(void);

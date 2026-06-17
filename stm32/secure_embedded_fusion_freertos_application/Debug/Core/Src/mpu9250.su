@@ -12,10 +12,10 @@
 ../Core/Src/mpu9250.c:419:18:MPU9250_gyroGet	24	static
 ../Core/Src/mpu9250.c:445:15:app_mpu9250_sensor_stack_init	24	static
 ../Core/Src/mpu9250.c:513:18:mpu9250_calibrateGyro	64	static
-../Core/Src/mpu9250.c:564:18:MPU_readProcessedData	56	static
-../Core/Src/mpu9250.c:644:13:app_mpu9250_log_runtime_error	32	static
-../Core/Src/mpu9250.c:661:14:app_mpu9250_peripherals_init	24	static,ignoring_inline_asm
-../Core/Src/mpu9250.c:716:37:app_mpu9250_recover_and_reinit	32	static
-../Core/Src/mpu9250.c:741:21:app_mpu9250_runtime_restore_config_only	16	static
-../Core/Src/mpu9250.c:765:30:app_mpu9250_runtime_process	16	static
-../Core/Src/mpu9250.c:814:18:MPU_calcAttitude	32	static
+../Core/Src/mpu9250.c:562:18:MPU_readProcessedData	56	static
+../Core/Src/mpu9250.c:640:13:app_mpu9250_log_runtime_error	32	static
+../Core/Src/mpu9250.c:665:14:app_mpu9250_peripherals_init	24	static,ignoring_inline_asm
+../Core/Src/mpu9250.c:720:37:app_mpu9250_recover_and_reinit	32	static
+../Core/Src/mpu9250.c:745:21:app_mpu9250_runtime_restore_config_only	16	static
+../Core/Src/mpu9250.c:769:30:app_mpu9250_runtime_process	16	static
+../Core/Src/mpu9250.c:816:18:MPU_calcAttitude	32	static

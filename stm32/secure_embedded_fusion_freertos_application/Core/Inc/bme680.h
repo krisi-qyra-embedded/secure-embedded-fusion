@@ -20,11 +20,7 @@ extern "C" {
 #include "cmsis_os.h"
 #include "i2c_dma.h"
 #include <bme680_defs.h>
-#include "fault_log.h"
 
-#ifdef BME680_LOG_PRINTF
-#undef BME680_LOG_PRINTF
-#endif
 /* ----------------------------- Adapter policy ----------------------------- */
 /*
  * Lower layer is single-shot only.
@@ -38,11 +34,11 @@ extern SemaphoreHandle_t xSerialSemaphore;
         if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
             (xSerialSemaphore != NULL)) {                                          \
             if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
-                fault_log_printf(FAULT_LOG_SRC_BME680, __VA_ARGS__);               \
+                log_printf(__VA_ARGS__);                                           \
                 xSemaphoreGive(xSerialSemaphore);                                  \
             }                                                                      \
         } else {                                                                   \
-            fault_log_printf(FAULT_LOG_SRC_BME680, __VA_ARGS__);                   \
+            log_printf(__VA_ARGS__);                                               \
         }                                                                          \
     } while (0)
 
