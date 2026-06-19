@@ -136,6 +136,8 @@ void escalate_to_iwdg_reset(const char *reason);
 
 void on_fatal_init_error(const char *msg);
 
+uint8_t system_fault_capture_or_critical_fault_active(void);
+
 /* ----------------------------- Heartbeat signal API ----------------------------- */
 
 void heartbeat_signal_spi(void);

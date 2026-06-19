@@ -29,14 +29,16 @@ extern "C" {
 #define SYSTEM_FAULT_MASK_BME680      (1UL << 0)
 #define SYSTEM_FAULT_MASK_MPU9250     (1UL << 1)
 #define SYSTEM_FAULT_MASK_MAX31865    (1UL << 2)
+#define SYSTEM_FAULT_MASK_PM25        (1UL << 3)
 
 #define SYSTEM_FAULT_OWNER_NONE       0U
 #define SYSTEM_FAULT_OWNER_BME680     1U
 #define SYSTEM_FAULT_OWNER_MPU9250    2U
 #define SYSTEM_FAULT_OWNER_MAX31865   3U
+#define SYSTEM_FAULT_OWNER_PM25       4U
 
 #define SYSTEM_FAULT_MASK_CRITICAL  \
-    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250 | SYSTEM_FAULT_MASK_MAX31865)
+    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250 | SYSTEM_FAULT_MASK_MAX31865 | SYSTEM_FAULT_MASK_PM25)
 
 extern volatile uint8_t  system_fault_logging_active;
 extern volatile uint8_t  system_fault_owner;
@@ -115,7 +117,22 @@ typedef enum
     I2C_RECOVER_OK   = 1
 } i2c_recover_status_t;
 
-/* ----------------------------- BME680 completion flags ----------------------------- */
+/* ----------------------------- I2C DMA completion flags ----------------------------- */
+/*
+ * These flags belong only to the I2C DMA driver.
+ *
+ * BME680:
+ *   RX -> DMA1_Stream5
+ *   TX -> DMA1_Stream6
+ *
+ * MPU9250:
+ *   RX -> DMA1_Stream1
+ *   TX -> DMA1_Stream4
+ *
+ * PM2.5 is NOT declared here because PM2.5 uses USART1 RX DMA2_Stream5.
+ * Its UART RX event/semaphore live in pm25_uart.c / pm25_uart.h:
+ *   pm25_uart_rx_sem
+ */
 extern volatile i2c_dma_transfer_state_t bme680g_rx_cmplt;
 extern volatile i2c_dma_transfer_state_t bme680g_tx_cmplt;
 extern volatile i2c_dma_transfer_state_t mpu9250g_rx_cmplt;

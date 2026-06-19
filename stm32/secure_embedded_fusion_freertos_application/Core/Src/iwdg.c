@@ -70,9 +70,13 @@ extern volatile uint32_t system_fault_in_progress_mask;
 #define SYSTEM_FAULT_MASK_MAX31865    (1UL << 2)
 #endif
 
+#ifndef SYSTEM_FAULT_MASK_PM25
+#define SYSTEM_FAULT_MASK_PM25        (1UL << 3)
+#endif
+
 #ifndef SYSTEM_FAULT_MASK_CRITICAL
 #define SYSTEM_FAULT_MASK_CRITICAL  \
-    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250 | SYSTEM_FAULT_MASK_MAX31865)
+    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250 | SYSTEM_FAULT_MASK_MAX31865 | SYSTEM_FAULT_MASK_PM25)
 #endif
 
 
@@ -96,6 +100,28 @@ extern volatile uint32_t system_fault_in_progress_mask;
 #define IWDG_RESET_FALLBACK_MS              (3000U)
 #endif
 
+
+/* Checks whether critical fault handling is active. */
+uint8_t system_fault_capture_or_critical_fault_active(void)
+{
+    /* Combine active, in-progress and completed masks with the reset request. */
+    uint32_t critical_faults;
+
+    critical_faults =
+        (system_fault_active_mask |
+         system_fault_in_progress_mask |
+         system_fault_completed_mask) & SYSTEM_FAULT_MASK_CRITICAL;
+
+    if (iwdg_reset_requested != 0U) {
+        return 1U;
+    }
+
+    if (critical_faults != 0U) {
+        return 1U;
+    }
+
+    return 0U;
+}
 
 /* escalation helper: persist marker then stop kicking -> IWDG will reset */
 /* Stops normal execution so the watchdog can reset the device. */

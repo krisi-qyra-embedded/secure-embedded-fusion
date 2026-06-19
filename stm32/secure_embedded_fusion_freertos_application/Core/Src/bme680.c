@@ -2487,7 +2487,7 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
         }
 
         if (system_fault_logging_active == 0U) {
-            BME680_LOG_PRINTF("t:%.2f; p:%.0f; h:%.0f, ",
+            BME680_LOG_PRINTF("[BME680] t:%.2f; p:%.0f; h:%.0f, ",
                               bme.temperature,
                               bme.pressure,
                               bme.humidity);

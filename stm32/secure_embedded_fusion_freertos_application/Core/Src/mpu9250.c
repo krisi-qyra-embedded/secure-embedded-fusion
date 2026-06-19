@@ -613,7 +613,7 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     pMPU9250->sensorData.az = pMPU9250->rawData.az / pMPU9250->sensorData.aScaleFactor;
 
     if (system_fault_logging_active == 0U) {
-        MPU9250_LOG_PRINTF("ACCEL: X=%.3f g , Y=%.3f g , Z=%.3f g\r\n",
+        MPU9250_LOG_PRINTF("[MPU9250] ACCEL: X=%.3f g , Y=%.3f g , Z=%.3f g\r\n",
                            pMPU9250->sensorData.ax,
                            pMPU9250->sensorData.ay,
                            pMPU9250->sensorData.az);
@@ -646,7 +646,7 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
     pMPU9250->sensorData.gz /= pMPU9250->sensorData.gScaleFactor;
 
     if (system_fault_logging_active == 0U) {
-        MPU9250_LOG_PRINTF("GYRO:  X=%.3f dps , Y=%.3f dps , Z=%.3f dps\r\n",
+        MPU9250_LOG_PRINTF("[MPU9250] GYRO:  X=%.3f dps , Y=%.3f dps , Z=%.3f dps\r\n",
                            pMPU9250->sensorData.gx,
                            pMPU9250->sensorData.gy,
                            pMPU9250->sensorData.gz);

@@ -3,6 +3,7 @@
  */
 
 #include "stm32f4xx.h"
+#include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include <string.h>
 #include "systick.h"
@@ -23,12 +24,16 @@
 #include "task.h"
 #include "semphr.h"
 #include "cmsis_os.h"
+#include "pm2_5.h"
+#include "pm25_uart.h"
+
 
 /* ---------------- app status enum (declare in main.c as requested) ---------------- */
 static app_status_t app_bme680_sensor_stack_init_(void);
 static app_status_t app_bme680_peripherals_init(void);
 static app_status_t app_max31865_sensor_stack_init(void);
 static app_status_t app_max31865_peripherals_init(void);
+void Error_Handler(void);
 
 /* ---------------- FreeRTOS sensor task configuration ---------------- */
 #define BME680_TASK_STACK_WORDS      		(1536U)
@@ -41,17 +46,27 @@ static app_status_t app_max31865_peripherals_init(void);
 #define SUPERVISOR_TASK_PRIORITY     		(tskIDLE_PRIORITY + 4U)
 #define MAX31865_TASK_STACK_WORDS        	(1536U)
 #define MAX31865_SENSOR_TASK_PRIORITY       (tskIDLE_PRIORITY + 3U)
+#ifndef PM25_TASK_STACK_WORDS
+#define PM25_TASK_STACK_WORDS        		(1536U)
+#endif
+#ifndef PM25_SENSOR_TASK_PRIORITY
+#define PM25_SENSOR_TASK_PRIORITY    		BME680_SENSOR_TASK_PRIORITY
+#endif
+
 
 static void bme680_task(void *pvParameters);
 static void mpu9250_task(void *pvParameters);
 static void max31865_task(void *argument);
+static void pm25_task(void *argument);
 static void supervisor_task(void *pvParameters);
 static void debug_log_bme680_task_state(void);
 
 static TaskHandle_t bme680_task_handle = NULL;
 static TaskHandle_t mpu9250_task_handle = NULL;
 static TaskHandle_t max31865_task_handle = NULL;
+static TaskHandle_t pm25_task_handle = NULL;
 static TaskHandle_t supervisor_task_handle = NULL;
+static PMS25_App_t  g_pm25_app;
 
 extern SemaphoreHandle_t xSerialSemaphore;
 
@@ -67,6 +82,7 @@ extern SemaphoreHandle_t mpu9250_rx_sem;
 extern SemaphoreHandle_t mpu9250_tx_sem;
 extern SemaphoreHandle_t max31865_spi_rx_sem;
 extern SemaphoreHandle_t max31865_spi_tx_sem;
+extern SemaphoreHandle_t pm25_uart_rx_sem;
 
 int rslt;
 uint8_t retries = 3;
@@ -75,6 +91,8 @@ dma_status_t status;
 struct bme680_field_data data;
 volatile st_battery_t bat;
 app_bme680_runtime_status_t rc;
+float temperatureC = 0.0f;
+Max31865_t max31865_dev;
 /* USER CODE BEGIN PFP */
 void fnAPP_Init_Standard_Values(void);
 
@@ -83,8 +101,9 @@ float pres;
 float hum;
 
 app_mpu9250_runtime_status_t mpu_runtime_rc;
-float temperatureC = 0.0f;
-Max31865_t max31865_dev;
+UART_Status_t uart_st;
+tim_status_t tim_st;
+
 /* ---------------- app status enum ---------------- */
 //typedef enum {
 //    APP_STATUS_OK = 0,
@@ -96,6 +115,7 @@ int main(void)
 {
 	/* Create the sensor and supervisor tasks before starting the scheduler. */
 
+	HAL_Init();
 	clock_100_mhz_init();
     memset(&MPU9250, 0, sizeof(MPU9250));
     SCB->CPACR |= ((3UL << (10U * 2U)) | (3UL << (11U * 2U)));
@@ -158,6 +178,26 @@ int main(void)
         /*NVIC_SystemReset();*/
     }
 
+    uart_st = UART1_PM25_Init();
+    if (uart_st != UART_STATUS_OK)
+    {
+        log_printf("[FATAL][PM25] UART1_PM25_Init failed, st=%u\r\n",
+                   (unsigned)uart_st);
+        on_fatal_init_error("UART1_PM25_Init failed");
+        //NVIC_SystemReset();
+    }
+    if (PMS25_AppInit(&g_pm25_app,
+                      PM25_FRAME_POLL_TIMEOUT_MS,
+                      PM25_NO_FRAME_FAULT_MS,
+                      PM25_SAMPLE_PERIOD_MS,
+                      PM25_RECOVERY_DELAY_MS,
+                      PM25_MAX_RECOVERY_ATTEMPTS) != PMS25_APP_RUNTIME_OK)
+    {
+        log_printf("[FATAL][PM25] PMS25_AppInit failed\r\n");
+        on_fatal_init_error("PMS25_AppInit failed");
+        //NVIC_SystemReset();
+    }
+
     supervisor_heartbeats_init();
 
     xSerialSemaphore = xSemaphoreCreateMutex();
@@ -217,6 +257,17 @@ int main(void)
         /*NVIC_SystemReset();*/
     }
 
+    /* Binary semaphore for PM2.5 USART1 RX DMA completion.
+     * This object is used by the PM2.5 UART RX DMA path:
+     *   RX -> DMA2_Stream5_IRQHandler
+     *   USART1 RX complete -> HAL_UART_RxCpltCallback()
+     */
+    pm25_uart_rx_sem = xSemaphoreCreateBinary();
+    if (pm25_uart_rx_sem == NULL) {
+        on_fatal_init_error("pm25_uart_rx_sem create failed");
+        /*NVIC_SystemReset();*/
+    }
+
     if (xTaskCreate(bme680_task,
                     "bme680_task",
                     BME680_TASK_STACK_WORDS,
@@ -244,6 +295,16 @@ int main(void)
                     MAX31865_SENSOR_TASK_PRIORITY,
                     &max31865_task_handle) != pdPASS) {
         on_fatal_init_error("max31865_task create failed");
+        /*NVIC_SystemReset();*/
+    }
+
+    if (xTaskCreate(pm25_task,
+                    "pm25_task",
+                    PM25_TASK_STACK_WORDS,
+                    NULL,
+                    PM25_SENSOR_TASK_PRIORITY,
+                    &pm25_task_handle) != pdPASS) {
+        on_fatal_init_error("pm25_task create failed");
         /*NVIC_SystemReset();*/
     }
 
@@ -325,6 +386,59 @@ static void mpu9250_task(void *pvParameters)
         }
 
         vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SENSOR_TASK_PERIOD_MS));
+    }
+}
+
+/* Processes PM2.5 frames and runtime recovery under FreeRTOS. */
+static void pm25_task(void *argument)
+{
+    /* Suspend the task after reporting fatal or invalid runtime state. */
+    (void)argument;
+
+    for (;;) {
+        const PMS25_AppRuntimeStatus_t app_st = PMS25_AppRun(&g_pm25_app);
+
+        if (app_st == PMS25_APP_RUNTIME_OK) {
+            continue;
+        }
+
+        if (app_st == PMS25_APP_RUNTIME_FATAL) {
+            system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_PM25);
+
+            PM25_LOG_PRINTF("[FATAL][PM25] All recovery attempts exhausted -> reporting fatal to supervisor\r\n");
+            app_fault_delay_ms(20U);
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_PM25);
+
+            request_iwdg_reset("PM2.5 runtime failure after 3 total recovery attempts");
+
+            vTaskSuspend(NULL);
+        }
+
+        if (app_st == PMS25_APP_RUNTIME_BAD_PARAM) {
+            system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_PM25);
+
+            PM25_LOG_PRINTF("[FATAL][PM25] PMS25_AppRun returned BAD_PARAM -> reporting fatal to supervisor\r\n");
+            app_fault_delay_ms(20U);
+
+            system_fault_mark_completed(SYSTEM_FAULT_OWNER_PM25);
+
+            request_iwdg_reset("PM2.5 runtime bad parameter");
+
+            vTaskSuspend(NULL);
+        }
+
+        system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_PM25);
+
+        PM25_LOG_PRINTF("[FATAL][PM25] PMS25_AppRun returned unexpected status=%d -> reporting fatal to supervisor\r\n",
+                        (int)app_st);
+        app_fault_delay_ms(20U);
+
+        system_fault_mark_completed(SYSTEM_FAULT_OWNER_PM25);
+
+        request_iwdg_reset("PM2.5 runtime unexpected status");
+
+        vTaskSuspend(NULL);
     }
 }
 
@@ -493,6 +607,16 @@ static app_status_t app_bme680_peripherals_init(void)
     fnAPP_Init_Standard_Values();
 
     return APP_STATUS_OK;
+}
+
+/* Halts execution after an unrecoverable application error. */
+void Error_Handler(void)
+{
+    /* Disable interrupts before entering the terminal wait. */
+    __disable_irq();
+    while (1)
+    {
+    }
 }
 
 /* Applies the BME680 sensor configuration. */

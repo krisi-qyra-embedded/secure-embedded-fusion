@@ -12,6 +12,14 @@
 #include "task.h"
 #include "semphr.h"
 
+#ifndef SYSTEM_FAULT_OWNER_PM25
+#define SYSTEM_FAULT_OWNER_PM25       4U
+#endif
+
+#ifndef SYSTEM_FAULT_MASK_PM25
+#define SYSTEM_FAULT_MASK_PM25        (1UL << 3)
+#endif
+
 /*
  * Multi-sensor I2C DMA driver:
  *
@@ -161,6 +169,9 @@ volatile uint32_t system_fault_in_progress_mask = 0U;
 
          case SYSTEM_FAULT_OWNER_MAX31865:
              return SYSTEM_FAULT_MASK_MAX31865;
+
+         case SYSTEM_FAULT_OWNER_PM25:
+             return SYSTEM_FAULT_MASK_PM25;
 
          default:
              return 0U;

@@ -713,7 +713,7 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
                 *readTemp = temp;
 
                 if (system_fault_logging_active == 0U) {
-                    MAX31865_LOG_PRINTF("OK: TempC = %.4f C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
+                    MAX31865_LOG_PRINTF("[MAX31865] OK: TempC = %.4f C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
                                         temp,
                                         raw,
                                         (unsigned long)raw,

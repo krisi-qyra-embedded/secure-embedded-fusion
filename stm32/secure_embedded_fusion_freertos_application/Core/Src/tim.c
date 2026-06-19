@@ -14,6 +14,7 @@
 #define TIM2_1HZ_INT_TICKS             (10000UL)
 
 volatile uint8_t tim2_1s_flag = 0;
+TIM_HandleTypeDef htim2;
 
 /* Waits for a configured three-millisecond TIM2 interval. */
 void tim2_3ms_delay(void)
@@ -182,3 +183,98 @@ void tim2_1hz_interrupt_init(void)
     TIM2->DIER |= TIM_DIER_UIE;
     NVIC_EnableIRQ(TIM2_IRQn);
 }
+
+/* Configures the HAL TIM2 handle with a microsecond counter. */
+tim_status_t MX_TIM2_Init(void)
+{
+    /* Account for the doubled timer clock when APB1 is prescaled. */
+    uint32_t tim_clk_hz;
+    uint32_t pclk1_hz;
+
+    __HAL_RCC_TIM2_CLK_ENABLE();
+
+    htim2.Instance = TIM2;
+
+    pclk1_hz = HAL_RCC_GetPCLK1Freq();
+
+    if ((RCC->CFGR & RCC_CFGR_PPRE1) == RCC_HCLK_DIV1)
+    {
+        tim_clk_hz = pclk1_hz;
+    }
+    else
+    {
+        tim_clk_hz = pclk1_hz * 2U;
+    }
+
+    htim2.Init.Prescaler         = (uint32_t)((tim_clk_hz / 1000000U) - 1U);
+    htim2.Init.CounterMode       = TIM_COUNTERMODE_UP;
+    htim2.Init.Period            = 100U - 1U;
+    htim2.Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
+    htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+
+    if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+    {
+        return TIM_STATUS_INIT_FAIL;
+    }
+
+    HAL_NVIC_SetPriority(TIM2_IRQn, 1U, 0U);
+    HAL_NVIC_EnableIRQ(TIM2_IRQn);
+
+    return TIM_STATUS_OK;
+}
+
+/* Arms a TIM2 update interrupt for the requested interval. */
+tim_status_t tim2_start_oneshot_us(uint16_t delay_us)
+{
+    /* Stop the prior timer and clear its flag before changing ARR. */
+    if (delay_us == 0U)
+    {
+        return TIM_STATUS_BAD_PARAM;
+    }
+
+    if (HAL_TIM_Base_Stop_IT(&htim2) != HAL_OK)
+    {
+        return TIM_STATUS_STOP_FAIL;
+    }
+
+    __HAL_TIM_DISABLE_IT(&htim2, TIM_IT_UPDATE);
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
+
+    __HAL_TIM_SET_COUNTER(&htim2, 0U);
+    __HAL_TIM_SET_AUTORELOAD(&htim2, (uint32_t)delay_us - 1U);
+
+    if (HAL_TIM_Base_Start_IT(&htim2) != HAL_OK)
+    {
+        return TIM_STATUS_START_FAIL;
+    }
+
+    return TIM_STATUS_OK;
+}
+
+/* Stops the TIM2 interval and clears its update flag. */
+tim_status_t tim2_stop_oneshot(void)
+{
+    /* Return a stop failure before clearing the interrupt state. */
+    if (HAL_TIM_Base_Stop_IT(&htim2) != HAL_OK)
+    {
+        return TIM_STATUS_STOP_FAIL;
+    }
+
+    __HAL_TIM_DISABLE_IT(&htim2, TIM_IT_UPDATE);
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
+
+    return TIM_STATUS_OK;
+}
+
+/* Delays through the HAL millisecond timebase. */
+void delay_ms(uint32_t ms)
+{
+    /* Delegate the interval to HAL_Delay. */
+    HAL_Delay(ms);
+}
+
+//void TIM2_IRQHandler(void)
+//{
+//    HAL_TIM_IRQHandler(&htim2);
+//}
+

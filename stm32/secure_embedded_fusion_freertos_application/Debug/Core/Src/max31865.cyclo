@@ -17,10 +17,10 @@
 ../Core/Src/max31865.c:464:13:Max31865_log_recovery_action	4
 ../Core/Src/max31865.c:476:13:Max31865_log_fault_diagnosis	101
 ../Core/Src/max31865.c:576:13:app_max31865_log_runtime_error	12
-../Core/Src/max31865.c:601:19:Max31865_readTempC	84
-../Core/Src/max31865.c:847:13:app_max31865_log_local_runtime_error	6
-../Core/Src/max31865.c:861:31:app_max31865_runtime_process	5
-../Core/Src/max31865.c:883:19:Max31865_readTempF	10
-../Core/Src/max31865.c:901:7:Max31865_Filter	1
-../Core/Src/max31865.c:906:19:Max31865_monitorLoop	12
-../Core/Src/max31865.c:929:19:Max31865_debug_once	17
+../Core/Src/max31865.c:602:19:Max31865_readTempC	84
+../Core/Src/max31865.c:848:13:app_max31865_log_local_runtime_error	6
+../Core/Src/max31865.c:862:31:app_max31865_runtime_process	5
+../Core/Src/max31865.c:884:19:Max31865_readTempF	10
+../Core/Src/max31865.c:902:7:Max31865_Filter	1
+../Core/Src/max31865.c:907:19:Max31865_monitorLoop	12
+../Core/Src/max31865.c:930:19:Max31865_debug_once	17

@@ -43,6 +43,7 @@ void SysTick_Handler(void)
 {
     /* Advance the software tick used by peripheral timeout checks. */
     g_ms_ticks++;
+    HAL_IncTick();
 
     if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
         xPortSysTickHandler();

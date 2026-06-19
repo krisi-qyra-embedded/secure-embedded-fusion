@@ -14,12 +14,15 @@ C_SRCS += \
 ../Core/Src/main.c \
 ../Core/Src/max31865.c \
 ../Core/Src/mpu9250.c \
+../Core/Src/pm25_uart.c \
+../Core/Src/pm2_5.c \
 ../Core/Src/pwr.c \
 ../Core/Src/sig_sensors.c \
 ../Core/Src/spi_dma.c \
 ../Core/Src/stm32f4xx_it.c \
 ../Core/Src/syscalls.c \
 ../Core/Src/sysmem.c \
+../Core/Src/system_stm32f4xx.c \
 ../Core/Src/systick.c \
 ../Core/Src/tim.c \
 ../Core/Src/uart.c 
@@ -34,12 +37,15 @@ OBJS += \
 ./Core/Src/main.o \
 ./Core/Src/max31865.o \
 ./Core/Src/mpu9250.o \
+./Core/Src/pm25_uart.o \
+./Core/Src/pm2_5.o \
 ./Core/Src/pwr.o \
 ./Core/Src/sig_sensors.o \
 ./Core/Src/spi_dma.o \
 ./Core/Src/stm32f4xx_it.o \
 ./Core/Src/syscalls.o \
 ./Core/Src/sysmem.o \
+./Core/Src/system_stm32f4xx.o \
 ./Core/Src/systick.o \
 ./Core/Src/tim.o \
 ./Core/Src/uart.o 
@@ -54,12 +60,15 @@ C_DEPS += \
 ./Core/Src/main.d \
 ./Core/Src/max31865.d \
 ./Core/Src/mpu9250.d \
+./Core/Src/pm25_uart.d \
+./Core/Src/pm2_5.d \
 ./Core/Src/pwr.d \
 ./Core/Src/sig_sensors.d \
 ./Core/Src/spi_dma.d \
 ./Core/Src/stm32f4xx_it.d \
 ./Core/Src/syscalls.d \
 ./Core/Src/sysmem.d \
+./Core/Src/system_stm32f4xx.d \
 ./Core/Src/systick.d \
 ./Core/Src/tim.d \
 ./Core/Src/uart.d 
@@ -72,7 +81,7 @@ Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/adc_dma.cyclo ./Core/Src/adc_dma.d ./Core/Src/adc_dma.o ./Core/Src/adc_dma.su ./Core/Src/bme680.cyclo ./Core/Src/bme680.d ./Core/Src/bme680.o ./Core/Src/bme680.su ./Core/Src/clock.cyclo ./Core/Src/clock.d ./Core/Src/clock.o ./Core/Src/clock.su ./Core/Src/dma.cyclo ./Core/Src/dma.d ./Core/Src/dma.o ./Core/Src/dma.su ./Core/Src/i2c_dma.cyclo ./Core/Src/i2c_dma.d ./Core/Src/i2c_dma.o ./Core/Src/i2c_dma.su ./Core/Src/iwdg.cyclo ./Core/Src/iwdg.d ./Core/Src/iwdg.o ./Core/Src/iwdg.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/max31865.cyclo ./Core/Src/max31865.d ./Core/Src/max31865.o ./Core/Src/max31865.su ./Core/Src/mpu9250.cyclo ./Core/Src/mpu9250.d ./Core/Src/mpu9250.o ./Core/Src/mpu9250.su ./Core/Src/pwr.cyclo ./Core/Src/pwr.d ./Core/Src/pwr.o ./Core/Src/pwr.su ./Core/Src/sig_sensors.cyclo ./Core/Src/sig_sensors.d ./Core/Src/sig_sensors.o ./Core/Src/sig_sensors.su ./Core/Src/spi_dma.cyclo ./Core/Src/spi_dma.d ./Core/Src/spi_dma.o ./Core/Src/spi_dma.su ./Core/Src/stm32f4xx_it.cyclo ./Core/Src/stm32f4xx_it.d ./Core/Src/stm32f4xx_it.o ./Core/Src/stm32f4xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/systick.cyclo ./Core/Src/systick.d ./Core/Src/systick.o ./Core/Src/systick.su ./Core/Src/tim.cyclo ./Core/Src/tim.d ./Core/Src/tim.o ./Core/Src/tim.su ./Core/Src/uart.cyclo ./Core/Src/uart.d ./Core/Src/uart.o ./Core/Src/uart.su
+	-$(RM) ./Core/Src/adc_dma.cyclo ./Core/Src/adc_dma.d ./Core/Src/adc_dma.o ./Core/Src/adc_dma.su ./Core/Src/bme680.cyclo ./Core/Src/bme680.d ./Core/Src/bme680.o ./Core/Src/bme680.su ./Core/Src/clock.cyclo ./Core/Src/clock.d ./Core/Src/clock.o ./Core/Src/clock.su ./Core/Src/dma.cyclo ./Core/Src/dma.d ./Core/Src/dma.o ./Core/Src/dma.su ./Core/Src/i2c_dma.cyclo ./Core/Src/i2c_dma.d ./Core/Src/i2c_dma.o ./Core/Src/i2c_dma.su ./Core/Src/iwdg.cyclo ./Core/Src/iwdg.d ./Core/Src/iwdg.o ./Core/Src/iwdg.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/max31865.cyclo ./Core/Src/max31865.d ./Core/Src/max31865.o ./Core/Src/max31865.su ./Core/Src/mpu9250.cyclo ./Core/Src/mpu9250.d ./Core/Src/mpu9250.o ./Core/Src/mpu9250.su ./Core/Src/pm25_uart.cyclo ./Core/Src/pm25_uart.d ./Core/Src/pm25_uart.o ./Core/Src/pm25_uart.su ./Core/Src/pm2_5.cyclo ./Core/Src/pm2_5.d ./Core/Src/pm2_5.o ./Core/Src/pm2_5.su ./Core/Src/pwr.cyclo ./Core/Src/pwr.d ./Core/Src/pwr.o ./Core/Src/pwr.su ./Core/Src/sig_sensors.cyclo ./Core/Src/sig_sensors.d ./Core/Src/sig_sensors.o ./Core/Src/sig_sensors.su ./Core/Src/spi_dma.cyclo ./Core/Src/spi_dma.d ./Core/Src/spi_dma.o ./Core/Src/spi_dma.su ./Core/Src/stm32f4xx_it.cyclo ./Core/Src/stm32f4xx_it.d ./Core/Src/stm32f4xx_it.o ./Core/Src/stm32f4xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f4xx.cyclo ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/system_stm32f4xx.su ./Core/Src/systick.cyclo ./Core/Src/systick.d ./Core/Src/systick.o ./Core/Src/systick.su ./Core/Src/tim.cyclo ./Core/Src/tim.d ./Core/Src/tim.o ./Core/Src/tim.su ./Core/Src/uart.cyclo ./Core/Src/uart.d ./Core/Src/uart.o ./Core/Src/uart.su
 
 .PHONY: clean-Core-2f-Src
 

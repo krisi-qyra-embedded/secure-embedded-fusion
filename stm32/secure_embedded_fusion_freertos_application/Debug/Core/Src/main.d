@@ -24,6 +24,8 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/systick.h ../Core/Inc/dma.h ../Core/Inc/adc_dma.h \
  ../Core/Inc/mpu9250.h ../Core/Inc/i2c_dma.h \
@@ -46,7 +48,8 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Core/Inc/tim.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h \
  ../Core/Inc/pwr.h ../Core/Inc/sig_sensors.h ../Core/Inc/bme680_defs.h \
  ../Core/Inc/bme680.h ../Core/Inc/max31865.h ../Core/Inc/spi_dma.h \
- ../Core/Inc/uart.h ../Core/Inc/spi_dma.h ../Core/Inc/main.h
+ ../Core/Inc/uart.h ../Core/Inc/spi_dma.h ../Core/Inc/main.h \
+ ../Core/Inc/pm2_5.h ../Core/Inc/pm25_uart.h ../Core/Inc/pm2_5.h
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
 ../Drivers/CMSIS/Include/core_cm4.h:
@@ -72,6 +75,8 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/systick.h:
 ../Core/Inc/dma.h:
@@ -107,3 +112,6 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Core/Inc/uart.h:
 ../Core/Inc/spi_dma.h:
 ../Core/Inc/main.h:
+../Core/Inc/pm2_5.h:
+../Core/Inc/pm25_uart.h:
+../Core/Inc/pm2_5.h:
