@@ -266,15 +266,13 @@ tim_status_t tim2_stop_oneshot(void)
     return TIM_STATUS_OK;
 }
 
-/* Delays through the HAL millisecond timebase. */
-void delay_ms(uint32_t ms)
-{
-    /* Delegate the interval to HAL_Delay. */
-    HAL_Delay(ms);
-}
+//void delay_ms(uint32_t ms)
+//{
+//    HAL_Delay(ms);
+//}
 
 //void TIM2_IRQHandler(void)
 //{
 //    HAL_TIM_IRQHandler(&htim2);
-//}
+//}
 

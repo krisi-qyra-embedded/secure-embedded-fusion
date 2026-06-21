@@ -8,6 +8,9 @@
 #include "stm32f4xx_hal.h"
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern TIM_HandleTypeDef htim2;
 

@@ -10,37 +10,17 @@
 #include <stdbool.h>
 #include "stm32f4xx.h"
 #include "systick.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "i2c_dma.h"
-#include "semphr.h"
-#include "cmsis_os.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern SemaphoreHandle_t xSerialSemaphore;
-
-#define SYSTEM_LOG_PRINTF(...)                                                     \
-    do {                                                                           \
-        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
-            (xSerialSemaphore != NULL)) {                                          \
-            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
-                log_printf(__VA_ARGS__);                                           \
-                xSemaphoreGive(xSerialSemaphore);                                  \
-            }                                                                      \
-        } else {                                                                   \
-            log_printf(__VA_ARGS__);                                               \
-        }                                                                          \
-    } while (0)
 
 #define IWDG_KEY_ENABLE             0x0000CCCCU
 #define IWDG_KEY_WR_ACCESS_ENABLE   0x00005555U
 #define IWDG_KEY_RELOAD             0x0000AAAAU
 
 #define SUPERVISOR_PERIOD_MS        50U
-#define HEARTBEAT_WINDOW_MS         10000U
+#define HEARTBEAT_WINDOW_MS         7000U
 #define INTENTIONAL_RESET_TAG       0xDEADBEEFU
 
 #define IWDG_PRESCALER_4            0x00000000U
@@ -55,23 +35,6 @@ extern SemaphoreHandle_t xSerialSemaphore;
 
 /* Poll loop budget -- tune per system */
 #define IWDG_READY_POLL_MAX         1000000U
-
-#define FAULT_CAPTURE_GRACE_MS          (6000U)
-#define FAULT_CAPTURE_ABSOLUTE_MAX_MS   (10000U)
-
-#ifndef FAULT_CAPTURE_MIN_GRACE_MS
-#define FAULT_CAPTURE_MIN_GRACE_MS      (2000U)
-#endif
-
-
-#ifndef FAULT_CAPTURE_ENROLL_MS
-#define FAULT_CAPTURE_ENROLL_MS       (8000U)
-#endif
-
-#ifndef FAULT_CAPTURE_HARD_MAX_MS
-#define FAULT_CAPTURE_HARD_MAX_MS     (60000U)
-#endif
-
 
 typedef enum
 {
@@ -92,9 +55,6 @@ extern volatile uint32_t hb_bme680main_ts;
 
 extern volatile uint32_t hb_mpu9250_ts;
 extern volatile uint32_t hb_mpu9250main_ts;
-
-extern volatile uint8_t  iwdg_reset_requested;
-extern volatile uint32_t iwdg_reset_request_ms;
 
 /* ----------------------------- IWDG API ----------------------------- */
 
@@ -130,13 +90,9 @@ void supervisor_heartbeats_init(void);
 
 void supervisor_check_and_kick(void);
 
-void request_iwdg_reset(const char *reason);
-
 void escalate_to_iwdg_reset(const char *reason);
 
 void on_fatal_init_error(const char *msg);
-
-uint8_t system_fault_capture_or_critical_fault_active(void);
 
 /* ----------------------------- Heartbeat signal API ----------------------------- */
 

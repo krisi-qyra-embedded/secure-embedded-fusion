@@ -7,8 +7,6 @@
 
 #include <stdint.h>
 #include "stm32f4xx.h"
-#include "FreeRTOS.h"
-#include "semphr.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,15 +43,11 @@ typedef struct
     volatile uint32_t tx_ht_count;
 } spi_dma_diag_t;
 
-/* ----------------------------- Public API ----------------------------- */
-
 spi_dma_status_t spi4_dma_init(void);
 
 spi_dma_status_t spi4_dma_transmit(uint8_t *tx_buf, uint32_t len);
 spi_dma_status_t spi4_dma_receive(uint8_t *rx_buf, uint32_t len);
-spi_dma_status_t spi4_dma_transmit_receive(uint8_t *tx_buf,
-                                           uint8_t *rx_buf,
-                                           uint32_t len);
+spi_dma_status_t spi4_dma_transmit_receive(uint8_t *tx_buf, uint8_t *rx_buf, uint32_t len);
 
 spi_dma_status_t spi4_recover(void);
 spi_dma_status_t spi4_restore_and_init(void);
@@ -67,41 +61,14 @@ spi_dma_status_t spi4_wait_bsy_clear_ms(uint32_t timeout_ms);
 
 spi_dma_status_t spi4_set_baudrate_prescaler(uint8_t br_code);
 
-void spi4_short_delay_ms(uint32_t ms);
-
-/* ----------------------------- RTOS sync API ----------------------------- */
-
-int spi4_dma_rtos_sync_init(void);
-
-extern SemaphoreHandle_t max31865_spi_rx_sem;
-extern SemaphoreHandle_t max31865_spi_tx_sem;
-extern SemaphoreHandle_t xSerialSemaphore;
-
-#define SPI_DMA_LOG_PRINTF(...)                                                    \
-    do {                                                                           \
-        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
-            (xSerialSemaphore != NULL)) {                                          \
-            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
-                log_printf(__VA_ARGS__);                                           \
-                xSemaphoreGive(xSerialSemaphore);                                  \
-            }                                                                      \
-        } else {                                                                   \
-            log_printf(__VA_ARGS__);                                               \
-        }                                                                          \
-    } while (0)
-
-/* ----------------------------- Completion globals ----------------------------- */
-
 extern volatile spi_dma_transfer_state_t max31865_spi_dma_rx_cmplt;
 extern volatile spi_dma_transfer_state_t max31865_spi_dma_tx_cmplt;
-
-extern spi_dma_diag_t g_spi_dma_diag;
-
 extern volatile uint32_t hb_spi_ts;
-
 extern volatile uint8_t tim2_1s_flag;
 
 uint8_t tim2_1s_check_flag(void);
+
+extern spi_dma_diag_t g_spi_dma_diag;
 
 #ifdef __cplusplus
 }

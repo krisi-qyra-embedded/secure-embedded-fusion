@@ -4,7 +4,7 @@
 
 #include "sig_sensors.h"
 #include "pwr.h"
-#include "bme680.h"
+
 /**
  * init_bme680 - initialize BME680 device
  *
@@ -12,18 +12,6 @@
  *   0  -> success
  *  <0  -> failure (propagated error code from underlying call or -1 for local errors)
  */
-
-extern volatile uint8_t system_fault_logging_active;
-extern volatile uint8_t system_fault_owner;
-volatile uint8_t bme680_gas_reference_active;
-
-#ifndef BME680_STARTUP_GAS_REF_REGULATION_SAMPLES
-#define BME680_STARTUP_GAS_REF_REGULATION_SAMPLES    (10U)
-#endif
-
-static uint8_t bme680_gas_ref_startup_regulation_left =
-    BME680_STARTUP_GAS_REF_REGULATION_SAMPLES;
-
 /* Configures BME680 measurement and gas-heater settings. */
 int8_t init_bme680(void)
 {
@@ -49,8 +37,8 @@ int8_t init_bme680(void)
     /* --- bme680_init: single attempt, return immediately on error --- */
     rslt = bme680_init(dev);
     if (rslt != 0) {
-    	BME680_LOG_PRINTF("[ERROR] bme680_init failed (err=%d)\r\n", (int)rslt);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme680_init failed (err=%d)\r\n", (int)rslt);
+        tim2_delay_ms(20U);
         dev->delay_ms(BACKOFF_MS_BASE);  
         return rslt;
     }
@@ -74,8 +62,8 @@ int8_t init_bme680(void)
     /* --- bme680_set_sensor_settings: single attempt, delay then return on error --- */
     rslt = bme680_set_sensor_settings(set_required_settings, dev);
     if (rslt != 0) {
-    	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_settings failed (err=%d)\r\n", (int)rslt);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme680_set_sensor_settings failed (err=%d)\r\n", (int)rslt);
+        tim2_delay_ms(20U);
         dev->delay_ms(BACKOFF_MS_BASE);
         return rslt ? rslt : -2;
     }
@@ -83,8 +71,8 @@ int8_t init_bme680(void)
     /* --- Set sensor mode (power mode) --- */
     rslt = bme680_set_sensor_mode(dev);
     if (rslt != 0) {
-    	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_mode failed (err=%d)\r\n", (int)rslt);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme680_set_sensor_mode failed (err=%d)\r\n", (int)rslt);
+        tim2_delay_ms(20U);
         dev->delay_ms(BACKOFF_MS_BASE);  
         return rslt ? rslt : -3;
     }
@@ -92,8 +80,8 @@ int8_t init_bme680(void)
     /* --- Get profile duration --- */
     rslt = bme680_get_profile_dur(&bme.meas_period, dev);
     if (rslt != 0) {
-    	BME680_LOG_PRINTF("[ERROR] bme680_get_profile_dur failed (err=%d)\r\n", (int)rslt);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme680_get_profile_dur failed (err=%d)\r\n", (int)rslt);
+        tim2_delay_ms(20U);
         dev->delay_ms(BACKOFF_MS_BASE);  
         return rslt ? rslt : -4;
     }
@@ -101,8 +89,8 @@ int8_t init_bme680(void)
     /* --- Get gas reference --- */
     rslt = bme_GetGasReference();
     if (rslt != 0) {
-    	BME680_LOG_PRINTF("[ERROR] bme_GetGasReference failed (err=%d)\r\n", (int)rslt);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme_GetGasReference failed (err=%d)\r\n", (int)rslt);
+        tim2_delay_ms(20U);
         dev->delay_ms(BACKOFF_MS_BASE);  
         return rslt ? rslt : -5;
     }
@@ -124,204 +112,109 @@ int8_t init_bme680(void)
 int8_t bme_GetGasReference(void)
 {
     /* Ignore readings without the gas-valid status bit. */
-    const uint8_t  TARGET_VALID_READS = 3U;
-    const uint8_t  MAX_ATTEMPTS_TOTAL = 10U;
-    const uint8_t  MAX_READ_RETRIES   = 2U;
-    const uint32_t MAX_RUNTIME_MS     = 1500U;
+    const uint8_t TARGET_VALID_READS = 10;         
+    const uint8_t MAX_ATTEMPTS_TOTAL = 40;         
+    const uint8_t MAX_READ_RETRIES   = 3;          
 
     int8_t rslt;
-    int8_t final_status = 0;
     struct bme680_field_data data;
-
-    uint64_t acc = 0ULL;
-    uint8_t valid_count = 0U;
-    uint16_t attempts = 0U;
-    uint32_t start_ms = ms_get();
-    uint32_t last_valid_gas = 0U;
-
-    bme680_gas_reference_active = 1U;
-    heartbeat_signal_bme680main();
 
     rslt = null_ptr_check(&bme.gas_sensor);
     if (rslt != BME680_OK) {
-        BME680_LOG_PRINTF("[ERROR] bme_GetGasReference: null_ptr_check failed err=%d\r\n",
-                          (int)rslt);
+        log_printf("[ERROR] bme_GetGasReference: null_ptr_check failed (err=%d)\r\n", (int)rslt);
         tim2_delay_ms(20U);
-        final_status = -1;
-        goto gas_ref_exit;
+        return -1;
     }
 
-    while ((valid_count < TARGET_VALID_READS) &&
-           (attempts < MAX_ATTEMPTS_TOTAL)) {
+    uint64_t acc = 0ULL;
+    uint8_t valid_count = 0;
+    uint16_t attempts = 0;
 
-        uint32_t elapsed_ms = ms_get() - start_ms;
+    bme.gas_reference = 0;
 
-        if (elapsed_ms > MAX_RUNTIME_MS) {
-            break;
-        }
-
+    while ((valid_count < TARGET_VALID_READS) && (attempts < MAX_ATTEMPTS_TOTAL)) {
         attempts++;
-        heartbeat_signal_bme680main();
 
-        if (bme.gas_sensor.power_mode == BME680_FORCED_MODE) {
-            rslt = bme680_set_sensor_mode(&bme.gas_sensor);
-            if (rslt != BME680_OK) {
-                BME680_LOG_PRINTF("[WARN] bme_GetGasReference: set_sensor_mode failed err=%d attempt=%u/%u\r\n",
-                                  (int)rslt,
-                                  (unsigned)attempts,
-                                  (unsigned)MAX_ATTEMPTS_TOTAL);
-                tim2_delay_ms(20U);
-                continue;
-            }
-
-            {
-                uint32_t wait_ms = (bme.meas_period > 0U) ? (uint32_t)bme.meas_period : 100U;
-
-                if (wait_ms > 250U) {
-                    wait_ms = 250U;
-                }
-
-                heartbeat_signal_bme680main();
-
-                if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
-                    vTaskDelay(pdMS_TO_TICKS(wait_ms));
-                } else {
-                    bme.gas_sensor.delay_ms(wait_ms);
-                }
-            }
-        }
-
-        memset(&data, 0, sizeof(data));
-
-        for (uint8_t retry = 0U; retry < MAX_READ_RETRIES; ++retry) {
-            heartbeat_signal_bme680main();
-
+        for (uint8_t retry = 0; retry < MAX_READ_RETRIES; ++retry) {
             rslt = bme680_get_sensor_data(&data, &bme.gas_sensor);
-
-            if (rslt == BME680_OK) {
-                heartbeat_signal_bme680();
-                break;
-            }
-
-            BME680_LOG_PRINTF("[WARN] bme_GetGasReference: transient read err=%d retry=%u/%u\r\n",
-                              (int)rslt,
-                              (unsigned)(retry + 1U),
-                              (unsigned)MAX_READ_RETRIES);
-            tim2_delay_ms(20U);
-
-            if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
-                vTaskDelay(pdMS_TO_TICKS(2U + ((uint32_t)retry * 5U)));
-            } else {
-                bme.gas_sensor.delay_ms(2U + ((uint32_t)retry * 5U));
-            }
+            if (rslt == BME680_OK) break;
+            log_printf("[WARN] bme_GetGasReference: bme680_get_sensor_data transient err=%d (retry %u)\r\n",
+                       (int)rslt, (unsigned)(retry + 1));
+                       tim2_delay_ms(20U);
+            bme.gas_sensor.delay_ms(2U + retry * 5U);
         }
-
         if (rslt != BME680_OK) {
-            BME680_LOG_PRINTF("[ERROR] bme_GetGasReference: read failed permanently err=%d\r\n",
-                              (int)rslt);
+            log_printf("[ERROR] bme_GetGasReference: bme680_get_sensor_data failed permanently (err=%d)\r\n", (int)rslt);
             tim2_delay_ms(20U);
-            final_status = -3;
-            goto gas_ref_exit;
+            return -3;
         }
 
-        if ((data.status & BME680_GASM_VALID_MSK) != 0U) {
-            last_valid_gas = (uint32_t)data.gas_resistance;
-            bme.gas_resistance = last_valid_gas;
-
-            acc += (uint64_t)last_valid_gas;
+        if (data.status & BME680_GASM_VALID_MSK) {
+            acc += (uint64_t)data.gas_resistance;
             valid_count++;
+        } else {
+            /* Not a valid gas measurement this sample; log lightly and continue */
+            /*log_printf("[DEBUG] bme_GetGasReference: sample %u invalid (status=0x%02X)\r\n",
+                       (unsigned)attempts, data.status);*/
         }
 
-        heartbeat_signal_bme680main();
+        /* Wait sensor profile duration (use configured delay callback); ensure non-zero period */
+        uint32_t delay_ms = (bme.meas_period > 0U) ? bme.meas_period : 100U;
+        bme.gas_sensor.delay_ms(delay_ms);
     }
 
-    heartbeat_signal_bme680main();
-
-    if ((valid_count == 0U) || (last_valid_gas == 0U)) {
-        BME680_LOG_PRINTF("[ERROR] bme_GetGasReference: no valid gas readings attempts=%u\r\n",
-                          (unsigned)attempts);
+    if (valid_count == 0) {
+        log_printf("[ERROR] bme_GetGasReference: no valid gas readings after %u attempts\r\n", (unsigned)attempts);
         tim2_delay_ms(20U);
-        final_status = -2;
-        goto gas_ref_exit;
+        return -2;
     }
 
-    {
-        uint32_t avg = (uint32_t)(acc / (uint64_t)valid_count);
+    uint32_t avg = (uint32_t)(acc / (uint64_t)valid_count);
+    bme.gas_reference = avg;
 
-        bme.gas_reference = last_valid_gas;
+    /*log_printf("[INFO] bme_GetGasReference: collected %u valid samples (attempts=%u) avg_gas_res=%lu\r\n",
+               (unsigned)valid_count, (unsigned)attempts, (unsigned long)avg);*/
 
-        BME680_LOG_PRINTF("[INFO] bme_GetGasReference: valid=%u attempts=%u gas_ref=%lu avg=%lu\r\n",
-                          (unsigned)valid_count,
-                          (unsigned)attempts,
-                          (unsigned long)bme.gas_reference,
-                          (unsigned long)avg);
-        tim2_delay_ms(20U);
-    }
-
-    bme680_gas_ref_startup_regulation_left =
-        BME680_STARTUP_GAS_REF_REGULATION_SAMPLES;
-
-    heartbeat_signal_bme680main();
-    heartbeat_signal_bme680();
-
-    final_status = 0;
-
-gas_ref_exit:
-    bme680_gas_reference_active = 0U;
-    return final_status;
+    return 0;
 }
+
 /* Calculates the gas contribution to the air-quality score. */
 int16_t bme_GetGasScore(void)
 {
     /* Clamp the valid gas score to its 75-point contribution. */
-    uint32_t gas_ref;
-    uint32_t gas_res;
-    uint32_t gas_score;
 
-    gas_ref = (uint32_t)bme.gas_reference;
-    gas_res = (uint32_t)bme.gas_resistance;
+    const float EPS = 1e-6f;
+    float upper = (float)bme.gas_upper_limit;
+    float lower = (float)bme.gas_lower_limit;
 
-    if (gas_res == 0U) {
-        BME680_LOG_PRINTF("[ERROR] bme_GetGasScore: gas_resistance is zero\r\n");
+    if ((upper - lower) <= EPS) {
+        log_printf("[ERROR] bme_GetGasScore: invalid gas limits upper=%f lower=%f\r\n", upper, lower);
         tim2_delay_ms(20U);
         return -1;
     }
 
-    if (gas_ref == 0U) {
-        bme.gas_reference = gas_res;
-        gas_ref = gas_res;
-    }
+    float ref = (float)bme.gas_reference;
 
-    if (bme680_gas_ref_startup_regulation_left > 0U) {
-        if (gas_res < gas_ref) {
-            bme.gas_reference = gas_res;
-            gas_ref = gas_res;
-        }
-
-        bme680_gas_ref_startup_regulation_left--;
-    }
-
-    if (gas_ref == 0U) {
-        BME680_LOG_PRINTF("[ERROR] bme_GetGasScore: gas_reference is zero after regulation\r\n");
-        tim2_delay_ms(20U);
-        return -1;
-    }
-
-    /*
-     * Gas contribution max = 75.
-     * If current gas resistance is equal/better than reference, return full gas score.
+    /* Formula derived from your original:
+     * gas_score = (0.75/(upper-lower) * ref - lower*(0.75/(upper-lower))) * 100
+     * rearranged to be clearer:
+     * gas_score = 0.75 * (ref - lower) / (upper - lower) * 100
      */
-    if (gas_res >= gas_ref) {
-        gas_score = 75U;
-    } else {
-        gas_score = (uint32_t)(((uint64_t)gas_res * 75ULL) / (uint64_t)gas_ref);
+    float frac = 0.75f * (ref - lower) / (upper - lower);
+    float score_f = frac * 100.0f;
+
+    if (! (score_f > -1e9f && score_f < 1e9f) ) {  
+        log_printf("[ERROR] bme_GetGasScore: numeric error (score=%f)\r\n", score_f);
+        tim2_delay_ms(20U);
+        return -1;
     }
 
-    if (gas_score > 75U) {
-        gas_score = 75U;
-    }
+    if (score_f > 75.0f) score_f = 75.0f;
+    if (score_f < 0.0f)  score_f = 0.0f;
 
-    return (int16_t)gas_score;
+    int16_t gas_score = (int16_t)(score_f + 0.5f);
+
+    return gas_score;
 }
 
 /*
@@ -348,14 +241,14 @@ int16_t bme_GetHumidityScore(void)
     float hum_ref = (float) bme.hum_reference;   
 
     if (!isfinite(hum_ref) || hum_ref <= 0.0f || hum_ref >= 100.0f) {
-    	BME680_LOG_PRINTF("[ERROR] bme_GetHumidityScore: invalid hum_reference=%.3f\r\n", hum_ref);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme_GetHumidityScore: invalid hum_reference=%.3f\r\n", hum_ref);
+        tim2_delay_ms(20U);
         return -1;
     }
 
     if (!isfinite(hum) || hum < 0.0f) {
-    	BME680_LOG_PRINTF("[ERROR] bme_GetHumidityScore: invalid humidity value=%.3f\r\n", hum);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme_GetHumidityScore: invalid humidity value=%.3f\r\n", hum);
+        tim2_delay_ms(20U);
         return -1;
     }
 
@@ -374,16 +267,16 @@ int16_t bme_GetHumidityScore(void)
          */
         float denom = 100.0f - hum_ref;
         if (denom <= EPS) {
-        	BME680_LOG_PRINTF("[ERROR] bme_GetHumidityScore: denom too small (100 - hum_ref = %.6f)\r\n", denom);
-        	tim2_delay_ms(20);
+            log_printf("[ERROR] bme_GetHumidityScore: denom too small (100 - hum_ref = %.6f)\r\n", denom);
+            tim2_delay_ms(20U);
             return -1;
         }
         score_f = ((-0.25f / denom) * hum + 0.416666f) * 100.0f;
     }
 
     if (!isfinite(score_f)) {
-    	BME680_LOG_PRINTF("[ERROR] bme_GetHumidityScore: numeric failure (score=%f)\r\n", score_f);
-    	tim2_delay_ms(20);
+        log_printf("[ERROR] bme_GetHumidityScore: numeric failure (score=%f)\r\n", score_f);
+        tim2_delay_ms(20U);
         return -1;
     }
 
@@ -395,30 +288,23 @@ int16_t bme_GetHumidityScore(void)
 }
 
 /* Logs the air-quality category derived from the combined score. */
-void bme_calculateIAQ(int16_t score)
-{
-    /* Convert the input score to the implementation's IAQ scale. */
-    const char *iaq_label;
+void bme_calculateIAQ(int16_t score){
+	/* Convert the input score to the implementation's IAQ scale. */
+	score = (100 - score) * 5;
+	log_printf("IAQ: %d\r\n", score);
 
-    if (system_fault_logging_active != 0U) {
-        return;
-    }
-
-    score = (100 - score) * 5;
-
-    if (score >= 301) {
-        iaq_label = "Hazardous";
-    } else if (score >= 201) {
-        iaq_label = "Very Unhealthy";
-    } else if (score >= 176) {
-        iaq_label = "Unhealthy";
-    } else if (score >= 151) {
-        iaq_label = "Unhealthy for Sensitive Groups";
-    } else if (score >= 51) {
-        iaq_label = "Moderate";
-    } else {
-        iaq_label = "Good";
-    }
-
-    BME680_LOG_PRINTF("IAQ: %d IAQ %s\r\n", score, iaq_label);
+	log_printf("IAQ ");
+	if(score >= 301)
+		log_printf("Hazardous\r\n");
+	else if (score >= 201 && score <= 300 )
+		log_printf("Very Unhealthy\r\n");
+	else if (score >= 176 && score <= 200 )
+		log_printf("Unhealthy\r\n");
+	else if (score >= 151 && score <= 175 )
+		log_printf("Unhealthy for Sensitive Groups\r\n");
+	else if (score >=  51 && score <= 150 )
+		log_printf("Moderate\r\n");
+	else if (score >=  00 && score <=  50 )
+		log_printf("Good\r\n");
 }
+
