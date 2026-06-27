@@ -3,12 +3,12 @@
  */
 
 #include "pm2_5.h"
-#include "uart.h"
 #include "pm25_uart.h"
 #include "stm32f4xx_hal.h"
 #include "pwr.h"
 #include "tim.h"
-
+#include "i2c_dma.h"   /* app_fault_delay_ms + system fault helpers */
+#include "iwdg.h"
 #include <string.h>
 
 #define PMS25_FRAME_SIZE               32U
@@ -19,12 +19,27 @@
 #define PMS25_PREFAULT_BACKOFF_MS      20U
 #define PMS25_FATAL_LOG_FLUSH_MS       100U
 
+extern SemaphoreHandle_t xSerialSemaphore;
+
+/* Provides the overridable PM2.5 heartbeat hook. */
+__attribute__((weak)) void heartbeat_signal_pm25(void)
+{
+    /* The default weak hook intentionally records no progress. */
+}
+
+/* ----------------------------- Local helpers ----------------------------- */
+
 static uint16_t PMS25_ReadBE16(const uint8_t *p);
 static PMS25_Status_t PMS25_MapUartStatus(UART_Status_t uart_st);
 static const char *PMS25_UartStatusStr(UART_Status_t st);
+
 static void PMS25_AppSleepMs(uint32_t ms);
 static void PMS25_LogSample(const PMS25_Data_t *d);
 static void PMS25_ClearData(PMS25_App_t *app);
+
+static void PMS25_MarkFaultInProgress(void);
+static void PMS25_ClearFaultActive(void);
+
 static void PMS25_LogRuntimeReadFailure(PMS25_Status_t pm_st,
                                         uint32_t no_frame_elapsed_ms,
                                         uint32_t no_frame_fault_ms,
@@ -54,6 +69,11 @@ static PMS25_Status_t PMS25_MapUartStatus(UART_Status_t uart_st)
         case UART_STATUS_TIMEOUT:
             return PMS25_STATUS_TIMEOUT;
 
+        case UART_STATUS_INVALID_PARAM:
+        case UART_STATUS_INIT_ERROR:
+        case UART_STATUS_BUSY:
+        case UART_STATUS_DMA_ERROR:
+        case UART_STATUS_ERROR:
         default:
             return PMS25_STATUS_UART_ERROR;
     }
@@ -97,12 +117,47 @@ const char *PMS25_StatusStr(PMS25_Status_t st)
 static void PMS25_AppSleepMs(uint32_t ms)
 {
     /* Use the application delay path for sampling and recovery intervals. */
-    const uint32_t deadline = HAL_GetTick() + ms;
-
-    while ((int32_t)(HAL_GetTick() - deadline) < 0)
-    {
-        cpu_sleep_until_irq();
+    if (ms == 0U) {
+        return;
     }
+
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+        TickType_t ticks = pdMS_TO_TICKS(ms);
+
+        if (ticks == 0U) {
+            ticks = 1U;
+        }
+
+        vTaskDelay(ticks);
+        return;
+    }
+
+    {
+        const uint32_t start = HAL_GetTick();
+
+        while ((HAL_GetTick() - start) < ms)
+        {
+            cpu_sleep_until_irq();
+        }
+    }
+}
+
+/* Marks PM2.5 diagnostics as in progress. */
+static void PMS25_MarkFaultInProgress(void)
+{
+    /* Publish the fault bit only when its owner constant is available. */
+#ifdef SYSTEM_FAULT_OWNER_PM25
+    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_PM25);
+#endif
+}
+
+/* Clears recovered PM2.5 fault state. */
+static void PMS25_ClearFaultActive(void)
+{
+    /* Use the configured PM2.5 owner with the shared fault helper. */
+#ifdef SYSTEM_FAULT_OWNER_PM25
+    system_fault_clear_active(SYSTEM_FAULT_OWNER_PM25);
+#endif
 }
 
 /* Reports the PM2.5 mass and particle-count sample. */
@@ -110,25 +165,26 @@ static void PMS25_LogSample(const PMS25_Data_t *d)
 {
     /* Reject a null sample before reading its decoded fields. */
     if (d == NULL) {
-        log_printf("[PM25][ERROR] PMS25_LogSample: NULL data pointer\r\n");
+        PM25_LOG_PRINTF("[PM25][ERROR] PMS25_LogSample: NULL data pointer\r\n");
+        app_fault_delay_ms(20U);
         return;
     }
 
-    log_printf("[PM25] STD: PM1.0=%u PM2.5=%u PM10=%u | ATM: PM1.0=%u PM2.5=%u PM10=%u\r\n",
-               (unsigned)d->pm1_0_standard,
-               (unsigned)d->pm2_5_standard,
-               (unsigned)d->pm10_standard,
-               (unsigned)d->pm1_0_atmospheric,
-               (unsigned)d->pm2_5_atmospheric,
-               (unsigned)d->pm10_atmospheric);
+    PM25_LOG_PRINTF("[PM25] STD: PM1.0=%u PM2.5=%u PM10=%u | ATM: PM1.0=%u PM2.5=%u PM10=%u\r\n",
+                    (unsigned)d->pm1_0_standard,
+                    (unsigned)d->pm2_5_standard,
+                    (unsigned)d->pm10_standard,
+                    (unsigned)d->pm1_0_atmospheric,
+                    (unsigned)d->pm2_5_atmospheric,
+                    (unsigned)d->pm10_atmospheric);
 
-    log_printf("[PM25] PARTICLES: >0.3um=%u >0.5um=%u >1.0um=%u >2.5um=%u >5.0um=%u >10um=%u\r\n",
-               (unsigned)d->particles_0_3um,
-               (unsigned)d->particles_0_5um,
-               (unsigned)d->particles_1_0um,
-               (unsigned)d->particles_2_5um,
-               (unsigned)d->particles_5_0um,
-               (unsigned)d->particles_10um);
+    PM25_LOG_PRINTF("[PM25] PARTICLES: >0.3um=%u >0.5um=%u >1.0um=%u >2.5um=%u >5.0um=%u >10um=%u\r\n",
+                    (unsigned)d->particles_0_3um,
+                    (unsigned)d->particles_0_5um,
+                    (unsigned)d->particles_1_0um,
+                    (unsigned)d->particles_2_5um,
+                    (unsigned)d->particles_5_0um,
+                    (unsigned)d->particles_10um);
 }
 
 /* Clears the cached PM2.5 measurement. */
@@ -149,13 +205,19 @@ static void PMS25_LogRuntimeReadFailure(PMS25_Status_t pm_st,
                                         uint8_t max_recovery_attempts)
 {
     /* Include the no-frame age and current recovery attempt. */
-    log_printf("[WARN][PM25] read failed, st=%s, no_frame_elapsed=%lu ms, threshold=%lu ms, recovery attempt=%u/%u\r\n",
-               PMS25_StatusStr(pm_st),
-               (unsigned long)no_frame_elapsed_ms,
-               (unsigned long)no_frame_fault_ms,
-               (unsigned)recovery_attempt,
-               (unsigned)max_recovery_attempts);
+    PMS25_MarkFaultInProgress();
+
+    PM25_LOG_PRINTF("[WARN][PM25] read failed, st=%s, no_frame_elapsed=%lu ms, threshold=%lu ms, recovery attempt=%u/%u\r\n",
+                    PMS25_StatusStr(pm_st),
+                    (unsigned long)no_frame_elapsed_ms,
+                    (unsigned long)no_frame_fault_ms,
+                    (unsigned)recovery_attempt,
+                    (unsigned)max_recovery_attempts);
+
+    app_fault_delay_ms(20U);
 }
+
+/* ----------------------------- Frame parser ----------------------------- */
 
 /* Receives, validates and decodes one PM2.5 frame. */
 static PMS25_Status_t PMS25_ReadInternal(PMS25_Data_t *out,
@@ -184,6 +246,7 @@ static PMS25_Status_t PMS25_ReadInternal(PMS25_Data_t *out,
         *frame_available_out = 0U;
     }
 
+    memset(frame, 0, sizeof(frame));
     start_tick = HAL_GetTick();
 
     while (1)
@@ -204,6 +267,7 @@ static PMS25_Status_t PMS25_ReadInternal(PMS25_Data_t *out,
 
         if (first_byte != PMS25_HEADER_BYTE_0)
         {
+            last_nonfatal = PMS25_STATUS_SYNC_ERROR;
             continue;
         }
 
@@ -284,6 +348,8 @@ PMS25_Status_t PMS25_Read(PMS25_Data_t *out, uint32_t timeout_ms)
     return PMS25_ReadInternal(out, timeout_ms, NULL);
 }
 
+/* ----------------------------- Runtime wrapper ----------------------------- */
+
 /* Initializes PM2.5 sampling and recovery limits. */
 PMS25_AppRuntimeStatus_t PMS25_AppInit(PMS25_App_t *app,
                                        uint32_t frame_poll_timeout_ms,
@@ -327,11 +393,26 @@ PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app)
 
     if (app == NULL)
     {
+        PMS25_MarkFaultInProgress();
+
+        PM25_LOG_PRINTF("[ERROR][PM25] PMS25_AppRun: NULL app pointer\r\n");
+        app_fault_delay_ms(20U);
+
         return PMS25_APP_RUNTIME_BAD_PARAM;
     }
 
-    pm_st = PMS25_ReadInternal(&app->Data, app->FramePollTimeoutMs, &frame_available);
+    pm_st = PMS25_ReadInternal(&app->Data,
+                               app->FramePollTimeoutMs,
+                               &frame_available);
+
     now = HAL_GetTick();
+
+    if ((pm_st == PMS25_STATUS_TIMEOUT) ||
+        (pm_st == PMS25_STATUS_UART_ERROR) ||
+        (pm_st == PMS25_STATUS_SYNC_ERROR) ||
+        (pm_st == PMS25_STATUS_CHECKSUM_ERROR)) {
+        PMS25_MarkFaultInProgress();
+    }
 
     if (frame_available != 0U)
     {
@@ -341,8 +422,13 @@ PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app)
     if (pm_st == PMS25_STATUS_OK)
     {
         app->RecoveryAttempt = 0U;
-        PMS25_LogSample(&app->Data);
-        PMS25_AppSleepMs(app->SamplePeriodMs);
+
+        PMS25_ClearFaultActive();
+
+        if (system_fault_capture_or_critical_fault_active() == 0U) {
+            PMS25_LogSample(&app->Data);
+        }
+
         return PMS25_APP_RUNTIME_OK;
     }
 
@@ -354,7 +440,14 @@ PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app)
         return PMS25_APP_RUNTIME_OK;
     }
 
-    app->RecoveryAttempt++;
+    if (app->RecoveryAttempt < app->MaxRecoveryAttempts)
+    {
+        app->RecoveryAttempt++;
+    }
+    else
+    {
+        app->RecoveryAttempt = app->MaxRecoveryAttempts;
+    }
 
     PMS25_LogRuntimeReadFailure(pm_st,
                                 no_frame_elapsed,
@@ -365,26 +458,42 @@ PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app)
     PMS25_ClearData(app);
 
     uart_st = UART1_PM25_Recover(app);
-    if (uart_st != UART_STATUS_OK)
+    if (uart_st == UART_STATUS_OK)
     {
-        log_printf("[ERR][PM25] UART1_PM25_Recover failed, st=%s\r\n",
-                   PMS25_UartStatusStr(uart_st));
+        PM25_LOG_PRINTF("[INFO][PM25] UART1_PM25_Recover OK after attempt %u/%u\r\n",
+                        (unsigned)app->RecoveryAttempt,
+                        (unsigned)app->MaxRecoveryAttempts);
+        app_fault_delay_ms(20U);
+    }
+    else
+    {
+        PMS25_MarkFaultInProgress();
+
+        PM25_LOG_PRINTF("[WARN][PM25] UART1_PM25_Recover failed, st=%s, attempt=%u/%u\r\n",
+                        PMS25_UartStatusStr(uart_st),
+                        (unsigned)app->RecoveryAttempt,
+                        (unsigned)app->MaxRecoveryAttempts);
+        app_fault_delay_ms(20U);
     }
 
-    app->LastFrameAvailableTick = HAL_GetTick();
+    app->LastFrameAvailableTick = HAL_GetTick() - app->NoFrameFaultMs;
 
     if (app->RecoveryAttempt >= app->MaxRecoveryAttempts)
     {
-        log_printf("[FATAL][PM25] recovery attempts exhausted (%u/%u)\r\n",
-                   (unsigned)app->RecoveryAttempt,
-                   (unsigned)app->MaxRecoveryAttempts);
-        delay_ms(PMS25_FATAL_LOG_FLUSH_MS);
+        PMS25_MarkFaultInProgress();
+
+        PM25_LOG_PRINTF("[FATAL][PM25] recovery attempts exhausted (%u/%u) -> reporting fatal to task\r\n",
+                        (unsigned)app->RecoveryAttempt,
+                        (unsigned)app->MaxRecoveryAttempts);
+
+        app_fault_delay_ms(PMS25_FATAL_LOG_FLUSH_MS);
+
         return PMS25_APP_RUNTIME_FATAL;
     }
 
     if (app->RecoveryDelayMs != 0U)
     {
-        delay_ms(app->RecoveryDelayMs);
+        PMS25_AppSleepMs(app->RecoveryDelayMs);
     }
 
     return PMS25_APP_RUNTIME_OK;

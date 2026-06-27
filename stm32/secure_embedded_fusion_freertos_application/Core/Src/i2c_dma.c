@@ -8,6 +8,25 @@
 #include "pwr.h" /* not used directly here; low-power is correctly applied in the caller wait loops */
 /*#include "sig_sensors.h"*/
 #include "iwdg.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
+#ifndef SYSTEM_FAULT_OWNER_PM25
+#define SYSTEM_FAULT_OWNER_PM25       4U
+#endif
+
+#ifndef SYSTEM_FAULT_MASK_PM25
+#define SYSTEM_FAULT_MASK_PM25        (1UL << 3)
+#endif
+
+#ifndef SYSTEM_FAULT_OWNER_DS18B20
+#define SYSTEM_FAULT_OWNER_DS18B20    5U
+#endif
+
+#ifndef SYSTEM_FAULT_MASK_DS18B20
+#define SYSTEM_FAULT_MASK_DS18B20     (1UL << 4)
+#endif
 
 /*
  * Multi-sensor I2C DMA driver:
@@ -40,7 +59,6 @@
  *
  * - All other DMA stream IRQ handlers in this file are intentionally empty.
  *
- * Expert/pro design points:
  * - Centralized I2C timing + CR2(DMAEN/LAST) restore
  * - Recovery restores CR2/CCR/TRISE/PE after SWRST/APB reset
  * - Separate DMA quiesce paths for BME680 and MPU9250
@@ -93,7 +111,183 @@ volatile i2c_dma_transfer_state_t bme680g_tx_cmplt = I2C_DMA_TRANSFER_IDLE;
 volatile i2c_dma_transfer_state_t mpu9250g_rx_cmplt = I2C_DMA_TRANSFER_IDLE;
 volatile i2c_dma_transfer_state_t mpu9250g_tx_cmplt = I2C_DMA_TRANSFER_IDLE;
 
-extern TIM_HandleTypeDef htim2;
+volatile uint8_t system_fault_logging_active = 0U;
+volatile uint8_t system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
+
+volatile uint32_t system_fault_active_mask = 0U;
+volatile uint32_t system_fault_completed_mask = 0U;
+volatile uint32_t system_fault_in_progress_mask = 0U;
+
+ /* Delays fault handling before or after scheduler startup. */
+ void app_fault_delay_ms(uint32_t ms)
+{
+    /* Use a task delay when FreeRTOS is running. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) {
+        vTaskDelay(pdMS_TO_TICKS(ms));
+    } else {
+        tim2_delay_ms(ms);
+    }
+}
+
+ /* Marks an owner's fault capture as active and in progress. */
+ void system_fault_mark_in_progress(uint8_t owner)
+ {
+     /* Update shared fault masks inside a critical section. */
+     uint32_t mask = system_fault_mask_from_owner(owner);
+
+     if (mask == 0U) {
+         return;
+     }
+
+     taskENTER_CRITICAL();
+
+     system_fault_logging_active = 1U;
+     system_fault_active_mask |= mask;
+     system_fault_in_progress_mask |= mask;
+     system_fault_owner = owner;
+
+     taskEXIT_CRITICAL();
+ }
+
+ /* Marks the sensor owning an I2C failure from task context. */
+ static void i2c_dma_mark_fault_owner_task(I2C_TypeDef *I2Cx)
+ {
+     /* Map I2C1 to BME680 and I2C3 to MPU9250. */
+     if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+         return;
+     }
+
+     if (I2Cx == I2C1) {
+         system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
+     } else if (I2Cx == I2C3) {
+         system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MPU9250);
+     }
+ }
+
+ /* Maps a fault owner to its configured mask. */
+ uint32_t system_fault_mask_from_owner(uint8_t owner)
+ {
+     /* Return zero for an unsupported owner. */
+     switch (owner) {
+         case SYSTEM_FAULT_OWNER_BME680:
+             return SYSTEM_FAULT_MASK_BME680;
+
+         case SYSTEM_FAULT_OWNER_MPU9250:
+             return SYSTEM_FAULT_MASK_MPU9250;
+
+         case SYSTEM_FAULT_OWNER_MAX31865:
+             return SYSTEM_FAULT_MASK_MAX31865;
+
+         case SYSTEM_FAULT_OWNER_PM25:
+             return SYSTEM_FAULT_MASK_PM25;
+
+         case SYSTEM_FAULT_OWNER_DS18B20:
+             return SYSTEM_FAULT_MASK_DS18B20;
+
+         default:
+             return 0U;
+     }
+ }
+
+/* Latches the fault bit for an owner. */
+void system_fault_mark_active(uint8_t owner)
+{
+    /* Record the active mask and last owner under task protection. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+    system_fault_logging_active = 1U;
+    system_fault_active_mask |= mask;
+    system_fault_owner = owner;    
+    taskEXIT_CRITICAL();
+}
+
+/* Marks an owner's fault diagnostics as complete. */
+void system_fault_mark_completed(uint8_t owner)
+{
+    /* Clear its in-progress bit while retaining the completed mask. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+
+    system_fault_completed_mask |= mask;
+    system_fault_in_progress_mask &= ~mask;
+
+    taskEXIT_CRITICAL();
+}
+
+/* Clears an owner's active and captured fault state. */
+void system_fault_clear_active(uint8_t owner)
+{
+    /* Release the logging gate when no active faults remain. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+
+    system_fault_active_mask &= ~mask;
+    system_fault_in_progress_mask &= ~mask;
+    system_fault_completed_mask &= ~mask;
+
+    if (system_fault_active_mask == 0U) {
+        system_fault_logging_active = 0U;
+        system_fault_owner = SYSTEM_FAULT_OWNER_NONE;
+    }
+
+    taskEXIT_CRITICAL();
+}
+
+/* Latches a fault owner from interrupt context. */
+void system_fault_mark_active_from_isr(uint8_t owner)
+{
+    /* Update the shared mask without entering a task-only critical section. */
+    uint32_t mask = system_fault_mask_from_owner(owner);
+
+    if (mask == 0U) {
+        return;
+    }
+
+    system_fault_logging_active = 1U;
+    system_fault_active_mask |= mask;
+    system_fault_owner = owner;
+}
+
+/* Routes an I2C fault to its owning sensor. */
+static void i2c_dma_mark_fault_owner(I2C_TypeDef *I2Cx)
+{
+    /* Associate the bus with the corresponding fault-reporting path. */
+    i2c_dma_mark_fault_owner_task(I2Cx);
+}
+
+/*
+ * FreeRTOS binary semaphores used by DMA IRQ handlers.
+ *
+ * Ownership/mapping:
+ *   BME680  I2C1_RX -> DMA1_Stream5 -> bme680_rx_sem
+ *   BME680  I2C1_TX -> DMA1_Stream6 -> bme680_tx_sem
+ *   MPU9250 I2C3_RX -> DMA1_Stream1 -> mpu9250_rx_sem
+ *   MPU9250 I2C3_TX -> DMA1_Stream4 -> mpu9250_tx_sem
+ *
+ * These semaphores are given only from the DMA IRQ path. The old completion
+ * flags are kept for diagnostics and compatibility.
+ */
+SemaphoreHandle_t bme680_rx_sem  = NULL;
+SemaphoreHandle_t bme680_tx_sem  = NULL;
+SemaphoreHandle_t mpu9250_rx_sem = NULL;
+SemaphoreHandle_t mpu9250_tx_sem = NULL;
+
+SemaphoreHandle_t xSerialSemaphore = NULL;
 
 typedef struct {
     DMA_Stream_TypeDef *stream;
@@ -147,6 +341,7 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
                                      uint32_t len);
 
 static inline void i2c_irq_wait_btf_short(I2C_TypeDef *I2Cx);
+static inline void i2c_dma_give_sem_from_isr(SemaphoreHandle_t sem);
 
 __attribute__((weak)) int i2c1_bme680_device_reinit(void);
 __attribute__((weak)) int i2c1_bme680_selftest(void);
@@ -169,6 +364,53 @@ static inline void short_delay(volatile uint32_t d)
     /* Keep the loop count volatile so the NOP delay is retained. */
     while (d--) {
         __asm__ volatile ("nop");
+    }
+}
+
+/* Creates and clears the I2C DMA completion semaphores. */
+int i2c_dma_rtos_sync_init(void)
+{
+    /* Fail if any RX or TX semaphore could not be allocated. */
+    if (bme680_rx_sem == NULL) {
+        bme680_rx_sem = xSemaphoreCreateBinary();
+    }
+
+    if (bme680_tx_sem == NULL) {
+        bme680_tx_sem = xSemaphoreCreateBinary();
+    }
+
+    if (mpu9250_rx_sem == NULL) {
+        mpu9250_rx_sem = xSemaphoreCreateBinary();
+    }
+
+    if (mpu9250_tx_sem == NULL) {
+        mpu9250_tx_sem = xSemaphoreCreateBinary();
+    }
+
+    if ((bme680_rx_sem == NULL)  ||
+        (bme680_tx_sem == NULL)  ||
+        (mpu9250_rx_sem == NULL) ||
+        (mpu9250_tx_sem == NULL)) {
+        return 0;
+    }
+
+    (void)xSemaphoreTake(bme680_rx_sem,  0U);
+    (void)xSemaphoreTake(bme680_tx_sem,  0U);
+    (void)xSemaphoreTake(mpu9250_rx_sem, 0U);
+    (void)xSemaphoreTake(mpu9250_tx_sem, 0U);
+
+    return 1;
+}
+
+/* Wakes a task waiting for I2C DMA completion. */
+static inline void i2c_dma_give_sem_from_isr(SemaphoreHandle_t sem)
+{
+    /* Request an ISR exit yield when a higher-priority task wakes. */
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    if (sem != NULL) {
+        (void)xSemaphoreGiveFromISR(sem, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
     }
 }
 
@@ -384,8 +626,7 @@ static uint8_t tim2__1s_check_flag(void)
 /* Services the TIM2 timeout interrupt. */
 void TIM2_IRQHandler(void)
 {
-	/* Publish timer completion when an update event is pending. */
-	HAL_TIM_IRQHandler(&htim2);
+    /* Publish timer completion when an update event is pending. */
     if ((TIM2->SR & TIM_SR_UIF) != 0U) {
         TIM2->SR &= ~TIM_SR_UIF;
         TIM2->CR1 &= ~TIM_CR1_CEN;
@@ -553,15 +794,15 @@ static void i2c_toggle_apb_reset(I2C_TypeDef *I2Cx)
     /* Release the reset bit after the peripheral-settling delay. */
     if (I2Cx == I2C1) {
         RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
-        tim2_delay_ms(1);
+        app_fault_delay_ms(1);
         RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C1RST;
     } else if (I2Cx == I2C2) {
         RCC->APB1RSTR |= RCC_APB1RSTR_I2C2RST;
-        tim2_delay_ms(1);
+        app_fault_delay_ms(1);
         RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C2RST;
     } else if (I2Cx == I2C3) {
         RCC->APB1RSTR |= RCC_APB1RSTR_I2C3RST;
-        tim2_delay_ms(1);
+        app_fault_delay_ms(1);
         RCC->APB1RSTR &= ~RCC_APB1RSTR_I2C3RST;
     }
 
@@ -577,9 +818,11 @@ i2c_dma_init_status_t i2c_dma_bme680_peripherals_init(void)
 
     rc = i2c_init_select(1U, 8U, 9U);
     if (rc != I2C_SELECT_OK) {
-        log_printf("[ERROR][I2C_DMA][I2C1][BME680][INIT] GPIO/I2C select failed | rc=%d pins=SCL:PB8 SDA:PB9 AF=4\r\n",
-                   (int)rc);
-        tim2_delay_ms(20U);
+        i2c_dma_mark_fault_owner(I2C1);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][INIT] GPIO/I2C select failed | rc=%d pins=SCL:PB8 SDA:PB9 AF=4\r\n",
+                           (int)rc);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_I2C_SELECT;
     }
 
@@ -600,10 +843,13 @@ i2c_dma_init_status_t i2c_dma_bme680_peripherals_init(void)
         DMA_HIFCR_CTCIF5,
         DMA1_Stream5_IRQn
     );
+
     if (status != DMA_OK) {
-        log_printf("[ERROR][I2C_DMA][I2C1][BME680][DMA_RX_INIT] DMA stream init failed | stream=DMA1_Stream5 channel=1 rc=%d\r\n",
-                   (int)status);
-        tim2_delay_ms(20U);
+        i2c_dma_mark_fault_owner(I2C1);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_RX_INIT] DMA stream init failed | stream=DMA1_Stream5 channel=1 rc=%d\r\n",
+                           (int)status);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_RX_INIT;
     }
 
@@ -620,10 +866,13 @@ i2c_dma_init_status_t i2c_dma_bme680_peripherals_init(void)
         DMA_HIFCR_CTCIF6,
         DMA1_Stream6_IRQn
     );
+
     if (status != DMA_OK) {
-        log_printf("[ERROR][I2C_DMA][I2C1][BME680][DMA_TX_INIT] DMA stream init failed | stream=DMA1_Stream6 channel=1 rc=%d\r\n",
-                   (int)status);
-        tim2_delay_ms(20U);
+        i2c_dma_mark_fault_owner(I2C1);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_TX_INIT] DMA stream init failed | stream=DMA1_Stream6 channel=1 rc=%d\r\n",
+                           (int)status);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_TX_INIT;
     }
 
@@ -641,9 +890,11 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
 
     rc = i2c_init_select(3U, 8U, 4U);
     if (rc != I2C_SELECT_OK) {
-        log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][INIT] GPIO/I2C select failed | rc=%d pins=SCL:PA8 SDA:PB4 AF_SCL=4 AF_SDA=9\r\n",
-                   (int)rc);
-        tim2_delay_ms(20U);
+        i2c_dma_mark_fault_owner(I2C3);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][INIT] GPIO/I2C select failed | rc=%d pins=SCL:PA8 SDA:PB4 AF_SCL=4 AF_SDA=9\r\n",
+                           (int)rc);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_I2C_SELECT;
     }
 
@@ -660,10 +911,13 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
         DMA_LIFCR_CTCIF1,
         DMA1_Stream1_IRQn
     );
+
     if (status != DMA_OK) {
-        log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_RX_INIT] DMA stream init failed | stream=DMA1_Stream1 channel=1 rc=%d\r\n",
-                   (int)status);
-        tim2_delay_ms(20U);
+        i2c_dma_mark_fault_owner(I2C3);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_RX_INIT] DMA stream init failed | stream=DMA1_Stream1 channel=1 rc=%d\r\n",
+                           (int)status);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_RX_INIT;
     }
 
@@ -680,10 +934,13 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
         DMA_HIFCR_CTCIF4,
         DMA1_Stream4_IRQn
     );
+
     if (status != DMA_OK) {
-        log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_TX_INIT] DMA stream init failed | stream=DMA1_Stream4 channel=3 rc=%d\r\n",
-                   (int)status);
-        tim2_delay_ms(20U);
+        i2c_dma_mark_fault_owner(I2C3);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_TX_INIT] DMA stream init failed | stream=DMA1_Stream4 channel=3 rc=%d\r\n",
+                           (int)status);
+        app_fault_delay_ms(20U);
         return I2C_DMA_INIT_ERR_DMA_TX_INIT;
     }
 
@@ -706,11 +963,6 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
         return I2C_RECOVER_FAIL;
     }
 
-    /*log_printf("[DEBUG] I2C recover: mask=0x%08lX expect=%u\r\n",
-               (unsigned long)wait_mask,
-               (unsigned)expect_set);
-    tim2_delay_ms(2);*/
-
     if (I2Cx == I2C1) {
         i2c_bme680_dma_quiesce();
     } else if (I2Cx == I2C3) {
@@ -718,19 +970,19 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
     }
 
     i2c_force_stop_and_clear(I2Cx);
-    tim2_delay_ms(2);
+    app_fault_delay_ms(2);
 
     if (wait_reg_mask_state(&I2Cx->SR2, I2C_SR2_BUSY, 0U, BUSY_WAIT_COUNT)) {
         bus_released = 1U;
-        /*log_printf("[DEBUG] i2c_recover: graceful bus release succeeded\r\n");
-        tim2_delay_ms(2);*/
     } else {
-        log_printf("[WARN][I2C_DMA][RECOVER][BUS_RELEASE] STOP/SR clear did not release bus | bus=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][RECOVER][BUS_RELEASE] STOP/SR clear did not release bus | bus=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if ((bus_released != 0U) && (allow_restart != 0U)) {
@@ -741,13 +993,15 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
             return I2C_RECOVER_OK;
         }
 
-        log_printf("[WARN][I2C_DMA][RECOVER][RESTART_CHECK] START after bus-release did not produce expected flag | bus=0x%08lX mask=0x%08lX expect=%u SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][RECOVER][RESTART_CHECK] START after bus-release did not produce expected flag | bus=0x%08lX mask=0x%08lX expect=%u SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)wait_mask,
                    (unsigned int)expect_set,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     I2Cx->CR1 |= I2C_CR1_SWRST;
@@ -758,7 +1012,7 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
     short_delay(2000U);
 
     i2c_restore_config(I2Cx);
-    tim2_delay_ms(2);
+    app_fault_delay_ms(2);
 
     if (I2Cx == I2C1) {
         i2c_bme680_dma_quiesce();
@@ -767,16 +1021,16 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
     }
 
     if (wait_reg_mask_state(&I2Cx->SR2, I2C_SR2_BUSY, 0U, POST_WAIT_COUNT)) {
-        /*log_printf("[DEBUG] i2c_recover: SWRST recovery succeeded\r\n");
-        tim2_delay_ms(2);*/
     } else {
-        log_printf("[WARN][I2C_DMA][RECOVER][SWRST_FAIL] software reset did not release bus; escalating to APB peripheral reset | bus=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX CR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][RECOVER][SWRST_FAIL] software reset did not release bus; escalating to APB peripheral reset | bus=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX CR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1,
                    (unsigned long)I2Cx->CR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
 
         i2c_toggle_apb_reset(I2Cx);
 
@@ -788,39 +1042,44 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
 
         i2c_force_stop_and_clear(I2Cx);
         i2c_restore_config(I2Cx);
-        tim2_delay_ms(2);
+        app_fault_delay_ms(2);
     }
 
     if (I2Cx == I2C1) {
         if (i2c1_bme680_device_reinit() != 0) {
-            log_printf("[ERROR][I2C_DMA][I2C1][BME680][RECOVER] device lightweight reinit failed after bus recovery\r\n");
-            tim2_delay_ms(20U);
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][RECOVER] device lightweight reinit failed after bus recovery\r\n");
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
 
         if (i2c1_bme680_selftest() != 0) {
-            log_printf("[ERROR][I2C_DMA][I2C1][BME680][RECOVER] post-recovery self-test failed\r\n");
-            tim2_delay_ms(20U);
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][RECOVER] post-recovery self-test failed\r\n");
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
 
-        log_printf("[INFO][I2C_DMA][I2C1][BME680][RECOVER] lightweight restore completed | DMA=quiesced I2C=config-restored selftest=OK\r\n");
-        tim2_delay_ms(20U);
+        I2C_DMA_LOG_PRINTF("[INFO][I2C_DMA][I2C1][BME680][RECOVER] lightweight restore completed | DMA=quiesced I2C=config-restored selftest=OK\r\n");
+        app_fault_delay_ms(20U);
     } else if (I2Cx == I2C3) {
         if (i2c3_mpu9250_device_reinit() != 0) {
-            log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][RECOVER] device lightweight reinit failed after bus recovery\r\n");
-            tim2_delay_ms(20U);
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][RECOVER] device lightweight reinit failed after bus recovery\r\n");
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
 
         if (i2c3_mpu9250_selftest() != 0) {
-            log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][RECOVER] post-recovery self-test failed\r\n");
-            tim2_delay_ms(20U);
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][RECOVER] post-recovery self-test failed\r\n");
+            app_fault_delay_ms(20U);
             return I2C_RECOVER_FAIL;
         }
-
-        /*log_printf("[DEBUG] i2c_recover: MPU9250 lightweight restore OK\r\n");
-        tim2_delay_ms(2);*/
     }
 
     if (allow_restart != 0U) {
@@ -831,19 +1090,73 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
             return I2C_RECOVER_OK;
         }
 
-        log_printf("[ERROR][I2C_DMA][RECOVER][FINAL_CHECK] final START/flag validation failed | bus=0x%08lX mask=0x%08lX expect=%u SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][RECOVER][FINAL_CHECK] final START/flag validation failed | bus=0x%08lX mask=0x%08lX expect=%u SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)wait_mask,
                    (unsigned int)expect_set,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_RECOVER_FAIL;
     }
 
     return wait_reg_mask_state(status_reg, wait_mask, expect_set, POST_WAIT_COUNT)
            ? I2C_RECOVER_OK
            : I2C_RECOVER_FAIL;
+}
+
+/* Waits for the requested I2C transmit state. */
+static int wait_flag_txe_or_btf(I2C_TypeDef *I2Cx, uint32_t flag_mask)
+{
+    /* Use recovery after both short and extended flag waits fail. */
+    if (I2Cx == NULL) {
+        return 0;
+    }
+
+    if (!wait_reg_mask_state(&I2Cx->SR1, flag_mask, 1U, SHORT_WAIT_COUNT)) {
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][WAIT][TXE_BTF_SHORT] TXE/BTF flag not set in short window | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+                           (unsigned long)I2Cx,
+                           (unsigned long)flag_mask,
+                           (unsigned long)I2Cx->SR1,
+                           (unsigned long)I2Cx->SR2,
+                           (unsigned long)I2Cx->CR1);
+        app_fault_delay_ms(20U);
+    }
+
+    if (!wait_reg_mask_state_long(&I2Cx->SR1, flag_mask, 1U)) {
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][WAIT][TXE_BTF_LONG] TXE/BTF flag still missing after long wait; recovery will be attempted | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+                           (unsigned long)I2Cx,
+                           (unsigned long)flag_mask,
+                           (unsigned long)I2Cx->SR1,
+                           (unsigned long)I2Cx->SR2,
+                           (unsigned long)I2Cx->CR1);
+        app_fault_delay_ms(20U);
+    }
+
+    if ((I2Cx->SR1 & flag_mask) == 0U) {
+        if (!i2c_recover(I2Cx, &I2Cx->SR2, I2C_SR2_BUSY, 0U, 0U)) {
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WAIT][TXE_BTF_RECOVER_FAIL] recovery failed while waiting for TXE/BTF | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+                               (unsigned long)I2Cx,
+                               (unsigned long)flag_mask,
+                               (unsigned long)I2Cx->SR1,
+                               (unsigned long)I2Cx->SR2,
+                               (unsigned long)I2Cx->CR1);
+            app_fault_delay_ms(20U);
+            return 0;
+        }
+
+        return ((I2Cx->SR1 & flag_mask) != 0U) ? 1 : 0;
+    }
+
+    return 1;
 }
 
 /* Waits for the I2C bus to become idle. */
@@ -855,30 +1168,36 @@ static int wait_flag_busy_clear(I2C_TypeDef *I2Cx)
     }
 
     if (!wait_reg_mask_state(&I2Cx->SR2, I2C_SR2_BUSY, 0U, SHORT_WAIT_COUNT)) {
-        log_printf("[WARN][I2C_DMA][WAIT][BUSY_SHORT] BUSY did not clear in short window | bus=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][WAIT][BUSY_SHORT] BUSY did not clear in short window | bus=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&I2Cx->SR2, I2C_SR2_BUSY, 0U)) {
-        log_printf("[WARN][I2C_DMA][WAIT][BUSY_LONG] BUSY still set after long wait; recovery will be attempted | bus=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][WAIT][BUSY_LONG] BUSY still set after long wait; recovery will be attempted | bus=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if ((I2Cx->SR2 & I2C_SR2_BUSY) != 0U) {
         if (!i2c_recover(I2Cx, &I2Cx->SR2, I2C_SR2_BUSY, 0U, 0U)) {
-            log_printf("[ERROR][I2C_DMA][WAIT][BUSY_RECOVER_FAIL] BUSY recovery failed | bus=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX CR2=0x%08lX\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WAIT][BUSY_RECOVER_FAIL] BUSY recovery failed | bus=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX CR2=0x%08lX\r\n",
                        (unsigned long)I2Cx,
                        (unsigned long)I2Cx->SR1,
                        (unsigned long)I2Cx->SR2,
                        (unsigned long)I2Cx->CR1,
                        (unsigned long)I2Cx->CR2);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return 0;
         }
     }
@@ -895,34 +1214,40 @@ static int wait_flag_addr_or_sb(I2C_TypeDef *I2Cx, uint32_t flag_mask)
     }
 
     if (!wait_reg_mask_state(&I2Cx->SR1, flag_mask, 1U, SHORT_WAIT_COUNT)) {
-        log_printf("[WARN][I2C_DMA][WAIT][SR1_SHORT] SR1 flag not set in short window | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][WAIT][SR1_SHORT] SR1 flag not set in short window | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)flag_mask,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&I2Cx->SR1, flag_mask, 1U)) {
-        log_printf("[WARN][I2C_DMA][WAIT][SR1_LONG] SR1 flag still missing after long wait; recovery will be attempted | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][WAIT][SR1_LONG] SR1 flag still missing after long wait; recovery will be attempted | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned long)flag_mask,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if ((I2Cx->SR1 & flag_mask) == 0U) {
         if (!i2c_recover(I2Cx, &I2Cx->SR2, I2C_SR2_BUSY, 0U, 0U)) {
-            log_printf("[ERROR][I2C_DMA][WAIT][SR1_RECOVER_FAIL] recovery failed while waiting for SR1 flag | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WAIT][SR1_RECOVER_FAIL] recovery failed while waiting for SR1 flag | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
                        (unsigned long)I2Cx,
                        (unsigned long)flag_mask,
                        (unsigned long)I2Cx->SR1,
                        (unsigned long)I2Cx->SR2,
                        (unsigned long)I2Cx->CR1);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -932,50 +1257,19 @@ static int wait_flag_addr_or_sb(I2C_TypeDef *I2Cx, uint32_t flag_mask)
     return 1;
 }
 
-/* Waits for the requested I2C transmit state. */
-static int wait_flag_txe_or_btf(I2C_TypeDef *I2Cx, uint32_t flag_mask)
+/* Maps an I2C DMA stream failure to its sensor. */
+static void i2c_dma_mark_fault_owner_from_stream(DMA_Stream_TypeDef *stream)
 {
-    /* Use recovery after both short and extended flag waits fail. */
-    if (I2Cx == NULL) {
-        return 0;
+    /* Recognize the RX and TX stream pair for each bus. */
+    if (stream == NULL) {
+        return;
     }
 
-    if (!wait_reg_mask_state(&I2Cx->SR1, flag_mask, 1U, SHORT_WAIT_COUNT)) {
-        log_printf("[WARN][I2C_DMA][WAIT][TXE_BTF_SHORT] TXE/BTF flag not set in short window | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
-                   (unsigned long)I2Cx,
-                   (unsigned long)flag_mask,
-                   (unsigned long)I2Cx->SR1,
-                   (unsigned long)I2Cx->SR2,
-                   (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+    if ((stream == DMA1_Stream5) || (stream == DMA1_Stream6)) {
+        i2c_dma_mark_fault_owner(I2C1);    
+    } else if ((stream == DMA1_Stream1) || (stream == DMA1_Stream4)) {
+        i2c_dma_mark_fault_owner(I2C3);    
     }
-
-    if (!wait_reg_mask_state_long(&I2Cx->SR1, flag_mask, 1U)) {
-        log_printf("[WARN][I2C_DMA][WAIT][TXE_BTF_LONG] TXE/BTF flag still missing after long wait; recovery will be attempted | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
-                   (unsigned long)I2Cx,
-                   (unsigned long)flag_mask,
-                   (unsigned long)I2Cx->SR1,
-                   (unsigned long)I2Cx->SR2,
-                   (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
-    }
-
-    if ((I2Cx->SR1 & flag_mask) == 0U) {
-        if (!i2c_recover(I2Cx, &I2Cx->SR2, I2C_SR2_BUSY, 0U, 0U)) {
-            log_printf("[ERROR][I2C_DMA][WAIT][TXE_BTF_RECOVER_FAIL] recovery failed while waiting for TXE/BTF | bus=0x%08lX mask=0x%08lX SR1=0x%08lX SR2=0x%08lX CR1=0x%08lX\r\n",
-                       (unsigned long)I2Cx,
-                       (unsigned long)flag_mask,
-                       (unsigned long)I2Cx->SR1,
-                       (unsigned long)I2Cx->SR2,
-                       (unsigned long)I2Cx->CR1);
-            tim2_delay_ms(20U);
-            return 0;
-        }
-
-        return ((I2Cx->SR1 & flag_mask) != 0U) ? 1 : 0;
-    }
-
-    return 1;
 }
 
 /* Waits for a DMA stream to stop before reconfiguration. */
@@ -990,19 +1284,23 @@ static int wait_dma_stream_disabled(DMA_Stream_TypeDef *stream,
     }
 
     if (!wait_reg_mask_state(&stream->CR, en_mask, 0U, SHORT_WAIT_COUNT)) {
-        log_printf("[WARN][I2C_DMA][DMA_WAIT][EN_SHORT] DMA stream EN bit did not clear in short window | stream=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
+        i2c_dma_mark_fault_owner_from_stream(stream);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][DMA_WAIT][EN_SHORT] DMA stream EN bit did not clear in short window | stream=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
                    (unsigned long)stream,
                    (unsigned long)stream->CR,
                    (unsigned long)stream->NDTR);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if (!wait_reg_mask_state_long(&stream->CR, en_mask, 0U)) {
-        log_printf("[WARN][I2C_DMA][DMA_WAIT][EN_LONG] DMA stream EN bit still set; forcing disable/flag clear | stream=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
+        i2c_dma_mark_fault_owner_from_stream(stream);
+
+        I2C_DMA_LOG_PRINTF("[WARN][I2C_DMA][DMA_WAIT][EN_LONG] DMA stream EN bit still set; forcing disable/flag clear | stream=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
                    (unsigned long)stream,
                    (unsigned long)stream->CR,
                    (unsigned long)stream->NDTR);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
     }
 
     if ((stream->CR & en_mask) != 0U) {
@@ -1133,11 +1431,13 @@ dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
     uint32_t cr = 0U;
 
     if ((stream == NULL) || (flag_reg == NULL) || (channel > 7U)) {
-        log_printf("[ERROR][I2C_DMA][DMA_INIT] invalid DMA init argument | stream=0x%08lX flag_reg=0x%08lX channel=%lu\r\n",
+        i2c_dma_mark_fault_owner_from_stream(stream);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][DMA_INIT] invalid DMA init argument | stream=0x%08lX flag_reg=0x%08lX channel=%lu\r\n",
                    (unsigned long)stream,
                    (unsigned long)flag_reg,
                    (unsigned long)channel);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return DMA_ERR_DISABLE_TIMEOUT;
     }
 
@@ -1146,12 +1446,14 @@ dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
 
     stream->CR &= ~DMA_SxCR_EN;
     if (!wait_dma_stream_disabled(stream, flag_reg, DMA_SxCR_EN, flag_mask)) {
-        log_printf("[ERROR][I2C_DMA][DMA_INIT] stream disable timeout before configuration | stream=0x%08lX channel=%lu CR=0x%08lX NDTR=%lu\r\n",
+        i2c_dma_mark_fault_owner_from_stream(stream);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][DMA_INIT] stream disable timeout before configuration | stream=0x%08lX channel=%lu CR=0x%08lX NDTR=%lu\r\n",
                    (unsigned long)stream,
                    (unsigned long)channel,
                    (unsigned long)stream->CR,
                    (unsigned long)stream->NDTR);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return DMA_ERR_DISABLE_TIMEOUT;
     }
 
@@ -1179,6 +1481,11 @@ dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
     reg_barrier();
 
     NVIC_ClearPendingIRQ(irq);
+
+#ifdef configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY
+    NVIC_SetPriority(irq, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
+#endif
+
     NVIC_EnableIRQ(irq);
 
     return DMA_OK;
@@ -1197,13 +1504,15 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
     dma_stream_hw_t hw;
 
     if ((I2Cx == NULL) || (msg == NULL) || (len == 0U)) {
-        log_printf("[ERROR][I2C_DMA][DMA_START] invalid transfer argument | bus=0x%08lX stream=%u dir=%u buf=0x%08lX len=%lu\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][DMA_START] invalid transfer argument | bus=0x%08lX stream=%u dir=%u buf=0x%08lX len=%lu\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)dma_stream_num,
                    (unsigned int)dir,
                    (unsigned long)msg,
                    (unsigned long)len);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
@@ -1213,15 +1522,20 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
          *   TX -> DMA1 Stream6
          */
         if ((dir == DMA_DIR_P2M) && (dma_stream_num != 5U)) {
-            log_printf("[ERROR][I2C_DMA][I2C1][BME680][DMA_MAP] invalid RX stream | expected=DMA1_Stream5 actual=Stream%u\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_MAP] invalid RX stream | expected=DMA1_Stream5 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return 0;
         }
+
         if ((dir == DMA_DIR_M2P) && (dma_stream_num != 6U)) {
-            log_printf("[ERROR][I2C_DMA][I2C1][BME680][DMA_MAP] invalid TX stream | expected=DMA1_Stream6 actual=Stream%u\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C1][BME680][DMA_MAP] invalid TX stream | expected=DMA1_Stream6 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1232,15 +1546,20 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
          *   TX -> DMA1 Stream4
          */
         if ((dir == DMA_DIR_P2M) && (dma_stream_num != 1U)) {
-            log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_MAP] invalid RX stream | expected=DMA1_Stream1 actual=Stream%u\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_MAP] invalid RX stream | expected=DMA1_Stream1 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return 0;
         }
+
         if ((dir == DMA_DIR_M2P) && (dma_stream_num != 4U)) {
-            log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_MAP] invalid TX stream | expected=DMA1_Stream4 actual=Stream%u\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_MAP] invalid TX stream | expected=DMA1_Stream4 actual=Stream%u\r\n",
                        (unsigned int)dma_stream_num);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return 0;
         }
 
@@ -1248,24 +1567,28 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
     }
 
     if (!dma1_get_stream_hw(dma_stream_num, &hw)) {
-        log_printf("[ERROR][I2C_DMA][DMA_START] unsupported DMA1 stream | stream=%u bus=0x%08lX dir=%u len=%lu\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][DMA_START] unsupported DMA1 stream | stream=%u bus=0x%08lX dir=%u len=%lu\r\n",
                    (unsigned int)dma_stream_num,
                    (unsigned long)I2Cx,
                    (unsigned int)dir,
                    (unsigned long)len);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
     hw.stream->CR &= ~DMA_SxCR_EN;
     if (!wait_dma_stream_disabled(hw.stream, hw.ifcr, DMA_SxCR_EN, hw.clear_all_mask)) {
-        log_printf("[ERROR][I2C_DMA][DMA_START] stream disable failed before reprogramming | stream=DMA1_Stream%u CR=0x%08lX NDTR=%lu dir=%u len=%lu\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][DMA_START] stream disable failed before reprogramming | stream=DMA1_Stream%u CR=0x%08lX NDTR=%lu dir=%u len=%lu\r\n",
                    (unsigned int)dma_stream_num,
                    (unsigned long)hw.stream->CR,
                    (unsigned long)hw.stream->NDTR,
                    (unsigned int)dir,
                    (unsigned long)len);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
@@ -1290,18 +1613,21 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
     reg_barrier();
 
     if ((hw.stream->CR & DMA_SxCR_EN) == 0U) {
-        log_printf("[ERROR][I2C_DMA][DMA_START] stream enable verification failed | stream=DMA1_Stream%u CR=0x%08lX NDTR=%lu PAR=0x%08lX M0AR=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][DMA_START] stream enable verification failed | stream=DMA1_Stream%u CR=0x%08lX NDTR=%lu PAR=0x%08lX M0AR=0x%08lX\r\n",
                    (unsigned int)dma_stream_num,
                    (unsigned long)hw.stream->CR,
                    (unsigned long)hw.stream->NDTR,
                    (unsigned long)hw.stream->PAR,
                    (unsigned long)hw.stream->M0AR);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return 0;
     }
 
     return 1;
 }
+
 /* ----------------------------- I2C DMA write ----------------------------- */
 
 /* Starts a DMA-backed I2C register write. */
@@ -1319,46 +1645,54 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
     }
 
     if ((I2Cx != I2C1) && (I2Cx != I2C2) && (I2Cx != I2C3)) {
-        log_printf("[ERROR][I2C_DMA][WRITE] unsupported I2C instance | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE] unsupported I2C instance | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned int)data_len);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_UNSUPPORTED_INSTANCE;
     }
 
     if ((data_len > 0U) && (data == NULL)) {
-        log_printf("[ERROR][I2C_DMA][WRITE] NULL data pointer with non-zero payload | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE] NULL data pointer with non-zero payload | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned int)data_len);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_NULL_BUFFER;
     }
 
     if (!wait_flag_busy_clear(I2Cx)) {
-        log_printf("[ERROR][I2C_DMA][WRITE][BUSY] bus busy before START | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE][BUSY] bus busy before START | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned int)data_len,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_BUSY_TIMEOUT;
     }
 
     I2Cx->CR1 |= I2C_CR1_START;
     if (!wait_flag_addr_or_sb(I2Cx, I2C_SR1_SB)) {
-        log_printf("[ERROR][I2C_DMA][WRITE][START] SB timeout after START | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE][START] SB timeout after START | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_SB_TIMEOUT;
     }
@@ -1366,13 +1700,15 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
 
     I2Cx->DR = (uint8_t)((slave_addr_7bit << 1) | 0U);
     if (!wait_flag_addr_or_sb(I2Cx, I2C_SR1_ADDR)) {
-        log_printf("[ERROR][I2C_DMA][WRITE][ADDR_W] slave did not ACK address | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE][ADDR_W] slave did not ACK address | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_ADDR_TIMEOUT;
     }
@@ -1380,24 +1716,28 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
     (void)I2Cx->SR2;
 
     if (!wait_flag_txe_or_btf(I2Cx, I2C_SR1_TXE)) {
-        log_printf("[ERROR][I2C_DMA][WRITE][TXE_BEFORE_REG] TXE not set before register byte | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE][TXE_BEFORE_REG] TXE not set before register byte | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
 
     I2Cx->DR = reg_addr;
     if (!wait_flag_txe_or_btf(I2Cx, I2C_SR1_TXE)) {
-        log_printf("[ERROR][I2C_DMA][WRITE][TXE_AFTER_REG] register byte not accepted by peripheral | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][WRITE][TXE_AFTER_REG] register byte not accepted by peripheral | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr_7bit,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
@@ -1458,56 +1798,66 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
     uint8_t rx_stream_num;
 
     if (p_read_buff == NULL) {
-        log_printf("[ERROR][I2C_DMA][READ] NULL RX buffer | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ] NULL RX buffer | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_NULL_BUFFER;
     }
 
     if (num_of_bytes == 0U) {
-        log_printf("[ERROR][I2C_DMA][READ] zero-length RX request rejected | bus=0x%08lX slave7=0x%02X reg=0x%02X\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ] zero-length RX request rejected | bus=0x%08lX slave7=0x%02X reg=0x%02X\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_ZERO_LEN;
     }
 
     if ((I2Cx != I2C1) && (I2Cx != I2C2) && (I2Cx != I2C3)) {
-        log_printf("[ERROR][I2C_DMA][READ] unsupported I2C instance | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ] unsupported I2C instance | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_UNSUPPORTED_INSTANCE;
     }
 
     if (!wait_flag_busy_clear(I2Cx)) {
-        log_printf("[ERROR][I2C_DMA][READ][BUSY] bus busy before START | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][BUSY] bus busy before START | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         return I2C_DMA_ERR_BUSY_TIMEOUT;
     }
 
     I2Cx->CR1 |= I2C_CR1_START;
     if (!wait_flag_addr_or_sb(I2Cx, I2C_SR1_SB)) {
-        log_printf("[ERROR][I2C_DMA][READ][START] SB timeout during register-address phase | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][START] SB timeout during register-address phase | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_SB_TIMEOUT;
     }
@@ -1515,14 +1865,16 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
 
     I2Cx->DR = (uint8_t)((slave_addr << 1) | 0U);
     if (!wait_flag_addr_or_sb(I2Cx, I2C_SR1_ADDR)) {
-        log_printf("[ERROR][I2C_DMA][READ][ADDR_W] slave did not ACK write-address phase | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][ADDR_W] slave did not ACK write-address phase | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_ADDR_TIMEOUT;
     }
@@ -1530,12 +1882,14 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
     (void)I2Cx->SR2;
 
     if (!wait_flag_txe_or_btf(I2Cx, I2C_SR1_TXE)) {
-        log_printf("[ERROR][I2C_DMA][READ][TXE_BEFORE_REG] TXE not set before register-address write | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][TXE_BEFORE_REG] TXE not set before register-address write | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
@@ -1548,26 +1902,30 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
 
     I2Cx->DR = reg_addr;
     if (!wait_flag_txe_or_btf(I2Cx, I2C_SR1_BTF)) {
-        log_printf("[ERROR][I2C_DMA][READ][BTF_AFTER_REG] register-address byte did not complete before repeated START | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][BTF_AFTER_REG] register-address byte did not complete before repeated START | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned long)I2Cx->SR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
     }
 
     I2Cx->CR1 |= I2C_CR1_START;
     if (!wait_flag_addr_or_sb(I2Cx, I2C_SR1_SB)) {
-        log_printf("[ERROR][I2C_DMA][READ][RESTART] SB timeout during repeated START | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX CR1=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][RESTART] SB timeout during repeated START | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX CR1=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->CR1);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_SB_TIMEOUT;
     }
@@ -1575,14 +1933,16 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
 
     I2Cx->DR = (uint8_t)((slave_addr << 1) | 1U);
     if (!wait_flag_addr_or_sb(I2Cx, I2C_SR1_ADDR)) {
-        log_printf("[ERROR][I2C_DMA][READ][ADDR_R] slave did not ACK read-address phase | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
+        i2c_dma_mark_fault_owner(I2Cx);
+
+        I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][ADDR_R] slave did not ACK read-address phase | bus=0x%08lX slave7=0x%02X reg=0x%02X len=%u SR1=0x%08lX SR2=0x%08lX\r\n",
                    (unsigned long)I2Cx,
                    (unsigned int)slave_addr,
                    (unsigned int)reg_addr,
                    (unsigned int)num_of_bytes,
                    (unsigned long)I2Cx->SR1,
                    (unsigned long)I2Cx->SR2);
-        tim2_delay_ms(20U);
+        app_fault_delay_ms(20U);
         I2Cx->CR1 |= I2C_CR1_STOP;
         return I2C_DMA_ERR_ADDR_TIMEOUT;
     }
@@ -1594,12 +1954,14 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
         I2Cx->CR1 |= I2C_CR1_STOP;
 
         if (!wait_reg_mask_state(&I2Cx->SR1, I2C_SR1_RXNE, 1U, I2C_WAIT_TIMEOUT_COUNT)) {
-            log_printf("[ERROR][I2C_DMA][READ][RXNE_1B] RXNE timeout during single-byte read | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][RXNE_1B] RXNE timeout during single-byte read | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
                        (unsigned long)I2Cx,
                        (unsigned int)slave_addr,
                        (unsigned int)reg_addr,
                        (unsigned long)I2Cx->SR1);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
         }
 
@@ -1620,12 +1982,14 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
         (void)I2Cx->SR2;
 
         if (!wait_reg_mask_state(&I2Cx->SR1, I2C_SR1_BTF, 1U, I2C_WAIT_TIMEOUT_COUNT)) {
-            log_printf("[ERROR][I2C_DMA][READ][BTF_2B] BTF timeout during two-byte read | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
+            i2c_dma_mark_fault_owner(I2Cx);
+
+            I2C_DMA_LOG_PRINTF("[ERROR][I2C_DMA][READ][BTF_2B] BTF timeout during two-byte read | bus=0x%08lX slave7=0x%02X reg=0x%02X SR1=0x%08lX\r\n",
                        (unsigned long)I2Cx,
                        (unsigned int)slave_addr,
                        (unsigned int)reg_addr,
                        (unsigned long)I2Cx->SR1);
-            tim2_delay_ms(20U);
+            app_fault_delay_ms(20U);
             I2Cx->CR1 |= I2C_CR1_STOP;
             return I2C_DMA_ERR_TXE_BTF_TIMEOUT;
         }
@@ -1696,6 +2060,7 @@ void DMA1_Stream6_IRQHandler(void) /* I2C1_TX complete/error -> bme680g_tx_cmplt
         reg_barrier();
 
         bme680g_tx_cmplt = I2C_DMA_TRANSFER_COMPLETE;
+        i2c_dma_give_sem_from_isr(bme680_tx_sem);
         return;
     }
 
@@ -1707,12 +2072,11 @@ void DMA1_Stream6_IRQHandler(void) /* I2C1_TX complete/error -> bme680g_tx_cmplt
 
         i2c_force_stop_and_clear(I2C1);
 
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_BME680);
+
         bme680g_tx_cmplt = I2C_DMA_TRANSFER_ERROR;
-        log_printf("[ERROR][I2C_DMA][I2C1][BME680][DMA_TX_IRQ] transfer error interrupt | stream=DMA1_Stream6 HISR=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
-                   (unsigned long)hisr,
-                   (unsigned long)DMA1_Stream6->CR,
-                   (unsigned long)DMA1_Stream6->NDTR);
-        tim2_delay_ms(20U);
+        i2c_dma_give_sem_from_isr(bme680_tx_sem);
+
         return;
     }
 }
@@ -1735,6 +2099,7 @@ void DMA1_Stream5_IRQHandler(void) /* I2C1_RX complete/error -> bme680g_rx_cmplt
         reg_barrier();
 
         bme680g_rx_cmplt = I2C_DMA_TRANSFER_COMPLETE;
+        i2c_dma_give_sem_from_isr(bme680_rx_sem);
         return;
     }
 
@@ -1746,12 +2111,11 @@ void DMA1_Stream5_IRQHandler(void) /* I2C1_RX complete/error -> bme680g_rx_cmplt
 
         i2c_force_stop_and_clear(I2C1);
 
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_BME680);
+
         bme680g_rx_cmplt = I2C_DMA_TRANSFER_ERROR;
-        log_printf("[ERROR][I2C_DMA][I2C1][BME680][DMA_RX_IRQ] transfer error interrupt | stream=DMA1_Stream5 HISR=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
-                   (unsigned long)hisr,
-                   (unsigned long)DMA1_Stream5->CR,
-                   (unsigned long)DMA1_Stream5->NDTR);
-        tim2_delay_ms(20U);
+        i2c_dma_give_sem_from_isr(bme680_rx_sem);
+
         return;
     }
 }
@@ -1774,6 +2138,7 @@ void DMA1_Stream1_IRQHandler(void) /* I2C3_RX complete/error -> mpu9250g_rx_cmpl
         reg_barrier();
 
         mpu9250g_rx_cmplt = I2C_DMA_TRANSFER_COMPLETE;
+        i2c_dma_give_sem_from_isr(mpu9250_rx_sem);
         return;
     }
 
@@ -1785,12 +2150,11 @@ void DMA1_Stream1_IRQHandler(void) /* I2C3_RX complete/error -> mpu9250g_rx_cmpl
 
         i2c_force_stop_and_clear(I2C3);
 
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_MPU9250);
+
         mpu9250g_rx_cmplt = I2C_DMA_TRANSFER_ERROR;
-        log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_RX_IRQ] transfer error interrupt | stream=DMA1_Stream1 LISR=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
-                   (unsigned long)lisr,
-                   (unsigned long)DMA1_Stream1->CR,
-                   (unsigned long)DMA1_Stream1->NDTR);
-        tim2_delay_ms(20U);
+        i2c_dma_give_sem_from_isr(mpu9250_rx_sem);
+
         return;
     }
 }
@@ -1814,6 +2178,7 @@ void DMA1_Stream4_IRQHandler(void) /* I2C3_TX complete/error -> mpu9250g_tx_cmpl
         reg_barrier();
 
         mpu9250g_tx_cmplt = I2C_DMA_TRANSFER_COMPLETE;
+        i2c_dma_give_sem_from_isr(mpu9250_tx_sem);
         return;
     }
 
@@ -1825,12 +2190,11 @@ void DMA1_Stream4_IRQHandler(void) /* I2C3_TX complete/error -> mpu9250g_tx_cmpl
 
         i2c_force_stop_and_clear(I2C3);
 
+        system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_MPU9250);
+
         mpu9250g_tx_cmplt = I2C_DMA_TRANSFER_ERROR;
-        log_printf("[ERROR][I2C_DMA][I2C3][MPU9250][DMA_TX_IRQ] transfer error interrupt | stream=DMA1_Stream4 HISR=0x%08lX CR=0x%08lX NDTR=%lu\r\n",
-                   (unsigned long)hisr,
-                   (unsigned long)DMA1_Stream4->CR,
-                   (unsigned long)DMA1_Stream4->NDTR);
-        tim2_delay_ms(20U);
+        i2c_dma_give_sem_from_isr(mpu9250_tx_sem);
+
         return;
     }
 }

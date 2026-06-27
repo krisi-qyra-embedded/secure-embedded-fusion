@@ -14,7 +14,10 @@ extern "C" {
 
 #include <stdint.h>
 #include <stddef.h>
-
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "cmsis_os.h"
 #include "i2c_dma.h"
 #include <bme680_defs.h>
 
@@ -23,7 +26,21 @@ extern "C" {
  * Lower layer is single-shot only.
  * No nested retries here. Runtime/app layer owns the 3 total retries.
  */
+extern SemaphoreHandle_t xSerialSemaphore;
 #define BME680_USER_I2C_TIMEOUT_ITER    (200000U)
+
+#define BME680_LOG_PRINTF(...)                                                     \
+    do {                                                                           \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
+            (xSerialSemaphore != NULL)) {                                          \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
+                log_printf(__VA_ARGS__);                                           \
+                xSemaphoreGive(xSerialSemaphore);                                  \
+            }                                                                      \
+        } else {                                                                   \
+            log_printf(__VA_ARGS__);                                               \
+        }                                                                          \
+    } while (0)
 
 /* --------------------------------------------------------------------------
  * Explicit return codes for Bosch user adapter hooks.

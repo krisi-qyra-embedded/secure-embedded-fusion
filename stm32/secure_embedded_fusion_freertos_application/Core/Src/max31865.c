@@ -9,17 +9,51 @@
 #include "iwdg.h"
 #include <math.h>
 #include <string.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "spi_dma.h"
+#include "i2c_dma.h"   /* for app_fault_delay_ms/system fault helpers if needed */
 
+extern SemaphoreHandle_t max31865_spi_rx_sem;
+extern SemaphoreHandle_t max31865_spi_tx_sem;
+extern SemaphoreHandle_t xSerialSemaphore;
+extern volatile uint8_t system_fault_logging_active;
+extern volatile uint8_t system_fault_owner;
+extern float temperatureC;
+
+#ifndef MAX31865_BIAS_SETTLE_MS
+#define MAX31865_BIAS_SETTLE_MS          10U
+#endif
+
+#ifndef MAX31865_ONESHOT_CONVERSION_MS
+#define MAX31865_ONESHOT_CONVERSION_MS   70U
+#endif
+
+static void app_max31865_log_local_runtime_error(const char *tag,
+                                                 int32_t rc,
+                                                 int attempt,
+                                                 int max_attempts);
+
+/* Drains stale MAX31865 DMA completion tokens. */
+static void max31865_clear_dma_semaphore_if_rtos(SemaphoreHandle_t sem)
+{
+    /* Take pending semaphore tokens without blocking the task. */
+    if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) && (sem != NULL)) {
+        while (xSemaphoreTake(sem, 0U) == pdTRUE) {
+        }
+    }
+}
 
 /* Logs a labeled sensor byte buffer. */
 static void _log_hex(const char *label, const uint8_t *buf, uint16_t len)
 {
     /* Print each byte in hexadecimal for transfer diagnostics. */
-    log_printf("%s:", label);
+    MAX31865_LOG_PRINTF("%s:", label);
     for (uint16_t i = 0U; i < len; ++i) {
-        log_printf(" %02X", buf[i]);
+        MAX31865_LOG_PRINTF(" %02X", buf[i]);
     }
-    log_printf("\r\n");
+    MAX31865_LOG_PRINTF("\r\n");
 }
 
 /* Configures PB6 as the MAX31865 chip-select output. */
@@ -78,7 +112,10 @@ int MPU_CS(uint8_t state)
 }
 
 /* Reads consecutive MAX31865 registers through SPI DMA. */
-max31865_status_t Max31865_readRegisterN(Max31865_t *max31865, uint8_t addr, uint8_t *buffer, uint8_t n)
+max31865_status_t Max31865_readRegisterN(Max31865_t *max31865,
+                                         uint8_t addr,
+                                         uint8_t *buffer,
+                                         uint8_t n)
 {
     /* Keep chip select asserted until both DMA streams and SPI complete. */
     if ((max31865 == NULL) || (buffer == NULL) || (n == 0U)) {
@@ -93,12 +130,22 @@ max31865_status_t Max31865_readRegisterN(Max31865_t *max31865, uint8_t addr, uin
     uint8_t txbuf[MAX_STACK_TOTAL];
     uint8_t rxbuf[MAX_STACK_TOTAL];
 
-    addr &= 0x7Fu;
+    addr &= 0x7FU;
+
     txbuf[0] = addr;
     for (uint16_t i = 1U; i < total; ++i) {
-        txbuf[i] = 0xFFu;
+        txbuf[i] = 0xFFU;
     }
+
     memset(rxbuf, 0, total);
+
+    /*
+     * Clear stale DMA semaphore tokens before starting the new full-duplex SPI transfer.
+     * RX -> DMA2_Stream0 -> max31865_spi_rx_sem
+     * TX -> DMA2_Stream1 -> max31865_spi_tx_sem
+     */
+    max31865_clear_dma_semaphore_if_rtos(max31865_spi_rx_sem);
+    max31865_clear_dma_semaphore_if_rtos(max31865_spi_tx_sem);
 
     MPU_CS(CS_SELECT);
 
@@ -130,6 +177,7 @@ max31865_status_t Max31865_readRegisterN(Max31865_t *max31865, uint8_t addr, uin
     }
 
     MPU_CS(CS_DESELECT);
+
     return MAX31865_STATUS_OK;
 }
 
@@ -163,7 +211,9 @@ max31865_status_t Max31865_readRegister16(Max31865_t *max31865, uint8_t addr, ui
 }
 
 /* Writes one MAX31865 register through SPI DMA. */
-max31865_status_t Max31865_writeRegister8(Max31865_t *dev, uint8_t addr, uint8_t data)
+max31865_status_t Max31865_writeRegister8(Max31865_t *dev,
+                                          uint8_t addr,
+                                          uint8_t data)
 {
     /* Set the write bit in the address and release chip select on failure. */
     if (dev == NULL) {
@@ -171,8 +221,15 @@ max31865_status_t Max31865_writeRegister8(Max31865_t *dev, uint8_t addr, uint8_t
     }
 
     uint8_t txbuf[2];
+
     txbuf[0] = (uint8_t)(addr | 0x80U);
     txbuf[1] = data;
+
+    /*
+     * Clear stale TX DMA semaphore token before starting the new SPI TX transfer.
+     * TX -> DMA2_Stream1 -> max31865_spi_tx_sem
+     */
+    max31865_clear_dma_semaphore_if_rtos(max31865_spi_tx_sem);
 
     MPU_CS(CS_SELECT);
 
@@ -195,6 +252,7 @@ max31865_status_t Max31865_writeRegister8(Max31865_t *dev, uint8_t addr, uint8_t
     }
 
     MPU_CS(CS_DESELECT);
+
     return MAX31865_STATUS_OK;
 }
 
@@ -307,15 +365,22 @@ max31865_status_t Max31865_readRTD(Max31865_t *max31865, uint16_t *rtd_value)
 
     max31865_status_t status = Max31865_clearFault(max31865);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("WARN: readRTD clearFault r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("WARN: readRTD clearFault r=%d\r\n", status);
+        app_fault_delay_ms(20U);
     }
 
     status = Max31865_enableBias(max31865, 1U);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("WARN: readRTD enableBias r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("WARN: readRTD enableBias r=%d\r\n", status);
+        app_fault_delay_ms(20U);
+        return status;
     }
+
+    /*
+     * MAX31865 needs bias settling time before a one-shot conversion.
+     * Without this, transient raw=0x0000 / 0x7FFF samples can appear.
+     */
+    app_fault_delay_ms(MAX31865_BIAS_SETTLE_MS);
 
     uint8_t cfg = 0U;
     status = Max31865_readRegister8(max31865, MAX31856_CONFIG_REG, &cfg);
@@ -324,12 +389,15 @@ max31865_status_t Max31865_readRTD(Max31865_t *max31865, uint16_t *rtd_value)
     }
 
     cfg |= MAX31856_CONFIG_1SHOT;
+
     status = Max31865_writeRegister8(max31865, MAX31856_CONFIG_REG, cfg);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: readRTD start 1shot failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: readRTD start 1shot failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
+
+    app_fault_delay_ms(MAX31865_ONESHOT_CONVERSION_MS);
 
     status = Max31865_readRegister16(max31865, MAX31856_RTDMSB_REG, rtd_value);
     if (status != MAX31865_STATUS_OK) {
@@ -337,6 +405,7 @@ max31865_status_t Max31865_readRTD(Max31865_t *max31865, uint16_t *rtd_value)
     }
 
     *rtd_value >>= 1U;
+
     return MAX31865_STATUS_OK;
 }
 
@@ -345,12 +414,12 @@ max31865_status_t Max31865_init(Max31865_t *max31865, uint8_t numwires, uint8_t 
 {
     /* Disable automatic conversion and bias before clearing faults. */
     if (max31865 == NULL) {
-        log_printf("ERR: init invalid args (max31865 == NULL)\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: init invalid args (max31865 == NULL)\r\n");
+        app_fault_delay_ms(20U);
         return MAX31865_STATUS_INVALID_ARG;
     }
 
-    hb_main_ts = 0U;
+    heartbeat_signal_main();
     MPU_CS(CS_DESELECT);
 
     max31865->wires = numwires;
@@ -358,41 +427,41 @@ max31865_status_t Max31865_init(Max31865_t *max31865, uint8_t numwires, uint8_t 
 
     max31865_status_t status = Max31865_setWires(max31865, numwires);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: init setWires failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: init setWires failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 
     status = Max31865_enableBias(max31865, 0U);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: init enableBias failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: init enableBias failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 
     status = Max31865_autoConvert(max31865, 0U);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: init autoConvert failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: init autoConvert failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 
     status = Max31865_clearFault(max31865);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: init clearFault failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: init clearFault failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 
     status = Max31865_setFilter(max31865, filterHz);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: init setFilter failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: init setFilter failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 
-    log_printf("OK: Max31865 initialized (wires=%u filter=%u)\r\n", (unsigned)numwires, (unsigned)filterHz);
-    tim2_delay_ms(1);
+    MAX31865_LOG_PRINTF("OK: Max31865 initialized (wires=%u filter=%u)\r\n", (unsigned)numwires, (unsigned)filterHz);
+    app_fault_delay_ms(1U);
     return MAX31865_STATUS_OK;
 }
 
@@ -400,7 +469,7 @@ max31865_status_t Max31865_init(Max31865_t *max31865, uint8_t numwires, uint8_t 
 static void Max31865_log_recovery_action(int attempt, int max_attempts)
 {
     /* Include the current attempt and configured retry limit. */
-    log_printf("ACT: sample attempt %d/%d failed -> starting SPI/MAX31865 recovery path\r\n",
+    MAX31865_LOG_PRINTF("ACT: sample attempt %d/%d failed -> starting SPI/MAX31865 recovery path\r\n",
                attempt, max_attempts);
 }
 
@@ -416,93 +485,119 @@ static void Max31865_log_fault_diagnosis(uint16_t raw, uint8_t fault)
     /* Distinguish zero and full-scale RTD codes from valid measurements. */
     const float rt_ohms = (((float)raw) / 32768.0f) * _MAX31865_RREF;
 
-    log_printf("DBG: MAX31865 context: raw=0x%04X (%lu), approx_Rt=%.3f ohm, fault=0x%02X\r\n",
+    MAX31865_LOG_PRINTF("DBG: MAX31865 context: raw=0x%04X (%lu), approx_Rt=%.3f ohm, fault=0x%02X\r\n",
                raw, (unsigned long)raw, rt_ohms, (unsigned)fault);
-    tim2_delay_ms(20U);
+    app_fault_delay_ms(20U);
     if (raw == 0x7FFFU) {
-        log_printf("DIAG: RTD code is FULL SCALE (32767). Datasheet meaning: saturated-high measurement.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: RTD code is FULL SCALE (32767). Datasheet meaning: saturated-high measurement.\r\n");
+        app_fault_delay_ms(20U);
     } else if (raw == 0x0000U) {
-        log_printf("DIAG: RTD code is NEAR ZERO (0). Datasheet meaning: saturated-low measurement.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: RTD code is NEAR ZERO (0). Datasheet meaning: saturated-low measurement.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     /* No MAX31865 fault bits set -> likely not a clean threshold fault */
     if (fault == 0U) {
         if ((raw == 0x7FFFU) || (raw == 0x0000U)) {
-            log_printf("DIAG: No MAX31865 fault bits are set. This makes a pure RTD threshold fault less likely.\r\n");
-            log_printf("DIAG: Suspect SPI/CS/DMA/timing, bias/conversion timing, stale register read, transient power/noise, or intermittent wiring.\r\n");
-            tim2_delay_ms(20U);
+            MAX31865_LOG_PRINTF("DIAG: No MAX31865 fault bits are set. This makes a pure RTD threshold fault less likely.\r\n");
+            MAX31865_LOG_PRINTF("DIAG: Suspect SPI/CS/DMA/timing, bias/conversion timing, stale register read, transient power/noise, or intermittent wiring.\r\n");
+            app_fault_delay_ms(20U);
         } else {
-            log_printf("DIAG: No MAX31865 fault bits are set.\r\n");
-            tim2_delay_ms(20U);
+            MAX31865_LOG_PRINTF("DIAG: No MAX31865 fault bits are set.\r\n");
+            app_fault_delay_ms(20U);
         }
         return;
     }
 
     /* D7: High threshold -> measured resistance > high threshold */
     if ((fault & MAX31865_FAULT_HIGHTHRESH) != 0U) {
-        log_printf("DIAG: D7 HIGH-THRESHOLD fault: measured RTD resistance is above the programmed high threshold.\r\n");
-        log_printf("DIAG: Possible causes: open RTD element, RTDIN+ shorted high, FORCE+ shorted high, or FORCE+ not connected to RTD.\r\n");
-        log_printf("DIAG: Resulting data trend: FULL SCALE.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: D7 HIGH-THRESHOLD fault: measured RTD resistance is above the programmed high threshold.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Possible causes: open RTD element, RTDIN+ shorted high, FORCE+ shorted high, or FORCE+ not connected to RTD.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Resulting data trend: FULL SCALE.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     /* D6: Low threshold -> measured resistance < low threshold */
     if ((fault & MAX31865_FAULT_LOWTHRESH) != 0U) {
-        log_printf("DIAG: D6 LOW-THRESHOLD fault: measured RTD resistance is below the programmed low threshold.\r\n");
-        log_printf("DIAG: Possible causes: RTDIN+ shorted to RTDIN-, RTDIN+ shorted low and not connected to RTD, or FORCE+ shorted low.\r\n");
-        log_printf("DIAG: Resulting data trend: NEAR ZERO.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: D6 LOW-THRESHOLD fault: measured RTD resistance is below the programmed low threshold.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Possible causes: RTDIN+ shorted to RTDIN-, RTDIN+ shorted low and not connected to RTD, or FORCE+ shorted low.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Resulting data trend: NEAR ZERO.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     if ((fault & MAX31865_FAULT_REFINLOW) != 0U) {
-        log_printf("DIAG: D5 fault: VREFIN- > 0.85 x VBIAS.\r\n");
-        log_printf("DIAG: Possible causes: open RTD element, FORCE+ shorted high and connected to RTD, FORCE+ unconnected, or FORCE+ shorted high and not connected to RTD.\r\n");
-        log_printf("DIAG: Resulting data trend: FULL SCALE or INDETERMINATE.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: D5 fault: VREFIN- > 0.85 x VBIAS.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Possible causes: open RTD element, FORCE+ shorted high and connected to RTD, FORCE+ unconnected, or FORCE+ shorted high and not connected to RTD.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Resulting data trend: FULL SCALE or INDETERMINATE.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     if ((fault & MAX31865_FAULT_REFINHIGH) != 0U) {
-        log_printf("DIAG: D4 fault: VREFIN- < 0.85 x VBIAS.\r\n");
-        log_printf("DIAG: Typical cause: FORCE- open / broken return path / low-side wiring issue.\r\n");
-        log_printf("DIAG: Resulting data trend: may APPEAR VALID even though the measurement path is wrong.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: D4 fault: VREFIN- < 0.85 x VBIAS.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Typical cause: FORCE- open / broken return path / low-side wiring issue.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Resulting data trend: may APPEAR VALID even though the measurement path is wrong.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     if ((fault & MAX31865_FAULT_RTDINLOW) != 0U) {
-        log_printf("DIAG: D3 fault: VRTDIN- < 0.85 x VBIAS.\r\n");
-        log_printf("DIAG: Typical cause: FORCE- open or RTDIN- low-side wiring issue.\r\n");
-        log_printf("DIAG: Resulting data trend: NEAR ZERO or deceptively VALID-looking.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: D3 fault: VRTDIN- < 0.85 x VBIAS.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Typical cause: FORCE- open or RTDIN- low-side wiring issue.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Resulting data trend: NEAR ZERO or deceptively VALID-looking.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     if ((fault & MAX31865_FAULT_OVUV) != 0U) {
-        log_printf("DIAG: D2 over/under-voltage fault: a protected input went above VDD or below GND.\r\n");
-        log_printf("DIAG: Resulting data trend: INDETERMINATE. Check supply, grounding, noise, and transients.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: D2 over/under-voltage fault: a protected input went above VDD or below GND.\r\n");
+        MAX31865_LOG_PRINTF("DIAG: Resulting data trend: INDETERMINATE. Check supply, grounding, noise, and transients.\r\n");
+        app_fault_delay_ms(20U);
     }
 
     if (raw == 0x7FFFU) {
         if ((fault & (MAX31865_FAULT_HIGHTHRESH | MAX31865_FAULT_REFINLOW)) != 0U) {
-            log_printf("DIAG: Holistic summary: this sample looks like an OPEN-CIRCUIT / VERY-HIGH-RESISTANCE style fault.\r\n");
-            tim2_delay_ms(20U);
+            MAX31865_LOG_PRINTF("DIAG: Holistic summary: this sample looks like an OPEN-CIRCUIT / VERY-HIGH-RESISTANCE style fault.\r\n");
+            app_fault_delay_ms(20U);
         } else {
-            log_printf("DIAG: Holistic summary: full-scale data observed; combine the fault bits above with wiring and power checks.\r\n");
-            tim2_delay_ms(20U);
+            MAX31865_LOG_PRINTF("DIAG: Holistic summary: full-scale data observed; combine the fault bits above with wiring and power checks.\r\n");
+            app_fault_delay_ms(20U);
         }
     } else if (raw == 0x0000U) {
         if ((fault & (MAX31865_FAULT_LOWTHRESH | MAX31865_FAULT_RTDINLOW)) != 0U) {
-            log_printf("DIAG: Holistic summary: this sample looks like a SHORT / VERY-LOW-RESISTANCE style fault.\r\n");
-            tim2_delay_ms(20U);
+            MAX31865_LOG_PRINTF("DIAG: Holistic summary: this sample looks like a SHORT / VERY-LOW-RESISTANCE style fault.\r\n");
+            app_fault_delay_ms(20U);
         } else {
-            log_printf("DIAG: Holistic summary: near-zero data observed; combine the fault bits above with wiring and power checks.\r\n");
-            tim2_delay_ms(20U);
+            MAX31865_LOG_PRINTF("DIAG: Holistic summary: near-zero data observed; combine the fault bits above with wiring and power checks.\r\n");
+            app_fault_delay_ms(20U);
         }
     } else if ((fault & (MAX31865_FAULT_REFINHIGH | MAX31865_FAULT_RTDINLOW)) != 0U) {
-        log_printf("DIAG: Holistic summary: data can look numerically plausible, but the analog return path is suspect. Do not trust the sample.\r\n");
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("DIAG: Holistic summary: data can look numerically plausible, but the analog return path is suspect. Do not trust the sample.\r\n");
+        app_fault_delay_ms(20U);
     }
+}
+
+/* Reports a MAX31865 runtime failure to fault capture. */
+static void app_max31865_log_runtime_error(const char *tag,
+                                           int32_t rc,
+                                           int attempt,
+                                           int max_attempts)
+{
+    /* Mark this sensor's capture as in progress before logging. */
+    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MAX31865);
+
+    if (rc > 0) {
+        MAX31865_LOG_PRINTF("[WARN] %s returned warning code %ld (attempt %d/%d)\r\n",
+                            tag ? tag : "MAX31865 runtime",
+                            (long)rc,
+                            attempt,
+                            max_attempts);
+    } else {
+        MAX31865_LOG_PRINTF("[ERROR] %s failed with code %ld (attempt %d/%d)\r\n",
+                            tag ? tag : "MAX31865 runtime",
+                            (long)rc,
+                            attempt,
+                            max_attempts);
+    }
+
+    app_fault_delay_ms(20U);
 }
 
 /* Reads Celsius temperature with bounded MAX31865 recovery. */
@@ -510,12 +605,16 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
 {
     /* Retry failed samples after restoring the SPI and sensor configuration. */
     if ((max31865 == NULL) || (readTemp == NULL)) {
-        log_printf("ERR: readTempC invalid args\r\n");
-        tim2_delay_ms(20U);
+        system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MAX31865);
+
+        MAX31865_LOG_PRINTF("[ERROR] Max31865_readTempC: invalid args\r\n");
+        app_fault_delay_ms(20U);
+
         return MAX31865_STATUS_INVALID_ARG;
     }
 
     enum { MAX_ATTEMPTS = 3 };
+
     max31865_status_t final_status = MAX31865_STATUS_INVALID_DATA;
 
     for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
@@ -528,18 +627,30 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
         status = Max31865_readRTD(max31865, &raw);
         if (status != MAX31865_STATUS_OK) {
             final_status = status;
-            log_printf("ERR: readTempC: readRTD failed r=%d (attempt %d/%d)\r\n",
-                       status, attempt, MAX_ATTEMPTS);
-            log_printf("DIAG: No trustworthy RTD sample was produced. This points more to transaction/control/timing/recovery path issues than to a clean RTD threshold fault.\r\n");
-            tim2_delay_ms(20U);
+
+            app_max31865_log_runtime_error("Max31865_readRTD",
+                                           (int32_t)status,
+                                           attempt,
+                                           MAX_ATTEMPTS);
+
+            MAX31865_LOG_PRINTF("DIAG: No trustworthy RTD sample was produced. This points more to transaction/control/timing/recovery path issues than to a clean RTD threshold fault.\r\n");
+            app_fault_delay_ms(20U);
         } else {
-            max31865_status_t fault_status = Max31865_readFault(max31865, &fault);
+            max31865_status_t fault_status;
+
+            fault_status = Max31865_readFault(max31865, &fault);
             if (fault_status == MAX31865_STATUS_OK) {
                 fault_valid = true;
             } else {
-                log_printf("WARN: readTempC: readFault failed r=%d while diagnosing raw=0x%04X\r\n",
-                           fault_status, raw);
-                tim2_delay_ms(20U);
+                app_max31865_log_runtime_error("Max31865_readFault",
+                                               (int32_t)fault_status,
+                                               attempt,
+                                               MAX_ATTEMPTS);
+
+                MAX31865_LOG_PRINTF("[WARN] Max31865_readTempC: readFault failed r=%d while diagnosing raw=0x%04X\r\n",
+                                    (int)fault_status,
+                                    raw);
+                app_fault_delay_ms(20U);
             }
         }
 
@@ -565,8 +676,10 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
             } else {
                 Rt /= _MAX31865_RNOMINAL;
                 Rt *= 100.0f;
+
                 {
                     float rpoly = Rt;
+
                     temp = -242.02f;
                     temp += 2.2228f * rpoly;
                     rpoly *= Rt;
@@ -582,99 +695,193 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
 
             if (fault_valid && (fault != 0U)) {
                 final_status = MAX31865_STATUS_FAULT;
-                log_printf("ERR: readTempC: sample looked numerically usable, but MAX31865 reports fault=0x%02X (attempt %d/%d)\r\n",
-                           (unsigned)fault, attempt, MAX_ATTEMPTS);
-                tim2_delay_ms(20U);
+
+                app_max31865_log_runtime_error("MAX31865 fault register",
+                                               (int32_t)MAX31865_STATUS_FAULT,
+                                               attempt,
+                                               MAX_ATTEMPTS);
+
+                MAX31865_LOG_PRINTF("[ERROR] Max31865_readTempC: sample looked numerically usable, but MAX31865 reports fault=0x%02X (attempt %d/%d)\r\n",
+                                    (unsigned)fault,
+                                    attempt,
+                                    MAX_ATTEMPTS);
+                app_fault_delay_ms(20U);
+
                 Max31865_log_fault_diagnosis(raw, fault);
             } else {
                 sample_failed = false;
                 *readTemp = temp;
-                log_printf("OK: TempC = %.4f °C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
-                           temp,
-                           raw,
-                           (unsigned long)raw,
-                           (((float)raw) / 32768.0f) * _MAX31865_RREF);
+
+                if (system_fault_logging_active == 0U) {
+                    MAX31865_LOG_PRINTF("[MAX31865] OK: TempC = %.4f C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
+                                        temp,
+                                        raw,
+                                        (unsigned long)raw,
+                                        (((float)raw) / 32768.0f) * _MAX31865_RREF);
+                }
+
                 heartbeat_signal_main();
+
+                system_fault_clear_active(SYSTEM_FAULT_OWNER_MAX31865);
+
                 return MAX31865_STATUS_OK;
             }
         }
 
-        if ((status == MAX31865_STATUS_OK) && (sample_failed != false) &&
+        if ((status == MAX31865_STATUS_OK) &&
+            (sample_failed != false) &&
             ((raw == 0U) || (raw >= 0x7FFFU))) {
+
             final_status = MAX31865_STATUS_INVALID_DATA;
-            log_printf("ERR: readTempC: invalid RTD value raw=0x%04X (%lu) (attempt %d/%d)\r\n",
-                       raw, (unsigned long)raw, attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+
+            app_max31865_log_local_runtime_error("MAX31865 invalid RTD raw sample",
+                                                 (int32_t)MAX31865_STATUS_INVALID_DATA,
+                                                 attempt,
+                                                 MAX_ATTEMPTS);
+
+            MAX31865_LOG_PRINTF("[ERROR] Max31865_readTempC: invalid RTD value raw=0x%04X (%lu) (attempt %d/%d)\r\n",
+                                raw,
+                                (unsigned long)raw,
+                                attempt,
+                                MAX_ATTEMPTS);
+            app_fault_delay_ms(20U);
 
             if (raw == 0x7FFFU) {
-                log_printf("DIAG: Raw code hit FULL SCALE (32767). In the MAX31865 tables this corresponds to a saturated-high result.\r\n");
-                tim2_delay_ms(20U);
+                MAX31865_LOG_PRINTF("DIAG: Raw code hit FULL SCALE (32767). In the MAX31865 tables this corresponds to a saturated-high result.\r\n");
+                app_fault_delay_ms(20U);
             } else if (raw == 0x0000U) {
-                log_printf("DIAG: Raw code hit NEAR ZERO (0). In the MAX31865 tables this corresponds to a saturated-low result.\r\n");
-                tim2_delay_ms(20U);
+                MAX31865_LOG_PRINTF("DIAG: Raw code hit NEAR ZERO (0). In the MAX31865 tables this corresponds to a saturated-low result.\r\n");
+                app_fault_delay_ms(20U);
             } else {
-                log_printf("DIAG: Raw code is outside the accepted window for this routine, so the sample is treated as invalid.\r\n");
-                tim2_delay_ms(20U);
+                MAX31865_LOG_PRINTF("DIAG: Raw code is outside the accepted window for this routine, so the sample is treated as invalid.\r\n");
+                app_fault_delay_ms(20U);
             }
 
             if (fault_valid) {
                 Max31865_log_fault_diagnosis(raw, fault);
             } else {
-                log_printf("WARN: readTempC: fault register unavailable for this invalid sample; diagnosis limited to raw-code behavior.\r\n");
-                tim2_delay_ms(20U);
+                MAX31865_LOG_PRINTF("[WARN] Max31865_readTempC: fault register unavailable for this invalid sample; diagnosis limited to raw-code behavior.\r\n");
+                app_fault_delay_ms(20U);
             }
         }
 
         if (attempt >= MAX_ATTEMPTS) {
-            log_printf("ACT: sample attempt %d/%d failed -> recovery budget exhausted, no further retry\r\n",
-                       attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
-            log_printf("[FATAL] MAX31865 failed after retry %d/%d -> reporting fatal to caller (last_status=%d)\r\n",
-                       attempt, MAX_ATTEMPTS, (int)final_status);
-            tim2_delay_ms(20U);
-            log_printf("ERR: readTempC: all attempts exhausted; returning status=%d\r\n",
-                       (int)final_status);
-            tim2_delay_ms(20U);
+            system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MAX31865);
+
+            MAX31865_LOG_PRINTF("ACT: MAX31865 sample attempt %d/%d failed -> recovery budget exhausted, no further retry\r\n",
+                                attempt,
+                                MAX_ATTEMPTS);
+            app_fault_delay_ms(20U);
+
+            MAX31865_LOG_PRINTF("[FATAL] MAX31865 failed after retry %d/%d -> reporting fatal to task (last_status=%d)\r\n",
+                                attempt,
+                                MAX_ATTEMPTS,
+                                (int)final_status);
+            app_fault_delay_ms(20U);
+
             return final_status;
         }
 
         Max31865_log_recovery_action(attempt, MAX_ATTEMPTS);
 
         if (spi4_recover() == SPI_DMA_STATUS_OK) {
-            log_printf("INFO: readTempC: spi4_recover() succeeded, doing full restore/init\r\n");
+        	heartbeat_signal_main();
+            MAX31865_LOG_PRINTF("INFO: Max31865_readTempC: spi4_recover() succeeded, doing full restore/init\r\n");
 
             if (spi4_restore_and_init() == SPI_DMA_STATUS_OK) {
-                log_printf("INFO: readTempC: spi4_restore_and_init() succeeded, reinitializing device\r\n");
+            	heartbeat_signal_main();
+                MAX31865_LOG_PRINTF("INFO: Max31865_readTempC: spi4_restore_and_init() succeeded, reinitializing device\r\n");
 
                 memset(max31865, 0, sizeof(*max31865));
-                if (Max31865_init(max31865, 3U, 50U) != MAX31865_STATUS_OK) {
-                    log_printf("FATAL: Max31865_init failed after recovery -> restarting\r\n");
-                    tim2_delay_ms(20U);
-                    NVIC_SystemReset();
-                }
 
-                log_printf("ACT: recovery complete after attempt %d/%d, retrying temperature conversion\r\n",
-                           attempt, MAX_ATTEMPTS);
+                if (Max31865_init(max31865, 3U, 50U) != MAX31865_STATUS_OK) {
+                    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MAX31865);
+
+                    MAX31865_LOG_PRINTF("[FATAL] MAX31865 init failed after SPI recovery -> reporting fatal to task\r\n");
+                    app_fault_delay_ms(20U);
+
+                    return MAX31865_STATUS_INIT_FAILED;
+                }
+                heartbeat_signal_main();
+                MAX31865_LOG_PRINTF("ACT: MAX31865 recovery complete after attempt %d/%d, retrying temperature conversion\r\n",
+                                    attempt,
+                                    MAX_ATTEMPTS);
+
                 spi4_short_delay_ms(5U);
                 continue;
             }
 
-            log_printf("WARN: readTempC: spi4_restore_and_init() failed (attempt %d/%d)\r\n",
-                       attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+            app_max31865_log_runtime_error("spi4_restore_and_init",
+                                           (int32_t)SPI_DMA_STATUS_RECOVERY_FAILED,
+                                           attempt,
+                                           MAX_ATTEMPTS);
+
+            MAX31865_LOG_PRINTF("[WARN] Max31865_readTempC: spi4_restore_and_init() failed (attempt %d/%d)\r\n",
+                                attempt,
+                                MAX_ATTEMPTS);
+            app_fault_delay_ms(20U);
         } else {
-            log_printf("WARN: readTempC: spi4_recover() failed (attempt %d/%d)\r\n",
-                       attempt, MAX_ATTEMPTS);
-            tim2_delay_ms(20U);
+            app_max31865_log_runtime_error("spi4_recover",
+                                           (int32_t)SPI_DMA_STATUS_RECOVERY_FAILED,
+                                           attempt,
+                                           MAX_ATTEMPTS);
+
+            MAX31865_LOG_PRINTF("[WARN] Max31865_readTempC: spi4_recover() failed (attempt %d/%d)\r\n",
+                                attempt,
+                                MAX_ATTEMPTS);
+            app_fault_delay_ms(20U);
         }
 
-        log_printf("ACT: short backoff before retry %d/%d\r\n", attempt + 1, MAX_ATTEMPTS);
+        MAX31865_LOG_PRINTF("ACT: MAX31865 short backoff before retry %d/%d\r\n",
+                            attempt + 1,
+                            MAX_ATTEMPTS);
+
         spi4_short_delay_ms(10U);
     }
 
-    log_printf("ERR: readTempC: unexpected fallthrough; returning INVALID_DATA\r\n");
-    tim2_delay_ms(20U);
+    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_MAX31865);
+
+    MAX31865_LOG_PRINTF("[ERROR] Max31865_readTempC: unexpected fallthrough; returning INVALID_DATA\r\n");
+    app_fault_delay_ms(20U);
+
     return MAX31865_STATUS_INVALID_DATA;
+}
+
+/* Reports a local MAX31865 retry failure. */
+static void app_max31865_log_local_runtime_error(const char *tag,
+                                                 int32_t rc,
+                                                 int attempt,
+                                                 int max_attempts)
+{
+    /* Include the attempt count before the diagnostic-drain delay. */
+    MAX31865_LOG_PRINTF("[ERROR] %s failed with code %ld (attempt %d/%d)\r\n",
+                        tag ? tag : "MAX31865 runtime",
+                        (long)rc,
+                        attempt,
+                        max_attempts);
+    app_fault_delay_ms(20U);
+}
+
+/* Runs one supervised MAX31865 measurement. */
+app_max31865_runtime_status_t app_max31865_runtime_process(void)
+{
+    /* Clear the sensor fault after a successful temperature read. */
+    max31865_status_t max_rc;
+
+    max_rc = Max31865_readTempC(&max31865_dev, &temperatureC);
+    if (max_rc == MAX31865_STATUS_OK) {
+        heartbeat_signal_main();
+
+        system_fault_clear_active(SYSTEM_FAULT_OWNER_MAX31865);
+
+        return APP_MAX31865_RUNTIME_OK;
+    }
+
+    MAX31865_LOG_PRINTF("[ERROR] app_max31865_runtime_process: Max31865_readTempC rc=%d\r\n",
+                        (int)max_rc);
+    app_fault_delay_ms(20U);
+
+    return APP_MAX31865_RUNTIME_READ_FAIL;
 }
 
 /* Reads MAX31865 temperature in Fahrenheit. */
@@ -682,14 +889,14 @@ max31865_status_t Max31865_readTempF(Max31865_t *max31865, float *readTemp)
 {
     /* Propagate Celsius-read failures before converting the result. */
     if ((max31865 == NULL) || (readTemp == NULL)) {
-        log_printf("ERR: readTempF invalid args\r\n");
+        MAX31865_LOG_PRINTF("ERR: readTempF invalid args\r\n");
         return MAX31865_STATUS_INVALID_ARG;
     }
 
     float temp_c = 0.0f;
     max31865_status_t status = Max31865_readTempC(max31865, &temp_c);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: readTempF -> Max31865_readTempC failed\r\n");
+        MAX31865_LOG_PRINTF("ERR: readTempF -> Max31865_readTempC failed\r\n");
         return status;
     }
 
@@ -709,7 +916,7 @@ max31865_status_t Max31865_monitorLoop(Max31865_t *max31865, uint32_t interval_m
 {
     /* Wait the requested interval between sensor reads. */
     if (max31865 == NULL) {
-        log_printf("ERR: monitorLoop invalid args\r\n");
+        MAX31865_LOG_PRINTF("ERR: monitorLoop invalid args\r\n");
         return MAX31865_STATUS_INVALID_ARG;
     }
 
@@ -718,11 +925,11 @@ max31865_status_t Max31865_monitorLoop(Max31865_t *max31865, uint32_t interval_m
     while (1) {
         const max31865_status_t status = Max31865_readTempC(max31865, &tmp);
         if (status == MAX31865_STATUS_OK) {
-            log_printf("MON: Temp = %.3f °C\r\n", tmp);
+            MAX31865_LOG_PRINTF("MON: Temp = %.3f °C\r\n", tmp);
         } else {
             uint8_t fault = 0U;
             (void)Max31865_readFault(max31865, &fault);
-            log_printf("MON: Read failed code=%d, fault=0x%02X\r\n", status, fault);
+            MAX31865_LOG_PRINTF("MON: Read failed code=%d, fault=0x%02X\r\n", status, fault);
         }
 
         tim2_delay_ms(interval_ms);
@@ -734,14 +941,14 @@ max31865_status_t Max31865_debug_once(Max31865_t *dev)
 {
     /* Remove the RTD status bit before calculating diagnostic resistance. */
     if (dev == NULL) {
-        log_printf("ERR: debug_once invalid arg (dev==NULL)\r\n");
+        MAX31865_LOG_PRINTF("ERR: debug_once invalid arg (dev==NULL)\r\n");
         return MAX31865_STATUS_INVALID_ARG;
     }
 
     uint8_t raw_buf[2] = {0U, 0U};
     max31865_status_t status = Max31865_readRegisterN(dev, MAX31856_RTDMSB_REG, raw_buf, 2U);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: debug_once read raw16 failed r=%d\r\n", status);
+        MAX31865_LOG_PRINTF("ERR: debug_once read raw16 failed r=%d\r\n", status);
         return status;
     }
 
@@ -751,16 +958,16 @@ max31865_status_t Max31865_debug_once(Max31865_t *dev)
     uint8_t cfg = 0U;
     status = Max31865_readRegisterN(dev, MAX31856_CONFIG_REG, &cfg, 1U);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: debug_once read cfg failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: debug_once read cfg failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 
     uint8_t fault = 0U;
     status = Max31865_readRegisterN(dev, MAX31856_FAULTSTAT_REG, &fault, 1U);
     if (status != MAX31865_STATUS_OK) {
-        log_printf("ERR: debug_once read fault failed r=%d\r\n", status);
-        tim2_delay_ms(20U);
+        MAX31865_LOG_PRINTF("ERR: debug_once read fault failed r=%d\r\n", status);
+        app_fault_delay_ms(20U);
         return status;
     }
 

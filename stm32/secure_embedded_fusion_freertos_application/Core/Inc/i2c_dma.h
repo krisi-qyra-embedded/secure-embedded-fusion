@@ -12,6 +12,12 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 #include "stm32f4xx.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "cmsis_os.h"
+#include "uart.h"
+
 
 #define DMA1_STREAM5_TCIF (1U << 11)   // Transfer complete flag for Stream5
 #define DMA1_STREAM6_TCIF (1U << 21)   // Transfer complete flag for Stream6
@@ -20,6 +26,50 @@ extern "C" {
 #define DMA1_STREAM1_TCIF (1U << 11)
 #define DMA1_STREAM4_TCIF (1U << 5)
 
+
+#define SYSTEM_FAULT_MASK_BME680      (1UL << 0)
+#define SYSTEM_FAULT_MASK_MPU9250     (1UL << 1)
+#define SYSTEM_FAULT_MASK_MAX31865    (1UL << 2)
+#define SYSTEM_FAULT_MASK_PM25        (1UL << 3)
+#define SYSTEM_FAULT_MASK_DS18B20     (1UL << 4)
+
+#define SYSTEM_FAULT_OWNER_NONE       0U
+#define SYSTEM_FAULT_OWNER_BME680     1U
+#define SYSTEM_FAULT_OWNER_MPU9250    2U
+#define SYSTEM_FAULT_OWNER_MAX31865   3U
+#define SYSTEM_FAULT_OWNER_PM25       4U
+#define SYSTEM_FAULT_OWNER_DS18B20    5U
+
+#define SYSTEM_FAULT_MASK_CRITICAL  \
+    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250 | SYSTEM_FAULT_MASK_MAX31865 | SYSTEM_FAULT_MASK_PM25 | SYSTEM_FAULT_MASK_DS18B20)
+
+extern volatile uint8_t  system_fault_logging_active;
+extern volatile uint8_t  system_fault_owner;
+extern volatile uint32_t system_fault_active_mask;
+extern volatile uint32_t system_fault_completed_mask;
+extern volatile uint32_t system_fault_in_progress_mask;
+
+void system_fault_mark_active(uint8_t owner);
+void system_fault_mark_completed(uint8_t owner);
+void system_fault_clear_active(uint8_t owner);
+void system_fault_mark_active_from_isr(uint8_t owner);
+void system_fault_mark_in_progress(uint8_t owner);
+uint32_t system_fault_mask_from_owner(uint8_t owner);
+
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#define I2C_DMA_LOG_PRINTF(...)                                                    \
+    do {                                                                           \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
+            (xSerialSemaphore != NULL)) {                                          \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
+                log_printf(__VA_ARGS__);                                           \
+                xSemaphoreGive(xSerialSemaphore);                                  \
+            }                                                                      \
+        } else {                                                                   \
+            log_printf(__VA_ARGS__);                                               \
+        }                                                                          \
+    } while (0)
 
 /* ----------------------------- Public status types ----------------------------- */
 
@@ -70,7 +120,25 @@ typedef enum
     I2C_RECOVER_OK   = 1
 } i2c_recover_status_t;
 
-/* ----------------------------- BME680 completion flags ----------------------------- */
+/* ----------------------------- I2C DMA completion flags ----------------------------- */
+/*
+ * These flags belong only to the I2C DMA driver.
+ *
+ * BME680:
+ *   RX -> DMA1_Stream5
+ *   TX -> DMA1_Stream6
+ *
+ * MPU9250:
+ *   RX -> DMA1_Stream1
+ *   TX -> DMA1_Stream4
+ *
+ * PM2.5 is NOT declared here because PM2.5 uses USART1 RX DMA2_Stream5.
+ * Its UART RX event/semaphore live in pm25_uart.c / pm25_uart.h:
+ *   pm25_uart_rx_sem
+ *
+ * DS18B20 is NOT declared here because DS18B20 is 1-Wire, not I2C DMA.
+ * Only its shared system fault owner/mask lives here.
+ */
 extern volatile i2c_dma_transfer_state_t bme680g_rx_cmplt;
 extern volatile i2c_dma_transfer_state_t bme680g_tx_cmplt;
 extern volatile i2c_dma_transfer_state_t mpu9250g_rx_cmplt;
@@ -106,6 +174,9 @@ i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
                                  uint32_t wait_mask,
                                  uint8_t expect_set,
                                  uint8_t allow_restart);
+int i2c_dma_rtos_sync_init(void);
+
+void app_fault_delay_ms(uint32_t ms);
 
 #ifdef __cplusplus
 }

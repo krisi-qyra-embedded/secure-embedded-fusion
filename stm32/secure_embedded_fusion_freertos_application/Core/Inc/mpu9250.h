@@ -10,6 +10,22 @@
 
 /* ----------------------------- Constants ----------------------------- */
 
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#define MPU9250_LOG_PRINTF(...)                                                    \
+    do {                                                                           \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
+            (xSerialSemaphore != NULL)) {                                          \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
+                log_printf(__VA_ARGS__);                                           \
+                xSemaphoreGive(xSerialSemaphore);                                  \
+            }                                                                      \
+        } else {                                                                   \
+            log_printf(__VA_ARGS__);                                               \
+        }                                                                          \
+    } while (0)
+
+
 #define RAD2DEG                        57.2957795131f
 #define G_TO_MS2                       9.80665f
 

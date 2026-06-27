@@ -6,14 +6,20 @@
 #define INC_DS18B20_H_
 
 #include "onewire.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "uart.h"
 #include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* For one-sensor bring-up keep this as 1U.
- * For final 5-sensor bus, change this to 5U and pass ExpectedSensorCount=5U.
+/*
+ * Final 5-sensor bus.
+ * If you later test only one sensor, temporarily set this to 1U
+ * and pass ExpectedSensorCount=1U in DS18B20_AppInit().
  */
 #define DS18B20_MaxCnt                  5U
 
@@ -32,6 +38,51 @@ extern "C" {
 #define DS18B20_DECIMAL_STEPS_11BIT     0.125f
 #define DS18B20_DECIMAL_STEPS_10BIT     0.25f
 #define DS18B20_DECIMAL_STEPS_9BIT      0.5f
+
+/*
+ * Shared system fault owner/mask for DS18B20.
+ *
+ * Keep these values aligned with i2c_dma.c / i2c_dma.h:
+ * BME680   -> owner 1, mask bit 0
+ * MPU9250  -> owner 2, mask bit 1
+ * MAX31865 -> owner 3, mask bit 2
+ * PM25     -> owner 4, mask bit 3
+ * DS18B20  -> owner 5, mask bit 4
+ */
+#ifndef SYSTEM_FAULT_OWNER_DS18B20
+#define SYSTEM_FAULT_OWNER_DS18B20      5U
+#endif
+
+#ifndef SYSTEM_FAULT_MASK_DS18B20
+#define SYSTEM_FAULT_MASK_DS18B20       (1UL << 4)
+#endif
+
+/*
+ * Shared UART2/log mutex.
+ *
+ * Owned/created in main.c:
+ *     xSerialSemaphore = xSemaphoreCreateMutex();
+ *
+ * Same style as MAX31865_LOG_PRINTF:
+ * - if FreeRTOS is running, take the UART/log mutex
+ * - if scheduler is not running yet, print directly
+ */
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#ifndef DS18B20_LOG_PRINTF
+#define DS18B20_LOG_PRINTF(...)                                                   \
+    do {                                                                          \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                \
+            (xSerialSemaphore != NULL)) {                                         \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) { \
+                log_printf(__VA_ARGS__);                                          \
+                xSemaphoreGive(xSerialSemaphore);                                 \
+            }                                                                     \
+        } else {                                                                  \
+            log_printf(__VA_ARGS__);                                              \
+        }                                                                         \
+    } while (0)
+#endif
 
 typedef enum {
     DS18B20_Resolution_9bits  = 9,

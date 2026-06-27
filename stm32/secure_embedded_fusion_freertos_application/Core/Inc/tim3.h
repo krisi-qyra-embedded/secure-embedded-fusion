@@ -19,7 +19,7 @@ extern TIM_HandleTypeDef htim3;
 tim_status_t MX_TIM3_Init(void);
 
 void delay_us(uint16_t us);
-void delay_ms(uint32_t ms);
+//void delay_ms(uint32_t ms);
 
 #ifdef __cplusplus
 }

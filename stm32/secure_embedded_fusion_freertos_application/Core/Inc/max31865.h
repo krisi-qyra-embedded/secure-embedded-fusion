@@ -7,10 +7,32 @@
 
 #include <stdint.h>
 #include "spi_dma.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "uart.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#ifndef MAX31865_LOG_PRINTF
+#define MAX31865_LOG_PRINTF(...)                                                   \
+    do {                                                                           \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
+            (xSerialSemaphore != NULL)) {                                          \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
+                log_printf(__VA_ARGS__);                                           \
+                xSemaphoreGive(xSerialSemaphore);                                  \
+            }                                                                      \
+        } else {                                                                   \
+            log_printf(__VA_ARGS__);                                               \
+        }                                                                          \
+    } while (0)
+#endif
+
 
 #define _MAX31865_USE_FREERTOS  1
 #define _MAX31865_RREF          430.0f
@@ -37,6 +59,13 @@ extern "C" {
 
 typedef enum
 {
+    APP_MAX31865_RUNTIME_OK = 0,
+    APP_MAX31865_RUNTIME_READ_FAIL,
+    APP_MAX31865_RUNTIME_UNEXPECTED_FAIL
+} app_max31865_runtime_status_t;
+
+typedef enum
+{
     MAX31865_STATUS_OK             = 0,
     MAX31865_STATUS_INVALID_ARG    = -1,
     MAX31865_STATUS_SIZE_ERROR     = -2,
@@ -45,7 +74,8 @@ typedef enum
     MAX31865_STATUS_FAULT          = -5,
     MAX31865_STATUS_DMA_ERROR      = -6,
     MAX31865_STATUS_RECOVERY_ERROR = -7,
-    MAX31865_STATUS_INVALID_DATA   = -8
+    MAX31865_STATUS_INVALID_DATA   = -8,
+	MAX31865_STATUS_INIT_FAILED    = -9
 } max31865_status_t;
 
 #define RREF_MILLI_OHMS 430000UL
@@ -103,11 +133,11 @@ max31865_status_t Max31865_autoConvert(Max31865_t *max31865, uint8_t enable);
 max31865_status_t Max31865_setWires(Max31865_t *max31865, uint8_t numWires);
 max31865_status_t Max31865_setFilter(Max31865_t *max31865, uint8_t filterHz);
 max31865_status_t Max31865_readRTD(Max31865_t *max31865, uint16_t *rtd_value);
-
+app_max31865_runtime_status_t app_max31865_runtime_process(void);
 max31865_status_t Max31865_monitorLoop(Max31865_t *max31865, uint32_t interval_ms);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif /* __MAX31865_H__ */

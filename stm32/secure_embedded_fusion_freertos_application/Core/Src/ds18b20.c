@@ -14,6 +14,10 @@
 #include "tim.h"
 #include "tim3.h"
 #include "systick.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "i2c_dma.h"
 
 static void DS18B20_LogGroupSeparator(void);
 static void DS18B20_LogTemperatureSample(uint8_t sensor_index, float temperature_c);
@@ -22,15 +26,72 @@ static DS18B20_Status_t DS18B20_MapOwStatus(OneWire_Status_t st);
 static const char *DS18B20_StatusStr(DS18B20_Status_t st);
 static void DS18B20_AppGpioInit(GPIO_TypeDef *Port, uint16_t Pin);
 
+extern void system_fault_mark_in_progress(uint8_t owner);
+extern void system_fault_mark_completed(uint8_t owner);
+extern void system_fault_clear_active(uint8_t owner);
+extern uint8_t system_fault_capture_or_critical_fault_active(void);
+
+static void DS18B20_AppMarkFaultInProgress(void);
+static void DS18B20_AppMarkFaultCompleted(void);
+static void DS18B20_AppClearFaultActive(void);
+
+/* Checks whether normal DS18B20 output is allowed. */
+static uint8_t DS18B20_NormalLoggingAllowed(void)
+{
+    /* Mute routine temperature logs during critical fault capture. */
+    return (system_fault_capture_or_critical_fault_active() == 0U) ? 1U : 0U;
+}
+
 /* Waits between DS18B20 application operations. */
 static void DS18B20_AppSleepMs(uint32_t ms)
 {
     /* Use the application delay path while conversion or recovery settles. */
-    uint32_t deadline = HAL_GetTick() + ms;
+    if (ms == 0U) {
+        return;
+    }
 
-    while ((int32_t)(HAL_GetTick() - deadline) < 0)
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
     {
-        cpu_sleep_until_irq();
+        TickType_t ticks = pdMS_TO_TICKS(ms);
+
+        if (ticks == 0U) {
+            ticks = 1U;
+        }
+
+        vTaskDelay(ticks);
+        return;
+    }
+
+    delay_ms(ms);
+}
+
+/* Starts DS18B20 fault capture under FreeRTOS. */
+static void DS18B20_AppMarkFaultInProgress(void)
+{
+    /* Publish the sensor's in-progress bit only after scheduler startup. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+    {
+        system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_DS18B20);
+    }
+}
+
+/* Marks the DS18B20 fault report complete. */
+static void DS18B20_AppMarkFaultCompleted(void)
+{
+    /* Use the shared completion mask when the scheduler is running. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+    {
+        system_fault_mark_completed(SYSTEM_FAULT_OWNER_DS18B20);
+    }
+}
+
+/* Clears recovered DS18B20 fault state. */
+static void DS18B20_AppClearFaultActive(void)
+{
+    /* Release the sensor's shared fault bits from task context. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+    {
+        system_fault_clear_active(SYSTEM_FAULT_OWNER_DS18B20);
     }
 }
 
@@ -38,7 +99,7 @@ static void DS18B20_AppSleepMs(uint32_t ms)
 static void DS18B20_AppLogErrorDelay(const char *fmt, ...)
 {
     /* Clamp the formatted text to the diagnostic buffer capacity. */
-    char tmp[128];
+    char tmp[160];
     va_list ap;
     int n;
 
@@ -51,10 +112,12 @@ static void DS18B20_AppLogErrorDelay(const char *fmt, ...)
         if (n > (int)(sizeof(tmp) - 1)) {
             n = (int)(sizeof(tmp) - 1);
         }
-        log_write_bytes((const uint8_t *)tmp, (uint32_t)n);
+
+        DS18B20_LOG_PRINTF("%s", tmp);
     }
 
-    delay_ms(10U);
+    /* user requested 10 ms delay after error print; yield if FreeRTOS is running */
+    DS18B20_AppSleepMs(10U);
 }
 
 /* Clears retained DS18B20 discovery and sample data. */
@@ -157,6 +220,11 @@ static DS18B20_Status_t DS18B20_AppApplyRecoveryPhase(DS18B20_App_t *App,
                 return ds_st;
             }
 
+            DS18B20_LOG_PRINTF("[DBG][DS18B20] Init result=%s RomCnt=%u Expected=%u\r\n",
+                               DS18B20_StatusStr(ds_st),
+                               (unsigned int)App->OW.RomCnt,
+                               (unsigned int)App->ExpectedSensorCount);
+
             return DS18B20_AppVerifyAllSensorsReady(App);
         }
 
@@ -188,6 +256,7 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRunRecoverySequence(DS18B20_App_t *
                                                                  const char *reason)
 {
     /* Reset runtime state after the first successful recovery phase. */
+    DS18B20_AppMarkFaultInProgress();
     uint8_t phase;
     DS18B20_Status_t st;
 
@@ -206,6 +275,7 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRunRecoverySequence(DS18B20_App_t *
                 (reason != NULL) ? reason : "runtime");
 
             App->RecoveryAttempt = 0U;
+            DS18B20_AppClearFaultActive();
             DS18B20_AppResetRuntimeState(App);
             return DS18B20_APP_RUNTIME_RECOVERED;
         }
@@ -220,6 +290,8 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRunRecoverySequence(DS18B20_App_t *
     DS18B20_AppLogErrorDelay(
         "[FATAL] DS18B20 recovery exhausted 3/3 attempts (%s)\r\n",
         (reason != NULL) ? reason : "runtime");
+
+    DS18B20_AppMarkFaultCompleted();
 
     return DS18B20_APP_RUNTIME_RECOVERY_FAIL;
 }
@@ -328,6 +400,8 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverAndReinit(DS18B20_App_t *App
     DS18B20_Status_t ds_st;
     OneWire_Status_t ow_st;
 
+    DS18B20_AppMarkFaultInProgress();
+
     if (App == NULL) {
         return DS18B20_APP_RUNTIME_BAD_PARAM;
     }
@@ -353,6 +427,7 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverAndReinit(DS18B20_App_t *App
             }
 
             App->RecoveryAttempt = 0U;
+            DS18B20_AppClearFaultActive();
             DS18B20_AppResetRuntimeState(App);
             return DS18B20_APP_RUNTIME_RECOVERED;
         }
@@ -379,6 +454,7 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverAndReinit(DS18B20_App_t *App
             }
 
             App->RecoveryAttempt = 0U;
+            DS18B20_AppClearFaultActive();
             DS18B20_AppResetRuntimeState(App);
             return DS18B20_APP_RUNTIME_RECOVERED;
         }
@@ -407,11 +483,13 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverAndReinit(DS18B20_App_t *App
             }
 
             App->RecoveryAttempt = 0U;
+            DS18B20_AppClearFaultActive();
             DS18B20_AppResetRuntimeState(App);
             return DS18B20_APP_RUNTIME_RECOVERED;
         }
 
         default:
+            DS18B20_AppMarkFaultCompleted();
             return DS18B20_APP_RUNTIME_RECOVERY_FAIL;
     }
 }
@@ -421,6 +499,7 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverFailedSensor(DS18B20_App_t *
                                                                  uint8_t sensor_index)
 {
     /* Retain the failing ROM while escalating toward a full rescan. */
+    DS18B20_AppMarkFaultInProgress();
     uint8_t attempt;
     uint8_t sensor_rom[8];
     float recovered_temp = 0.0f;
@@ -542,6 +621,7 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverFailedSensor(DS18B20_App_t *
                 (unsigned int)attempt);
 
             App->RecoveryAttempt = 0U;
+            DS18B20_AppClearFaultActive();
             DS18B20_AppResetRuntimeState(App);
             return DS18B20_APP_RUNTIME_RECOVERED;
         }
@@ -556,6 +636,8 @@ static DS18B20_AppRuntimeStatus_t DS18B20_AppRecoverFailedSensor(DS18B20_App_t *
     DS18B20_AppLogErrorDelay(
         "[FATAL] DS18B20 sensor %u failed after 3 dedicated recovery attempts\r\n",
         (unsigned int)(sensor_index + 1U));
+
+    DS18B20_AppMarkFaultCompleted();
 
     return DS18B20_APP_RUNTIME_RECOVERY_FAIL;
 }
@@ -1268,7 +1350,7 @@ static void DS18B20_AppGpioInit(GPIO_TypeDef *Port, uint16_t Pin)
                  return DS18B20_APP_RUNTIME_RECOVERY_FAIL;
              }
 
-             cpu_sleep_until_irq();
+             DS18B20_AppSleepMs(1U);
              return DS18B20_APP_RUNTIME_OK;
          }
 
@@ -1322,43 +1404,55 @@ static void DS18B20_AppGpioInit(GPIO_TypeDef *Port, uint16_t Pin)
      }
  }
 
-/* Reports a DS18B20 temperature using fixed-point formatting. */
-static void DS18B20_LogTemperatureSample(uint8_t sensor_index, float temperature_c)
-{
-    /* Split the scaled magnitude into whole and fractional digits. */
-    int32_t scaled;
-    int32_t whole;
-    int32_t frac;
+ /* Reports a DS18B20 temperature using fixed-point formatting. */
+ static void DS18B20_LogTemperatureSample(uint8_t sensor_index, float temperature_c)
+ {
+     /* Split the scaled magnitude into whole and fractional digits. */
+     int32_t scaled;
+     int32_t whole;
+     int32_t frac;
 
-    scaled = (int32_t)(temperature_c * 10000.0f);
+     if (DS18B20_NormalLoggingAllowed() == 0U)
+     {
+         return;
+     }
 
-    if (scaled < 0)
-    {
-        int32_t abs_scaled = -scaled;
-        whole = abs_scaled / 10000;
-        frac  = abs_scaled % 10000;
-        log_printf("[DS18B20][%u] -%ld.%04ld C\r\n",
-                   (unsigned int)sensor_index,
-                   (long)whole,
-                   (long)frac);
-    }
-    else
-    {
-        whole = scaled / 10000;
-        frac  = scaled % 10000;
-        log_printf("[DS18B20][%u] %ld.%04ld C\r\n",
-                   (unsigned int)sensor_index,
-                   (long)whole,
-                   (long)frac);
-    }
-}
+     scaled = (int32_t)(temperature_c * 10000.0f);
 
-/* Separates successive DS18B20 diagnostic sample groups. */
-static void DS18B20_LogGroupSeparator(void)
-{
-    /* Emit the group boundary through the sensor logging path. */
-    log_printf("----- end of DS18B20 sample group -----\r\n");
-}
+     if (scaled < 0)
+     {
+         int32_t abs_scaled = -scaled;
+         whole = abs_scaled / 10000;
+         frac  = abs_scaled % 10000;
+
+         DS18B20_LOG_PRINTF("[DS18B20][%u] -%ld.%04ld C\r\n",
+                            (unsigned int)sensor_index,
+                            (long)whole,
+                            (long)frac);
+     }
+     else
+     {
+         whole = scaled / 10000;
+         frac  = scaled % 10000;
+
+         DS18B20_LOG_PRINTF("[DS18B20][%u] %ld.%04ld C\r\n",
+                            (unsigned int)sensor_index,
+                            (long)whole,
+                            (long)frac);
+     }
+ }
+
+ /* Separates successive DS18B20 diagnostic sample groups. */
+ static void DS18B20_LogGroupSeparator(void)
+ {
+     /* Emit the group boundary through the sensor logging path. */
+     if (DS18B20_NormalLoggingAllowed() == 0U)
+     {
+         return;
+     }
+
+     DS18B20_LOG_PRINTF("----- end of DS18B20 sample group -----\r\n");
+ }
 
 /* Retains the unused DS18B20 timer callback entry point. */
 void DS18B20_AppTimerCallback(DS18B20_App_t *App, TIM_HandleTypeDef *htim)

@@ -5,6 +5,9 @@
 #include "iwdg.h"
 #include "pwr.h"
 #include "sig_sensors.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include <string.h>
 /**@PINOUT
 
@@ -18,6 +21,19 @@
 
 #define MPU_READ_TIMEOUT_ITER  100000U   /* adjust for your CPU clock if needed */
 #define MPU_READ_RETRIES        3U
+
+#ifndef BME680_USER_I2C_RTOS_TIMEOUT_MS
+#define BME680_USER_I2C_RTOS_TIMEOUT_MS    (100U)
+#endif
+
+/* FreeRTOS binary semaphores owned by i2c_dma.c and given by DMA1_Stream5/6 IRQs. */
+extern SemaphoreHandle_t bme680_rx_sem;
+extern SemaphoreHandle_t bme680_tx_sem;
+extern SemaphoreHandle_t xSerialSemaphore;
+extern volatile uint8_t system_fault_logging_active;
+extern volatile uint8_t system_fault_owner;
+extern void mpu9250_pause_for_bme680_gas_ref(void);
+extern void mpu9250_resume_after_bme680_gas_ref(void);
 
 /*!
  * @brief This API performs the soft reset of the sensor.
@@ -286,7 +302,52 @@ uint8_t to7bit(uint32_t addr_const)
 /****************** Global Function Definitions *******************************/
 void user_delay_ms(uint32_t period)
 {
-    tim2_delay_ms(period);
+	app_fault_delay_ms(period);
+}
+
+static void bme680_clear_dma_semaphore_if_rtos(SemaphoreHandle_t sem)
+{
+    if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) && (sem != NULL)) {
+        while (xSemaphoreTake(sem, 0U) == pdTRUE) {
+            /* Drain stale completion events before starting a new transfer. */
+        }
+    }
+}
+
+static int bme680_wait_dma_complete_or_timeout(volatile i2c_dma_transfer_state_t *state,
+                                               SemaphoreHandle_t sem)
+{
+    uint32_t t = 0U;
+
+    if (state == NULL) {
+        return 0;
+    }
+
+    /* Blocking/non-DMA paths may complete before an IRQ semaphore is involved. */
+    if (*state == I2C_DMA_TRANSFER_COMPLETE) {
+        return 1;
+    }
+
+    if (*state == I2C_DMA_TRANSFER_ERROR) {
+        return 0;
+    }
+
+    /* FreeRTOS path: block the current task until DMA IRQ gives the semaphore. */
+    if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) && (sem != NULL)) {
+        if (xSemaphoreTake(sem, pdMS_TO_TICKS(BME680_USER_I2C_RTOS_TIMEOUT_MS)) == pdTRUE) {
+            return (*state == I2C_DMA_TRANSFER_COMPLETE) ? 1 : 0;
+        }
+
+        return 0;
+    }
+
+    /* Bare-metal/startup fallback: used before scheduler start during sensor init. */
+    while ((*state == I2C_DMA_TRANSFER_IDLE) &&
+           (t++ < BME680_USER_I2C_TIMEOUT_ITER)) {
+        cpu_sleep_until_irq();
+    }
+
+    return (*state == I2C_DMA_TRANSFER_COMPLETE) ? 1 : 0;
 }
 
 /* Return codes (int8_t):
@@ -302,8 +363,8 @@ int8_t user_i2c_read(void *handle,
                      uint16_t len)
 {
     I2C_TypeDef *I2Cx;
-    uint32_t t = 0U;
     const uint8_t slave7 = to7bit((uint32_t)dev_id);
+    i2c_dma_status_t st;
 
     if ((handle == NULL) || (reg_data == NULL) || (len == 0U)) {
         return (int8_t)BME680_USER_I2C_E_INVALID_ARG;
@@ -316,17 +377,15 @@ int8_t user_i2c_read(void *handle,
 
     bme680g_rx_cmplt = I2C_DMA_TRANSFER_IDLE;
 
-    i2c_dma_status_t st = i2c_dma_read(I2Cx, slave7, reg_addr, reg_data, len);
+    /* Clear any stale DMA IRQ semaphore token before starting a new RX transfer. */
+    bme680_clear_dma_semaphore_if_rtos(bme680_rx_sem);
+
+    st = i2c_dma_read(I2Cx, slave7, reg_addr, reg_data, len);
     if (st != I2C_DMA_OK) {
         return (int8_t)BME680_USER_I2C_E_START_FAIL;
     }
 
-    while ((bme680g_rx_cmplt == I2C_DMA_TRANSFER_IDLE) &&
-           (t++ < BME680_USER_I2C_TIMEOUT_ITER)) {
-        cpu_sleep_until_irq();
-    }
-
-    if (bme680g_rx_cmplt == I2C_DMA_TRANSFER_COMPLETE) {
+    if (bme680_wait_dma_complete_or_timeout(&bme680g_rx_cmplt, bme680_rx_sem)) {
         bme680g_rx_cmplt = I2C_DMA_TRANSFER_IDLE;
         return (int8_t)BME680_USER_I2C_OK;
     }
@@ -350,8 +409,8 @@ int8_t user_i2c_write(void *handle,
                       uint16_t len)
 {
     I2C_TypeDef *I2Cx;
-    uint32_t t = 0U;
     const uint8_t slave7 = to7bit((uint32_t)dev_id);
+    i2c_dma_status_t st;
 
     if ((handle == NULL) || (reg_data == NULL) || (len == 0U)) {
         return (int8_t)BME680_USER_I2C_E_INVALID_ARG;
@@ -364,17 +423,15 @@ int8_t user_i2c_write(void *handle,
 
     bme680g_tx_cmplt = I2C_DMA_TRANSFER_IDLE;
 
-    i2c_dma_status_t st = i2c_dma_write_reg(I2Cx, slave7, reg_addr, reg_data, len);
+    /* Clear any stale DMA IRQ semaphore token before starting a new TX transfer. */
+    bme680_clear_dma_semaphore_if_rtos(bme680_tx_sem);
+
+    st = i2c_dma_write_reg(I2Cx, slave7, reg_addr, reg_data, len);
     if (st != I2C_DMA_OK) {
         return (int8_t)BME680_USER_I2C_E_START_FAIL;
     }
 
-    while ((bme680g_tx_cmplt == I2C_DMA_TRANSFER_IDLE) &&
-           (t++ < BME680_USER_I2C_TIMEOUT_ITER)) {
-        cpu_sleep_until_irq();
-    }
-
-    if (bme680g_tx_cmplt == I2C_DMA_TRANSFER_COMPLETE) {
+    if (bme680_wait_dma_complete_or_timeout(&bme680g_tx_cmplt, bme680_tx_sem)) {
         bme680g_tx_cmplt = I2C_DMA_TRANSFER_IDLE;
         return (int8_t)BME680_USER_I2C_OK;
     }
@@ -384,6 +441,7 @@ int8_t user_i2c_write(void *handle,
 
     return (int8_t)BME680_USER_I2C_E_TIMEOUT;
 }
+
 /*!
  *@brief Initialize BME680: soft-reset, read chip-id, and calibration data.
  *
@@ -394,45 +452,46 @@ int8_t bme680_init(struct bme680_dev *dev)
 {
     int8_t rslt = BME680_E_COM_FAIL; /* Default error */
 
-    log_printf("[INFO] bme680_init: entry\r\n");
+    BME680_LOG_PRINTF("[INFO] bme680_init: entry\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 1 — Null pointer check */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_init: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_init: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
     /* Step 2 — Soft reset */
     rslt = bme680_soft_reset(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_init: soft reset failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_init: soft reset failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_COM_FAIL;
     }
 
     /* Step 3 — Read CHIP_ID register */
     rslt = bme680_get_regs(BME680_CHIP_ID_ADDR, (uint8_t *)(&dev->chip_id), 1, dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_init: failed to read CHIP_ID register (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_init: failed to read CHIP_ID register (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_COM_FAIL;
     }
 
     /* Step 4 — Validate CHIP_ID */
     if (dev->chip_id != BME680_CHIP_ID) {
-        log_printf("[ERROR] bme680_init: unexpected CHIP_ID (0x%02X != 0x%02X)\r\n",
+    	BME680_LOG_PRINTF("[ERROR] bme680_init: unexpected CHIP_ID (0x%02X != 0x%02X)\r\n",
                    (uint8_t)dev->chip_id, (uint8_t)BME680_CHIP_ID);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20);
         return BME680_E_DEV_NOT_FOUND;
     }
 
     /* Step 5 — Get calibration data */
     rslt = get_calib_data(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_init: get_calib_data failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_init: get_calib_data failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_COM_FAIL;
     }
 
@@ -455,8 +514,8 @@ int8_t bme680_get_regs(uint8_t reg_addr, uint8_t *reg_data, uint16_t len, struct
     /* Step 1 — Null pointer check */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_get_regs: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_regs: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -464,21 +523,23 @@ int8_t bme680_get_regs(uint8_t reg_addr, uint8_t *reg_data, uint16_t len, struct
     if (dev->intf == BME680_SPI_INTF) {
         rslt = set_mem_page(reg_addr, dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] bme680_get_regs: set_mem_page failed (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] bme680_get_regs: set_mem_page failed (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
             return rslt;
         }
-        log_printf("[DEBUG] bme680_get_regs: SPI memory page set successfully\r\n");
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_regs: SPI memory page set successfully\r\n");
+        app_fault_delay_ms(20);
 
         reg_addr |= BME680_SPI_RD_MSK;
-        log_printf("[DEBUG] bme680_get_regs: SPI read mask applied, reg_addr=0x%02X\r\n", reg_addr);
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_regs: SPI read mask applied, reg_addr=0x%02X\r\n", reg_addr);
+        app_fault_delay_ms(20);
     }
 
     /* Step 3 — Perform the read operation */
     dev->com_rslt = dev->read(dev->handle, dev->dev_id, reg_addr, reg_data, len);
     if (dev->com_rslt != 0) {
-        log_printf("[ERROR] bme680_get_regs: read failed (com_rslt=%d)\r\n", dev->com_rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_regs: read failed (com_rslt=%d)\r\n", dev->com_rslt);
+    	app_fault_delay_ms(20);
         rslt = BME680_E_COM_FAIL;
     } else {
         rslt = BME680_OK;
@@ -500,22 +561,22 @@ int8_t bme680_set_regs(const uint8_t *reg_addr, const uint8_t *reg_data, uint8_t
     /* Null pointer check */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_set_regs: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_set_regs: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
     /* This implementation is I2C-only — SPI support intentionally removed */
     if (dev->intf != BME680_I2C_INTF) {
-        log_printf("[ERROR] bme680_set_regs: device interface is not I2C (intf=%d). SPI removed.\r\n", dev->intf);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_set_regs: device interface is not I2C (intf=%d). SPI removed.\r\n", dev->intf);
+    	app_fault_delay_ms(20);
         return BME680_E_COM_FAIL;
     }
 
     /* Validate length: now we only buffer reg_data bytes, so len must be < tmp buffer length */
     if ((len == 0) || (len > (int)BME680_TMP_BUFFER_LENGTH)) {
-        log_printf("[ERROR] bme680_set_regs: invalid length (%u)\r\n", (unsigned)len);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_set_regs: invalid length (%u)\r\n", (unsigned)len);
+    	app_fault_delay_ms(20);
         return BME680_E_INVALID_LENGTH;
     }
 
@@ -541,9 +602,9 @@ int8_t bme680_set_regs(const uint8_t *reg_addr, const uint8_t *reg_data, uint8_t
         /* Perform I2C write: start_reg, tmp_buff[0..run_len-1] */
         dev->com_rslt = dev->write(dev->handle, dev->dev_id, start_reg, tmp_buff, run_len);
         if (dev->com_rslt != 0) {
-            log_printf("[ERROR] bme680_set_regs: I2C write failed for start_reg=0x%02X (com_rslt=%d)\r\n",
+        	BME680_LOG_PRINTF("[ERROR] bme680_set_regs: I2C write failed for start_reg=0x%02X (com_rslt=%d)\r\n",
                        (unsigned)start_reg, (int)dev->com_rslt);
-            tim2_delay_ms(20U);
+        	app_fault_delay_ms(20);
             rslt = BME680_E_COM_FAIL;
             break;
         }
@@ -571,8 +632,8 @@ int8_t bme680_soft_reset(struct bme680_dev *dev)
     /* Step 1 — Null pointer check */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_soft_reset: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_soft_reset: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -580,18 +641,19 @@ int8_t bme680_soft_reset(struct bme680_dev *dev)
     if (dev->intf == BME680_SPI_INTF) {
         rslt = get_mem_page(dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] bme680_soft_reset: get_mem_page failed before reset (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] bme680_soft_reset: get_mem_page failed before reset (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
             return rslt;
         }
-        log_printf("[DEBUG] bme680_soft_reset: SPI memory page set before reset\r\n");
+        BME680_LOG_PRINTF("[DEBUG] bme680_soft_reset: SPI memory page set before reset\r\n");
+        app_fault_delay_ms(20);
     }
 
     /* Step 3 — Perform soft reset by writing the reset command */
     rslt = bme680_set_regs(&reg_addr, &soft_rst_cmd, 1, dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_soft_reset: bme680_set_regs failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_soft_reset: bme680_set_regs failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return rslt;
     }
 
@@ -602,11 +664,12 @@ int8_t bme680_soft_reset(struct bme680_dev *dev)
     if (dev->intf == BME680_SPI_INTF) {
         rslt = get_mem_page(dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] bme680_soft_reset: get_mem_page failed after reset (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] bme680_soft_reset: get_mem_page failed after reset (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
             return rslt;
         }
-        log_printf("[DEBUG] bme680_soft_reset: SPI memory page set after reset\r\n");
+        BME680_LOG_PRINTF("[DEBUG] bme680_soft_reset: SPI memory page set after reset\r\n");
+        app_fault_delay_ms(20);
     }
 
     return rslt;
@@ -629,8 +692,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
     /* Step 0 — Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_set_sensor_settings: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_settings: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -643,8 +706,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
         if (desired_settings & BME680_GAS_MEAS_SEL) {
             rslt = set_gas_config(dev);
             if (rslt != BME680_OK) {
-                log_printf("[WARN] bme680_set_sensor_settings: set_gas_config returned %d (continuing)\r\n", (int)rslt);
-                tim2_delay_ms(20U);
+            	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: set_gas_config returned %d (continuing)\r\n", (int)rslt);
+            	app_fault_delay_ms(20);
             }
         }
 
@@ -655,8 +718,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
             rslt = bme680_set_sensor_mode(dev);
 
         if (rslt != BME680_OK) {
-            log_printf("[WARN] bme680_set_sensor_settings: bme680_set_sensor_mode returned %d (continuing)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: bme680_set_sensor_mode returned %d (continuing)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
         }
 
         /* ------------------------
@@ -669,8 +732,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
             if (rslt == BME680_OK) {
                 rslt = bme680_get_regs(reg_addr, &data, 1, dev);
                 if (rslt != BME680_OK) {
-                    log_printf("[WARN] bme680_set_sensor_settings: bme680_get_regs(filter) returned %d (will still append)\r\n", (int)rslt);
-                    tim2_delay_ms(20U);
+                	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: bme680_get_regs(filter) returned %d (will still append)\r\n", (int)rslt);
+                	app_fault_delay_ms(20);
                 }
             }
 
@@ -692,8 +755,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
             if (rslt == BME680_OK) {
                 rslt = bme680_get_regs(reg_addr, &data, 1, dev);
                 if (rslt != BME680_OK) {
-                    log_printf("[WARN] bme680_set_sensor_settings: bme680_get_regs(hctrl) returned %d (will still append)\r\n", (int)rslt);
-                    tim2_delay_ms(20U);
+                	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: bme680_get_regs(hctrl) returned %d (will still append)\r\n", (int)rslt);
+                	app_fault_delay_ms(20);
                 }
             }
 
@@ -714,8 +777,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
             if (rslt == BME680_OK) {
                 rslt = bme680_get_regs(reg_addr, &data, 1, dev);
                 if (rslt != BME680_OK) {
-                    log_printf("[WARN] bme680_set_sensor_settings: bme680_get_regs(t/p) returned %d (will still append)\r\n", (int)rslt);
-                    tim2_delay_ms(20U);
+                	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: bme680_get_regs(t/p) returned %d (will still append)\r\n", (int)rslt);
+                	app_fault_delay_ms(20);
                 }
             }
 
@@ -740,8 +803,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
             if (rslt == BME680_OK) {
                 rslt = bme680_get_regs(reg_addr, &data, 1, dev);
                 if (rslt != BME680_OK) {
-                    log_printf("[WARN] bme680_set_sensor_settings: bme680_get_regs(os_h) returned %d (will still append)\r\n", (int)rslt);
-                    tim2_delay_ms(20U);
+                	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: bme680_get_regs(os_h) returned %d (will still append)\r\n", (int)rslt);
+                	app_fault_delay_ms(20);
                 }
             }
 
@@ -766,8 +829,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
             if (rslt == BME680_OK) {
                 rslt = bme680_get_regs(reg_addr, &data, 1, dev);
                 if (rslt != BME680_OK) {
-                    log_printf("[WARN] bme680_set_sensor_settings: bme680_get_regs(run_gas) returned %d (will still append)\r\n", (int)rslt);
-                    tim2_delay_ms(20U);
+                	BME680_LOG_PRINTF("[WARN] bme680_set_sensor_settings: bme680_get_regs(run_gas) returned %d (will still append)\r\n", (int)rslt);
+                	app_fault_delay_ms(20);
                 }
             }
 
@@ -786,8 +849,8 @@ int8_t bme680_set_sensor_settings(uint16_t desired_settings, struct bme680_dev *
         if (rslt == BME680_OK) {
             rslt = bme680_set_regs(reg_array, data_array, count, dev);
             if (rslt != BME680_OK) {
-                log_printf("[ERROR] bme680_set_sensor_settings: bme680_set_regs failed (err=%d)\r\n", (int)rslt);
-                tim2_delay_ms(20U);
+            	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_settings: bme680_set_regs failed (err=%d)\r\n", (int)rslt);
+            	app_fault_delay_ms(20);
             }
         }
 
@@ -809,67 +872,77 @@ int8_t bme680_get_sensor_settings(uint16_t desired_settings, struct bme680_dev *
     uint8_t reg_addr = BME680_CONF_HEAT_CTRL_ADDR; /* starting address of the register array for burst read */
     uint8_t data_array[BME680_REG_BUFFER_LENGTH] = { 0 };
 
-    log_printf("[INFO] bme680_get_sensor_settings: entry (settings=0x%04X)\r\n", (unsigned)desired_settings);
+    BME680_LOG_PRINTF("[INFO] bme680_get_sensor_settings: entry (settings=0x%04X)\r\n", (unsigned)desired_settings);
+    app_fault_delay_ms(20);
 
     /* Step 1 — Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_get_sensor_settings: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_sensor_settings: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
-    log_printf("[DEBUG] bme680_get_sensor_settings: null_ptr_check passed\r\n");
+    BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: null_ptr_check passed\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 2 — Read the block of registers needed */
     rslt = bme680_get_regs(reg_addr, data_array, BME680_REG_BUFFER_LENGTH, dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_get_sensor_settings: bme680_get_regs failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_sensor_settings: bme680_get_regs failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_COM_FAIL;
     }
-    log_printf("[DEBUG] bme680_get_sensor_settings: register burst read successful\r\n");
+    BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: register burst read successful\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 3 — Parse values into device structure according to requested settings */
     if (desired_settings & BME680_GAS_MEAS_SEL) {
         rslt = get_gas_config(dev);
         if (rslt != BME680_OK) {
-            log_printf("[WARN] bme680_get_sensor_settings: get_gas_config returned %d (continuing)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[WARN] bme680_get_sensor_settings: get_gas_config returned %d (continuing)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
         } else {
-            log_printf("[DEBUG] bme680_get_sensor_settings: gas config updated from sensor\r\n");
+        	BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: gas config updated from sensor\r\n");
+        	app_fault_delay_ms(20);
         }
     }
 
     if (desired_settings & BME680_FILTER_SEL) {
         dev->tph_sett.filter = BME680_GET_BITS(data_array[BME680_REG_FILTER_INDEX], BME680_FILTER);
-        log_printf("[DEBUG] bme680_get_sensor_settings: filter = %u\r\n", (unsigned)dev->tph_sett.filter);
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: filter = %u\r\n", (unsigned)dev->tph_sett.filter);
+        app_fault_delay_ms(20);
     }
 
     if (desired_settings & (BME680_OST_SEL | BME680_OSP_SEL)) {
         dev->tph_sett.os_temp = BME680_GET_BITS(data_array[BME680_REG_TEMP_INDEX], BME680_OST);
         dev->tph_sett.os_pres = BME680_GET_BITS(data_array[BME680_REG_PRES_INDEX], BME680_OSP);
-        log_printf("[DEBUG] bme680_get_sensor_settings: os_temp=%u os_pres=%u\r\n",
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: os_temp=%u os_pres=%u\r\n",
                    (unsigned)dev->tph_sett.os_temp, (unsigned)dev->tph_sett.os_pres);
+        app_fault_delay_ms(20);
     }
 
     if (desired_settings & BME680_OSH_SEL) {
         dev->tph_sett.os_hum = BME680_GET_BITS_POS_0(data_array[BME680_REG_HUM_INDEX], BME680_OSH);
-        log_printf("[DEBUG] bme680_get_sensor_settings: os_hum=%u\r\n", (unsigned)dev->tph_sett.os_hum);
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: os_hum=%u\r\n", (unsigned)dev->tph_sett.os_hum);
+        app_fault_delay_ms(20);
     }
 
     if (desired_settings & BME680_HCNTRL_SEL) {
         dev->gas_sett.heatr_ctrl = BME680_GET_BITS_POS_0(data_array[BME680_REG_HCTRL_INDEX], BME680_HCTRL);
-        log_printf("[DEBUG] bme680_get_sensor_settings: heatr_ctrl=%u\r\n", (unsigned)dev->gas_sett.heatr_ctrl);
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: heatr_ctrl=%u\r\n", (unsigned)dev->gas_sett.heatr_ctrl);
+        app_fault_delay_ms(20);
     }
 
     if (desired_settings & (BME680_RUN_GAS_SEL | BME680_NBCONV_SEL)) {
         dev->gas_sett.nb_conv = BME680_GET_BITS_POS_0(data_array[BME680_REG_NBCONV_INDEX], BME680_NBCONV);
         dev->gas_sett.run_gas = BME680_GET_BITS(data_array[BME680_REG_RUN_GAS_INDEX], BME680_RUN_GAS);
-        log_printf("[DEBUG] bme680_get_sensor_settings: nb_conv=%u run_gas=%u\r\n",
+        BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_settings: nb_conv=%u run_gas=%u\r\n",
                    (unsigned)dev->gas_sett.nb_conv, (unsigned)dev->gas_sett.run_gas);
+        app_fault_delay_ms(20);
     }
 
-    log_printf("[INFO] bme680_get_sensor_settings: exit (result=%d)\r\n", (int)BME680_OK);
+    BME680_LOG_PRINTF("[INFO] bme680_get_sensor_settings: exit (result=%d)\r\n", (int)BME680_OK);
+    app_fault_delay_ms(20);
     return BME680_OK;
 }
 
@@ -890,8 +963,8 @@ int8_t bme680_set_sensor_mode(struct bme680_dev *dev)
     /* Step 1 — Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_set_sensor_mode: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_mode: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -899,8 +972,8 @@ int8_t bme680_set_sensor_mode(struct bme680_dev *dev)
     do {
         rslt = bme680_get_regs(BME680_CONF_T_P_MODE_ADDR, &tmp_pow_mode, 1, dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] bme680_set_sensor_mode: failed to read power-mode reg (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_mode: failed to read power-mode reg (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
             return rslt;
         }
 
@@ -911,8 +984,8 @@ int8_t bme680_set_sensor_mode(struct bme680_dev *dev)
             uint8_t sleep_val = (uint8_t)(tmp_pow_mode & (~BME680_MODE_MSK));
             rslt = bme680_set_regs(&reg_addr, &sleep_val, 1, dev);
             if (rslt != BME680_OK) {
-                log_printf("[ERROR] bme680_set_sensor_mode: failed to write sleep mode (err=%d)\r\n", (int)rslt);
-                tim2_delay_ms(20U);
+            	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_mode: failed to write sleep mode (err=%d)\r\n", (int)rslt);
+            	app_fault_delay_ms(20);
                 return rslt;
             }
             /* Wait a bit before polling again */
@@ -927,9 +1000,9 @@ int8_t bme680_set_sensor_mode(struct bme680_dev *dev)
         if (rslt == BME680_OK) {
             rslt = bme680_set_regs(&reg_addr, &new_val, 1, dev);
             if (rslt != BME680_OK) {
-                log_printf("[ERROR] bme680_set_sensor_mode: failed to set requested power_mode=%u (err=%d)\r\n",
+            	BME680_LOG_PRINTF("[ERROR] bme680_set_sensor_mode: failed to set requested power_mode=%u (err=%d)\r\n",
                            (unsigned)dev->power_mode, (int)rslt);
-                tim2_delay_ms(20U);
+            	app_fault_delay_ms(20);
                 return rslt;
             }
         }
@@ -946,31 +1019,36 @@ int8_t bme680_get_sensor_mode(struct bme680_dev *dev)
     int8_t rslt = BME680_E_COM_FAIL;
     uint8_t mode = 0;
 
-    log_printf("[INFO] bme680_get_sensor_mode: entry\r\n");
+    BME680_LOG_PRINTF("[INFO] bme680_get_sensor_mode: entry\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 1 — Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_get_sensor_mode: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_sensor_mode: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
-    log_printf("[DEBUG] bme680_get_sensor_mode: null_ptr_check passed\r\n");
+    BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_mode: null_ptr_check passed\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 2 — Read the T/P mode register */
     rslt = bme680_get_regs(BME680_CONF_T_P_MODE_ADDR, &mode, 1, dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_get_sensor_mode: failed to read mode register (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_sensor_mode: failed to read mode register (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return rslt;
     }
-    log_printf("[DEBUG] bme680_get_sensor_mode: raw mode reg=0x%02X\r\n", mode);
+    BME680_LOG_PRINTF("[DEBUG] bme680_get_sensor_mode: raw mode reg=0x%02X\r\n", mode);
+    app_fault_delay_ms(20);
 
     /* Step 3 — Mask out unrelated bits and store the power mode */
     dev->power_mode = (uint8_t)(mode & BME680_MODE_MSK);
-    log_printf("[INFO] bme680_get_sensor_mode: power_mode=%u\r\n", (unsigned)dev->power_mode);
+    BME680_LOG_PRINTF("[INFO] bme680_get_sensor_mode: power_mode=%u\r\n", (unsigned)dev->power_mode);
+    app_fault_delay_ms(20);
 
-    log_printf("[INFO] bme680_get_sensor_mode: exit (result=%d)\r\n", (int)rslt);
+    BME680_LOG_PRINTF("[INFO] bme680_get_sensor_mode: exit (result=%d)\r\n", (int)rslt);
+    app_fault_delay_ms(20);
     return rslt;
 }
 
@@ -1030,15 +1108,15 @@ int8_t bme680_get_profile_dur(uint16_t *duration, const struct bme680_dev *dev)
 
     /* Validate pointers */
     if (duration == NULL) {
-        log_printf("[ERROR] bme680_get_profile_dur: NULL duration pointer\r\n");
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_profile_dur: NULL duration pointer\r\n");
+    	app_fault_delay_ms(20);
         return BME680_E_INVALID_LENGTH;
     }
 
     rslt = null_ptr_check((struct bme680_dev *)dev); /* null_ptr_check expects non-const */
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] bme680_get_profile_dur: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] bme680_get_profile_dur: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -1097,12 +1175,10 @@ int8_t bme680_get_sensor_data(struct bme680_field_data *data, struct bme680_dev 
                            (unsigned)data->status);*/
             }
         } else {
-            /*log_printf("[ERROR] bme680_get_sensor_data: read_field_data failed (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);*/
+            /*log_printf("[ERROR] bme680_get_sensor_data: read_field_data failed (err=%d)\r\n", (int)rslt);*/
         }
     } else {
-        /*log_printf("[ERROR] bme680_get_sensor_data: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);*/
+        /*log_printf("[ERROR] bme680_get_sensor_data: null_ptr_check failed (err=%d)\r\n", (int)rslt);*/
     }
 
     /*log_printf("[INFO] bme680_get_sensor_data: exit (result=%d)\r\n", (int)rslt);*/
@@ -1144,10 +1220,11 @@ static int8_t get_calib_data(struct bme680_dev *dev)
                                1U,
                                dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] get_calib_data: coeff block1 byte %u read failed err=%d\r\n",
+        	BME680_LOG_PRINTF("[ERROR] get_calib_data: coeff block1 byte %u read failed err=%d\r\n",
                        (unsigned int)i,
                        (int)rslt);
-            tim2_delay_ms(2);
+        	app_fault_delay_ms(20);
+        	app_fault_delay_ms(2);
             return rslt;
         }
     }
@@ -1158,10 +1235,11 @@ static int8_t get_calib_data(struct bme680_dev *dev)
                                1U,
                                dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] get_calib_data: coeff block2 byte %u read failed err=%d\r\n",
+        	BME680_LOG_PRINTF("[ERROR] get_calib_data: coeff block2 byte %u read failed err=%d\r\n",
                        (unsigned int)i,
                        (int)rslt);
-            tim2_delay_ms(2);
+        	app_fault_delay_ms(20);
+        	app_fault_delay_ms(2);
             return rslt;
         }
     }
@@ -1197,16 +1275,18 @@ static int8_t get_calib_data(struct bme680_dev *dev)
      * treat the calibration block as bad.
      */
     if ((dev->calib.par_t2 == 0) && (dev->calib.par_t3 == 0)) {
-        log_printf("[ERROR] get_calib_data: invalid temperature calibration: par_t2=%d par_t3=%d\r\n",
+    	BME680_LOG_PRINTF("[ERROR] get_calib_data: invalid temperature calibration: par_t2=%d par_t3=%d\r\n",
                    (int)dev->calib.par_t2,
                    (int)dev->calib.par_t3);
-        tim2_delay_ms(2);
+    	app_fault_delay_ms(20);
+    	app_fault_delay_ms(2);
 
-        log_printf("[ERROR] raw T2/T3 bytes: T2_MSB=0x%02X T2_LSB=0x%02X T3=0x%02X\r\n",
+        BME680_LOG_PRINTF("[ERROR] raw T2/T3 bytes: T2_MSB=0x%02X T2_LSB=0x%02X T3=0x%02X\r\n",
                    coeff_array[BME680_T2_MSB_REG],
                    coeff_array[BME680_T2_LSB_REG],
                    coeff_array[BME680_T3_REG]);
-        tim2_delay_ms(2);
+        app_fault_delay_ms(20);
+        app_fault_delay_ms(2);
 
         return BME680_E_COM_FAIL;
     }
@@ -1304,8 +1384,8 @@ static int8_t set_gas_config(struct bme680_dev *dev)
     /* Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] set_gas_config: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] set_gas_config: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -1323,14 +1403,14 @@ static int8_t set_gas_config(struct bme680_dev *dev)
         /* Write the two registers */
         rslt = bme680_set_regs(reg_addr, reg_data, 2, dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] set_gas_config: bme680_set_regs failed (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] set_gas_config: bme680_set_regs failed (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
         }
     } else {
         /* Not allowed unless forced mode — return the same warning/error code as original design */
         rslt = BME680_W_DEFINE_PWR_MODE;
-        log_printf("[WARN] set_gas_config: device not in FORCED mode, skipping gas config (code=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+        BME680_LOG_PRINTF("[WARN] set_gas_config: device not in FORCED mode, skipping gas config (code=%d)\r\n", (int)rslt);
+        app_fault_delay_ms(20);
     }
 
     return rslt;
@@ -1353,49 +1433,55 @@ static int8_t get_gas_config(struct bme680_dev *dev)
     const uint8_t reg_addr2 = BME680_ADDR_GAS_CONF_START;
     uint8_t reg_data = 0;
 
-    log_printf("[INFO] get_gas_config: entry\r\n");
+    BME680_LOG_PRINTF("[INFO] get_gas_config: entry\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 1 — Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] get_gas_config: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] get_gas_config: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
-    log_printf("[DEBUG] get_gas_config: null_ptr_check passed\r\n");
+    BME680_LOG_PRINTF("[DEBUG] get_gas_config: null_ptr_check passed\r\n");
+    app_fault_delay_ms(20);
 
     /* Step 2 — If SPI, ensure correct memory page */
     if (dev->intf == BME680_SPI_INTF) {
         rslt = set_mem_page(reg_addr1, dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] get_gas_config: set_mem_page failed (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] get_gas_config: set_mem_page failed (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
             return rslt;
         }
-        log_printf("[DEBUG] get_gas_config: SPI memory page set for reg 0x%02X\r\n", reg_addr1);
+        BME680_LOG_PRINTF("[DEBUG] get_gas_config: SPI memory page set for reg 0x%02X\r\n", reg_addr1);
+        app_fault_delay_ms(20);
     }
 
     /* Step 3 — Read sensor config register (heater temp) */
     rslt = bme680_get_regs(reg_addr1, &reg_data, 1, dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] get_gas_config: failed to read reg 0x%02X (err=%d)\r\n", reg_addr1, (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] get_gas_config: failed to read reg 0x%02X (err=%d)\r\n", reg_addr1, (int)rslt);
+    	app_fault_delay_ms(20);
         return rslt;
     }
     dev->gas_sett.heatr_temp = reg_data;
-    log_printf("[DEBUG] get_gas_config: read reg 0x%02X -> heatr_temp=0x%02X\r\n", reg_addr1, reg_data);
+    BME680_LOG_PRINTF("[DEBUG] get_gas_config: read reg 0x%02X -> heatr_temp=0x%02X\r\n", reg_addr1, reg_data);
+    app_fault_delay_ms(20);
 
     /* Step 4 — Read gas config register (heater duration) */
     rslt = bme680_get_regs(reg_addr2, &reg_data, 1, dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] get_gas_config: failed to read reg 0x%02X (err=%d)\r\n", reg_addr2, (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] get_gas_config: failed to read reg 0x%02X (err=%d)\r\n", reg_addr2, (int)rslt);
+    	app_fault_delay_ms(20);
         return rslt;
     }
     dev->gas_sett.heatr_dur = reg_data;
-    log_printf("[DEBUG] get_gas_config: read reg 0x%02X -> heatr_dur=0x%02X\r\n", reg_addr2, reg_data);
+    BME680_LOG_PRINTF("[DEBUG] get_gas_config: read reg 0x%02X -> heatr_dur=0x%02X\r\n", reg_addr2, reg_data);
+    app_fault_delay_ms(20);
 
-    log_printf("[INFO] get_gas_config: exit (result=%d)\r\n", (int)rslt);
+    BME680_LOG_PRINTF("[INFO] get_gas_config: exit (result=%d)\r\n", (int)rslt);
+    app_fault_delay_ms(20);
     return rslt;
 }
 
@@ -1897,8 +1983,8 @@ static int8_t read_field_data(struct bme680_field_data *data, struct bme680_dev 
     /* Step 1 — Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] read_field_data: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] read_field_data: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -1907,8 +1993,8 @@ static int8_t read_field_data(struct bme680_field_data *data, struct bme680_dev 
         /* Read the whole field (status + measurement bytes) */
         rslt = bme680_get_regs((uint8_t)BME680_FIELD0_ADDR, buff, (uint16_t)BME680_FIELD_LENGTH, dev);
         if (rslt != BME680_OK) {
-            log_printf("[ERROR] read_field_data: bme680_get_regs failed (err=%d)\r\n", (int)rslt);
-            tim2_delay_ms(20U);
+        	BME680_LOG_PRINTF("[ERROR] read_field_data: bme680_get_regs failed (err=%d)\r\n", (int)rslt);
+        	app_fault_delay_ms(20);
             /* If read failed, break out — preserve rslt for caller */
             break;
         }
@@ -1963,8 +2049,7 @@ static int8_t read_field_data(struct bme680_field_data *data, struct bme680_dev 
     /* If loop exhausted without seeing NEW_DATA and no other error, report no new data */
     if ((rslt != BME680_OK) && (tries == 0U) && ((data->status & BME680_NEW_DATA_MSK) == 0U)) {
         rslt = BME680_W_NO_NEW_DATA;
-        /*log_printf("[WARN] read_field_data: no new data after retries\r\n");
-        tim2_delay_ms(20U);*/
+        /*log_printf("[WARN] read_field_data: no new data after retries\r\n");*/
     }
 
     /*log_printf("[INFO] read_field_data: exit (result=%d)\r\n", (int)rslt);*/
@@ -1985,16 +2070,18 @@ static int8_t set_mem_page(uint8_t reg_addr, struct bme680_dev *dev)
     uint8_t current_reg = 0;
     uint8_t mem_page = 0;
 
-    log_printf("[INFO] set_mem_page: entry (reg_addr=0x%02X)\r\n", reg_addr);
+    BME680_LOG_PRINTF("[INFO] set_mem_page: entry (reg_addr=0x%02X)\r\n", reg_addr);
+    app_fault_delay_ms(20);
 
     /* Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] set_mem_page: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] set_mem_page: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
-    log_printf("[DEBUG] set_mem_page: null_ptr_check passed\r\n");
+    BME680_LOG_PRINTF("[DEBUG] set_mem_page: null_ptr_check passed\r\n");
+    app_fault_delay_ms(20);
 
     /* Decide desired memory page from register address */
     if (reg_addr > 0x7FU) {
@@ -2002,12 +2089,14 @@ static int8_t set_mem_page(uint8_t reg_addr, struct bme680_dev *dev)
     } else {
         mem_page = BME680_MEM_PAGE0;
     }
-    log_printf("[DEBUG] set_mem_page: desired mem_page=%u current mem_page=%u\r\n",
+    BME680_LOG_PRINTF("[DEBUG] set_mem_page: desired mem_page=%u current mem_page=%u\r\n",
                (unsigned)mem_page, (unsigned)dev->mem_page);
+    app_fault_delay_ms(20);
 
     /* If page already set, nothing to do */
     if (mem_page == dev->mem_page) {
-        log_printf("[DEBUG] set_mem_page: mem_page already set, nothing to do\r\n");
+    	BME680_LOG_PRINTF("[DEBUG] set_mem_page: mem_page already set, nothing to do\r\n");
+    	app_fault_delay_ms(20);
         return BME680_OK;
     }
 
@@ -2019,13 +2108,14 @@ static int8_t set_mem_page(uint8_t reg_addr, struct bme680_dev *dev)
     dev->com_rslt = dev->read(dev->handle, dev->dev_id, (uint8_t)(BME680_MEM_PAGE_ADDR | BME680_SPI_RD_MSK),
                               &current_reg, 1);
     if (dev->com_rslt != 0) {
-        log_printf("[ERROR] set_mem_page: read of MEM_PAGE_ADDR failed (com_rslt=%d)\r\n", dev->com_rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] set_mem_page: read of MEM_PAGE_ADDR failed (com_rslt=%d)\r\n", dev->com_rslt);
+    	app_fault_delay_ms(20);
         rslt = BME680_E_COM_FAIL;
         return rslt;
     }
     rslt = BME680_OK;
-    log_printf("[DEBUG] set_mem_page: read mem page reg -> 0x%02X\r\n", current_reg);
+    BME680_LOG_PRINTF("[DEBUG] set_mem_page: read mem page reg -> 0x%02X\r\n", current_reg);
+    app_fault_delay_ms(20);
 
     /* Clear the mem_page bits and set new value (preserve other bits) */
     current_reg &= (uint8_t)(~BME680_MEM_PAGE_MSK);
@@ -2036,15 +2126,17 @@ static int8_t set_mem_page(uint8_t reg_addr, struct bme680_dev *dev)
                                (uint8_t)(BME680_MEM_PAGE_ADDR & BME680_SPI_WR_MSK),
                                &current_reg, 1);
     if (dev->com_rslt != 0) {
-        log_printf("[ERROR] set_mem_page: write of MEM_PAGE_ADDR failed (com_rslt=%d)\r\n", dev->com_rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] set_mem_page: write of MEM_PAGE_ADDR failed (com_rslt=%d)\r\n", dev->com_rslt);
+    	app_fault_delay_ms(20);
         rslt = BME680_E_COM_FAIL;
     } else {
         rslt = BME680_OK;
-        log_printf("[INFO] set_mem_page: memory page set to %u successfully\r\n", (unsigned)dev->mem_page);
+        BME680_LOG_PRINTF("[INFO] set_mem_page: memory page set to %u successfully\r\n", (unsigned)dev->mem_page);
+        app_fault_delay_ms(20);
     }
 
-    log_printf("[INFO] set_mem_page: exit (result=%d)\r\n", (int)rslt);
+    BME680_LOG_PRINTF("[INFO] set_mem_page: exit (result=%d)\r\n", (int)rslt);
+    app_fault_delay_ms(20);
     return rslt;
 }
 
@@ -2062,31 +2154,35 @@ static int8_t get_mem_page(struct bme680_dev *dev)
     int8_t rslt = BME680_E_COM_FAIL;
     uint8_t reg = 0;
 
-    log_printf("[INFO] get_mem_page: entry\r\n");
+    BME680_LOG_PRINTF("[INFO] get_mem_page: entry\r\n");
+    app_fault_delay_ms(20);
 
     /* Null pointer check (must remain) */
     rslt = null_ptr_check(dev);
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] get_mem_page: null_ptr_check failed (err=%d)\r\n", (int)rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] get_mem_page: null_ptr_check failed (err=%d)\r\n", (int)rslt);
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
-    log_printf("[DEBUG] get_mem_page: null_ptr_check passed\r\n");
+    BME680_LOG_PRINTF("[DEBUG] get_mem_page: null_ptr_check passed\r\n");
+    app_fault_delay_ms(20);
 
     /* Read mem-page register (apply SPI read mask if needed) */
     dev->com_rslt = dev->read(dev->handle, dev->dev_id, (uint8_t)(BME680_MEM_PAGE_ADDR | BME680_SPI_RD_MSK),
                               &reg, 1);
     if (dev->com_rslt != 0) {
-        log_printf("[ERROR] get_mem_page: read failed (com_rslt=%d)\r\n", dev->com_rslt);
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] get_mem_page: read failed (com_rslt=%d)\r\n", dev->com_rslt);
+    	app_fault_delay_ms(20);
         rslt = BME680_E_COM_FAIL;
     } else {
         dev->mem_page = (uint8_t)(reg & BME680_MEM_PAGE_MSK);
         rslt = BME680_OK;
-        log_printf("[DEBUG] get_mem_page: read reg=0x%02X mem_page=%u\r\n", reg, (unsigned)dev->mem_page);
+        BME680_LOG_PRINTF("[DEBUG] get_mem_page: read reg=0x%02X mem_page=%u\r\n", reg, (unsigned)dev->mem_page);
+        app_fault_delay_ms(20);
     }
 
-    log_printf("[INFO] get_mem_page: exit (result=%d)\r\n", (int)rslt);
+    BME680_LOG_PRINTF("[INFO] get_mem_page: exit (result=%d)\r\n", (int)rslt);
+    app_fault_delay_ms(20);
     return rslt;
 }
 
@@ -2106,8 +2202,8 @@ static int8_t boundary_check(uint8_t *value, uint8_t min, uint8_t max, struct bm
     /*log_printf("[INFO] boundary_check: entry (min=%u max=%u)\r\n", (unsigned)min, (unsigned)max);*/
 
     if (value == NULL) {
-        log_printf("[ERROR] boundary_check: NULL value pointer\r\n");
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] boundary_check: NULL value pointer\r\n");
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -2148,26 +2244,26 @@ int8_t null_ptr_check(const struct bme680_dev *dev)
     /*log_printf("[INFO] null_ptr_check: entry\r\n");*/
 
     if (dev == NULL) {
-        log_printf("[ERROR] null_ptr_check: dev == NULL\r\n");
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] null_ptr_check: dev == NULL\r\n");
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
     if (dev->read == NULL) {
-        log_printf("[ERROR] null_ptr_check: dev->read == NULL\r\n");
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] null_ptr_check: dev->read == NULL\r\n");
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
     if (dev->write == NULL) {
-        log_printf("[ERROR] null_ptr_check: dev->write == NULL\r\n");
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] null_ptr_check: dev->write == NULL\r\n");
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
     if (dev->delay_ms == NULL) {
-        log_printf("[ERROR] null_ptr_check: dev->delay_ms == NULL\r\n");
-        tim2_delay_ms(20U);
+    	BME680_LOG_PRINTF("[ERROR] null_ptr_check: dev->delay_ms == NULL\r\n");
+    	app_fault_delay_ms(20);
         return BME680_E_NULL_PTR;
     }
 
@@ -2199,16 +2295,18 @@ int8_t null_ptr_check(const struct bme680_dev *dev)
  */
 
 static void app_bme680_log_runtime_error(const char *tag,
-                                         int32_t rc,
-                                         int attempt,
-                                         int max_attempts)
+                                          int32_t rc,
+                                          int attempt,
+                                          int max_attempts)
 {
-    log_printf("[WARN] BME680 retry %d/%d: %s rc=%ld\r\n",
-               attempt,
-               max_attempts,
-               tag,
-               (long)rc);
-    tim2_delay_ms(20U);
+    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
+
+    BME680_LOG_PRINTF("[ERROR] %s failed with code %ld (attempt %d/%d)\r\n",
+                      tag ? tag : "BME680 runtime",
+                      (long)rc,
+                      attempt,
+                      max_attempts);
+    app_fault_delay_ms(20U);
 }
 
 
@@ -2216,10 +2314,22 @@ static app_bme680_runtime_status_t app_bme680_recover_and_reinit(int attempt,
                                                                  int max_attempts)
 {
     i2c_dma_init_status_t init_status;
-    int8_t rslt;
 
-    (void)attempt;
-    (void)max_attempts;
+    /*
+     * Runtime recovery must be bounded.
+     *
+     * Do NOT call init_bme680() from here during fault-injection/runtime retry.
+     * If the BME680 is physically disconnected or being fault-injected,
+     * init_bme680() enters soft-reset / chip-id / calibration reads and can
+     * consume the retry window before the outer loop reaches attempt 2/3 and 3/3.
+     *
+     * The outer app_bme680_sensor_runtime_process() loop owns the 3-attempt budget.
+     * This function only restores I2C/DMA state between attempts.
+     */
+    BME680_LOG_PRINTF("ACT: BME680 recovery after attempt %d/%d -> I2C/DMA restore only\r\n",
+                      attempt,
+                      max_attempts);
+    app_fault_delay_ms(20U);
 
     if (i2c_recover(I2C1, &I2C1->SR2, I2C_SR2_BUSY, 0U, 0U) != I2C_RECOVER_OK) {
         return APP_BME680_RUNTIME_I2C_RECOVER_FAIL;
@@ -2228,11 +2338,6 @@ static app_bme680_runtime_status_t app_bme680_recover_and_reinit(int attempt,
     init_status = i2c_dma_bme680_peripherals_init();
     if (init_status != I2C_DMA_INIT_OK) {
         return APP_BME680_RUNTIME_PERIPH_REINIT_FAIL;
-    }
-
-    rslt = init_bme680();
-    if (rslt != BME680_OK) {
-        return APP_BME680_RUNTIME_SENSOR_REINIT_FAIL;
     }
 
     user_delay_ms(10U);
@@ -2247,17 +2352,17 @@ sensor_stack_init_status_t app_bme680_sensor_stack_init(void)
 
     init_status = i2c_dma_bme680_peripherals_init();
     if (init_status != I2C_DMA_INIT_OK) {
-        log_printf("[ERROR] app_bme680_sensor_stack_init: i2c_dma_bme680_peripherals_init failed rc=%d\r\n",
+    	BME680_LOG_PRINTF("[ERROR] app_bme680_sensor_stack_init: i2c_dma_bme680_peripherals_init failed rc=%d\r\n",
                    (int)init_status);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20);
         return SENSOR_STACK_INIT_FAIL;
     }
 
     rslt = init_bme680();
     if (rslt != BME680_OK) {
-        log_printf("[ERROR] app_bme680_sensor_stack_init: init_bme680 failed rc=%d\r\n",
+    	BME680_LOG_PRINTF("[ERROR] app_bme680_sensor_stack_init: init_bme680 failed rc=%d\r\n",
                    (int)rslt);
-        tim2_delay_ms(20U);
+    	app_fault_delay_ms(20);
         return SENSOR_STACK_INIT_FAIL;
     }
 
@@ -2271,6 +2376,8 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
 {
     enum { MAX_ATTEMPTS = 3 };
 
+    heartbeat_signal_bme680main();
+
     for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
         struct bme680_field_data data;
         float temp;
@@ -2282,41 +2389,75 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
 
         rslt = bme680_get_sensor_data(&data, &bme.gas_sensor);
         if (rslt != BME680_OK) {
-            app_bme680_log_runtime_error("bme680_get_sensor_data", rslt, attempt, MAX_ATTEMPTS);
+            system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
+
+            app_bme680_log_runtime_error("bme680_get_sensor_data",
+                                         rslt,
+                                         attempt,
+                                         MAX_ATTEMPTS);
 
             if (attempt == MAX_ATTEMPTS) {
-                log_printf("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
-                           attempt, MAX_ATTEMPTS);
-                tim2_delay_ms(20U);
-                NVIC_SystemReset();
+                BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d -> reporting fatal to task\r\n",
+                                  attempt,
+                                  MAX_ATTEMPTS);
+                app_fault_delay_ms(20U);
                 return APP_BME680_RUNTIME_SENSOR_DATA_FAIL;
             }
 
-            (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-            user_delay_ms(10U);
+            {
+                app_bme680_runtime_status_t recovery_status;
+
+                recovery_status = app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
+                if (recovery_status != APP_BME680_RUNTIME_OK) {
+                    BME680_LOG_PRINTF("[WARN] BME680 recovery/reinit failed after attempt %d/%d, continuing retry budget rc=%d\r\n",
+                                      attempt,
+                                      MAX_ATTEMPTS,
+                                      (int)recovery_status);
+                    app_fault_delay_ms(20U);
+                }
+            }
+
+            BME680_LOG_PRINTF("ACT: BME680 short backoff before retry\r\n");
+            app_fault_delay_ms(20U);
             continue;
         }
 
-        /* Skip startup / invalid samples so 0.00 does not get published */
+        /* Skip startup / invalid samples so 0.00 does not get published. */
         if ((data.temperature == 0) || (data.pressure == 0U) || (data.humidity == 0U)) {
-            //log_printf("[WARN] app_bme680: startup/invalid sample skipped\r\n");
-            tim2_delay_ms(20U);
 
             if (bme.gas_sensor.power_mode == BME680_FORCED_MODE) {
                 rslt = bme680_set_sensor_mode(&bme.gas_sensor);
                 if (rslt != BME680_OK) {
-                    app_bme680_log_runtime_error("bme680_set_sensor_mode", rslt, attempt, MAX_ATTEMPTS);
+                    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
+
+                    app_bme680_log_runtime_error("bme680_set_sensor_mode",
+                                                 rslt,
+                                                 attempt,
+                                                 MAX_ATTEMPTS);
 
                     if (attempt == MAX_ATTEMPTS) {
-                        log_printf("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
-                                   attempt, MAX_ATTEMPTS);
-                        tim2_delay_ms(20U);
-                        NVIC_SystemReset();
+                        BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d -> reporting fatal to task\r\n",
+                                          attempt,
+                                          MAX_ATTEMPTS);
+                        app_fault_delay_ms(20U);
                         return APP_BME680_RUNTIME_SET_MODE_FAIL;
                     }
 
-                    (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-                    user_delay_ms(10U);
+                    {
+                        app_bme680_runtime_status_t recovery_status;
+
+                        recovery_status = app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
+                        if (recovery_status != APP_BME680_RUNTIME_OK) {
+                            BME680_LOG_PRINTF("[WARN] BME680 recovery/reinit failed after attempt %d/%d, continuing retry budget rc=%d\r\n",
+                                              attempt,
+                                              MAX_ATTEMPTS,
+                                              (int)recovery_status);
+                            app_fault_delay_ms(20U);
+                        }
+                    }
+
+                    BME680_LOG_PRINTF("ACT: BME680 short backoff before retry\r\n");
+                    app_fault_delay_ms(20U);
                     continue;
                 }
 
@@ -2325,6 +2466,10 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
                     user_delay_ms(wait_ms);
                 }
             }
+
+            heartbeat_signal_bme680main();
+
+            system_fault_clear_active(SYSTEM_FAULT_OWNER_BME680);
 
             return APP_BME680_RUNTIME_OK;
         }
@@ -2341,67 +2486,72 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
             bme.gas_resistance = data.gas_resistance;
         }
 
-        log_printf("t:%.2f; p:%.0f; h:%.0f, ",
-                   bme.temperature, bme.pressure, bme.humidity);
-
-        if ((++bme.getgasreference_count % 5U) == 0U) {
-            rslt = bme_GetGasReference();
-            if (rslt != 0) {
-                app_bme680_log_runtime_error("bme_GetGasReference", rslt, attempt, MAX_ATTEMPTS);
-
-                if (attempt == MAX_ATTEMPTS) {
-                    log_printf("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
-                               attempt, MAX_ATTEMPTS);
-                    tim2_delay_ms(20U);
-                    NVIC_SystemReset();
-                    return APP_BME680_RUNTIME_GAS_REF_FAIL;
-                }
-
-                (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-                user_delay_ms(10U);
-                continue;
-            }
+        if (system_fault_logging_active == 0U) {
+            BME680_LOG_PRINTF("[BME680] t:%.2f; p:%.0f; h:%.0f, ",
+                              bme.temperature,
+                              bme.pressure,
+                              bme.humidity);
         }
 
         {
-            int16_t hum_score = bme_GetHumidityScore();
-            int16_t gas_score = bme_GetGasScore();
-            bme_calculateIAQ((int16_t)(hum_score + gas_score));
+            int16_t hum_score;
+            int16_t gas_score;
+            int16_t raw_score;
+
+            hum_score = bme_GetHumidityScore();
+            gas_score = bme_GetGasScore();
+            raw_score = (int16_t)(hum_score + gas_score);
+
+            bme_calculateIAQ(raw_score);
         }
 
         if (bme.gas_sensor.power_mode == BME680_FORCED_MODE) {
             rslt = bme680_set_sensor_mode(&bme.gas_sensor);
             if (rslt != BME680_OK) {
-                app_bme680_log_runtime_error("bme680_set_sensor_mode", rslt, attempt, MAX_ATTEMPTS);
+                system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
+
+                app_bme680_log_runtime_error("bme680_set_sensor_mode",
+                                             rslt,
+                                             attempt,
+                                             MAX_ATTEMPTS);
 
                 if (attempt == MAX_ATTEMPTS) {
-                    log_printf("[FATAL] BME680 failed after retry %d/%d -> watchdog reset\r\n",
-                               attempt, MAX_ATTEMPTS);
-                    tim2_delay_ms(20U);
-                    NVIC_SystemReset();
+                    BME680_LOG_PRINTF("[FATAL] BME680 failed after retry %d/%d -> reporting fatal to task\r\n",
+                                      attempt,
+                                      MAX_ATTEMPTS);
+                    app_fault_delay_ms(20U);
                     return APP_BME680_RUNTIME_SET_MODE_FAIL;
                 }
 
-                (void)app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
-                user_delay_ms(10U);
-                continue;
-            }
+                {
+                    app_bme680_runtime_status_t recovery_status;
 
-            {
-                uint32_t wait_ms = (bme.meas_period > 0U) ? (uint32_t)bme.meas_period : 2000U;
-                user_delay_ms(wait_ms);
+                    recovery_status = app_bme680_recover_and_reinit(attempt, MAX_ATTEMPTS);
+                    if (recovery_status != APP_BME680_RUNTIME_OK) {
+                        BME680_LOG_PRINTF("[WARN] BME680 recovery/reinit failed after attempt %d/%d, continuing retry budget rc=%d\r\n",
+                                          attempt,
+                                          MAX_ATTEMPTS,
+                                          (int)recovery_status);
+                        app_fault_delay_ms(20U);
+                    }
+                }
+
+                BME680_LOG_PRINTF("ACT: BME680 short backoff before retry\r\n");
+                app_fault_delay_ms(20U);
+                continue;
             }
         }
 
         heartbeat_signal_bme680main();
+
+        system_fault_clear_active(SYSTEM_FAULT_OWNER_BME680);
+
         return APP_BME680_RUNTIME_OK;
     }
 
+    system_fault_mark_in_progress(SYSTEM_FAULT_OWNER_BME680);
     return APP_BME680_RUNTIME_SENSOR_DATA_FAIL;
 }
-
-
-
 
 
 

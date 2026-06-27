@@ -36,16 +36,17 @@ __attribute__((weak)) void systick_error_hook(const char *msg, int code)
     (void) code;
 }
 
+extern void xPortSysTickHandler(void);
+
 /* Services the millisecond timebase interrupt. */
 void SysTick_Handler(void)
 {
-	/* Advance the software tick used by peripheral timeout checks. */
-	/* USER CODE END SysTick_IRQn 0 */
-	HAL_IncTick();
+    /* Advance the software tick used by peripheral timeout checks. */
     g_ms_ticks++;
-    if ((g_ms_ticks - supervisor_last_tick) >= SUPERVISOR_PERIOD_MS) {
-        supervisor_last_tick = g_ms_ticks;
-        supervisor_due = 1;
+    HAL_IncTick();
+
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        xPortSysTickHandler();
     }
 }
 

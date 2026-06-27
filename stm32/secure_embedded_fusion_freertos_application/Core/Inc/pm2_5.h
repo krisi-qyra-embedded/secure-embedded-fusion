@@ -7,6 +7,31 @@
 
 #include <stdint.h>
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "uart.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#ifndef PM25_LOG_PRINTF
+#define PM25_LOG_PRINTF(...)                                                       \
+    do {                                                                           \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \
+            (xSerialSemaphore != NULL)) {                                          \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \
+                log_printf(__VA_ARGS__);                                           \
+                xSemaphoreGive(xSerialSemaphore);                                  \
+            }                                                                      \
+        } else {                                                                   \
+            log_printf(__VA_ARGS__);                                               \
+        }                                                                          \
+    } while (0)
+#endif
 
 #define PM25_SYSTICK_CORE_HZ             96000000U
 #define PM25_SYSTICK_DIV                 6U
@@ -19,7 +44,6 @@
 
 #define PM25_LOG_FLUSH_DELAY_MS          100U
 #define PM25_IWDG_RELOAD_VALUE           2499U
-
 
 typedef enum
 {
@@ -59,6 +83,7 @@ typedef enum
 {
     PMS25_APP_RUNTIME_OK = 0U,
     PMS25_APP_RUNTIME_BAD_PARAM,
+    PMS25_APP_RUNTIME_READ_FAIL,
     PMS25_APP_RUNTIME_FATAL
 } PMS25_AppRuntimeStatus_t;
 
@@ -88,5 +113,9 @@ PMS25_AppRuntimeStatus_t PMS25_AppInit(PMS25_App_t *app,
                                        uint8_t max_recovery_attempts);
 
 PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* PM2_5_H */

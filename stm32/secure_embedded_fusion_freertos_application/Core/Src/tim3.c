@@ -64,9 +64,8 @@ void delay_us(uint16_t us)
     }
 }
 
-/* Delays through the HAL millisecond timebase. */
-void delay_ms(uint32_t ms)
-{
-    /* Delegate the interval to HAL_Delay. */
-    HAL_Delay(ms);
-}
+//void delay_ms(uint32_t ms)
+//{
+//    HAL_Delay(ms);
+//}
+

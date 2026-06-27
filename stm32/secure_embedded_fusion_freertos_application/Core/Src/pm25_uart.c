@@ -7,22 +7,29 @@
 #include "pwr.h"
 #include "tim.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
 #include <string.h>
 
 UART_HandleTypeDef huart1;
 static DMA_HandleTypeDef hdma_usart1_rx;
+
+/*
+ * FreeRTOS binary semaphore used by USART1 RX DMA completion.
+ *
+ * PM2.5 USART1_RX -> PA10 -> DMA2_Stream5 -> pm25_uart_rx_sem
+ */
+SemaphoreHandle_t pm25_uart_rx_sem = NULL;
+
 static volatile uint32_t g_uart1_last_rx_activity_tick = 0U;
 
-typedef enum
-{
-    UART1_RX_DMA_EVENT_IDLE = 0U,
-    UART1_RX_DMA_EVENT_DONE,
-    UART1_RX_DMA_EVENT_ERROR
-} UART1_RxDmaEvent_t;
-
-static volatile UART1_RxDmaEvent_t g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
+volatile UART1_RxDmaEvent_t g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
 
 static void UART1_PM25_ResetHandles(void);
+static inline void uart1_pm25_give_rx_sem_from_isr(void);
+static inline void uart1_pm25_drain_rx_sem(void);
 
 /* Clears the PM2.5 UART and DMA handle state. */
 static void UART1_PM25_ResetHandles(void)
@@ -30,7 +37,47 @@ static void UART1_PM25_ResetHandles(void)
     /* Reset the receive event with both HAL handles. */
     memset(&huart1, 0, sizeof(huart1));
     memset(&hdma_usart1_rx, 0, sizeof(hdma_usart1_rx));
+
     g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
+}
+
+/* Creates and clears the PM2.5 receive semaphore. */
+int UART1_PM25_RtosSyncInit(void)
+{
+    /* Discard a stale completion token after allocation. */
+    if (pm25_uart_rx_sem == NULL) {
+        pm25_uart_rx_sem = xSemaphoreCreateBinary();
+    }
+
+    if (pm25_uart_rx_sem == NULL) {
+        return 0;
+    }
+
+    (void)xSemaphoreTake(pm25_uart_rx_sem, 0U);
+
+    return 1;
+}
+
+/* Wakes the task waiting for PM2.5 receive completion. */
+static inline void uart1_pm25_give_rx_sem_from_isr(void)
+{
+    /* Yield on ISR exit if the receive semaphore wakes a task. */
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+    if (pm25_uart_rx_sem != NULL) {
+        (void)xSemaphoreGiveFromISR(pm25_uart_rx_sem, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+}
+
+/* Clears a stale PM2.5 receive semaphore token. */
+static inline void uart1_pm25_drain_rx_sem(void)
+{
+    /* Take the token without blocking after scheduler startup. */
+    if ((pm25_uart_rx_sem != NULL) &&
+        (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)) {
+        (void)xSemaphoreTake(pm25_uart_rx_sem, 0U);
+    }
 }
 
 /* Configures the PM2.5 USART1 receive path and DMA. */
@@ -43,6 +90,9 @@ UART_Status_t UART1_PM25_Init(void)
     __HAL_RCC_USART1_CLK_ENABLE();
     __HAL_RCC_DMA2_CLK_ENABLE();
 
+    /*
+     * PM2.5 sensor TX -> STM32 PA10 / USART1_RX
+     */
     GPIO_InitStruct.Pin       = GPIO_PIN_10;
     GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull      = GPIO_NOPULL;
@@ -85,7 +135,7 @@ UART_Status_t UART1_PM25_Init(void)
 
     __HAL_LINKDMA(&huart1, hdmarx, hdma_usart1_rx);
 
-    HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 0U, 0U);
+    HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 5U, 0U);
     NVIC_ClearPendingIRQ(DMA2_Stream5_IRQn);
     HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
 
@@ -152,6 +202,8 @@ UART_Status_t UART1_PM25_Recover(PMS25_App_t *app)
 
     app->RecoveryAttempt = recovery_attempt;
 
+    uart1_pm25_drain_rx_sem();
+
     return UART_STATUS_OK;
 }
 
@@ -169,13 +221,36 @@ UART_Status_t UART1_RX_DMA_Receive(uint8_t *p_data, uint16_t length, uint32_t ti
 
     g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
 
+    uart1_pm25_drain_rx_sem();
+
     hal_st = HAL_UART_Receive_DMA(&huart1, p_data, length);
     if (hal_st == HAL_BUSY)
     {
         return UART_STATUS_BUSY;
     }
+
     if (hal_st != HAL_OK)
     {
+        return UART_STATUS_DMA_ERROR;
+    }
+
+    if ((pm25_uart_rx_sem != NULL) &&
+        (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING))
+    {
+        if (xSemaphoreTake(pm25_uart_rx_sem, pdMS_TO_TICKS(timeout_ms)) != pdTRUE)
+        {
+            (void)HAL_UART_DMAStop(&huart1);
+            g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
+            return UART_STATUS_TIMEOUT;
+        }
+
+        if (g_uart1_rx_dma_event == UART1_RX_DMA_EVENT_DONE)
+        {
+            g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
+            return UART_STATUS_OK;
+        }
+
+        g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_IDLE;
         return UART_STATUS_DMA_ERROR;
     }
 
@@ -228,6 +303,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     {
         g_uart1_last_rx_activity_tick = HAL_GetTick();
         g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_DONE;
+
+        uart1_pm25_give_rx_sem_from_isr();
     }
 }
 
@@ -238,5 +315,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     if ((huart != NULL) && (huart->Instance == USART1))
     {
         g_uart1_rx_dma_event = UART1_RX_DMA_EVENT_ERROR;
+
+        uart1_pm25_give_rx_sem_from_isr();
     }
 }

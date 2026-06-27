@@ -5,6 +5,8 @@
 #include "onewire.h"
 #include "tim.h"
 #include "tim3.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <string.h>
 
 /* Checks the OneWire GPIO configuration. */
@@ -31,7 +33,6 @@ static void OneWire_Pin_Mode(OneWire_t *OW, PinMode Mode)
     }
     else
     {
-        /* Correct 1-Wire drive mode: MCU only pulls low; external resistor pulls high. */
         GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_OD;
         GPIO_InitStruct.Pull  = GPIO_NOPULL;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -56,10 +57,40 @@ static uint8_t OneWire_Pin_Read(OneWire_t *OW)
     return (HAL_GPIO_ReadPin(OW->DataPort, OW->DataPin) == GPIO_PIN_SET) ? 1U : 0U;
 }
 
+/* Protects a timing-sensitive OneWire bus slot. */
+static void OneWire_EnterCritical(void)
+{
+    /* Use a task critical section after scheduler startup, otherwise mask IRQs. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+    {
+        taskENTER_CRITICAL();
+    }
+    else
+    {
+        __disable_irq();
+    }
+}
+
+/* Leaves the OneWire timing-critical section. */
+static void OneWire_ExitCritical(void)
+{
+    /* Choose the matching RTOS or pre-scheduler interrupt path. */
+    if (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)
+    {
+        taskEXIT_CRITICAL();
+    }
+    else
+    {
+        __enable_irq();
+    }
+}
+
 /* Writes one OneWire bit with timer-based slot timing. */
 static void OneWire_WriteBitBlocking(OneWire_t *OW, uint8_t bit)
 {
-    /* Use a short low pulse for one and a longer low pulse for zero. */
+	/* Use a short low pulse for one and a longer low pulse for zero. */
+	OneWire_EnterCritical();
+
     if (bit != 0U)
     {
         OneWire_Pin_Level(OW, 0U);
@@ -78,6 +109,8 @@ static void OneWire_WriteBitBlocking(OneWire_t *OW, uint8_t bit)
         OneWire_Pin_Mode(OW, Input);
         delay_us(10U);
     }
+
+    OneWire_ExitCritical();
 }
 
 /* Reads one OneWire bit with timer-based slot timing. */
@@ -91,6 +124,8 @@ OneWire_Status_t OneWire_ReadBit(OneWire_t *OW, uint8_t *bit)
         return ONEWIRE_STATUS_BAD_PARAM;
     }
 
+    OneWire_EnterCritical();
+
     OneWire_Pin_Level(OW, 0U);
     OneWire_Pin_Mode(OW, Output);
     delay_us(3U);
@@ -101,6 +136,8 @@ OneWire_Status_t OneWire_ReadBit(OneWire_t *OW, uint8_t *bit)
     sample = OneWire_Pin_Read(OW);
 
     delay_us(50U);
+
+    OneWire_ExitCritical();
 
     *bit = sample;
     return ONEWIRE_STATUS_OK;
@@ -168,6 +205,8 @@ OneWire_Status_t OneWire_Reset(OneWire_t *OW)
         return ONEWIRE_STATUS_BAD_PARAM;
     }
 
+    OneWire_EnterCritical();
+
     OneWire_Pin_Level(OW, 0U);
     OneWire_Pin_Mode(OW, Output);
     delay_us(480U);
@@ -178,6 +217,8 @@ OneWire_Status_t OneWire_Reset(OneWire_t *OW)
     presence_sample = OneWire_Pin_Read(OW);
 
     delay_us(410U);
+
+    OneWire_ExitCritical();
 
     return (presence_sample == 0U) ? ONEWIRE_STATUS_OK : ONEWIRE_STATUS_NO_DEVICE;
 }
@@ -340,6 +381,11 @@ OneWire_Status_t OneWire_Init(OneWire_t *OW)
         return ONEWIRE_STATUS_BAD_PARAM;
     }
 
+    /*
+     * Initialization re-arms the GPIO and clears search state.
+     * These millisecond-scale delays are not protected with a critical section;
+     * exact bit-slot timing is protected inside Reset/ReadBit/WriteBit.
+     */
     OneWire_Pin_Mode(OW, Output);
     OneWire_Pin_Level(OW, 1U);
     delay_us(1000U);

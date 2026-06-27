@@ -1,8 +1,8 @@
 ../Core/Src/systick.c:28:28:systick_error_hook	16	static
-../Core/Src/systick.c:36:6:SysTick_Handler	8	static
-../Core/Src/systick.c:48:12:compute_reload	24	static
-../Core/Src/systick.c:59:18:systick_init	24	static,ignoring_inline_asm
-../Core/Src/systick.c:110:6:systick_deinit	4	static
-../Core/Src/systick.c:121:10:ms_get	4	static
-../Core/Src/systick.c:131:6:systick_delay_ms	24	static,ignoring_inline_asm
-../Core/Src/systick.c:150:18:systick_selftest	24	static,ignoring_inline_asm
+../Core/Src/systick.c:38:6:SysTick_Handler	8	static
+../Core/Src/systick.c:53:12:compute_reload	24	static
+../Core/Src/systick.c:64:18:systick_init	24	static,ignoring_inline_asm
+../Core/Src/systick.c:115:6:systick_deinit	4	static
+../Core/Src/systick.c:126:10:ms_get	4	static
+../Core/Src/systick.c:136:6:systick_delay_ms	24	static,ignoring_inline_asm
+../Core/Src/systick.c:155:18:systick_selftest	24	static,ignoring_inline_asm

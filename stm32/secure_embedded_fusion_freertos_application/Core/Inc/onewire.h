@@ -7,6 +7,10 @@
 
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "uart.h"
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -61,6 +65,31 @@ typedef struct
     volatile uint8_t    OpPhase;
     volatile OneWire_Operation_t ActiveOp;
 } OneWire_t;
+
+/*
+ * Shared UART2/log mutex.
+ *
+ * Owned/created in main.c:
+ *     xSerialSemaphore = xSemaphoreCreateMutex();
+ *
+ * Same style as SPI_DMA_LOG_PRINTF:
+ * if FreeRTOS is running, take the UART/log mutex before log_printf().
+ * If scheduler is not running yet, print directly.
+ */
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#define ONEWIRE_LOG_PRINTF(...)                                                     \
+    do {                                                                            \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                  \
+            (xSerialSemaphore != NULL)) {                                           \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {   \
+                log_printf(__VA_ARGS__);                                            \
+                xSemaphoreGive(xSerialSemaphore);                                   \
+            }                                                                       \
+        } else {                                                                    \
+            log_printf(__VA_ARGS__);                                                \
+        }                                                                           \
+    } while (0)
 
 OneWire_Status_t OneWire_Init(OneWire_t *OW);
 void             OneWire_TimerElapsedCallback(OneWire_t *OW, TIM_HandleTypeDef *htim);
