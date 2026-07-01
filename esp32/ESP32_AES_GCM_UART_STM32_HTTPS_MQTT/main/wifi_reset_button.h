@@ -1,0 +1,14 @@
+/* Author: i fiksuari pas prog
+ * Documentation date: 2026-07-01
+ */
+
+#ifndef MAIN_WIFI_RESET_BUTTON_H_
+#define MAIN_WIFI_RESET_BUTTON_H_
+
+#define ESP_INTR_FLAG_DEFAULT	0
+
+#define WIFI_RESET_BUTTON		0
+
+void wifi_reset_button_config(void);
+
+#endif /* MAIN_WIFI_RESET_BUTTON_H_ */

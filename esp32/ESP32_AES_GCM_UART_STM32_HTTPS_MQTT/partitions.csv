@@ -1,0 +1,9 @@
+# Name,      Type, SubType, Offset,   Size,     Flags
+nvs,         data, nvs,     0x11000,   0x4000,
+otadata,     data, ota,     0x15000,   0x2000,
+phy_init,    data, phy,     0x17000,   0x1000,
+ota_0,       app,  ota_0,   0x20000,  0x150000,
+ota_1,       app,  ota_1,   0x170000, 0x150000,
+stm32_fw,    data, 0x40,    0x2C0000, 0x110000, encrypted
+storage,     data, fat,     0x3D0000, 0x20000,  encrypted
+nvs_keys,    data, nvs_keys,0x3F0000, 0x1000,   encrypted
