@@ -1,0 +1,8 @@
+../Core/Src/sram_startup_entropy.c:58:5:sram_sample_startup_state	24	static
+../Core/Src/sram_startup_entropy.c:102:5:sram_sample_runtime	24	static
+../Core/Src/sram_startup_entropy.c:142:16:sram_get_entropy_buffer	4	static
+../Core/Src/sram_startup_entropy.c:151:10:sram_get_entropy_size	4	static
+../Core/Src/sram_startup_entropy.c:160:9:sram_is_sampled	4	static
+../Core/Src/sram_startup_entropy.c:175:10:sram_get_bytes	40	static
+../Core/Src/sram_startup_entropy.c:212:6:sram_get_statistics	32	static
+../Core/Src/sram_startup_entropy.c:243:6:sram_print_buffer	24	static

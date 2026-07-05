@@ -1,0 +1,15 @@
+../Core/Src/nonce.c:31:7:secure_zero	24	static
+../Core/Src/nonce.c:53:16:nonce_simple_init	8	static
+../Core/Src/nonce.c:110:6:nonce_increment_message_counter	4	static
+../Core/Src/nonce.c:119:10:nonce_get_message_counter	4	static
+../Core/Src/nonce.c:128:13:nonce_get_counter_string	8	static
+../Core/Src/nonce.c:143:10:counter_string_to_uint32	16	static
+../Core/Src/nonce.c:176:24:read_tim1_counter	4	static
+../Core/Src/nonce.c:195:10:read_tim1_hashed_loop	32	static
+../Core/Src/nonce.c:245:5:nonce_compute_static_entropy	32	static
+../Core/Src/nonce.c:283:11:nonce_simple_generate	16	static
+../Core/Src/nonce.c:329:12:nonce_simple_generate_to_buffer	24	static
+../Core/Src/nonce.c:349:18:nonce_simple_get_last	4	static
+../Core/Src/nonce.c:361:8:nonce_simple_print	24	static
+../Core/Src/nonce.c:374:8:nonce_simple_print_detailed	48	static
+../Core/Src/nonce.c:448:11:nonce_simple_verify_unique	16	static

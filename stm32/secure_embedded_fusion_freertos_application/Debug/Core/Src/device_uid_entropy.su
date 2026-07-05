@@ -1,0 +1,11 @@
+../Core/Src/device_uid_entropy.c:42:5:device_uid_read	24	static
+../Core/Src/device_uid_entropy.c:89:16:device_uid_get_buffer	8	static
+../Core/Src/device_uid_entropy.c:101:10:device_uid_get_size	4	static
+../Core/Src/device_uid_entropy.c:115:10:device_uid_get_bytes	24	static
+../Core/Src/device_uid_entropy.c:140:6:device_uid_get_words	24	static
+../Core/Src/device_uid_entropy.c:176:9:device_uid_compare	24	static
+../Core/Src/device_uid_entropy.c:203:10:device_uid_hash	24	static
+../Core/Src/device_uid_entropy.c:223:6:device_uid_print	24	static
+../Core/Src/device_uid_entropy.c:240:6:device_uid_print_bytes	16	static
+../Core/Src/device_uid_entropy.c:263:9:device_uid_is_valid	16	static
+../Core/Src/device_uid_entropy.c:298:10:device_generate_fingerprint	32	static

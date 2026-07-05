@@ -1,8 +1,8 @@
 ../Drivers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
 ../Drivers/CMSIS/Include/core_cm4.h:1777:22:__NVIC_ClearPendingIRQ	16	static
 ../Drivers/CMSIS/Include/core_cm4.h:1816:22:__NVIC_SetPriority	16	static
-../Core/Inc/uart.h:52:24:log_used	4	static
-../Core/Inc/uart.h:53:24:log_free	8	static
+../Core/Inc/uart.h:55:24:log_used	4	static
+../Core/Inc/uart.h:56:24:log_free	8	static
 ../Core/Src/uart.c:20:13:uart2_gpio_init	4	static
 ../Core/Src/uart.c:46:6:uart2_tx_rx_init	8	static
 ../Core/Src/uart.c:79:6:uart_set_baudrate	24	static

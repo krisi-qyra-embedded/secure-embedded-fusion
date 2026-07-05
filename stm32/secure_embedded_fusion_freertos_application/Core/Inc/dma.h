@@ -1,19 +1,42 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-06-17
+ * Documentation date: 2026-07-03
  */
 
-#ifndef __DMA_H__
-#define __DMA_H__
-#include <stdint.h>
-#include "stm32f4xx.h"
+#ifndef INC_DMA_H_
+#define INC_DMA_H_
 
-#define LISR_TCIF0		    (1U<<5)
-#define LIFCR_CTCIF0		(1U<<5)
+#include"stm32f4xx.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 
-#define LISR_TEIF0			(1U<<3)
-#define LIFCR_CTEIF0		(1U<<3)
+//#define  LISR_TCIF0 (1U << 5)
+//#define  LIFCR_CTCIF0 (1U << 5)
+//#define  LISR_TEIF0 (1U << 3)
+//#define  LIFCR_CTEIF0 (1U << 3)
+//#define GPIOAEN      (1U << 0)
+//#define ADC1EN        (1U << 8)
+#define BUF_SZ 255
 
-void dma2_mem2mem_config(void);
-void dma_transfer_start(uint32_t src_buff, uint32_t dest_buff, uint32_t len);
+#define ADC_DMA_INIT_SUCCESS               0
+#define ADC_DMA_INIT_COLLECTION_FAILED   -301
+#define ADC_DMA_INIT_RETRY_COUNT            2
 
-#endif
+extern uint8_t buf_pc4[BUF_SZ];
+extern uint8_t buf_pc5[BUF_SZ];
+extern uint8_t buf_pb0[BUF_SZ];
+
+extern size_t idx_pc4;
+extern size_t idx_pc5;
+extern size_t idx_pb0;
+
+extern uint8_t SAMPLE_COUNT;   
+extern uint32_t last_idx;
+extern volatile uint8_t g_transfer_complete;
+extern bool all_full;
+extern volatile uint16_t adc_buffer[30];
+extern uint16_t pc4_val,pc5_val,pb0_val;
+void dma2_ADC_pc45(uint16_t *mem_buf, uint32_t sample_count);
+int ADC_DMA_INIT(void);
+
+#endif /* INC_DMA_H_ */

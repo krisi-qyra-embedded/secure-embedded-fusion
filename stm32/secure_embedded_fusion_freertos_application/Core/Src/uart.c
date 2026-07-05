@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-06-17
+ * Documentation date: 2026-07-03
  */
 
 #include "uart.h"
@@ -59,7 +59,7 @@ void uart2_tx_rx_init(void)
     USART2->CR2 = 0U;
     USART2->CR3 = 0U;
 
-    uart_set_baudrate(USART2, UART2_PERIPH_CLK_HZ, baudrate);
+    uart_set_baudrate(USART2, UART2_PERIPH_CLK_HZ, UART2_BAUDRATE);
 
     USART2->CR1 |= (USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE);
 

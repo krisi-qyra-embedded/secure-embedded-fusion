@@ -25,6 +25,14 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
+Middlewares/ST/STM32_Cryptographic/interface \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/cipher \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/drbg \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/ecc \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/hash \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/mac \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/membuf \
+Middlewares/ST/STM32_Cryptographic/legacy_v3/src/rsa \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 \
 Middlewares/Third_Party/FreeRTOS/Source \
 Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \

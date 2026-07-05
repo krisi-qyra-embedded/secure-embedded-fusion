@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-06-17
+ * Documentation date: 2026-07-03
  */
 
 #ifndef INC_UART_H_
@@ -9,10 +9,12 @@
 #include<string.h>
 #include <stdarg.h>
 #include "stm32f411xe.h"
+
+#define periphclck 			16000000//max clock speed
+#define UART2_BAUDRATE 		115200U
+
 void uart2_tx_rx_init(void);
 
-#define periphclck 16000000//max clock speed
-#define baudrate 115200
 void uart_set_baudrate(USART_TypeDef *USARTx,uint32_t PeriphClk,uint32_t BaudRate);
 uint16_t compute_uart_div(uint32_t PeriphClk,uint32_t BaudRate);
 void uart2_transmit(int ch);

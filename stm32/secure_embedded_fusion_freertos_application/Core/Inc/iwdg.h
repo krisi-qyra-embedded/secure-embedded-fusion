@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-06-17
+ * Documentation date: 2026-07-03
  */
 
 #ifndef __IWDG_H__
@@ -96,8 +96,6 @@ extern volatile uint32_t hb_mpu9250main_ts;
 extern volatile uint8_t  iwdg_reset_requested;
 extern volatile uint32_t iwdg_reset_request_ms;
 
-extern volatile uint32_t hb_esp32_uart_aes_gcm_ts;
-
 /* ----------------------------- IWDG API ----------------------------- */
 
 /*
@@ -150,8 +148,6 @@ void heartbeat_signal_bme680main(void);
 
 void heartbeat_signal_mpu9250(void);
 void heartbeat_signal_mpu9250main(void);
-
-void heartbeat_signal_esp32_uart_aes_gcm(void);
 
 #ifdef __cplusplus
 }
