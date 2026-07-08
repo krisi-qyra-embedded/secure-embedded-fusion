@@ -10,8 +10,19 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "uart.h"
+#include "ecdh.h"
 #include <string.h>
 
+extern crypto_ctx_t g_crypto_ctx;
+
+gcm_sender_status_t ecdh_encrypt_uart_payload_once(
+    crypto_ctx_t *ctx,
+    const uint8_t *uart_payload,
+    size_t uart_payload_len,
+    uint8_t nonce_out[AES_GCM_AEAD_IV_SIZE],
+    uint8_t *ciphertext_and_tag_out,
+    size_t output_capacity,
+    size_t *output_len);
 
 /* ========================================================================
  * Bare-metal STM32 <-> ESP32 UART link test layer
@@ -571,6 +582,14 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     g_stale_response_count = 0U;
     g_bad_response_count = 0U;
 
+    st = ESP32_UART_Init();
+
+    if (st != ESP32_UART_STATUS_OK)
+    {
+        log_printf("[FATAL] ESP32_UART_Init failed, status=%d\r\n", (int)st);
+        return st;
+    }
+
     log_printf("\r\n\r\n");
     log_printf("============================================================\r\n");
     log_printf("[BOOT] STM32F411 bare-metal ESP32 UART link test\r\n");
@@ -580,14 +599,6 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     log_printf("[BOOT] PC7 USART6_RX <- ESP32_TX\r\n");
     log_printf("[BOOT] GND must be common between STM32 and ESP32\r\n");
     log_printf("============================================================\r\n");
-
-    st = ESP32_UART_Init();
-
-    if (st != ESP32_UART_STATUS_OK)
-    {
-        log_printf("[FATAL] ESP32_UART_Init failed, status=%d\r\n", (int)st);
-        return st;
-    }
 
     ESP32_UART_FlushRx();
     ESP32_UART_FlushTx();
@@ -602,12 +613,9 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     log_printf("[OK] ESP32 UART6 initialized\r\n");
     log_printf("[INFO] ESP32 UART baudrate = %lu\r\n",
                (unsigned long)ESP32_UART_BAUDRATE);
-    log_printf("[INFO] Sending one binary test frame every %lu ms\r\n",
-               (unsigned long)ESP32_TEST_PERIOD_MS);
-    log_printf("[INFO] ACK/NACK stop-and-wait mode enabled\r\n");
-    log_printf("[INFO] ACK timeout=%lu ms, maximum attempts=%u\r\n",
-               (unsigned long)ESP32_ACK_TIMEOUT_MS,
-               (unsigned int)ESP32_MAX_RETRIES);
+    log_printf("[INFO] One AES-GCM encrypted UART packet will be sent at startup\r\n");
+    log_printf("[INFO] Test wire format: nonce[12] || ciphertext || tag[16]\r\n");
+    log_printf("[INFO] ACK/NACK and receive-side processing are disabled for this test\r\n");
 
     return ESP32_UART_STATUS_OK;
 }
@@ -620,136 +628,203 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
 void ESP32_UART_LinkTest_RunOnce(void)
 {
     /* Advance the message sequence only after the expected ACK is accepted. */
-    uint8_t tx_frame[32];
-    uint16_t tx_len;
-    uint8_t attempt;
-    bool delivered = false;
+    static bool startup_packet_sent = false;
 
-    tx_len = ESP32_UART_BuildTestFrame(tx_frame,
-                                       sizeof(tx_frame),
-                                       g_test_sequence);
+    uint8_t tx_frame[32];
+    uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
+
+    uint8_t ciphertext_and_tag[
+        ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE +
+        AES_GCM_TAG_SIZE];
+
+    uint8_t wire_packet[
+        AES_GCM_AEAD_IV_SIZE +
+        ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE +
+        AES_GCM_TAG_SIZE];
+
+    uint16_t tx_len;
+    uint16_t wire_len;
+    size_t encrypted_len = 0U;
+    size_t ciphertext_len;
+    gcm_sender_status_t crypto_status;
+    ESP32_UART_Status_t write_status;
+    uint32_t wait_start;
+
+    if (startup_packet_sent)
+    {
+        log_printf(
+            "[TX][STARTUP] Encrypted startup packet was already sent; "
+            "second transmission suppressed.\r\n");
+        return;
+    }
+
+    memset(tx_frame, 0, sizeof(tx_frame));
+    memset(nonce, 0, sizeof(nonce));
+    memset(ciphertext_and_tag, 0, sizeof(ciphertext_and_tag));
+    memset(wire_packet, 0, sizeof(wire_packet));
+
+    tx_len = ESP32_UART_BuildTestFrame(
+        tx_frame,
+        sizeof(tx_frame),
+        g_test_sequence);
 
     if (tx_len == 0U)
     {
-        log_printf("[ERR] Failed to build ESP32 UART test frame\r\n");
+        log_printf(
+            "[TX][ERROR] Failed to build UART plaintext test frame\r\n");
         return;
     }
 
     log_printf("\r\n");
-    log_printf("================================================\r\n");
-    log_printf("[LINK] Starting transaction seq=%lu\r\n",
-               (unsigned long)g_test_sequence);
+    log_printf(
+        "========== STM32 -> ESP32 ENCRYPTED STARTUP TEST ==========\r\n");
 
-    log_printf("[TX] Packet len=%u bytes: ",
-               (unsigned int)tx_len);
+    log_printf(
+        "[TX][PLAINTEXT] Original UART frame [%u bytes]: ",
+        (unsigned int)tx_len);
 
     ESP32_UART_TestPrintHex(tx_frame, tx_len);
     log_printf("\r\n");
 
-    for (attempt = 1U; attempt <= ESP32_MAX_RETRIES; attempt++)
+    crypto_status =
+        ecdh_encrypt_uart_payload_once(
+            &g_crypto_ctx,
+            tx_frame,
+            tx_len,
+            nonce,
+            ciphertext_and_tag,
+            sizeof(ciphertext_and_tag),
+            &encrypted_len);
+
+    if (crypto_status != GCM_SENDER_SUCCESS)
     {
-        ESP32_UART_Status_t write_status;
-        ESP32_LinkResponse_t response;
-        uint8_t nack_reason = TEST_NACK_REASON_NONE;
-
-        ESP32_UART_FlushRx();
-
-        g_tx_attempt_count++;
-
-        log_printf("[TX] seq=%lu attempt=%u/%u\r\n",
-                   (unsigned long)g_test_sequence,
-                   (unsigned int)attempt,
-                   (unsigned int)ESP32_MAX_RETRIES);
-
-        write_status = ESP32_UART_Write(tx_frame,
-                                        tx_len,
-                                        100U);
-
-        if (write_status != ESP32_UART_STATUS_OK)
-        {
-            log_printf("[TX] Driver failure status=%d\r\n",
-                       (int)write_status);
-
-            if (attempt < ESP32_MAX_RETRIES)
-            {
-                g_retry_count++;
-                HAL_Delay(20U);
-            }
-
-            continue;
-        }
-
-        log_printf("[TX] Frame queued successfully; waiting for ACK/NACK seq=%lu\r\n",
-                   (unsigned long)g_test_sequence);
-
-        response = ESP32_UART_WaitForResponse(
-            g_test_sequence,
-            ESP32_ACK_TIMEOUT_MS,
-            &nack_reason);
-
-        if (response == ESP32_LINK_RESPONSE_ACK)
-        {
-            g_ack_count++;
-            g_tx_ok_count++;
-            delivered = true;
-
-            log_printf("[LINK] DELIVERY SUCCESS seq=%lu\r\n",
-                       (unsigned long)g_test_sequence);
-
-            break;
-        }
-
-        if (response == ESP32_LINK_RESPONSE_NACK)
-        {
-            g_nack_count++;
-
-            log_printf(
-                "[LINK] ESP32 rejected seq=%lu reason=%u (%s)\r\n",
-                (unsigned long)g_test_sequence,
-                (unsigned int)nack_reason,
-                ESP32_UART_NackReasonToString(nack_reason));
-        }
-        else
-        {
-            g_ack_timeout_count++;
-
-            log_printf("[LINK] ACK/NACK timeout for seq=%lu after %lu ms\r\n",
-                       (unsigned long)g_test_sequence,
-                       (unsigned long)ESP32_ACK_TIMEOUT_MS);
-        }
-
-        if (attempt < ESP32_MAX_RETRIES)
-        {
-            g_retry_count++;
-
-            log_printf("[LINK] Retrying the same packet seq=%lu\r\n",
-                       (unsigned long)g_test_sequence);
-
-            HAL_Delay(20U);
-        }
+        log_printf(
+            "[TX][ERROR] UART AES-GCM encryption failed, rc=%d\r\n",
+            (int)crypto_status);
+        return;
     }
 
-    if (delivered)
+    if ((encrypted_len !=
+            ((size_t)tx_len + AES_GCM_TAG_SIZE)) ||
+        (encrypted_len > UINT16_MAX))
     {
-        g_test_sequence++;
+        log_printf(
+            "[TX][ERROR] Invalid encrypted size=%u\r\n",
+            (unsigned int)encrypted_len);
+        return;
     }
-    else
+
+    ciphertext_len =
+        encrypted_len -
+        AES_GCM_TAG_SIZE;
+
+    memcpy(
+        &wire_packet[0],
+        nonce,
+        AES_GCM_AEAD_IV_SIZE);
+
+    memcpy(
+        &wire_packet[AES_GCM_AEAD_IV_SIZE],
+        ciphertext_and_tag,
+        encrypted_len);
+
+    wire_len =
+        (uint16_t)(
+            AES_GCM_AEAD_IV_SIZE +
+            encrypted_len);
+
+    log_printf(
+        "[TX][NONCE] IV_GCM [%u bytes]: ",
+        (unsigned int)AES_GCM_AEAD_IV_SIZE);
+    ESP32_UART_TestPrintHex(
+        nonce,
+        AES_GCM_AEAD_IV_SIZE);
+    log_printf("\r\n");
+
+    log_printf(
+        "[TX][CIPHERTEXT] [%u bytes]: ",
+        (unsigned int)ciphertext_len);
+    ESP32_UART_TestPrintHex(
+        ciphertext_and_tag,
+        (uint16_t)ciphertext_len);
+    log_printf("\r\n");
+
+    log_printf(
+        "[TX][TAG] [%u bytes]: ",
+        (unsigned int)AES_GCM_TAG_SIZE);
+    ESP32_UART_TestPrintHex(
+        &ciphertext_and_tag[ciphertext_len],
+        AES_GCM_TAG_SIZE);
+    log_printf("\r\n");
+
+    log_printf(
+        "[TX][SIZES] plaintext=%u nonce=%u ciphertext=%u "
+        "tag=%u wire=%u\r\n",
+        (unsigned int)tx_len,
+        (unsigned int)AES_GCM_AEAD_IV_SIZE,
+        (unsigned int)ciphertext_len,
+        (unsigned int)AES_GCM_TAG_SIZE,
+        (unsigned int)wire_len);
+
+    log_printf(
+        "[TX][WIRE] nonce || ciphertext || tag [%u bytes]: ",
+        (unsigned int)wire_len);
+    ESP32_UART_TestPrintHex(
+        wire_packet,
+        wire_len);
+    log_printf("\r\n");
+
+    ESP32_UART_FlushRx();
+    g_tx_attempt_count++;
+
+    write_status =
+        ESP32_UART_Write(
+            wire_packet,
+            wire_len,
+            200U);
+
+    if (write_status != ESP32_UART_STATUS_OK)
     {
         g_tx_fail_count++;
 
-        log_printf("[LINK] DELIVERY FAILED after %u attempts\r\n",
-                   (unsigned int)ESP32_MAX_RETRIES);
-
-        log_printf("[LINK] Sequence remains at %lu; no new packet will be sent\r\n",
-                   (unsigned long)g_test_sequence);
+        log_printf(
+            "[TX][ERROR] USART6 queue failed, status=%d\r\n",
+            (int)write_status);
+        return;
     }
 
-    g_loop_count++;
+    wait_start = HAL_GetTick();
 
-    if ((g_loop_count % 5U) == 0U)
+    while (ESP32_UART_IsTxBusy())
     {
-        ESP32_UART_LinkTest_PrintHealth();
+        if ((HAL_GetTick() - wait_start) >= 500U)
+        {
+            g_tx_fail_count++;
+
+            log_printf(
+                "[TX][ERROR] USART6 transmission did not complete "
+                "within 500 ms\r\n");
+            return;
+        }
+
+        __WFI();
     }
+
+    startup_packet_sent = true;
+    g_tx_ok_count++;
+    g_loop_count++;
+    g_test_sequence++;
+
+    log_printf(
+        "[TX][SUCCESS] One encrypted startup packet was sent "
+        "to ESP32 over USART6.\r\n");
+
+    log_printf(
+        "[TX][INFO] No ACK/NACK was requested and no receive-side "
+        "decryption was performed.\r\n");
+
+    log_printf(
+        "============================================================\r\n");
 }
 
 /* ------------------------------------------------------------

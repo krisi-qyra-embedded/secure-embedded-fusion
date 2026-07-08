@@ -51,7 +51,71 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Core/Inc/max31865.h ../Core/Inc/spi_dma.h ../Core/Inc/spi_dma.h \
  ../Core/Inc/main.h ../Core/Inc/pm2_5.h ../Core/Inc/pm25_uart.h \
  ../Core/Inc/pm2_5.h ../Core/Inc/ds18b20.h ../Core/Inc/onewire.h \
- ../Core/Inc/tim3.h ../Core/Inc/tim.h ../Core/Inc/ESP32_uart.h
+ ../Core/Inc/tim3.h ../Core/Inc/tim.h ../Core/Inc/ESP32_uart.h \
+ ../Core/Inc/ecdh.h ../Core/Inc/nonce.h ../Core/Inc/pwm_dma.h \
+ ../Core/Inc/DMA.h ../Core/Inc/entropy_personalization_nonce_gen.h \
+ ../Core/Inc/sram_startup_entropy.h ../Core/Inc/device_uid_entropy.h \
+ ../Core/Inc/device_uid_entropy.h ../Core/Inc/sram_startup_entropy.h \
+ ../Core/Inc/nonce.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_crypto.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha1.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_hash.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_hash_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_md.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha224.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha256.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha384.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha512.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha3.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sponge.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sm3.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cbc.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cipher.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cipher_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_blockcipher.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_default_defs.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_default_config.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_check_default_aes.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_default_config.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ccm.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cfb.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_chachapoly.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ctr.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ecb.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_gcm.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_check_default_gcm.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_keywrap.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ofb.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_xts.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_cmac.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_mac.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_mac_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_blockcipher.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_check_default_aes.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_hmac.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_md.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_kmac.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sponge.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_pkcs1v15.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_types.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_common.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_pkcs1v22.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecdsa.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecc.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecc_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecc_types.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_eddsa.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_sm2.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecdh.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_ctr_drbg.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_drbg.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_drbg_retvals.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h \
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
 ../Drivers/CMSIS/Include/core_cm4.h:
@@ -122,3 +186,72 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Core/Inc/tim3.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/ESP32_uart.h:
+../Core/Inc/ecdh.h:
+../Core/Inc/nonce.h:
+../Core/Inc/pwm_dma.h:
+../Core/Inc/DMA.h:
+../Core/Inc/entropy_personalization_nonce_gen.h:
+../Core/Inc/sram_startup_entropy.h:
+../Core/Inc/device_uid_entropy.h:
+../Core/Inc/device_uid_entropy.h:
+../Core/Inc/sram_startup_entropy.h:
+../Core/Inc/nonce.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_crypto.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha1.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_hash.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_hash_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_md.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha224.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha256.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha384.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha512.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sha3.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sponge.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sm3.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cbc.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cipher.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cipher_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_blockcipher.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_default_defs.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_default_config.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_check_default_aes.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_default_config.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ccm.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_cfb.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_chachapoly.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ctr.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ecb.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_gcm.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_check_default_gcm.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_keywrap.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_ofb.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_xts.h:
+../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_cmac.h:
+../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_mac.h:
+../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_mac_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_blockcipher.h:
+../Middlewares/ST/STM32_Cryptographic/include/cipher/cmox_check_default_aes.h:
+../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_hmac.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_md.h:
+../Middlewares/ST/STM32_Cryptographic/include/mac/cmox_kmac.h:
+../Middlewares/ST/STM32_Cryptographic/include/hash/cmox_sponge.h:
+../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_pkcs1v15.h:
+../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa.h:
+../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_types.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_common.h:
+../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/rsa/cmox_rsa_pkcs1v22.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecdsa.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecc.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecc_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecc_types.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_eddsa.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_sm2.h:
+../Middlewares/ST/STM32_Cryptographic/include/ecc/cmox_ecdh.h:
+../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_ctr_drbg.h:
+../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_drbg.h:
+../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_drbg_retvals.h:
+../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h:
+../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h:

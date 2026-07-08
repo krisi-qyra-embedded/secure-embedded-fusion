@@ -32,6 +32,10 @@
 #include "ds18b20.h"
 #include "tim3.h"
 #include "ESP32_uart.h"
+#include "ecdh.h"
+#include "cmox_crypto.h"
+#include "entropy_personalization_nonce_gen.h"
+#include "nonce.h"
 
 /* ---------------- app status enum (declare in main.c as requested) ---------------- */
 static app_status_t app_bme680_sensor_stack_init_(void);
@@ -86,6 +90,8 @@ static DS18B20_App_t g_ds18b20_app;
 
 extern SemaphoreHandle_t xSerialSemaphore;
 
+crypto_ctx_t g_crypto_ctx;
+
 /* DMA IRQ binary semaphores are defined/owned in i2c_dma.c.
  * main.c only creates the objects before the scheduler starts.
  *
@@ -127,28 +133,39 @@ DS18B20_AppRuntimeStatus_t app_st_ds18b20;
 //    APP_STATUS_INIT_FAIL = 1,
 //} app_status_t;
 
-/* Initializes the ESP32 link and runs periodic transactions. */
+/* Initializes crypto and runs one encrypted startup transaction. */
 int main(void)
 {
-	/* Delay between transactions using the link timebase. */
+    /* Require successful key and nonce setup before sending the startup frame. */
+    int32_t crypto_rc;
+    nonce_status_t startup_nonce_rc;
 
-	HAL_Init();
-	clock_100_mhz_init();
+    HAL_Init();
+    clock_100_mhz_init();
+
     memset(&MPU9250, 0, sizeof(MPU9250));
-    SCB->CPACR |= ((3UL << (10U * 2U)) | (3UL << (11U * 2U)));
+
+    SCB->CPACR |=
+        ((3UL << (10U * 2U)) |
+         (3UL << (11U * 2U)));
     __DSB();
     __ISB();
 
-    if (systick_init(96000000U, 6U) != SYSTICK_OK) {
-    	        NVIC_SystemReset();
-    	    }
+    if (systick_init(96000000U, 6U) != SYSTICK_OK)
+    {
+        NVIC_SystemReset();
+    }
 
-    if (systick_selftest(200U) != SYSTICK_OK) {
-    	        NVIC_SystemReset();
-    	    }
+    if (systick_selftest(200U) != SYSTICK_OK)
+    {
+        NVIC_SystemReset();
+    }
 
-    //sleep_mode_configure_once();
     tim2_1s_init();
+
+    /*
+     * USART2 is the debug log and USART6 is the STM32->ESP32 link.
+     */
     uart2_tx_rx_init();
 
     if (ESP32_UART_LinkTest_Init() != ESP32_UART_STATUS_OK)
@@ -156,258 +173,106 @@ int main(void)
         Error_Handler();
     }
 
-//
-//    /* TIM3 is now only a blocking 1 MHz microsecond delay source for OneWire. */
-//            tim_st = MX_TIM3_Init();
-//            if (tim_st != TIM_STATUS_OK)
-//            {
-//                log_printf("[ERR] MX_TIM3_Init failed\r\n");
-//                delay_ms(10U);
-//                Error_Handler();
-//            }
-//
-//    /*Crypto use only.*/
-//    //	if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS) {
-//    //	        NVIC_SystemReset();
-//    //	    }
-//
-//    check_reset_source();
-//
-//    ds_st = DS18B20_AppInit(&g_ds18b20_app,
-//                               GPIOA,
-//                               GPIO_PIN_5,
-//                               &htim3,
-//                               DS18B20_Resolution_12bits,
-//                               5U);
-//       if (ds_st != DS18B20_STATUS_OK)
-//       {
-//           on_fatal_init_error("DS18B20_AppInit failed after 3 recovery attempts");
-//           //NVIC_SystemReset();
-//       }
-//
-//
-//    if (app_bme680_peripherals_init() != APP_STATUS_OK) {
-//    	 	    on_fatal_init_error("app_bme680_peripherals_init failed");
-//    			//NVIC_SystemReset();
-//    	 	}
-//
-//    	 	if (app_bme680_sensor_stack_init_() != APP_STATUS_OK) {
-//    	 	    on_fatal_init_error("app_bme680_sensor_stack_init failed");
-//    	 		 //NVIC_SystemReset();
-//    	 	}
-//
-//    if (app_mpu9250_peripherals_init() != APP_STATUS_OK) {
-//        on_fatal_init_error("app_mpu9250_peripherals_init failed");
-//    	//NVIC_SystemReset();
-//    }
-//
-//    if (app_mpu9250_sensor_stack_init() != APP_STATUS_OK) {
-//        on_fatal_init_error("app_mpu9250_sensor_stack_init failed");
-//    	//NVIC_SystemReset();
-//    }
-//
-//    if (app_max31865_peripherals_init() != APP_STATUS_OK) {
-//        on_fatal_init_error("app_max31865_peripherals_init failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    if (app_max31865_sensor_stack_init() != APP_STATUS_OK) {
-//        on_fatal_init_error("app_max31865_sensor_stack_init failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//
-//    uart_st = UART1_PM25_Init();
-//    if (uart_st != UART_STATUS_OK)
-//    {
-//        log_printf("[FATAL][PM25] UART1_PM25_Init failed, st=%u\r\n",
-//                   (unsigned)uart_st);
-//        on_fatal_init_error("UART1_PM25_Init failed");
-//        //NVIC_SystemReset();
-//    }
-//    if (PMS25_AppInit(&g_pm25_app,
-//                      PM25_FRAME_POLL_TIMEOUT_MS,
-//                      PM25_NO_FRAME_FAULT_MS,
-//                      PM25_SAMPLE_PERIOD_MS,
-//                      PM25_RECOVERY_DELAY_MS,
-//                      PM25_MAX_RECOVERY_ATTEMPTS) != PMS25_APP_RUNTIME_OK)
-//    {
-//        log_printf("[FATAL][PM25] PMS25_AppInit failed\r\n");
-//        on_fatal_init_error("PMS25_AppInit failed");
-//        //NVIC_SystemReset();
-//    }
-//
-//
-//
-//    /* Initialize heartbeat timestamps as late as possible before scheduler/tasks start. */
-//    supervisor_heartbeats_init();
-//
-//    /* Create one mutex for task-level UART/log ownership.
-//     * This follows the same style as your xSerialSemaphore example.
-//     * Note: this protects log_printf() calls made here. If lower-level drivers
-//     * also print, protect log_printf() globally or move logs to a logger task later.
-//     */
-//    xSerialSemaphore = xSemaphoreCreateMutex();
-//    if (xSerialSemaphore == NULL) {
-//        on_fatal_init_error("xSerialSemaphore create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    /* Binary semaphores for BME680 I2C1 DMA IRQ completion.
-//     * These objects are defined in i2c_dma.c and given from:
-//     *   RX -> DMA1_Stream5_IRQHandler
-//     *   TX -> DMA1_Stream6_IRQHandler
-//     */
-//    bme680_rx_sem = xSemaphoreCreateBinary();
-//    if (bme680_rx_sem == NULL) {
-//        on_fatal_init_error("bme680_rx_sem create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    bme680_tx_sem = xSemaphoreCreateBinary();
-//    if (bme680_tx_sem == NULL) {
-//    	/*NVIC_SystemReset();*/
-//        on_fatal_init_error("bme680_tx_sem create failed");
-//    }
-//
-//    /* Binary semaphores for MPU9250 I2C3 DMA IRQ completion.
-//     * These objects are defined in i2c_dma.c and given from:
-//     *   RX -> DMA1_Stream1_IRQHandler
-//     *   TX -> DMA1_Stream4_IRQHandler
-//     */
-//    mpu9250_rx_sem = xSemaphoreCreateBinary();
-//    if (mpu9250_rx_sem == NULL) {
-//    	/*NVIC_SystemReset();*/
-//        on_fatal_init_error("mpu9250_rx_sem create failed");
-//    }
-//
-//    mpu9250_tx_sem = xSemaphoreCreateBinary();
-//    if (mpu9250_tx_sem == NULL) {
-//    	/*NVIC_SystemReset();*/
-//        on_fatal_init_error("mpu9250_tx_sem create failed");
-//    }
-//
-//    /* Binary semaphores for MAX31865 SPI4 DMA IRQ completion.
-//     * These objects are defined in spi_dma.c and given from:
-//     *   RX -> DMA2_Stream0_IRQHandler
-//     *   TX -> DMA2_Stream1_IRQHandler
-//     */
-//    max31865_spi_rx_sem = xSemaphoreCreateBinary();
-//    if (max31865_spi_rx_sem == NULL) {
-//        on_fatal_init_error("max31865_spi_rx_sem create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    max31865_spi_tx_sem = xSemaphoreCreateBinary();
-//    if (max31865_spi_tx_sem == NULL) {
-//        on_fatal_init_error("max31865_spi_tx_sem create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    /* Binary semaphore for PM2.5 USART1 RX DMA completion.
-//     * This object is used by the PM2.5 UART RX DMA path:
-//     *   RX -> DMA2_Stream5_IRQHandler
-//     *   USART1 RX complete -> HAL_UART_RxCpltCallback()
-//     */
-//    pm25_uart_rx_sem = xSemaphoreCreateBinary();
-//    if (pm25_uart_rx_sem == NULL) {
-//        on_fatal_init_error("pm25_uart_rx_sem create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//
-//    /* Create BME680 and MPU9250 runtime tasks.
-//     * Both tasks use the same priority and a conservative stack size because
-//     * the runtime paths include DMA/I2C error handling, recovery, logging,
-//     * floating-point processing, and watchdog escalation paths.
-//     */
-//    if (xTaskCreate(bme680_task,
-//                    "bme680_task",
-//                    BME680_TASK_STACK_WORDS,
-//                    NULL,
-//                    BME680_SENSOR_TASK_PRIORITY,
-//                    &bme680_task_handle) != pdPASS) {
-//        on_fatal_init_error("bme680_task create failed");
-//    	/*NVIC_SystemReset();*/
-//    }
-//
-//    if (xTaskCreate(mpu9250_task,
-//                    "mpu9250_task",
-//                    MPU9250_TASK_STACK_WORDS,
-//                    NULL,
-//                    MPU9250_SENSOR_TASK_PRIORITY,
-//                    &mpu9250_task_handle) != pdPASS) {
-//        on_fatal_init_error("mpu9250_task create failed");
-//    	/*NVIC_SystemReset();*/
-//    }
-//
-//    if (xTaskCreate(max31865_task,
-//                    "max31865_task",
-//                    MAX31865_TASK_STACK_WORDS,
-//                    NULL,
-//                    MAX31865_SENSOR_TASK_PRIORITY,
-//                    &max31865_task_handle) != pdPASS) {
-//        on_fatal_init_error("max31865_task create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    if (xTaskCreate(pm25_task,
-//                    "pm25_task",
-//                    PM25_TASK_STACK_WORDS,
-//                    NULL,
-//                    PM25_SENSOR_TASK_PRIORITY,
-//                    &pm25_task_handle) != pdPASS) {
-//        on_fatal_init_error("pm25_task create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    if (xTaskCreate(ds18b20_task,
-//                    "ds18b20_task",
-//                    DS18B20_TASK_STACK_WORDS,
-//                    NULL,
-//                    DS18B20_SENSOR_TASK_PRIORITY,
-//                    &ds18b20_task_handle) != pdPASS) {
-//        on_fatal_init_error("ds18b20_task create failed");
-//        /*NVIC_SystemReset();*/
-//    }
-//
-//    /* Dedicated supervisor task.
-//     * Only this task should check the health heartbeats and refresh/escalate
-//     * the IWDG through supervisor_check_and_kick().
-//     */
-//    if (xTaskCreate(supervisor_task,
-//                    "supervisor_task",
-//                    SUPERVISOR_TASK_STACK_WORDS,
-//                    NULL,
-//                    SUPERVISOR_TASK_PRIORITY,
-//                    &supervisor_task_handle) != pdPASS) {
-//        on_fatal_init_error("supervisor_task create failed");
-//    	//NVIC_SystemReset();
-//    }
-//
-//    /*
-//     * Start IWDG only after long sensor bring-up and task/semaphore creation.
-//     * Before the scheduler starts, the supervisor cannot refresh the watchdog yet.
-//     * Starting it here prevents long DS18B20/BME/MPU/MAX/PM25 init/recovery paths
-//     * from accidentally consuming the watchdog window.
-//     */
-//    {
-//        const iwdg_status_t iwdg_status = iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
-//
-//        if (iwdg_status != IWDG_OK)
-//        {
-//            log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
-//            app_fault_delay_ms(2U);
-//            NVIC_SystemReset();
-//        }
-//    }
-//
-//    vTaskStartScheduler();
+    adc_byte_buffers_init();
 
-    while (1) {
-        //NVIC_SystemReset();
-    	ESP32_UART_LinkTest_RunOnce();
-    	ESP32_UART_LinkTest_DelayMs(5000U);
+    if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS)
+    {
+        handle_error("cmox_initialize failed");
+    }
+
+    crypto_rc =
+        entropy_personalisation_HW_init();
+
+    if (crypto_rc != ENTROPY_HW_INIT_SUCCESS)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] entropy_personalisation_HW_init "
+            "failed, rc=%ld\r\n",
+            (long)crypto_rc);
+
+        handle_error("Entropy hardware initialization failed");
+    }
+
+    crypto_rc =
+        entropy_personalisation_hash();
+
+    if (crypto_rc != ENTROPY_CREATION_SUCCESS)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] entropy_personalisation_hash "
+            "failed, rc=%ld\r\n",
+            (long)crypto_rc);
+
+        handle_error("Entropy personalization hash failed");
+    }
+
+    startup_nonce_rc =
+        nonce_simple_init();
+
+    if (startup_nonce_rc != NONCE_OK)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] nonce_simple_init failed, rc=%d\r\n",
+            (int)startup_nonce_rc);
+
+        handle_error("Startup nonce initialization failed");
+    }
+
+    crypto_rc =
+        nonce_generation();
+
+    if (crypto_rc != NONCE_GEN_SUCCESS)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] nonce_generation failed, rc=%ld\r\n",
+            (long)crypto_rc);
+
+        handle_error("Startup nonce hash generation failed");
+    }
+
+    crypto_ctx_init(&g_crypto_ctx);
+
+    crypto_rc =
+        sender_init_ecdh_crypto(
+            &g_crypto_ctx);
+
+    if (crypto_rc != SENDER_INIT_SUCCESS)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] sender_init_ecdh_crypto "
+            "failed, rc=%ld\r\n",
+            (long)crypto_rc);
+
+        handle_error("STM32->ESP32 sender crypto initialization failed");
+    }
+
+    crypto_rc =
+        gcm_nonce_session_init(
+            &g_crypto_ctx);
+
+    if (crypto_rc != GCM_NONCE_OK)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] gcm_nonce_session_init "
+            "failed, rc=%ld\r\n",
+            (long)crypto_rc);
+
+        handle_error("GCM nonce session initialization failed");
+    }
+
+    log_printf(
+        "\r\n"
+        "[CRYPTO] STM32->ESP32 TX key and nonce session are ready.\r\n");
+
+    ESP32_UART_LinkTest_RunOnce();
+
+    log_printf(
+        "[MAIN] Startup encrypted UART test complete; "
+        "entering idle loop.\r\n");
+
+    for (;;)
+    {
+        __WFI();
     }
 }
 

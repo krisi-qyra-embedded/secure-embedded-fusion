@@ -7,6 +7,7 @@
 #include <string.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "tim.h"
 #include "ecdh.h" /* your project header with macros & prototypes */
 
@@ -487,88 +488,135 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
 
 #if ECDH_PROVISIONED_KEYS_PRESENT
 
-    if (is_all_zero_buf(
+    const bool complete_provisioned_bundle =
+        !is_all_zero_buf(
             ctx,
             ecdh_provisioned_sender_private_key,
-            sizeof(ecdh_provisioned_sender_private_key)) ||
-        is_all_zero_buf(
+            sizeof(ecdh_provisioned_sender_private_key)) &&
+        !is_all_zero_buf(
             ctx,
             ecdh_provisioned_sender_public_key,
-            sizeof(ecdh_provisioned_sender_public_key)) ||
-        is_all_zero_buf(
+            sizeof(ecdh_provisioned_sender_public_key)) &&
+        !is_all_zero_buf(
             ctx,
             ecdh_provisioned_receiver_private_key,
-            sizeof(ecdh_provisioned_receiver_private_key)) ||
-        is_all_zero_buf(
+            sizeof(ecdh_provisioned_receiver_private_key)) &&
+        !is_all_zero_buf(
             ctx,
             ecdh_provisioned_receiver_public_key,
-            sizeof(ecdh_provisioned_receiver_public_key))) {
+            sizeof(ecdh_provisioned_receiver_public_key)) &&
+        !is_all_zero_buf(
+            ctx,
+            esp32_provisioned_receiver_public_key,
+            sizeof(esp32_provisioned_receiver_public_key)) &&
+        !is_all_zero_buf(
+            ctx,
+            esp32_provisioned_sender_public_key,
+            sizeof(esp32_provisioned_sender_public_key));
+
+    if (complete_provisioned_bundle) {
+        /*
+         * Only the four local STM32 keys belong in ctx->keys.
+         * The two ESP32 peer public keys remain pinned constants in
+         * ecdh.h and are used later by cross-device ECDH functions.
+         */
+        memcpy(
+            ctx->keys.private_key_sender,
+            ecdh_provisioned_sender_private_key,
+            sizeof(ecdh_provisioned_sender_private_key)
+        );
+
+        memcpy(
+            ctx->keys.public_key_sender,
+            ecdh_provisioned_sender_public_key,
+            sizeof(ecdh_provisioned_sender_public_key)
+        );
+
+        memcpy(
+            ctx->keys.private_key_receiver,
+            ecdh_provisioned_receiver_private_key,
+            sizeof(ecdh_provisioned_receiver_private_key)
+        );
+
+        memcpy(
+            ctx->keys.public_key_receiver,
+            ecdh_provisioned_receiver_public_key,
+            sizeof(ecdh_provisioned_receiver_public_key)
+        );
+
+        ctx->keys.priv_len_sender =
+            sizeof(ecdh_provisioned_sender_private_key);
+
+        ctx->keys.pub_len_sender =
+            sizeof(ecdh_provisioned_sender_public_key);
+
+        ctx->keys.priv_len_receiver =
+            sizeof(ecdh_provisioned_receiver_private_key);
+
+        ctx->keys.pub_len_receiver =
+            sizeof(ecdh_provisioned_receiver_public_key);
 
         log_printf(
-            "[KEYS][ERROR] Provisioned key arrays are present "
-            "but at least one key is all-zero.\r\n"
+            "[KEYS] Complete six-key provisioning bundle found "
+            "in ecdh.h.\r\n"
         );
         tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-        return GEN_KEYS_ERR_BAD_PARAM;
+        log_printf(
+            "[KEYS] Four STM32 local keys and two ESP32 peer "
+            "public keys are present.\r\n"
+        );
+        tim2_delay_ms(KEY_PRINT_DELAY_MS);
+
+        log_printf(
+            "[KEYS] Local STM32 key generation is not required.\r\n"
+        );
+        tim2_delay_ms(KEY_PRINT_DELAY_MS);
+
+        log_printf(
+            "[KEYS] Provisioned key material will not be printed.\r\n"
+        );
+        tim2_delay_ms(KEY_PRINT_DELAY_MS);
+
+        return GEN_KEYS_SUCCESS;
     }
 
-    memcpy(
-        ctx->keys.private_key_sender,
-        ecdh_provisioned_sender_private_key,
-        sizeof(ecdh_provisioned_sender_private_key)
-    );
-
-    memcpy(
-        ctx->keys.public_key_sender,
-        ecdh_provisioned_sender_public_key,
-        sizeof(ecdh_provisioned_sender_public_key)
-    );
-
-    memcpy(
-        ctx->keys.private_key_receiver,
-        ecdh_provisioned_receiver_private_key,
-        sizeof(ecdh_provisioned_receiver_private_key)
-    );
-
-    memcpy(
-        ctx->keys.public_key_receiver,
-        ecdh_provisioned_receiver_public_key,
-        sizeof(ecdh_provisioned_receiver_public_key)
-    );
-
-    ctx->keys.priv_len_sender =
-        sizeof(ecdh_provisioned_sender_private_key);
-
-    ctx->keys.pub_len_sender =
-        sizeof(ecdh_provisioned_sender_public_key);
-
-    ctx->keys.priv_len_receiver =
-        sizeof(ecdh_provisioned_receiver_private_key);
-
-    ctx->keys.pub_len_receiver =
-        sizeof(ecdh_provisioned_receiver_public_key);
-
+    /*
+     * The provisioning block exists, but at least one of the six
+     * arrays is all-zero. Fall through to local STM32 key generation.
+     */
     log_printf(
-        "[KEYS] All four provisioned secp256r1 keys were found "
-        "in ecdh.h.\r\n"
+        "[KEYS][WARNING] Provisioned six-key bundle is incomplete "
+        "or contains an all-zero key.\r\n"
     );
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
     log_printf(
-        "[KEYS] Key generation is not required. "
-        "Existing sender and receiver keypairs loaded.\r\n"
+        "[KEYS][WARNING] Generating new local STM32 sender and "
+        "receiver keypairs.\r\n"
     );
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
     log_printf(
-        "[KEYS] Key material will not be printed.\r\n"
+        "[KEYS][WARNING] ESP32 peer public keys must still be "
+        "provisioned separately.\r\n"
     );
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
-
-    return GEN_KEYS_SUCCESS;
 
 #else
+
+    log_printf(
+        "[KEYS] ECDH_PROVISIONED_KEYS_PRESENT is disabled.\r\n"
+    );
+    tim2_delay_ms(KEY_PRINT_DELAY_MS);
+
+    log_printf(
+        "[KEYS] Generating new local STM32 sender and receiver "
+        "keypairs.\r\n"
+    );
+    tim2_delay_ms(KEY_PRINT_DELAY_MS);
+
+#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 
     cmox_ecc_retval_t  ecc_ret;
     cmox_drbg_retval_t drbg_ret;
@@ -576,11 +624,6 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
     size_t random_len = AES_256_KEY_SIZE;
 
     memset(random_buf, 0, sizeof(random_buf));
-
-    log_printf(
-        "[KEYS] No provisioned key set is enabled in ecdh.h.\r\n"
-    );
-    tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
     log_printf(
         "[KEYS] Generating new sender and receiver "
@@ -900,9 +943,7 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
 
     return GEN_KEYS_SUCCESS;
 
-#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 }
-
 /* Computes ECDH and normalizes the result to 32 bytes. */
 static ecdh_status_t compute_cmox_ecdh_canonical32(
     crypto_ctx_t *ctx,
@@ -1027,9 +1068,15 @@ static ecdh_status_t compute_cmox_ecdh_canonical32(
 }
 
 /**
- * Compute the sender-side ECDH secret:
+ * Compute the STM32 -> ESP32 sender-side ECDH secret:
  *
- *     sender private key x receiver public key
+ *     STM32 provisioned sender private key
+ *     x
+ *     ESP32 provisioned receiver public key
+ *
+ * The peer public key is deliberately taken from the pinned ESP32
+ * provisioning array. ctx->keys.public_key_receiver remains the local
+ * STM32 receiver public key and is not used for this TX direction.
  *
  * The result is normalized to exactly 32 bytes and stored in:
  *
@@ -1043,16 +1090,24 @@ ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
 {
     /* Use the receiver public key and retain the result for key derivation. */
     ecdh_status_t status;
-    size_t receiver_public_len;
 
     if (ctx == NULL) {
         return ECDH_ERR_ECDH_FAILED;
     }
 
-    receiver_public_len =
-        (ctx->keys.pub_len_receiver != 0U)
-        ? ctx->keys.pub_len_receiver
-        : AES_512_KEY_SIZE;
+#if !ECDH_PROVISIONED_KEYS_PRESENT
+    return ECDH_ERR_ECDH_FAILED;
+#else
+
+    if (ctx->keys.priv_len_sender != AES_256_KEY_SIZE ||
+        is_all_zero_buf(ctx,
+                        ctx->keys.private_key_sender,
+                        sizeof(ctx->keys.private_key_sender)) ||
+        is_all_zero_buf(ctx,
+                        esp32_provisioned_receiver_public_key,
+                        sizeof(esp32_provisioned_receiver_public_key))) {
+        return ECDH_ERR_ECDH_FAILED;
+    }
 
     secure_zero(ctx->tmp.computed_secret,
                 sizeof(ctx->tmp.computed_secret));
@@ -1061,9 +1116,9 @@ ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
     status = compute_cmox_ecdh_canonical32(
         ctx,
         ctx->keys.private_key_sender,
-        AES_256_KEY_SIZE,
-        ctx->keys.public_key_receiver,
-        receiver_public_len,
+        ctx->keys.priv_len_sender,
+        esp32_provisioned_receiver_public_key,
+        sizeof(esp32_provisioned_receiver_public_key),
         ctx->tmp.computed_secret,
         &ctx->tmp.computed_secret_len);
 
@@ -1092,7 +1147,14 @@ ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
         *out_len = ECDH_CANONICAL_SECRET_LEN;
     }
 
+    log_printf(
+        "[ECDH][TX] STM32 sender private x "
+        "ESP32 receiver public succeeded\r\n"
+    );
+
     return ECDH_SUCCESS;
+
+#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 }
 
 /**
@@ -2341,15 +2403,9 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
         crypto_uart_log_delay();
 
         log_hex_buffer(
-            "[TX][ORIGINAL PLAINTEXT PAYLOAD]",
+            "[TX][UART PLAINTEXT PACKET]",
             ctx->buffers.plain_text_bytes,
             ctx->tmp.plain_len
-        );
-
-        log_adc_values(
-            "[TX][ORIGINAL ADC VALUES]",
-            ctx->buffers.adc_values,
-            ctx->cfg.adc_sample_count
         );
 
         log_hex_buffer(
@@ -2606,6 +2662,130 @@ gcm_aead_dec_status_t decrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
     secure_zero(ctx->buffers.cipher_text_gcm_aead_receiver, in_len);
 
     return GCM_AEAD_DEC_SUCCESS;
+}
+
+/*
+ * Encrypt one complete UART plaintext frame for the STM32 -> ESP32
+ * startup test.
+ *
+ * Input:
+ *     uart_payload[0..uart_payload_len-1]
+ *
+ * Output:
+ *     nonce_out[12]
+ *     ciphertext_and_tag_out =
+ *         ciphertext[uart_payload_len] || tag[16]
+ *
+ * The payload is copied into the existing crypto context so the
+ * established C-MOX streaming AES-GCM implementation remains the
+ * single encryption implementation.
+ */
+/* Encrypts one UART payload and exports its GCM nonce and tag. */
+gcm_sender_status_t ecdh_encrypt_uart_payload_once(
+    crypto_ctx_t *ctx,
+    const uint8_t *uart_payload,
+    size_t uart_payload_len,
+    uint8_t nonce_out[AES_GCM_AEAD_IV_SIZE],
+    uint8_t *ciphertext_and_tag_out,
+    size_t output_capacity,
+    size_t *output_len)
+{
+    /* Check payload and output capacities before clearing and filling the crypto buffers. */
+    gcm_sender_status_t status;
+    size_t combined_len;
+
+    if (output_len != NULL) {
+        *output_len = 0U;
+    }
+
+    if ((ctx == NULL) ||
+        (uart_payload == NULL) ||
+        (nonce_out == NULL) ||
+        (ciphertext_and_tag_out == NULL) ||
+        (output_len == NULL) ||
+        (uart_payload_len == 0U) ||
+        (uart_payload_len > sizeof(ctx->buffers.plain_text_bytes)) ||
+        (uart_payload_len >
+            (sizeof(ctx->buffers.cipher_text_gcm_aead) -
+             AES_GCM_TAG_SIZE))) {
+        return GCM_SENDER_ERR_BAD_PARAM;
+    }
+
+    combined_len =
+        uart_payload_len +
+        AES_GCM_TAG_SIZE;
+
+    if (output_capacity < combined_len) {
+        return GCM_SENDER_ERR_BAD_PARAM;
+    }
+
+    secure_zero(ctx->buffers.plain_text_bytes,
+                sizeof(ctx->buffers.plain_text_bytes));
+
+    secure_zero(ctx->buffers.cipher_text_gcm_aead,
+                sizeof(ctx->buffers.cipher_text_gcm_aead));
+
+    secure_zero(ctx->auth.ciphertext_sender,
+                sizeof(ctx->auth.ciphertext_sender));
+
+    secure_zero(ctx->auth.tag_sender,
+                sizeof(ctx->auth.tag_sender));
+
+    secure_zero(nonce_out,
+                AES_GCM_AEAD_IV_SIZE);
+
+    secure_zero(ciphertext_and_tag_out,
+                output_capacity);
+
+    memcpy(ctx->buffers.plain_text_bytes,
+           uart_payload,
+           uart_payload_len);
+
+    ctx->tmp.plain_len = uart_payload_len;
+    ctx->tmp.computed_size = 0U;
+    ctx->auth.ciphertext_len = 0U;
+    ctx->auth.mac_len = 0U;
+
+    status =
+        generate_nonce_iv_encrypt_gcm_sender(ctx);
+
+    if (status != GCM_SENDER_SUCCESS) {
+        secure_zero(ctx->buffers.plain_text_bytes,
+                    sizeof(ctx->buffers.plain_text_bytes));
+
+        secure_zero(nonce_out,
+                    AES_GCM_AEAD_IV_SIZE);
+
+        secure_zero(ciphertext_and_tag_out,
+                    output_capacity);
+
+        return status;
+    }
+
+    if ((ctx->auth.ciphertext_len != uart_payload_len) ||
+        (ctx->auth.mac_len != AES_GCM_TAG_SIZE) ||
+        ((ctx->auth.ciphertext_len +
+          ctx->auth.mac_len) != combined_len)) {
+        secure_zero(nonce_out,
+                    AES_GCM_AEAD_IV_SIZE);
+
+        secure_zero(ciphertext_and_tag_out,
+                    output_capacity);
+
+        return GCM_SENDER_ERR_GCM_STREAM;
+    }
+
+    memcpy(nonce_out,
+           ctx->IV_GCM,
+           AES_GCM_AEAD_IV_SIZE);
+
+    memcpy(ciphertext_and_tag_out,
+           ctx->buffers.cipher_text_gcm_aead,
+           combined_len);
+
+    *output_len = combined_len;
+
+    return GCM_SENDER_SUCCESS;
 }
 
 /* Authenticates a GCM payload and reconstructs ADC values. */
@@ -2968,20 +3148,21 @@ void crypto_ctx_init(crypto_ctx_t *ctx)
 /* Initializes the transmit GCM session and counter state. */
 gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
 {
-    /* Derive the session identifier from the domain label and public keys. */
+    /* Include the startup nonce hash and directional public keys in the session digest. */
     static const uint8_t domain_label[] =
     {
         'S', 'T', 'M', '3', '2',
+        '-', 'T', 'X',
+        '-', 'E', 'S', 'P', '3', '2',
         '-', 'G', 'C', 'M',
-        '-', 'N', 'O', 'N', 'C', 'E',
         '-', 'V', '1'
     };
 
     uint8_t material[
         sizeof(domain_label) +
-        2U +
-        (AES_512_KEY_SIZE + 1U) +
-        (AES_512_KEY_SIZE + 1U)
+        1U + AES_512_KEY_SIZE +
+        1U + AES_512_KEY_SIZE +
+        1U + sizeof(nonce_hashed)
     ];
 
     uint8_t digest[32];
@@ -2994,13 +3175,20 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
         return GCM_NONCE_ERR_BAD_PARAM;
     }
 
-    if ((ctx->keys.pub_len_sender == 0U) ||
-        (ctx->keys.pub_len_receiver == 0U) ||
-        (ctx->keys.pub_len_sender >
-            sizeof(ctx->keys.public_key_sender)) ||
-        (ctx->keys.pub_len_receiver >
-            sizeof(ctx->keys.public_key_receiver))) {
+#if !ECDH_PROVISIONED_KEYS_PRESENT
+    return GCM_NONCE_ERR_BAD_KEY_STATE;
+#else
 
+    if ((ctx->keys.pub_len_sender != AES_512_KEY_SIZE) ||
+        is_all_zero_buf(ctx,
+                        ctx->keys.public_key_sender,
+                        sizeof(ctx->keys.public_key_sender)) ||
+        is_all_zero_buf(ctx,
+                        esp32_provisioned_receiver_public_key,
+                        sizeof(esp32_provisioned_receiver_public_key)) ||
+        is_all_zero_buf(ctx,
+                        nonce_hashed,
+                        sizeof(nonce_hashed))) {
         return GCM_NONCE_ERR_BAD_KEY_STATE;
     }
 
@@ -3010,7 +3198,6 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
     memcpy(&material[material_len],
            domain_label,
            sizeof(domain_label));
-
     material_len += sizeof(domain_label);
 
     material[material_len++] =
@@ -3019,17 +3206,23 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
     memcpy(&material[material_len],
            ctx->keys.public_key_sender,
            ctx->keys.pub_len_sender);
-
     material_len += ctx->keys.pub_len_sender;
 
     material[material_len++] =
-        (uint8_t)ctx->keys.pub_len_receiver;
+        (uint8_t)sizeof(esp32_provisioned_receiver_public_key);
 
     memcpy(&material[material_len],
-           ctx->keys.public_key_receiver,
-           ctx->keys.pub_len_receiver);
+           esp32_provisioned_receiver_public_key,
+           sizeof(esp32_provisioned_receiver_public_key));
+    material_len += sizeof(esp32_provisioned_receiver_public_key);
 
-    material_len += ctx->keys.pub_len_receiver;
+    material[material_len++] =
+        (uint8_t)sizeof(nonce_hashed);
+
+    memcpy(&material[material_len],
+           nonce_hashed,
+           sizeof(nonce_hashed));
+    material_len += sizeof(nonce_hashed);
 
     hash_ret = cmox_hash_compute(
         CMOX_SHA256_ALGO,
@@ -3044,7 +3237,6 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
 
     if ((hash_ret != CMOX_HASH_SUCCESS) ||
         (digest_len != sizeof(digest))) {
-
         secure_zero(digest, sizeof(digest));
         return GCM_NONCE_ERR_HASH;
     }
@@ -3052,7 +3244,6 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
     for (size_t offset = 0U;
          offset < sizeof(digest);
          offset += 4U) {
-
         session_id = load_be32(&digest[offset]);
 
         if (session_id != 0U) {
@@ -3071,23 +3262,24 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
 
     ctx->gcm_nonce.session_id = session_id;
     ctx->gcm_nonce.next_counter = GCM_COUNTER_START;
-    ctx->gcm_nonce.current_counter = 0ULL;
+    ctx->gcm_nonce.current_counter = UINT64_C(0);
     ctx->gcm_nonce.initialized = true;
 
     secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
 
     log_printf(
-        "[NONCE] New GCM session initialized: "
+        "[NONCE][TX] New STM32->ESP32 GCM session: "
         "session_id=%08lX first_counter=%08lX%08lX\r\n",
         (unsigned long)ctx->gcm_nonce.session_id,
-        (unsigned long)(
-            ctx->gcm_nonce.next_counter >> 32),
+        (unsigned long)(ctx->gcm_nonce.next_counter >> 32),
         (unsigned long)(
             ctx->gcm_nonce.next_counter &
             UINT64_C(0xFFFFFFFF))
     );
 
     return GCM_NONCE_OK;
+
+#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 }
 
 /* Allocates the next session-and-counter GCM nonce. */
