@@ -15,17 +15,14 @@
 
 extern crypto_ctx_t g_crypto_ctx;
 
-gcm_sender_status_t ecdh_encrypt_uart_payload_once(
-    crypto_ctx_t *ctx,
-    const uint8_t *uart_payload,
-    size_t uart_payload_len,
-    uint8_t nonce_out[AES_GCM_AEAD_IV_SIZE],
-    uint8_t *ciphertext_and_tag_out,
-    size_t output_capacity,
-    size_t *output_len);
-
 /* ========================================================================
- * Bare-metal STM32 <-> ESP32 UART link test layer
+ * Bare-metal encrypted STM32 <-> ESP32 startup transaction.
+ *
+ * Forward request:
+ *   nonce[12] || ciphertext[14] || tag[16] = 42 bytes
+ *
+ * Reverse ACK/NACK:
+ *   nonce[12] || ciphertext[11] || tag[16] = 39 bytes
  *
  * USART2:
  *   debug logs through log_printf()
@@ -34,9 +31,8 @@ gcm_sender_status_t ecdh_encrypt_uart_payload_once(
  *   PC6 = USART6_TX -> ESP32 RX
  *   PC7 = USART6_RX <- ESP32 TX
  *
- * This layer is only for first bring-up.
- * Later this gets replaced by:
- *   binary protocol parser -> CRC32 -> ACK/NACK -> AES-GCM AEAD
+ * The reverse packet is authenticated and decrypted before its
+ * ACK/NACK header, sequence, reason or checksum is interpreted.
  * ======================================================================== */
 
 #define TEST_MSG_TYPE_HEARTBEAT       0x10U
@@ -44,7 +40,7 @@ gcm_sender_status_t ecdh_encrypt_uart_payload_once(
 #define TEST_MSG_TYPE_NACK            0x21U
 #define TEST_RESPONSE_PAYLOAD_LEN     1U
 #define TEST_RESPONSE_FRAME_LEN       11U
-#define ESP32_ACK_TIMEOUT_MS          300U
+#define ESP32_ACK_TIMEOUT_MS          1000U
 #define ESP32_MAX_RETRIES             3U
 
 
@@ -55,8 +51,6 @@ gcm_sender_status_t ecdh_encrypt_uart_payload_once(
 #define TEST_MAGIC_0                0xA5U
 #define TEST_MAGIC_1                0x5AU
 #define TEST_PROTO_VERSION          0x01U
-#define TEST_MSG_TYPE_HEARTBEAT     0x10U
-
 static uint32_t g_test_sequence = 0U;
 static uint32_t g_tx_ok_count = 0U;
 static uint32_t g_tx_fail_count = 0U;
@@ -87,17 +81,18 @@ static uint16_t ESP32_UART_BuildTestFrame(uint8_t *buf,
 
 typedef enum {
     TEST_NACK_REASON_NONE             = 0x00U,
-    TEST_NACK_REASON_BAD_VERSION      = 0x01U,
-    TEST_NACK_REASON_BAD_TYPE         = 0x02U,
-    TEST_NACK_REASON_BAD_LENGTH       = 0x03U,
-    TEST_NACK_REASON_BAD_CHECKSUM     = 0x04U,
+    TEST_NACK_REASON_BAD_CHECKSUM     = 0x01U,
+    TEST_NACK_REASON_BAD_MAGIC        = 0x02U,
+    TEST_NACK_REASON_BAD_FORMAT       = 0x03U,
+    TEST_NACK_REASON_GCM_AUTH         = 0x04U,
     TEST_NACK_REASON_INTERNAL_ERROR   = 0x05U
 } test_nack_reason_t;
 
 typedef enum {
     ESP32_LINK_RESPONSE_ACK = 0,
     ESP32_LINK_RESPONSE_NACK,
-    ESP32_LINK_RESPONSE_TIMEOUT
+    ESP32_LINK_RESPONSE_TIMEOUT,
+    ESP32_LINK_RESPONSE_INVALID
 } ESP32_LinkResponse_t;
 
 static uint32_t g_tx_attempt_count = 0U;
@@ -108,22 +103,31 @@ static uint32_t g_retry_count = 0U;
 static uint32_t g_stale_response_count = 0U;
 static uint32_t g_bad_response_count = 0U;
 
-static ESP32_LinkResponse_t ESP32_UART_WaitForResponse(
+static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
     uint32_t expected_sequence,
     uint32_t timeout_ms,
     uint8_t *nack_reason);
 
-static const char *ESP32_UART_NackReasonToString(uint8_t reason);
+static bool ESP32_UART_LoadEncryptedResponse(
+    crypto_ctx_t *ctx,
+    const uint8_t *wire_packet,
+    size_t wire_len);
+
+static const char *ESP32_UART_NackReasonToString(
+    uint8_t reason);
 
 /* ---------------- private helpers ---------------- */
 
 /* Advances an ESP32 UART ring-buffer index. */
-static uint16_t rb_next(uint16_t index, uint16_t size)
+static uint16_t rb_next(
+    uint16_t index,
+    uint16_t size)
 {
     /* Wrap at the configured buffer size rather than allowing overflow. */
     index++;
 
-    if (index >= size) {
+    if (index >= size)
+    {
         index = 0U;
     }
 
@@ -613,9 +617,10 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     log_printf("[OK] ESP32 UART6 initialized\r\n");
     log_printf("[INFO] ESP32 UART baudrate = %lu\r\n",
                (unsigned long)ESP32_UART_BAUDRATE);
-    log_printf("[INFO] One AES-GCM encrypted UART packet will be sent at startup\r\n");
-    log_printf("[INFO] Test wire format: nonce[12] || ciphertext || tag[16]\r\n");
-    log_printf("[INFO] ACK/NACK and receive-side processing are disabled for this test\r\n");
+    log_printf("[INFO] One encrypted request/response cycle will run at startup\r\n");
+    log_printf("[INFO] STM32 TX wire: nonce[12] || ciphertext[14] || tag[16] = 42 bytes\r\n");
+    log_printf("[INFO] ESP32 RX wire: nonce[12] || ciphertext[11] || tag[16] = 39 bytes\r\n");
+    log_printf("[INFO] ACK/NACK is parsed only after AES-GCM authentication succeeds\r\n");
 
     return ESP32_UART_STATUS_OK;
 }
@@ -624,11 +629,12 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
  * Public test loop function
  * Call this from while(1) in main.c
  * ------------------------------------------------------------ */
+
 /* Runs one ESP32 request/response transaction. */
 void ESP32_UART_LinkTest_RunOnce(void)
 {
     /* Advance the message sequence only after the expected ACK is accepted. */
-    static bool startup_packet_sent = false;
+    static bool transaction_started = false;
 
     uint8_t tx_frame[32];
     uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
@@ -648,43 +654,59 @@ void ESP32_UART_LinkTest_RunOnce(void)
     size_t ciphertext_len;
     gcm_sender_status_t crypto_status;
     ESP32_UART_Status_t write_status;
+    ESP32_LinkResponse_t response;
+    uint8_t nack_reason = TEST_NACK_REASON_NONE;
     uint32_t wait_start;
 
-    if (startup_packet_sent)
+    if (transaction_started)
     {
         log_printf(
-            "[TX][STARTUP] Encrypted startup packet was already sent; "
-            "second transmission suppressed.\r\n");
+            "[LINK][STARTUP] Encrypted startup transaction "
+            "already attempted; second transmission suppressed.\r\n");
+
         return;
     }
+
+    transaction_started = true;
 
     memset(tx_frame, 0, sizeof(tx_frame));
     memset(nonce, 0, sizeof(nonce));
     memset(ciphertext_and_tag, 0, sizeof(ciphertext_and_tag));
     memset(wire_packet, 0, sizeof(wire_packet));
 
-    tx_len = ESP32_UART_BuildTestFrame(
-        tx_frame,
-        sizeof(tx_frame),
-        g_test_sequence);
+    tx_len =
+        ESP32_UART_BuildTestFrame(
+            tx_frame,
+            sizeof(tx_frame),
+            g_test_sequence);
 
     if (tx_len == 0U)
     {
+        g_tx_fail_count++;
+
         log_printf(
             "[TX][ERROR] Failed to build UART plaintext test frame\r\n");
+
         return;
     }
 
-    log_printf("\r\n");
     log_printf(
-        "========== STM32 -> ESP32 ENCRYPTED STARTUP TEST ==========\r\n");
+        "\r\n"
+        "========== STM32 -> ESP32 ENCRYPTED REQUEST ==========\r\n");
+
+#if ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET
 
     log_printf(
         "[TX][PLAINTEXT] Original UART frame [%u bytes]: ",
-        (unsigned int)tx_len);
+        (unsigned)tx_len);
 
-    ESP32_UART_TestPrintHex(tx_frame, tx_len);
+    ESP32_UART_TestPrintHex(
+        tx_frame,
+        tx_len);
+
     log_printf("\r\n");
+
+#endif
 
     crypto_status =
         ecdh_encrypt_uart_payload_once(
@@ -698,9 +720,12 @@ void ESP32_UART_LinkTest_RunOnce(void)
 
     if (crypto_status != GCM_SENDER_SUCCESS)
     {
+        g_tx_fail_count++;
+
         log_printf(
             "[TX][ERROR] UART AES-GCM encryption failed, rc=%d\r\n",
             (int)crypto_status);
+
         return;
     }
 
@@ -708,9 +733,12 @@ void ESP32_UART_LinkTest_RunOnce(void)
             ((size_t)tx_len + AES_GCM_TAG_SIZE)) ||
         (encrypted_len > UINT16_MAX))
     {
+        g_tx_fail_count++;
+
         log_printf(
             "[TX][ERROR] Invalid encrypted size=%u\r\n",
-            (unsigned int)encrypted_len);
+            (unsigned)encrypted_len);
+
         return;
     }
 
@@ -733,48 +761,52 @@ void ESP32_UART_LinkTest_RunOnce(void)
             AES_GCM_AEAD_IV_SIZE +
             encrypted_len);
 
+#if ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET
+
     log_printf(
-        "[TX][NONCE] IV_GCM [%u bytes]: ",
-        (unsigned int)AES_GCM_AEAD_IV_SIZE);
+        "[TX][NONCE] [%u bytes]: ",
+        (unsigned)AES_GCM_AEAD_IV_SIZE);
+
     ESP32_UART_TestPrintHex(
         nonce,
         AES_GCM_AEAD_IV_SIZE);
+
     log_printf("\r\n");
 
     log_printf(
         "[TX][CIPHERTEXT] [%u bytes]: ",
-        (unsigned int)ciphertext_len);
+        (unsigned)ciphertext_len);
+
     ESP32_UART_TestPrintHex(
         ciphertext_and_tag,
         (uint16_t)ciphertext_len);
+
     log_printf("\r\n");
 
     log_printf(
         "[TX][TAG] [%u bytes]: ",
-        (unsigned int)AES_GCM_TAG_SIZE);
+        (unsigned)AES_GCM_TAG_SIZE);
+
     ESP32_UART_TestPrintHex(
         &ciphertext_and_tag[ciphertext_len],
         AES_GCM_TAG_SIZE);
-    log_printf("\r\n");
 
-    log_printf(
-        "[TX][SIZES] plaintext=%u nonce=%u ciphertext=%u "
-        "tag=%u wire=%u\r\n",
-        (unsigned int)tx_len,
-        (unsigned int)AES_GCM_AEAD_IV_SIZE,
-        (unsigned int)ciphertext_len,
-        (unsigned int)AES_GCM_TAG_SIZE,
-        (unsigned int)wire_len);
+    log_printf("\r\n");
 
     log_printf(
         "[TX][WIRE] nonce || ciphertext || tag [%u bytes]: ",
-        (unsigned int)wire_len);
+        (unsigned)wire_len);
+
     ESP32_UART_TestPrintHex(
         wire_packet,
         wire_len);
+
     log_printf("\r\n");
 
+#endif /* ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET */
+
     ESP32_UART_FlushRx();
+
     g_tx_attempt_count++;
 
     write_status =
@@ -790,10 +822,12 @@ void ESP32_UART_LinkTest_RunOnce(void)
         log_printf(
             "[TX][ERROR] USART6 queue failed, status=%d\r\n",
             (int)write_status);
+
         return;
     }
 
-    wait_start = HAL_GetTick();
+    wait_start =
+        HAL_GetTick();
 
     while (ESP32_UART_IsTxBusy())
     {
@@ -804,27 +838,71 @@ void ESP32_UART_LinkTest_RunOnce(void)
             log_printf(
                 "[TX][ERROR] USART6 transmission did not complete "
                 "within 500 ms\r\n");
+
             return;
         }
 
         __WFI();
     }
 
-    startup_packet_sent = true;
-    g_tx_ok_count++;
+    log_printf(
+        "[TX][SUCCESS] Encrypted request sent; "
+        "waiting for 39-byte encrypted ACK/NACK\r\n");
+
+    response =
+        ESP32_UART_WaitForEncryptedResponse(
+            g_test_sequence,
+            ESP32_ACK_TIMEOUT_MS,
+            &nack_reason);
+
     g_loop_count++;
-    g_test_sequence++;
+
+    if (response == ESP32_LINK_RESPONSE_ACK)
+    {
+        g_ack_count++;
+        g_tx_ok_count++;
+        g_test_sequence++;
+
+        log_printf(
+            "[LINK][SUCCESS] Full encrypted request/ACK cycle "
+            "completed\r\n");
+    }
+    else if (response == ESP32_LINK_RESPONSE_NACK)
+    {
+        g_nack_count++;
+        g_tx_fail_count++;
+
+        log_printf(
+            "[LINK][NACK] ESP32 rejected sequence=%lu "
+            "reason=%u (%s)\r\n",
+            (unsigned long)g_test_sequence,
+            (unsigned)nack_reason,
+            ESP32_UART_NackReasonToString(nack_reason));
+    }
+    else if (response == ESP32_LINK_RESPONSE_TIMEOUT)
+    {
+        g_ack_timeout_count++;
+        g_tx_fail_count++;
+
+        log_printf(
+            "[LINK][TIMEOUT] No complete encrypted ACK/NACK "
+            "within %lu ms\r\n",
+            (unsigned long)ESP32_ACK_TIMEOUT_MS);
+    }
+    else
+    {
+        g_bad_response_count++;
+        g_tx_fail_count++;
+
+        log_printf(
+            "[LINK][ERROR] Encrypted ACK/NACK was received but "
+            "failed authentication or protocol validation\r\n");
+    }
+
+    ESP32_UART_LinkTest_PrintHealth();
 
     log_printf(
-        "[TX][SUCCESS] One encrypted startup packet was sent "
-        "to ESP32 over USART6.\r\n");
-
-    log_printf(
-        "[TX][INFO] No ACK/NACK was requested and no receive-side "
-        "decryption was performed.\r\n");
-
-    log_printf(
-        "============================================================\r\n");
+        "=======================================================\r\n");
 }
 
 /* ------------------------------------------------------------
@@ -1003,179 +1081,259 @@ static uint8_t ESP32_UART_TestChecksum8(const uint8_t *data, uint16_t len)
     return sum;
 }
 
-/* Receives and validates a plaintext ESP32 ACK or NACK. */
-static ESP32_LinkResponse_t ESP32_UART_WaitForResponse(
+/* Receives and authenticates an encrypted ESP32 ACK or NACK. */
+static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
     uint32_t expected_sequence,
     uint32_t timeout_ms,
     uint8_t *nack_reason)
 {
-    /* Reject a response with a different sequence or invalid checksum. */
-    uint8_t response[TEST_RESPONSE_FRAME_LEN];
-    uint16_t response_count = 0U;
-    uint32_t start_ms = HAL_GetTick();
+    /* Require the complete wire packet before loading the crypto context. */
+    uint8_t wire_packet[
+        GCM_UART_RESPONSE_WIRE_SIZE];
+
+    gcm_uart_response_t decoded_response;
+    gcm_receiver_status_t crypto_status;
+    ESP32_UART_Status_t uart_status;
+    uint16_t bytes_read = 0U;
 
     if (nack_reason != NULL)
     {
-        *nack_reason = TEST_NACK_REASON_NONE;
+        *nack_reason =
+            TEST_NACK_REASON_NONE;
     }
 
-    memset(response, 0, sizeof(response));
+    memset(
+        wire_packet,
+        0,
+        sizeof(wire_packet));
 
-    while ((HAL_GetTick() - start_ms) < timeout_ms)
+    memset(
+        &decoded_response,
+        0,
+        sizeof(decoded_response));
+
+    uart_status =
+        ESP32_UART_Read(
+            wire_packet,
+            (uint16_t)sizeof(wire_packet),
+            timeout_ms,
+            &bytes_read);
+
+    if ((uart_status != ESP32_UART_STATUS_OK) ||
+        (bytes_read != sizeof(wire_packet)))
     {
-        uint8_t byte;
+        log_printf(
+            "[RX][TIMEOUT] Encrypted response bytes=%u/%u "
+            "status=%d\r\n",
+            (unsigned)bytes_read,
+            (unsigned)sizeof(wire_packet),
+            (int)uart_status);
 
-        if (ESP32_UART_RxAvailable() == 0U)
-        {
-            __WFI();
-            continue;
-        }
+        memset(
+            wire_packet,
+            0,
+            sizeof(wire_packet));
 
-        if (ESP32_UART_ReadByte(&byte, 0U) != ESP32_UART_STATUS_OK)
-        {
-            continue;
-        }
-
-        if (response_count == 0U)
-        {
-            if (byte == TEST_MAGIC_0)
-            {
-                response[response_count++] = byte;
-            }
-
-            continue;
-        }
-
-        if (response_count == 1U)
-        {
-            if (byte == TEST_MAGIC_1)
-            {
-                response[response_count++] = byte;
-            }
-            else if (byte == TEST_MAGIC_0)
-            {
-                response[0] = byte;
-                response_count = 1U;
-            }
-            else
-            {
-                response_count = 0U;
-            }
-
-            continue;
-        }
-
-        response[response_count++] = byte;
-
-        if (response_count == TEST_RESPONSE_FRAME_LEN)
-        {
-            uint8_t calculated_checksum;
-            uint8_t received_checksum;
-            uint32_t received_sequence;
-            uint8_t message_type;
-            uint8_t reason;
-
-            log_printf("[RX] Response from ESP32: ");
-            ESP32_UART_TestPrintHex(response, TEST_RESPONSE_FRAME_LEN);
-            log_printf("\r\n");
-
-            calculated_checksum =
-                ESP32_UART_TestChecksum8(response,
-                                         TEST_RESPONSE_FRAME_LEN - 1U);
-
-            received_checksum =
-                response[TEST_RESPONSE_FRAME_LEN - 1U];
-
-            if (calculated_checksum != received_checksum)
-            {
-                g_bad_response_count++;
-
-                log_printf(
-                    "[RX] Invalid response checksum: calculated=0x%02X received=0x%02X\r\n",
-                    calculated_checksum,
-                    received_checksum);
-
-                response_count = 0U;
-                continue;
-            }
-
-            if ((response[0] != TEST_MAGIC_0) ||
-                (response[1] != TEST_MAGIC_1) ||
-                (response[2] != TEST_PROTO_VERSION) ||
-                (response[4] != TEST_RESPONSE_PAYLOAD_LEN))
-            {
-                g_bad_response_count++;
-
-                log_printf("[RX] Invalid ACK/NACK frame header\r\n");
-
-                response_count = 0U;
-                continue;
-            }
-
-            message_type = response[3];
-
-            received_sequence =
-                ((uint32_t)response[5] << 0U)  |
-                ((uint32_t)response[6] << 8U)  |
-                ((uint32_t)response[7] << 16U) |
-                ((uint32_t)response[8] << 24U);
-
-            reason = response[9];
-
-            if (received_sequence != expected_sequence)
-            {
-                g_stale_response_count++;
-
-                log_printf(
-                    "[RX] Stale response ignored: expected_seq=%lu received_seq=%lu\r\n",
-                    (unsigned long)expected_sequence,
-                    (unsigned long)received_sequence);
-
-                response_count = 0U;
-                continue;
-            }
-
-            g_rx_packet_count++;
-
-            if ((message_type == TEST_MSG_TYPE_ACK) &&
-                (reason == TEST_NACK_REASON_NONE))
-            {
-                log_printf("[RX] ACK accepted for seq=%lu\r\n",
-                           (unsigned long)received_sequence);
-
-                return ESP32_LINK_RESPONSE_ACK;
-            }
-
-            if (message_type == TEST_MSG_TYPE_NACK)
-            {
-                if (nack_reason != NULL)
-                {
-                    *nack_reason = reason;
-                }
-
-                log_printf(
-                    "[RX] NACK accepted for seq=%lu reason=%u (%s)\r\n",
-                    (unsigned long)received_sequence,
-                    (unsigned int)reason,
-                    ESP32_UART_NackReasonToString(reason));
-
-                return ESP32_LINK_RESPONSE_NACK;
-            }
-
-            g_bad_response_count++;
-
-            log_printf("[RX] Unknown response type=0x%02X\r\n",
-                       message_type);
-
-            response_count = 0U;
-        }
+        return ESP32_LINK_RESPONSE_TIMEOUT;
     }
 
-    return ESP32_LINK_RESPONSE_TIMEOUT;
+    if (!ESP32_UART_LoadEncryptedResponse(
+            &g_crypto_ctx,
+            wire_packet,
+            sizeof(wire_packet)))
+    {
+        memset(
+            wire_packet,
+            0,
+            sizeof(wire_packet));
+
+        return ESP32_LINK_RESPONSE_INVALID;
+    }
+
+#if ESP32_UART_DEBUG_PRINT_RX_ENCRYPTED_PACKET
+
+    log_printf(
+        "\r\n"
+        "========== ESP32 -> STM32 ENCRYPTED RESPONSE ==========\r\n");
+
+    log_printf(
+        "[RX][WIRE] nonce || ciphertext || tag [%u bytes]: ",
+        (unsigned)sizeof(wire_packet));
+
+    ESP32_UART_TestPrintHex(
+        wire_packet,
+        (uint16_t)sizeof(wire_packet));
+
+    log_printf("\r\n");
+
+    log_printf(
+        "[RX][NONCE] [%u bytes]: ",
+        (unsigned)AES_GCM_AEAD_IV_SIZE);
+
+    ESP32_UART_TestPrintHex(
+        g_crypto_ctx.IV_GCM_receiver,
+        AES_GCM_AEAD_IV_SIZE);
+
+    log_printf("\r\n");
+
+    log_printf(
+        "[RX][CIPHERTEXT] [%u bytes]: ",
+        (unsigned)GCM_UART_RESPONSE_CIPHERTEXT_SIZE);
+
+    ESP32_UART_TestPrintHex(
+        g_crypto_ctx.auth.ciphertext_sender,
+        GCM_UART_RESPONSE_CIPHERTEXT_SIZE);
+
+    log_printf("\r\n");
+
+    log_printf(
+        "[RX][TAG] [%u bytes]: ",
+        (unsigned)AES_GCM_TAG_SIZE);
+
+    ESP32_UART_TestPrintHex(
+        g_crypto_ctx.auth.tag_sender,
+        AES_GCM_TAG_SIZE);
+
+    log_printf("\r\n");
+
+#endif /* ESP32_UART_DEBUG_PRINT_RX_ENCRYPTED_PACKET */
+
+    crypto_status =
+        decrypt_verify_recombine_gcm_receiver(
+            &g_crypto_ctx,
+            expected_sequence,
+            &decoded_response);
+
+    memset(
+        wire_packet,
+        0,
+        sizeof(wire_packet));
+
+    if (crypto_status != GCM_RECEIVER_SUCCESS)
+    {
+        log_printf(
+            "[RX][ERROR] Encrypted ACK/NACK processing failed "
+            "(rc=%d)\r\n",
+            (int)crypto_status);
+
+        return ESP32_LINK_RESPONSE_INVALID;
+    }
+
+    g_rx_packet_count++;
+
+    if ((decoded_response.message_type ==
+            GCM_UART_MSG_TYPE_ACK) &&
+        (decoded_response.reason ==
+            TEST_NACK_REASON_NONE))
+    {
+        log_printf(
+            "[RX][ACK] Authenticated ACK accepted for seq=%lu\r\n",
+            (unsigned long)decoded_response.sequence);
+
+        return ESP32_LINK_RESPONSE_ACK;
+    }
+
+    if (decoded_response.message_type ==
+        GCM_UART_MSG_TYPE_NACK)
+    {
+        if (nack_reason != NULL)
+        {
+            *nack_reason =
+                decoded_response.reason;
+        }
+
+        log_printf(
+            "[RX][NACK] Authenticated NACK accepted for "
+            "seq=%lu reason=%u (%s)\r\n",
+            (unsigned long)decoded_response.sequence,
+            (unsigned)decoded_response.reason,
+            ESP32_UART_NackReasonToString(
+                decoded_response.reason));
+
+        return ESP32_LINK_RESPONSE_NACK;
+    }
+
+    return ESP32_LINK_RESPONSE_INVALID;
+}
+
+/* Loads the received nonce, ciphertext and tag into the crypto context. */
+static bool ESP32_UART_LoadEncryptedResponse(
+    crypto_ctx_t *ctx,
+    const uint8_t *wire_packet,
+    size_t wire_len)
+{
+    /* Clear prior receive state before copying the fixed packet fields. */
+    const size_t nonce_offset = 0U;
+    const size_t ciphertext_offset =
+        AES_GCM_AEAD_IV_SIZE;
+    const size_t tag_offset =
+        AES_GCM_AEAD_IV_SIZE +
+        GCM_UART_RESPONSE_CIPHERTEXT_SIZE;
+
+    if ((ctx == NULL) ||
+        (wire_packet == NULL) ||
+        (wire_len != GCM_UART_RESPONSE_WIRE_SIZE) ||
+        (sizeof(ctx->IV_GCM_receiver) !=
+            AES_GCM_AEAD_IV_SIZE) ||
+        (sizeof(ctx->auth.tag_sender) <
+            AES_GCM_TAG_SIZE) ||
+        (sizeof(ctx->auth.ciphertext_sender) <
+            GCM_UART_RESPONSE_CIPHERTEXT_SIZE))
+    {
+        return false;
+    }
+
+    memset(
+        ctx->IV_GCM_receiver,
+        0,
+        sizeof(ctx->IV_GCM_receiver));
+
+    memset(
+        ctx->auth.ciphertext_sender,
+        0,
+        sizeof(ctx->auth.ciphertext_sender));
+
+    memset(
+        ctx->auth.tag_sender,
+        0,
+        sizeof(ctx->auth.tag_sender));
+
+    memset(
+        ctx->buffers.decrypted_bytes,
+        0,
+        sizeof(ctx->buffers.decrypted_bytes));
+
+    ctx->auth.ciphertext_len = 0U;
+    ctx->auth.mac_len = 0U;
+    ctx->tmp.computed_size = 0U;
+
+    memcpy(
+        ctx->IV_GCM_receiver,
+        &wire_packet[nonce_offset],
+        AES_GCM_AEAD_IV_SIZE);
+
+    memcpy(
+        ctx->auth.ciphertext_sender,
+        &wire_packet[ciphertext_offset],
+        GCM_UART_RESPONSE_CIPHERTEXT_SIZE);
+
+    memcpy(
+        ctx->auth.tag_sender,
+        &wire_packet[tag_offset],
+        AES_GCM_TAG_SIZE);
+
+    ctx->auth.ciphertext_len =
+        GCM_UART_RESPONSE_CIPHERTEXT_SIZE;
+
+    ctx->auth.mac_len =
+        AES_GCM_TAG_SIZE;
+
+    return true;
 }
 
 /* Returns a diagnostic label for an ESP32 NACK reason. */
-static const char *ESP32_UART_NackReasonToString(uint8_t reason)
+static const char *ESP32_UART_NackReasonToString(
+    uint8_t reason)
 {
     /* Use the unknown label when the reason is not recognized. */
     switch (reason)
@@ -1183,17 +1341,17 @@ static const char *ESP32_UART_NackReasonToString(uint8_t reason)
         case TEST_NACK_REASON_NONE:
             return "NONE";
 
-        case TEST_NACK_REASON_BAD_VERSION:
-            return "BAD_VERSION";
-
-        case TEST_NACK_REASON_BAD_TYPE:
-            return "BAD_TYPE";
-
-        case TEST_NACK_REASON_BAD_LENGTH:
-            return "BAD_LENGTH";
-
         case TEST_NACK_REASON_BAD_CHECKSUM:
             return "BAD_CHECKSUM";
+
+        case TEST_NACK_REASON_BAD_MAGIC:
+            return "BAD_MAGIC";
+
+        case TEST_NACK_REASON_BAD_FORMAT:
+            return "BAD_FORMAT";
+
+        case TEST_NACK_REASON_GCM_AUTH:
+            return "GCM_AUTH_FAILURE";
 
         case TEST_NACK_REASON_INTERNAL_ERROR:
             return "INTERNAL_ERROR";

@@ -131,7 +131,8 @@ DS18B20_AppRuntimeStatus_t app_st_ds18b20;
 //typedef enum {
 //    APP_STATUS_OK = 0,
 //    APP_STATUS_INIT_FAIL = 1,
-//} app_status_t;
+//} app_status_t;
+
 
 /* Initializes crypto and runs one encrypted startup transaction. */
 int main(void)
@@ -243,9 +244,30 @@ int main(void)
             "failed, rc=%ld\r\n",
             (long)crypto_rc);
 
-        handle_error("STM32->ESP32 sender crypto initialization failed");
+        handle_error(
+            "STM32->ESP32 sender crypto initialization failed");
     }
 
+    crypto_rc =
+        receiver_init_ecdh_crypto(
+            &g_crypto_ctx);
+
+    if (crypto_rc != RECEIVER_INIT_SUCCESS)
+    {
+        log_printf(
+            "[CRYPTO][ERROR] receiver_init_ecdh_crypto "
+            "failed, rc=%ld\r\n",
+            (long)crypto_rc);
+
+        handle_error(
+            "ESP32->STM32 receiver crypto initialization failed");
+    }
+
+    /*
+     * This nonce session remains required for the STM32 transmitter.
+     * The reverse receive path does not allocate a nonce; it copies
+     * nonce[12] from the ESP32's 39-byte response packet.
+     */
     crypto_rc =
         gcm_nonce_session_init(
             &g_crypto_ctx);
@@ -257,18 +279,31 @@ int main(void)
             "failed, rc=%ld\r\n",
             (long)crypto_rc);
 
-        handle_error("GCM nonce session initialization failed");
+        handle_error(
+            "STM32 TX GCM nonce session initialization failed");
     }
 
     log_printf(
         "\r\n"
-        "[CRYPTO] STM32->ESP32 TX key and nonce session are ready.\r\n");
+        "[CRYPTO] Full-duplex directional keys are ready.\r\n");
+
+    log_printf(
+        "[CRYPTO] TX: STM32 sender private x "
+        "ESP32 receiver public.\r\n");
+
+    log_printf(
+        "[CRYPTO] RX: STM32 receiver private x "
+        "ESP32 sender public.\r\n");
+
+    log_printf(
+        "[CRYPTO] RX nonce generation is disabled; "
+        "the nonce is received from ESP32.\r\n");
 
     ESP32_UART_LinkTest_RunOnce();
 
     log_printf(
-        "[MAIN] Startup encrypted UART test complete; "
-        "entering idle loop.\r\n");
+        "[MAIN] Encrypted request/ACK-NACK startup transaction "
+        "complete; entering idle loop.\r\n");
 
     for (;;)
     {

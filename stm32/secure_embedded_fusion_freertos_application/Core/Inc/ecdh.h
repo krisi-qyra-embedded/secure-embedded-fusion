@@ -31,6 +31,43 @@
 #define ECDH_CANONICAL_SECRET_LEN   32U
 
 
+/*
+ * ESP32 -> STM32 encrypted ACK/NACK response format.
+ *
+ * Plaintext:
+ *   magic[2] || version[1] || type[1] || payload_len[1] ||
+ *   sequence_le[4] || reason[1] || checksum8[1]
+ *
+ * Encrypted UART wire packet:
+ *   nonce[12] || ciphertext[11] || tag[16]
+ */
+#define GCM_UART_RESPONSE_PLAINTEXT_SIZE      11U
+#define GCM_UART_RESPONSE_CIPHERTEXT_SIZE     11U
+#define GCM_UART_RESPONSE_WIRE_SIZE           \
+    (AES_GCM_AEAD_IV_SIZE +                   \
+     GCM_UART_RESPONSE_CIPHERTEXT_SIZE +      \
+     AES_GCM_TAG_SIZE)
+
+#define GCM_UART_MAGIC_0                      0xA5U
+#define GCM_UART_MAGIC_1                      0x5AU
+#define GCM_UART_PROTOCOL_VERSION             0x01U
+#define GCM_UART_MSG_TYPE_ACK                 0x20U
+#define GCM_UART_MSG_TYPE_NACK                0x21U
+#define GCM_UART_RESPONSE_PAYLOAD_LEN         0x01U
+
+#ifndef ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET
+#define ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET  1U
+#endif
+
+#ifndef ECDH_DEBUG_PRINT_RX_DERIVED_MATERIAL
+#define ECDH_DEBUG_PRINT_RX_DERIVED_MATERIAL  0U
+#endif
+
+#if GCM_UART_RESPONSE_WIRE_SIZE != 39U
+#error "ESP32 encrypted ACK/NACK wire packet must be 39 bytes"
+#endif
+
+
 #define CRYPTO_UART_LOG_DELAY_MS     20U
 
 #define ECDH_PROVISIONED_KEYS_PRESENT    1
@@ -341,13 +378,26 @@ typedef enum {
 } gcm_sender_status_t;
 
 typedef enum {
-    GCM_RECEIVER_SUCCESS            =  0,
-    GCM_RECEIVER_ERR_GCM_STREAM     = -1,
-    GCM_RECEIVER_ERR_GCM_SINGLECALL = -2,
-    GCM_RECEIVER_ERR_EMPTY_PLAINTEXT= -3,
-    GCM_RECEIVER_ERR_ADC_MISMATCH   = -4,
-	GCM_RECEIVER_ERR_BAD_PARAM      = -5
+    GCM_RECEIVER_SUCCESS              =   0,
+    GCM_RECEIVER_ERR_GCM_STREAM       =  -1,
+    GCM_RECEIVER_ERR_GCM_SINGLECALL   =  -2,
+    GCM_RECEIVER_ERR_EMPTY_PLAINTEXT  =  -3,
+    GCM_RECEIVER_ERR_ADC_MISMATCH     =  -4,
+    GCM_RECEIVER_ERR_BAD_PARAM        =  -5,
+    GCM_RECEIVER_ERR_FRAME_LENGTH     =  -6,
+    GCM_RECEIVER_ERR_FRAME_CHECKSUM   =  -7,
+    GCM_RECEIVER_ERR_FRAME_HEADER     =  -8,
+    GCM_RECEIVER_ERR_STALE_SEQUENCE   =  -9,
+    GCM_RECEIVER_ERR_FRAME_TYPE       = -10
 } gcm_receiver_status_t;
+
+typedef struct
+{
+    uint8_t message_type;
+    uint8_t reason;
+    uint32_t sequence;
+
+} gcm_uart_response_t;
 
 typedef enum {
     RECOMBINE_OK = 0,
@@ -422,7 +472,11 @@ typedef struct {
 
     uint8_t Key[AES_256_KEY_SIZE];
     uint8_t IV[AES_256_IV_SIZE];
+
     uint8_t IV_GCM[AES_GCM_AEAD_IV_SIZE];
+
+    uint8_t IV_GCM_receiver[AES_GCM_AEAD_IV_SIZE];
+
     gcm_nonce_state_t gcm_nonce;
 } crypto_ctx_t;
 
@@ -466,7 +520,18 @@ gcm_aead_single_status_t encrypt_aead_gcm_singlecall(crypto_ctx_t *ctx);
 gcm_dec_status_t decrypt_verify_aes_gcm_receiver(crypto_ctx_t *ctx);
 gcm_aead_dec_status_t decrypt_aead_gcm_singlecall(crypto_ctx_t *ctx);
 gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(crypto_ctx_t *ctx);
-gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(crypto_ctx_t *ctx);
+gcm_sender_status_t ecdh_encrypt_uart_payload_once(
+    crypto_ctx_t *ctx,
+    const uint8_t *uart_payload,
+    size_t uart_payload_len,
+    uint8_t nonce_out[AES_GCM_AEAD_IV_SIZE],
+    uint8_t *ciphertext_and_tag_out,
+    size_t output_capacity,
+    size_t *output_len);
+gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
+    crypto_ctx_t *ctx,
+    uint32_t expected_sequence,
+    gcm_uart_response_t *response_out);
 gcm_master_status_t derive_gcm_iv_from_drbg(crypto_ctx_t *ctx);
 gcm_nonce_status_t gcm_nonce_allocate(
     crypto_ctx_t *ctx);

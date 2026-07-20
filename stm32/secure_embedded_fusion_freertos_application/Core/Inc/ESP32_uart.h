@@ -18,12 +18,7 @@ extern "C" {
  * STM32F411 Nucleo:
  * USART6_TX = PC6, AF8
  * USART6_RX = PC7, AF8
- *
- * Same typical baudrate as PMS/PM2.5 UART sensors.
- * Change this if your PM2.5 driver uses another baudrate.
  */
-
-//#define ESP32_UART_PROVIDE_IRQ_HANDLER 	0U
 
 #ifndef ESP32_UART_BAUDRATE
 #define ESP32_UART_BAUDRATE              9600U
@@ -45,7 +40,16 @@ extern "C" {
 #define ESP32_UART_PROVIDE_IRQ_HANDLER   1U
 #endif
 
-typedef enum {
+#ifndef ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET
+#define ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET  1U
+#endif
+
+#ifndef ESP32_UART_DEBUG_PRINT_RX_ENCRYPTED_PACKET
+#define ESP32_UART_DEBUG_PRINT_RX_ENCRYPTED_PACKET  1U
+#endif
+
+typedef enum
+{
     ESP32_UART_STATUS_OK = 0,
     ESP32_UART_STATUS_ERROR,
     ESP32_UART_STATUS_TIMEOUT,
@@ -53,9 +57,11 @@ typedef enum {
     ESP32_UART_STATUS_INVALID_PARAM,
     ESP32_UART_STATUS_NOT_INITIALIZED,
     ESP32_UART_STATUS_OVERFLOW
+
 } ESP32_UART_Status_t;
 
-typedef struct {
+typedef struct
+{
     uint32_t rx_bytes;
     uint32_t tx_bytes;
     uint32_t rx_overflows;
@@ -64,22 +70,26 @@ typedef struct {
     uint32_t framing_errors;
     uint32_t noise_errors;
     uint32_t overrun_errors;
+
 } ESP32_UART_Stats_t;
 
 ESP32_UART_Status_t ESP32_UART_Init(void);
 void ESP32_UART_DeInit(void);
 
-ESP32_UART_Status_t ESP32_UART_Write(const uint8_t *data,
-                                     uint16_t len,
-                                     uint32_t timeout_ms);
+ESP32_UART_Status_t ESP32_UART_Write(
+    const uint8_t *data,
+    uint16_t len,
+    uint32_t timeout_ms);
 
-ESP32_UART_Status_t ESP32_UART_Read(uint8_t *data,
-                                    uint16_t len,
-                                    uint32_t timeout_ms,
-                                    uint16_t *bytes_read);
+ESP32_UART_Status_t ESP32_UART_Read(
+    uint8_t *data,
+    uint16_t len,
+    uint32_t timeout_ms,
+    uint16_t *bytes_read);
 
-ESP32_UART_Status_t ESP32_UART_ReadByte(uint8_t *byte,
-                                        uint32_t timeout_ms);
+ESP32_UART_Status_t ESP32_UART_ReadByte(
+    uint8_t *byte,
+    uint32_t timeout_ms);
 
 uint16_t ESP32_UART_RxAvailable(void);
 uint16_t ESP32_UART_TxFreeSpace(void);
@@ -89,12 +99,11 @@ void ESP32_UART_FlushTx(void);
 
 bool ESP32_UART_IsTxBusy(void);
 
-void ESP32_UART_GetStats(ESP32_UART_Stats_t *stats);
+void ESP32_UART_GetStats(
+    ESP32_UART_Stats_t *stats);
+
 void ESP32_UART_ClearStats(void);
 
-/* ------------------------------------------------------------
- * Bare-metal ESP32 UART link test API
- * ------------------------------------------------------------ */
 ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void);
 void ESP32_UART_LinkTest_RunOnce(void);
 void ESP32_UART_LinkTest_DelayMs(uint32_t delay_ms);
@@ -102,7 +111,7 @@ void ESP32_UART_LinkTest_PrintHealth(void);
 
 /*
  * Call this from USART6_IRQHandler().
- * If ESP32_UART_PROVIDE_IRQ_HANDLER = 1, the .c file already provides USART6_IRQHandler().
+ * If ESP32_UART_PROVIDE_IRQ_HANDLER = 1, ESP32_uart.c provides it.
  */
 void ESP32_UART_IRQHandler(void);
 

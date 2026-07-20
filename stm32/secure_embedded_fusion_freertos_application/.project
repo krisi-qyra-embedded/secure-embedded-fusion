@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>secure_embedded_fusion_ESP32_UART_AES_GCM</name>
+	<name>secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX</name>
 	<comment></comment>
 	<projects>
 	</projects>
