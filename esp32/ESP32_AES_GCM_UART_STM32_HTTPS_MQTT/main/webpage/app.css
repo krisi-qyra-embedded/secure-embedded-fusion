@@ -14,71 +14,71 @@ h1 {
 }
 
 h2 {
-	font-size: 1.4em;
+    font-size: 1.4em;
     color: #1d3557;
 }
 
 h3 {
-	font-size: 1.2em;
+    font-size: 1.2em;
     color: #1d3557;
 }
 
 h4 {
-	font-size: 1em;
+    font-size: 1em;
     color: #1d3557;
 }
 
 .gr {
-	color: green;
+    color: green;
 }
 
 .rd {
-	color: red;
+    color: red;
 }
 
 #local_time {
-	display: inline;
-	color: #1d3557;
+    display: inline;
+    color: #1d3557;
 }
 
 #latest_firmware, #latest_firmware_label {
-	display: inline;
+    display: inline;
 }
 
 #latest_firmware {
-	color: #1d3557;
+    color: #1d3557;
 }
 
 #connected_ap_label, #connected_ap {
-	display: inline;
+    display: inline;
 }
 
 #ip_address_label, #netmask_label, #gateway_label {
-	display: inline;
+    display: inline;
 }
 
 #wifi_connect_ip, #wifi_connect_netmask, #wifi_connect_gw {
-	display: inline;
+    display: inline;
 }
 
 #connected_ap {
-	color: #1d3557;
+    color: #1d3557;
 }
 
 #wifi_connect_ip {
-	color: #1d3557;
+    color: #1d3557;
 }
 
 #wifi_connect_netmask {
-	color: #1d3557;
+    color: #1d3557;
 }
 
 #wifi_connect_gw {
-	color: #1d3557;
+    color: #1d3557;
 }
 
 #disconnect_wifi {
-	display: none;
+    display: none;
 }
 
 .buttons {
@@ -86,8 +86,8 @@ h4 {
 }
 
 input[type="button"] {
-	font-size: 12px;
-	border: 0;
+    font-size: 12px;
+    border: 0;
     line-height: 2;
     padding: 0 5px;
     text-align: center;
@@ -110,4 +110,52 @@ input[type="button"]:hover {
 input[type="button"]:active {
     box-shadow: inset -2px -2px 3px rgba(255, 255, 255, .6),
                 inset 2px 2px 3px rgba(0, 0, 0, .6);
+}
+
+/*
+ * Sensor dashboard styling
+ */
+.sensor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+    margin: 10px 0;
+}
+
+.sensor-card {
+    background: #ffffff;
+    border: 1px solid rgba(29, 53, 87, 0.18);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.sensor-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.sensor-row {
+    margin: 6px 0;
+    color: #1d3557;
+}
+
+.sensor-label {
+    font-weight: bold;
+    color: #0272B7;
+}
+
+.sensor-value {
+    color: #1d3557;
+}
+
+.sensor-status {
+    margin-top: 8px;
+    font-size: 0.95em;
+    color: #1d3557;
+}
+
+#ccs811_status,
+#bme280_status {
+    color: #1d3557;
 }

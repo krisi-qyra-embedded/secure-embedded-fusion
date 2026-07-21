@@ -1,9 +1,13 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-01
+ * Documentation date: 2026-07-03
  */
 
 #ifndef MAIN_HTTP_SERVER_H_
 #define MAIN_HTTP_SERVER_H_
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "esp_err.h"
 
 #define OTA_UPDATE_PENDING 		0
 #define OTA_UPDATE_SUCCESSFUL	1

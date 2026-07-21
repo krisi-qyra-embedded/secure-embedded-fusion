@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-01
+ * Documentation date: 2026-07-03
  */
 
 #ifndef MAIN_WIFI_APP_H_
@@ -11,6 +11,8 @@
 #include "freertos/FreeRTOS.h"
 
 typedef void (*wifi_connected_event_callback_t)(void);
+typedef void (*wifi_app_softap_client_connected_cb_t)(void);
+typedef void (*wifi_app_softap_last_client_disconnected_cb_t)(void);
 
 #define WIFI_AP_SSID				"ESP32_AP"			// AP name
 #define WIFI_AP_PASSWORD			"password"			// AP password
@@ -54,6 +56,10 @@ wifi_config_t* wifi_app_get_wifi_config(void);
 void wifi_app_set_callback(wifi_connected_event_callback_t cb);
 
 void wifi_app_call_callback(void);
+
+void wifi_app_set_softap_client_connected_callback(wifi_app_softap_client_connected_cb_t cb);
+void wifi_app_set_softap_last_client_disconnected_callback(wifi_app_softap_last_client_disconnected_cb_t cb);
+int wifi_app_get_softap_client_count(void);
 
 int8_t wifi_app_get_rssi(void);
 

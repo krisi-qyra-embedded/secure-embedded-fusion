@@ -8,4 +8,4 @@ set(EXTRA_COMPONENT_DIRS
 )
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(esp32_basic_test_app)
+project(esp32_mqtt_https_secured_app)
