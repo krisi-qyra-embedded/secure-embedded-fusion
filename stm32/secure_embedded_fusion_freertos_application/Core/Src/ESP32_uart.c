@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #include "ESP32_uart.h"
@@ -16,7 +16,7 @@
 extern crypto_ctx_t g_crypto_ctx;
 
 /* ========================================================================
- * Bare-metal encrypted STM32 <-> ESP32 startup transaction.
+ * Bare-metal encrypted STM32 <-> ESP32 runtime transaction.
  *
  * Forward request:
  *   nonce[12] || ciphertext[14] || tag[16] = 42 bytes
@@ -617,7 +617,7 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     log_printf("[OK] ESP32 UART6 initialized\r\n");
     log_printf("[INFO] ESP32 UART baudrate = %lu\r\n",
                (unsigned long)ESP32_UART_BAUDRATE);
-    log_printf("[INFO] One encrypted request/response cycle will run at startup\r\n");
+    log_printf("[INFO] Encrypted request/response cycles run continuously from main loop\r\n");
     log_printf("[INFO] STM32 TX wire: nonce[12] || ciphertext[14] || tag[16] = 42 bytes\r\n");
     log_printf("[INFO] ESP32 RX wire: nonce[12] || ciphertext[11] || tag[16] = 39 bytes\r\n");
     log_printf("[INFO] ACK/NACK is parsed only after AES-GCM authentication succeeds\r\n");
@@ -634,8 +634,6 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
 void ESP32_UART_LinkTest_RunOnce(void)
 {
     /* Advance the message sequence only after the expected ACK is accepted. */
-    static bool transaction_started = false;
-
     uint8_t tx_frame[32];
     uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
 
@@ -657,17 +655,6 @@ void ESP32_UART_LinkTest_RunOnce(void)
     ESP32_LinkResponse_t response;
     uint8_t nack_reason = TEST_NACK_REASON_NONE;
     uint32_t wait_start;
-
-    if (transaction_started)
-    {
-        log_printf(
-            "[LINK][STARTUP] Encrypted startup transaction "
-            "already attempted; second transmission suppressed.\r\n");
-
-        return;
-    }
-
-    transaction_started = true;
 
     memset(tx_frame, 0, sizeof(tx_frame));
     memset(nonce, 0, sizeof(nonce));

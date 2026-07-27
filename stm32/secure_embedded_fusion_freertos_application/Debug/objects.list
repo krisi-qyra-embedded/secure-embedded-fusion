@@ -25,6 +25,7 @@
 "./Core/Src/sig_sensors.o"
 "./Core/Src/spi_dma.o"
 "./Core/Src/sram_startup_entropy.o"
+"./Core/Src/stm32_gcm_nvm.o"
 "./Core/Src/stm32f4xx_it.o"
 "./Core/Src/syscalls.o"
 "./Core/Src/sysmem.o"

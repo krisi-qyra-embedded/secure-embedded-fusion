@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #ifndef ECDH_H_
@@ -159,7 +159,8 @@ typedef enum
     GCM_NONCE_ERR_NO_SESSION     = -2,
     GCM_NONCE_ERR_BAD_KEY_STATE  = -3,
     GCM_NONCE_ERR_HASH           = -4,
-    GCM_NONCE_ERR_EXHAUSTED      = -5
+    GCM_NONCE_ERR_EXHAUSTED      = -5,
+    GCM_NONCE_ERR_NVM            = -6
 
 } gcm_nonce_status_t;
 
@@ -388,7 +389,9 @@ typedef enum {
     GCM_RECEIVER_ERR_FRAME_CHECKSUM   =  -7,
     GCM_RECEIVER_ERR_FRAME_HEADER     =  -8,
     GCM_RECEIVER_ERR_STALE_SEQUENCE   =  -9,
-    GCM_RECEIVER_ERR_FRAME_TYPE       = -10
+    GCM_RECEIVER_ERR_FRAME_TYPE       = -10,
+    GCM_RECEIVER_ERR_REPLAY           = -11,
+    GCM_RECEIVER_ERR_NVM              = -12
 } gcm_receiver_status_t;
 
 typedef struct

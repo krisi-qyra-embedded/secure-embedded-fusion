@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #ifndef ENTROPY_PERSONALIZATION_NONCE_GEN_H_

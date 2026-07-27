@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #include <stdint.h>
@@ -10,6 +10,7 @@
 #include <assert.h>
 #include "tim.h"
 #include "ecdh.h" /* your project header with macros & prototypes */
+#include "stm32_gcm_nvm.h"
 
 #define KEY_PRINT_DELAY_MS       20U
 #define KEY_BYTES_PER_LINE        8U
@@ -2963,6 +2964,7 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
     uint32_t received_sequence;
     uint32_t session_id;
     uint64_t counter;
+    stm32_gcm_nvm_replay_result_t replay_result;
     gcm_dec_status_t gcm_rc;
 
     if ((ctx == NULL) ||
@@ -3092,6 +3094,70 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         return GCM_RECEIVER_ERR_FRAME_TYPE;
     }
 
+    session_id =
+        load_be32(
+            &ctx->IV_GCM_receiver[0]);
+
+    counter =
+        load_be64(
+            &ctx->IV_GCM_receiver[4]);
+
+    replay_result =
+        stm32_gcm_nvm_check_and_commit_rx(
+            session_id,
+            counter);
+
+    if (replay_result ==
+        STM32_GCM_REPLAY_DUPLICATE_LAST) {
+        log_printf(
+            "[RX][REPLAY] Duplicate ESP32 response suppressed: "
+            "session=%08lX counter=%08lX%08lX",
+            (unsigned long)session_id,
+            (unsigned long)(counter >> 32),
+            (unsigned long)(
+                counter &
+                UINT64_C(0xFFFFFFFF)));
+
+        secure_zero(
+            ctx->buffers.decrypted_bytes,
+            sizeof(ctx->buffers.decrypted_bytes));
+
+        return GCM_RECEIVER_ERR_REPLAY;
+    }
+
+    if ((replay_result ==
+            STM32_GCM_REPLAY_REJECT_OLD) ||
+        (replay_result ==
+            STM32_GCM_REPLAY_BAD_NONCE)) {
+        log_printf(
+            "[RX][REPLAY] Old/replayed ESP32 response rejected: "
+            "session=%08lX counter=%08lX%08lX",
+            (unsigned long)session_id,
+            (unsigned long)(counter >> 32),
+            (unsigned long)(
+                counter &
+                UINT64_C(0xFFFFFFFF)));
+
+        secure_zero(
+            ctx->buffers.decrypted_bytes,
+            sizeof(ctx->buffers.decrypted_bytes));
+
+        return GCM_RECEIVER_ERR_REPLAY;
+    }
+
+    if (replay_result ==
+        STM32_GCM_REPLAY_STORAGE_ERROR) {
+        log_printf(
+            "[RX][ERROR] Authenticated response rejected because "
+            "replay state could not be persisted");
+
+        secure_zero(
+            ctx->buffers.decrypted_bytes,
+            sizeof(ctx->buffers.decrypted_bytes));
+
+        return GCM_RECEIVER_ERR_NVM;
+    }
+
     response_out->message_type =
         message_type;
 
@@ -3101,13 +3167,17 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
     response_out->sequence =
         received_sequence;
 
-    session_id =
-        load_be32(
-            &ctx->IV_GCM_receiver[0]);
-
-    counter =
-        load_be64(
-            &ctx->IV_GCM_receiver[4]);
+    log_printf(
+        "[RX][REPLAY] Freshness state committed: "
+        "session=%08lX counter=%08lX%08lX "
+        "remaining_flash_records=%lu",
+        (unsigned long)session_id,
+        (unsigned long)(counter >> 32),
+        (unsigned long)(
+            counter &
+            UINT64_C(0xFFFFFFFF)),
+        (unsigned long)
+            stm32_gcm_nvm_remaining_record_slots());
 
 #if ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET
 
@@ -3308,28 +3378,9 @@ void crypto_ctx_init(crypto_ctx_t *ctx)
 /* Initializes the transmit GCM session and counter state. */
 gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
 {
-    /* Include the startup nonce hash and directional public keys in the session digest. */
-    static const uint8_t domain_label[] =
-    {
-        'S', 'T', 'M', '3', '2',
-        '-', 'T', 'X',
-        '-', 'E', 'S', 'P', '3', '2',
-        '-', 'G', 'C', 'M',
-        '-', 'V', '1'
-    };
-
-    uint8_t material[
-        sizeof(domain_label) +
-        1U + AES_512_KEY_SIZE +
-        1U + AES_512_KEY_SIZE +
-        1U + sizeof(nonce_hashed)
-    ];
-
-    uint8_t digest[32];
-    size_t material_len = 0U;
-    size_t digest_len = sizeof(digest);
+    /* Reserve a stored session before enabling nonce allocation. */
     uint32_t session_id = 0U;
-    cmox_hash_retval_t hash_ret;
+    stm32_gcm_nvm_status_t nvm_status;
 
     if (ctx == NULL) {
         return GCM_NONCE_ERR_BAD_PARAM;
@@ -3345,76 +3396,21 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
                         sizeof(ctx->keys.public_key_sender)) ||
         is_all_zero_buf(ctx,
                         esp32_provisioned_receiver_public_key,
-                        sizeof(esp32_provisioned_receiver_public_key)) ||
-        is_all_zero_buf(ctx,
-                        nonce_hashed,
-                        sizeof(nonce_hashed))) {
+                        sizeof(esp32_provisioned_receiver_public_key))) {
         return GCM_NONCE_ERR_BAD_KEY_STATE;
     }
 
-    secure_zero(material, sizeof(material));
-    secure_zero(digest, sizeof(digest));
+    nvm_status =
+        stm32_gcm_nvm_reserve_tx_session(
+            &session_id);
 
-    memcpy(&material[material_len],
-           domain_label,
-           sizeof(domain_label));
-    material_len += sizeof(domain_label);
+    if (nvm_status != STM32_GCM_NVM_OK) {
+        log_printf(
+            "[NONCE][TX][ERROR] Persistent session reservation "
+            "failed rc=%d\r\n",
+            (int)nvm_status);
 
-    material[material_len++] =
-        (uint8_t)ctx->keys.pub_len_sender;
-
-    memcpy(&material[material_len],
-           ctx->keys.public_key_sender,
-           ctx->keys.pub_len_sender);
-    material_len += ctx->keys.pub_len_sender;
-
-    material[material_len++] =
-        (uint8_t)sizeof(esp32_provisioned_receiver_public_key);
-
-    memcpy(&material[material_len],
-           esp32_provisioned_receiver_public_key,
-           sizeof(esp32_provisioned_receiver_public_key));
-    material_len += sizeof(esp32_provisioned_receiver_public_key);
-
-    material[material_len++] =
-        (uint8_t)sizeof(nonce_hashed);
-
-    memcpy(&material[material_len],
-           nonce_hashed,
-           sizeof(nonce_hashed));
-    material_len += sizeof(nonce_hashed);
-
-    hash_ret = cmox_hash_compute(
-        CMOX_SHA256_ALGO,
-        material,
-        material_len,
-        digest,
-        sizeof(digest),
-        &digest_len
-    );
-
-    secure_zero(material, sizeof(material));
-
-    if ((hash_ret != CMOX_HASH_SUCCESS) ||
-        (digest_len != sizeof(digest))) {
-        secure_zero(digest, sizeof(digest));
-        return GCM_NONCE_ERR_HASH;
-    }
-
-    for (size_t offset = 0U;
-         offset < sizeof(digest);
-         offset += 4U) {
-        session_id = load_be32(&digest[offset]);
-
-        if (session_id != 0U) {
-            break;
-        }
-    }
-
-    secure_zero(digest, sizeof(digest));
-
-    if (session_id == 0U) {
-        return GCM_NONCE_ERR_HASH;
+        return GCM_NONCE_ERR_NVM;
     }
 
     secure_zero(&ctx->gcm_nonce,
@@ -3428,13 +3424,16 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
     secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
 
     log_printf(
-        "[NONCE][TX] New STM32->ESP32 GCM session: "
-        "session_id=%08lX first_counter=%08lX%08lX\r\n",
+        "[NONCE][TX] Reset-safe STM32->ESP32 GCM session reserved: "
+        "persistent_session=%08lX first_counter=%08lX%08lX "
+        "remaining_flash_records=%lu\r\n",
         (unsigned long)ctx->gcm_nonce.session_id,
         (unsigned long)(ctx->gcm_nonce.next_counter >> 32),
         (unsigned long)(
             ctx->gcm_nonce.next_counter &
-            UINT64_C(0xFFFFFFFF))
+            UINT64_C(0xFFFFFFFF)),
+        (unsigned long)
+            stm32_gcm_nvm_remaining_record_slots()
     );
 
     return GCM_NONCE_OK;

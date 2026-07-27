@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #include "stm32f4xx.h"
@@ -36,6 +36,8 @@
 #include "cmox_crypto.h"
 #include "entropy_personalization_nonce_gen.h"
 #include "nonce.h"
+#include "stm32_gcm_nvm.h"
+
 
 /* ---------------- app status enum (declare in main.c as requested) ---------------- */
 static app_status_t app_bme680_sensor_stack_init_(void);
@@ -131,15 +133,15 @@ DS18B20_AppRuntimeStatus_t app_st_ds18b20;
 //typedef enum {
 //    APP_STATUS_OK = 0,
 //    APP_STATUS_INIT_FAIL = 1,
-//} app_status_t;
+//} app_status_t;
 
-
-/* Initializes crypto and runs one encrypted startup transaction. */
+/* Initializes the ESP32 link and runs periodic transactions. */
 int main(void)
 {
-    /* Require successful key and nonce setup before sending the startup frame. */
+    /* Delay between transactions using the link timebase. */
     int32_t crypto_rc;
     nonce_status_t startup_nonce_rc;
+    stm32_gcm_nvm_status_t gcm_nvm_rc;
 
     HAL_Init();
     clock_100_mhz_init();
@@ -172,6 +174,20 @@ int main(void)
     if (ESP32_UART_LinkTest_Init() != ESP32_UART_STATUS_OK)
     {
         Error_Handler();
+    }
+
+    gcm_nvm_rc =
+        stm32_gcm_nvm_init();
+
+    if (gcm_nvm_rc != STM32_GCM_NVM_OK)
+    {
+        log_printf(
+            "[SECURITY][ERROR] STM32 GCM journal initialization "
+            "failed, rc=%d\r\n",
+            (int)gcm_nvm_rc);
+
+        handle_error(
+            "Persistent GCM journal initialization failed");
     }
 
     adc_byte_buffers_init();
@@ -299,15 +315,18 @@ int main(void)
         "[CRYPTO] RX nonce generation is disabled; "
         "the nonce is received from ESP32.\r\n");
 
-    ESP32_UART_LinkTest_RunOnce();
+    log_printf(
+        "[MAIN] Entering continuous encrypted UART runtime loop.\r\n");
 
     log_printf(
-        "[MAIN] Encrypted request/ACK-NACK startup transaction "
-        "complete; entering idle loop.\r\n");
+        "[MAIN] One STM32->ESP32 encrypted request/response "
+        "transaction will run every 1000 ms.\r\n");
 
     for (;;)
     {
-        __WFI();
+        ESP32_UART_LinkTest_RunOnce();
+
+        ESP32_UART_LinkTest_DelayMs(1000U);
     }
 }
 

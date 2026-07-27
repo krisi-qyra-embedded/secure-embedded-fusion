@@ -92,7 +92,8 @@ Core/Src/ecdh.o: ../Core/Src/ecdh.c ../Core/Inc/tim.h \
  ../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_drbg_retvals.h \
  ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h \
  ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h \
- ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h \
+ ../Core/Inc/stm32_gcm_nvm.h
 ../Core/Inc/tim.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
@@ -193,3 +194,4 @@ Core/Src/ecdh.o: ../Core/Src/ecdh.c ../Core/Inc/tim.h \
 ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h:
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h:
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h:
+../Core/Inc/stm32_gcm_nvm.h:
