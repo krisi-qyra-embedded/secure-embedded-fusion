@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #define ESP32_ECDH_DEFINE_PROVISIONED_KEYS 1
@@ -87,30 +87,6 @@ static void log_hex_buffer(
         buffer,
         length,
         ESP_LOG_INFO);
-}
-
-/* Compares two byte buffers without an early mismatch exit. */
-static bool secure_buffers_equal(
-    const uint8_t *first,
-    const uint8_t *second,
-    size_t length)
-{
-    uint8_t difference = 0U;
-
-    if ((first == NULL) ||
-        (second == NULL))
-    {
-        return false;
-    }
-
-    /* Accumulate all byte differences before deciding equality. */
-    for (size_t i = 0U; i < length; ++i)
-    {
-        difference |=
-            (uint8_t)(first[i] ^ second[i]);
-    }
-
-    return difference == 0U;
 }
 
 /* Detects an empty or all-zero byte buffer. */
@@ -743,15 +719,134 @@ cleanup:
     return status;
 }
 
-/* Loads the provisioned STM32-to-ESP32 receive material. */
-static esp32_ecdh_status_t import_cross_device_receiver_material(
-    esp32_ecdh_ctx_t *ctx)
+/* Imports and validates the peer's raw P-256 public coordinates. */
+static esp32_ecdh_status_t import_peer_public_point(
+    esp32_ecdh_ctx_t *ctx,
+    esp32_ecdh_party_t *party,
+    const uint8_t peer_public_key[ESP32_ECDH_PUBLIC_KEY_SIZE],
+    const char *peer_name)
 {
-    uint8_t peer_public_uncompressed[
+    uint8_t uncompressed[
         ESP32_ECDH_PUBLIC_KEY_UNCOMPRESSED_SIZE];
 
-    esp32_ecdh_status_t status = ESP32_ECDH_SUCCESS;
+    esp32_ecdh_status_t status =
+        ESP32_ECDH_SUCCESS;
+
     int rc;
+
+    if ((ctx == NULL) ||
+        (party == NULL) ||
+        (peer_public_key == NULL) ||
+        (peer_name == NULL))
+    {
+        return ESP32_ECDH_ERR_BAD_PARAM;
+    }
+
+    if (buffer_is_all_zero(
+            peer_public_key,
+            ESP32_ECDH_PUBLIC_KEY_SIZE))
+    {
+        ESP_LOGE(
+            TAG,
+            "%s peer public key is all zero",
+            peer_name);
+
+        return ESP32_ECDH_ERR_PROVISIONED_KEY_EMPTY;
+    }
+
+    mbedtls_platform_zeroize(
+        uncompressed,
+        sizeof(uncompressed));
+
+    uncompressed[0] = 0x04U;
+
+    memcpy(
+        &uncompressed[1],
+        peer_public_key,
+        ESP32_ECDH_PUBLIC_KEY_SIZE);
+
+    mbedtls_ecp_point_free(
+        &party->public_key);
+
+    mbedtls_ecp_point_init(
+        &party->public_key);
+
+    rc = mbedtls_ecp_point_read_binary(
+        &ctx->group,
+        &party->public_key,
+        uncompressed,
+        sizeof(uncompressed));
+
+    if (rc != 0)
+    {
+        log_mbedtls_error(
+            "mbedtls_ecp_point_read_binary(peer public)",
+            rc);
+
+        status =
+            ESP32_ECDH_ERR_PROVISIONED_KEY_IMPORT;
+
+        goto cleanup;
+    }
+
+    /* Validate the point on the selected curve before storing its bytes. */
+    rc = mbedtls_ecp_check_pubkey(
+        &ctx->group,
+        &party->public_key);
+
+    if (rc != 0)
+    {
+        log_mbedtls_error(
+            "mbedtls_ecp_check_pubkey(peer public)",
+            rc);
+
+        status =
+            ESP32_ECDH_ERR_PUBLIC_KEY_CHECK;
+
+        goto cleanup;
+    }
+
+    mbedtls_platform_zeroize(
+        party->public_key_bytes,
+        sizeof(party->public_key_bytes));
+
+    memcpy(
+        party->public_key_bytes,
+        peer_public_key,
+        ESP32_ECDH_PUBLIC_KEY_SIZE);
+
+    party->public_key_len =
+        ESP32_ECDH_PUBLIC_KEY_SIZE;
+
+cleanup:
+
+    mbedtls_platform_zeroize(
+        uncompressed,
+        sizeof(uncompressed));
+
+    if (status != ESP32_ECDH_SUCCESS)
+    {
+        mbedtls_ecp_point_free(
+            &party->public_key);
+
+        mbedtls_ecp_point_init(
+            &party->public_key);
+
+        mbedtls_platform_zeroize(
+            party->public_key_bytes,
+            sizeof(party->public_key_bytes));
+
+        party->public_key_len = 0U;
+    }
+
+    return status;
+}
+
+/* Loads the provisioned keys for both UART directions. */
+static esp32_ecdh_status_t import_cross_device_duplex_material(
+    esp32_ecdh_ctx_t *ctx)
+{
+    esp32_ecdh_status_t status;
 
     if (ctx == NULL)
     {
@@ -759,130 +854,138 @@ static esp32_ecdh_status_t import_cross_device_receiver_material(
     }
 
 #if !ESP32_ECDH_PROVISIONED_KEYS_PRESENT
+
     ESP_LOGE(
         TAG,
-        "Cross-device receiver test requires provisioned keys");
+        "Full-duplex cross-device ECDH requires provisioned keys");
 
     return ESP32_ECDH_ERR_PROVISIONED_KEY_EMPTY;
+
 #else
 
-    if (buffer_is_all_zero(
+    const bool complete_provisioned_bundle =
+        !buffer_is_all_zero(
+            esp32_provisioned_sender_private_key,
+            sizeof(esp32_provisioned_sender_private_key)) &&
+        !buffer_is_all_zero(
+            esp32_provisioned_sender_public_key,
+            sizeof(esp32_provisioned_sender_public_key)) &&
+        !buffer_is_all_zero(
             esp32_provisioned_receiver_private_key,
-            ESP32_ECDH_PRIVATE_KEY_SIZE) ||
-        buffer_is_all_zero(
+            sizeof(esp32_provisioned_receiver_private_key)) &&
+        !buffer_is_all_zero(
+            esp32_provisioned_receiver_public_key,
+            sizeof(esp32_provisioned_receiver_public_key)) &&
+        !buffer_is_all_zero(
+            stm32_provisioned_receiver_public_key,
+            sizeof(stm32_provisioned_receiver_public_key)) &&
+        !buffer_is_all_zero(
             stm32_provisioned_sender_public_key,
-            ESP32_ECDH_PUBLIC_KEY_SIZE))
+            sizeof(stm32_provisioned_sender_public_key));
+
+    if (!complete_provisioned_bundle)
     {
         ESP_LOGE(
             TAG,
-            "ESP32 receiver private key or STM32 sender public key "
-            "is all zero");
+            "Six-key cross-device provisioning bundle is incomplete "
+            "or contains an all-zero value");
 
         return ESP32_ECDH_ERR_PROVISIONED_KEY_EMPTY;
     }
 
-    ecdh_party_reset(&ctx->receiver);
-    ecdh_party_reset(&ctx->sender);
-
-    mbedtls_platform_zeroize(
-        peer_public_uncompressed,
-        sizeof(peer_public_uncompressed));
-
-    /* Pair the ESP32 receiver scalar with the STM32 sender public point. */
-    rc = mbedtls_mpi_read_binary(
-        &ctx->receiver.private_key,
-        esp32_provisioned_receiver_private_key,
-        ESP32_ECDH_PRIVATE_KEY_SIZE);
-
-    if (rc != 0)
-    {
-        log_mbedtls_error(
-            "mbedtls_mpi_read_binary(ESP32 receiver private)",
-            rc);
-
-        status = ESP32_ECDH_ERR_PROVISIONED_KEY_IMPORT;
-        goto cleanup;
-    }
-
-    rc = mbedtls_ecp_check_privkey(
-        &ctx->group,
-        &ctx->receiver.private_key);
-
-    if (rc != 0)
-    {
-        log_mbedtls_error(
-            "mbedtls_ecp_check_privkey(ESP32 receiver)",
-            rc);
-
-        status = ESP32_ECDH_ERR_PRIVATE_KEY_CHECK;
-        goto cleanup;
-    }
-
-    peer_public_uncompressed[0] = 0x04U;
-
-    memcpy(
-        &peer_public_uncompressed[1],
-        stm32_provisioned_sender_public_key,
-        ESP32_ECDH_PUBLIC_KEY_SIZE);
-
-    rc = mbedtls_ecp_point_read_binary(
-        &ctx->group,
-        &ctx->sender.public_key,
-        peer_public_uncompressed,
-        sizeof(peer_public_uncompressed));
-
-    if (rc != 0)
-    {
-        log_mbedtls_error(
-            "mbedtls_ecp_point_read_binary(STM32 sender public)",
-            rc);
-
-        status = ESP32_ECDH_ERR_PROVISIONED_KEY_IMPORT;
-        goto cleanup;
-    }
-
-    rc = mbedtls_ecp_check_pubkey(
-        &ctx->group,
-        &ctx->sender.public_key);
-
-    if (rc != 0)
-    {
-        log_mbedtls_error(
-            "mbedtls_ecp_check_pubkey(STM32 sender)",
-            rc);
-
-        status = ESP32_ECDH_ERR_PUBLIC_KEY_CHECK;
-        goto cleanup;
-    }
-
-    memcpy(
-        ctx->receiver.private_key_bytes,
-        esp32_provisioned_receiver_private_key,
-        ESP32_ECDH_PRIVATE_KEY_SIZE);
-
-    memcpy(
-        ctx->sender.public_key_bytes,
-        stm32_provisioned_sender_public_key,
-        ESP32_ECDH_PUBLIC_KEY_SIZE);
-
-    ctx->sender.public_key_len =
-        ESP32_ECDH_PUBLIC_KEY_SIZE;
-
-    ctx->receiver.public_key_len = 0U;
-
-cleanup:
-
-    mbedtls_platform_zeroize(
-        peer_public_uncompressed,
-        sizeof(peer_public_uncompressed));
+    status =
+        import_provisioned_keypair(
+            ctx,
+            &ctx->sender,
+            esp32_provisioned_sender_private_key,
+            esp32_provisioned_sender_public_key,
+            "ESP32 sender");
 
     if (status != ESP32_ECDH_SUCCESS)
     {
-        ecdh_party_reset(&ctx->receiver);
-        ecdh_party_reset(&ctx->sender);
+        ESP_LOGE(
+            TAG,
+            "ESP32 sender keypair import failed: status=%d",
+            (int)status);
+
+        return status;
     }
 
-    return status;
+    status =
+        import_provisioned_keypair(
+            ctx,
+            &ctx->receiver,
+            esp32_provisioned_receiver_private_key,
+            esp32_provisioned_receiver_public_key,
+            "ESP32 receiver");
+
+    if (status != ESP32_ECDH_SUCCESS)
+    {
+        ESP_LOGE(
+            TAG,
+            "ESP32 receiver keypair import failed: status=%d",
+            (int)status);
+
+        ecdh_party_reset(
+            &ctx->sender);
+
+        return status;
+    }
+
+    /* Replace peer public points after importing the local keypairs. */
+    status =
+        import_peer_public_point(
+            ctx,
+            &ctx->sender,
+            stm32_provisioned_sender_public_key,
+            "STM32 sender");
+
+    if (status != ESP32_ECDH_SUCCESS)
+    {
+        ecdh_party_reset(
+            &ctx->sender);
+
+        ecdh_party_reset(
+            &ctx->receiver);
+
+        return status;
+    }
+
+    status =
+        import_peer_public_point(
+            ctx,
+            &ctx->receiver,
+            stm32_provisioned_receiver_public_key,
+            "STM32 receiver");
+
+    if (status != ESP32_ECDH_SUCCESS)
+    {
+        ecdh_party_reset(
+            &ctx->sender);
+
+        ecdh_party_reset(
+            &ctx->receiver);
+
+        return status;
+    }
+
+    ESP_LOGI(
+        TAG,
+        "Full-duplex cross-device ECDH material loaded");
+
+    ESP_LOGI(
+        TAG,
+        "TX direction: ESP32 sender private x STM32 receiver public");
+
+    ESP_LOGI(
+        TAG,
+        "RX direction: ESP32 receiver private x STM32 sender public");
+
+    ESP_LOGI(
+        TAG,
+        "Provisioned key material will not be printed");
+
+    return ESP32_ECDH_SUCCESS;
 
 #endif /* ESP32_ECDH_PROVISIONED_KEYS_PRESENT */
 }
@@ -964,13 +1067,13 @@ esp32_ecdh_status_t esp32_ecdh_generate_keypairs(
     ecdh_clear_derived_state(ctx);
 
     status =
-        import_cross_device_receiver_material(ctx);
+        import_cross_device_duplex_material(ctx);
 
     if (status != ESP32_ECDH_SUCCESS)
     {
         ESP_LOGE(
             TAG,
-            "Cross-device receiver key import failed: status=%d",
+            "Full-duplex cross-device key import failed: status=%d",
             (int)status);
 
         return status;
@@ -980,20 +1083,7 @@ esp32_ecdh_status_t esp32_ecdh_generate_keypairs(
 
     ESP_LOGI(
         TAG,
-        "Cross-device RX material loaded");
-
-    ESP_LOGI(
-        TAG,
-        "ECDH direction: ESP32 receiver private x "
-        "STM32 sender public");
-
-    ESP_LOGI(
-        TAG,
-        "No ESP32 sender keypair was generated for this test");
-
-    ESP_LOGI(
-        TAG,
-        "Provisioned private/public material will not be printed");
+        "Both cross-device ECDH directions are provisioned");
 
     return ESP32_ECDH_SUCCESS;
 }
@@ -1017,7 +1107,7 @@ esp32_ecdh_status_t esp32_ecdh_print_keypairs(
 
     ESP_LOGI(
         TAG,
-        "All four provisioned ECDH keys are already loaded");
+        "Full six-key cross-device provisioning bundle is loaded");
 
     ESP_LOGI(
         TAG,
@@ -1344,31 +1434,52 @@ esp32_ecdh_compute_and_verify_shared_secrets(
     ecdh_clear_derived_state(ctx);
 
     status =
+        esp32_ecdh_compute_shared_as_sender(ctx);
+
+    if (status != ESP32_ECDH_SUCCESS)
+    {
+        ESP_LOGE(
+            TAG,
+            "ESP32->STM32 sender shared-secret computation "
+            "failed: status=%d",
+            (int)status);
+
+        ecdh_clear_shared_state(ctx);
+
+        return status;
+    }
+
+    status =
         esp32_ecdh_compute_shared_as_receiver(ctx);
 
     if (status != ESP32_ECDH_SUCCESS)
     {
         ESP_LOGE(
             TAG,
-            "Cross-device receiver shared-secret computation "
+            "STM32->ESP32 receiver shared-secret computation "
             "failed: status=%d",
             (int)status);
 
         ecdh_clear_shared_state(ctx);
+
         return status;
     }
 
-    if (ctx->computed_secret_receiver_len !=
-        ESP32_ECDH_SHARED_SECRET_SIZE)
+    if ((ctx->computed_secret_len !=
+            ESP32_ECDH_SHARED_SECRET_SIZE) ||
+        (ctx->computed_secret_receiver_len !=
+            ESP32_ECDH_SHARED_SECRET_SIZE))
     {
         ESP_LOGE(
             TAG,
-            "Unexpected receiver shared-secret length: "
-            "got=%u expected=%u",
+            "Unexpected cross-device shared-secret lengths: "
+            "tx=%u rx=%u expected=%u",
+            (unsigned int)ctx->computed_secret_len,
             (unsigned int)ctx->computed_secret_receiver_len,
             (unsigned int)ESP32_ECDH_SHARED_SECRET_SIZE);
 
         ecdh_clear_shared_state(ctx);
+
         return ESP32_ECDH_ERR_SHARED_LENGTH;
     }
 
@@ -1376,8 +1487,12 @@ esp32_ecdh_compute_and_verify_shared_secrets(
 
     ESP_LOGI(
         TAG,
-        "Cross-device STM32->ESP32 ECDH shared secret ready: "
-        "%u bytes",
+        "ESP32->STM32 sender shared secret ready: %u bytes",
+        (unsigned int)ctx->computed_secret_len);
+
+    ESP_LOGI(
+        TAG,
+        "STM32->ESP32 receiver shared secret ready: %u bytes",
         (unsigned int)ctx->computed_secret_receiver_len);
 
     return ESP32_ECDH_SUCCESS;
@@ -1412,7 +1527,7 @@ esp32_ecdh_status_t esp32_ecdh_print_all_material(
 
     ESP_LOGI(
         TAG,
-        "All four provisioned ECDH keys are already loaded");
+        "Full six-key cross-device provisioning bundle is loaded");
 
     ESP_LOGI(
         TAG,
@@ -1420,122 +1535,16 @@ esp32_ecdh_status_t esp32_ecdh_print_all_material(
 
     return ESP32_ECDH_SUCCESS;
 
-#endif /* ESP32_ECDH_PROVISIONED_KEYS_PRESENT */
-
-    if ((ctx->computed_secret_len !=
-            ESP32_ECDH_SHARED_SECRET_SIZE) ||
-        (ctx->computed_secret_receiver_len !=
-            ESP32_ECDH_SHARED_SECRET_SIZE))
-    {
-        ESP_LOGE(
-            TAG,
-            "Shared-secret length state is invalid: "
-            "sender=%u receiver=%u",
-            (unsigned int)
-                ctx->computed_secret_len,
-            (unsigned int)
-                ctx->computed_secret_receiver_len);
-
-        return ESP32_ECDH_ERR_SHARED_LENGTH;
-    }
-
-    if (!secure_buffers_equal(
-            ctx->computed_secret,
-            ctx->computed_secret_receiver,
-            ESP32_ECDH_SHARED_SECRET_SIZE))
-    {
-        ESP_LOGE(
-            TAG,
-            "Shared-secret state is inconsistent");
-
-        return ESP32_ECDH_ERR_SHARED_MISMATCH;
-    }
+#else
 
     ESP_LOGI(
         TAG,
-        "========== COMPLETE CRYPTO MATERIAL ==========");
-
-    ESP_LOGI(TAG, "----- SENDER -----");
-
-    log_hex_buffer(
-        "private_key_sender [32]",
-        ctx->sender.private_key_bytes,
-        sizeof(ctx->sender.private_key_bytes));
-
-    log_hex_buffer(
-        "public_key_sender [64]",
-        ctx->sender.public_key_bytes,
-        ctx->sender.public_key_len);
-
-    ESP_LOGI(
-        TAG,
-        "computed_secret valid=%u bytes",
-        (unsigned int)ctx->computed_secret_len);
-
-    log_hex_buffer(
-        "computed_secret [32]",
-        ctx->computed_secret,
-        ctx->computed_secret_len);
-
-    log_hex_buffer(
-        "aes_key [32]",
-        ctx->aes_key,
-        sizeof(ctx->aes_key));
-
-    log_hex_buffer(
-        "mac_key [32]",
-        ctx->mac_key,
-        sizeof(ctx->mac_key));
-
-    ESP_LOGI(TAG, "----- RECEIVER -----");
-
-    log_hex_buffer(
-        "private_key_receiver [32]",
-        ctx->receiver.private_key_bytes,
-        sizeof(ctx->receiver.private_key_bytes));
-
-    log_hex_buffer(
-        "public_key_receiver [64]",
-        ctx->receiver.public_key_bytes,
-        ctx->receiver.public_key_len);
-
-    ESP_LOGI(
-        TAG,
-        "computed_secret_receiver valid=%u bytes",
-        (unsigned int)ctx->computed_secret_receiver_len);
-
-    log_hex_buffer(
-        "computed_secret_receiver [32]",
-        ctx->computed_secret_receiver,
-        ctx->computed_secret_receiver_len);
-
-    log_hex_buffer(
-        "aes_key_receiver [32]",
-        ctx->aes_key_receiver,
-        sizeof(ctx->aes_key_receiver));
-
-    log_hex_buffer(
-        "mac_key_receiver [32]",
-        ctx->mac_key_receiver,
-        sizeof(ctx->mac_key_receiver));
-
-    ESP_LOGI(
-        TAG,
-        "Sender/receiver shared secrets match");
-
-    ESP_LOGI(
-        TAG,
-        "Sender/receiver AES keys match");
-
-    ESP_LOGI(
-        TAG,
-        "Sender/receiver MAC keys match");
-
-    ESP_LOGI(
-        TAG,
-        "==============================================");
+        "Complete crypto-material logging is disabled in "
+        "full-duplex cross-device mode");
 
     return ESP32_ECDH_SUCCESS;
+
+#endif /* ESP32_ECDH_PROVISIONED_KEYS_PRESENT */
 }
 
 /* Reports shared-secret state with optional debug output. */
@@ -1554,32 +1563,22 @@ esp32_ecdh_status_t esp32_ecdh_print_shared_secrets(
 
     ESP_LOGI(
         TAG,
-        "========== ECDH SHARED SECRETS ==========");
+        "========== DIRECTIONAL ECDH SHARED SECRETS ==========");
 
 /* Gate raw secret output behind the configured debug switch. */
 #if ESP32_ECDH_DEBUG_PRINT_SHARED_SECRETS
 
     ESP_LOGW(
         TAG,
-        "DEBUG ONLY: printing ECDH shared secrets");
-
-    ESP_LOGI(
-        TAG,
-        "Sender secret length=%u",
-        (unsigned int)ctx->computed_secret_len);
+        "DEBUG ONLY: printing directional ECDH shared secrets");
 
     log_hex_buffer(
-        "computed_secret",
+        "ESP32->STM32 sender shared secret",
         ctx->computed_secret,
         ctx->computed_secret_len);
 
-    ESP_LOGI(
-        TAG,
-        "Receiver secret length=%u",
-        (unsigned int)ctx->computed_secret_receiver_len);
-
     log_hex_buffer(
-        "computed_secret_receiver",
+        "STM32->ESP32 receiver shared secret",
         ctx->computed_secret_receiver,
         ctx->computed_secret_receiver_len);
 
@@ -1593,11 +1592,11 @@ esp32_ecdh_status_t esp32_ecdh_print_shared_secrets(
 
     ESP_LOGI(
         TAG,
-        "Sender and receiver shared secrets match");
+        "TX and RX shared secrets are independent by design");
 
     ESP_LOGI(
         TAG,
-        "=========================================");
+        "=====================================================");
 
     return ESP32_ECDH_SUCCESS;
 }
@@ -1850,10 +1849,26 @@ esp32_ecdh_status_t esp32_ecdh_derive_and_verify_keys(
     ecdh_clear_derived_state(ctx);
 
     /*
-     * Derive only the receive-direction keys:
+     * ESP32->STM32 transmit keys:
      *
-     * AES key = SHA256(shared || 0x01)
-     * MAC key = SHA256(shared || 0x02)
+     * aes_key = SHA256(tx_shared_secret || 0x01)
+     * mac_key = SHA256(tx_shared_secret || 0x02)
+     */
+    status =
+        esp32_ecdh_derive_sender_keys(ctx);
+
+    if (status != ESP32_ECDH_SUCCESS)
+    {
+        ecdh_clear_derived_state(ctx);
+
+        return status;
+    }
+
+    /*
+     * STM32->ESP32 receive keys:
+     *
+     * aes_key_receiver = SHA256(rx_shared_secret || 0x01)
+     * mac_key_receiver = SHA256(rx_shared_secret || 0x02)
      */
     status =
         esp32_ecdh_derive_receiver_keys(ctx);
@@ -1861,12 +1876,23 @@ esp32_ecdh_status_t esp32_ecdh_derive_and_verify_keys(
     if (status != ESP32_ECDH_SUCCESS)
     {
         ecdh_clear_derived_state(ctx);
+
         return status;
     }
 
-    if ((ctx->aes_key_receiver_len !=
+    if ((ctx->aes_key_len !=
+            ESP32_ECDH_DERIVED_KEY_SIZE) ||
+        (ctx->mac_key_len !=
+            ESP32_ECDH_DERIVED_KEY_SIZE) ||
+        (ctx->aes_key_receiver_len !=
             ESP32_ECDH_DERIVED_KEY_SIZE) ||
         (ctx->mac_key_receiver_len !=
+            ESP32_ECDH_DERIVED_KEY_SIZE) ||
+        buffer_is_all_zero(
+            ctx->aes_key,
+            ESP32_ECDH_DERIVED_KEY_SIZE) ||
+        buffer_is_all_zero(
+            ctx->mac_key,
             ESP32_ECDH_DERIVED_KEY_SIZE) ||
         buffer_is_all_zero(
             ctx->aes_key_receiver,
@@ -1877,9 +1903,10 @@ esp32_ecdh_status_t esp32_ecdh_derive_and_verify_keys(
     {
         ESP_LOGE(
             TAG,
-            "Invalid receive-direction derived-key state");
+            "Invalid full-duplex derived-key state");
 
         ecdh_clear_derived_state(ctx);
+
         return ESP32_ECDH_ERR_DERIVED_KEY_MISMATCH;
     }
 
@@ -1887,12 +1914,15 @@ esp32_ecdh_status_t esp32_ecdh_derive_and_verify_keys(
 
     ESP_LOGI(
         TAG,
-        "STM32->ESP32 receiver AES key derived successfully");
+        "ESP32->STM32 sender AES/MAC keys derived successfully");
 
     ESP_LOGI(
         TAG,
-        "Receiver AES KDF compatibility: "
-        "SHA256(shared_secret || 0x01)");
+        "STM32->ESP32 receiver AES/MAC keys derived successfully");
+
+    ESP_LOGI(
+        TAG,
+        "KDF compatibility: SHA256(shared_secret || 0x01/0x02)");
 
     return ESP32_ECDH_SUCCESS;
 }
@@ -1913,32 +1943,32 @@ esp32_ecdh_status_t esp32_ecdh_print_derived_keys(
 
     ESP_LOGI(
         TAG,
-        "========== DERIVED AES/MAC KEYS =========");
+        "========== DIRECTIONAL DERIVED KEYS =========");
 
 /* Only expose raw derived keys when their debug switch is enabled. */
 #if ESP32_ECDH_DEBUG_PRINT_DERIVED_KEYS
 
     ESP_LOGW(
         TAG,
-        "DEBUG ONLY: printing derived keys");
+        "DEBUG ONLY: printing directional derived keys");
 
     log_hex_buffer(
-        "aes_key [32]",
+        "ESP32->STM32 aes_key [32]",
         ctx->aes_key,
         ctx->aes_key_len);
 
     log_hex_buffer(
-        "aes_key_receiver [32]",
-        ctx->aes_key_receiver,
-        ctx->aes_key_receiver_len);
-
-    log_hex_buffer(
-        "mac_key [32]",
+        "ESP32->STM32 mac_key [32]",
         ctx->mac_key,
         ctx->mac_key_len);
 
     log_hex_buffer(
-        "mac_key_receiver [32]",
+        "STM32->ESP32 aes_key_receiver [32]",
+        ctx->aes_key_receiver,
+        ctx->aes_key_receiver_len);
+
+    log_hex_buffer(
+        "STM32->ESP32 mac_key_receiver [32]",
         ctx->mac_key_receiver,
         ctx->mac_key_receiver_len);
 
@@ -1952,15 +1982,11 @@ esp32_ecdh_status_t esp32_ecdh_print_derived_keys(
 
     ESP_LOGI(
         TAG,
-        "Sender and receiver AES keys match");
+        "TX and RX keys are independent by design");
 
     ESP_LOGI(
         TAG,
-        "Sender and receiver MAC keys match");
-
-    ESP_LOGI(
-        TAG,
-        "=========================================");
+        "============================================");
 
     return ESP32_ECDH_SUCCESS;
 }

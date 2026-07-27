@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #include "STM32_uart.h"
@@ -31,6 +31,7 @@ static const char *TAG = "STM32_UART";
 #define STM32_GCM_WIRE_PACKET_SIZE        \
     (STM32_GCM_NONCE_SIZE + STM32_GCM_CIPHERTEXT_TAG_SIZE)
 #define STM32_GCM_PACKET_QUEUE_LENGTH     4U
+#define ESP32_GCM_RESPONSE_WIRE_SIZE       39U
 
 #define STM32_UART_RESYNC_QUIET_US        INT64_C(50000)
 #define STM32_UART_READ_TIMEOUT_MS        20U
@@ -55,6 +56,10 @@ _Static_assert(
 _Static_assert(
     STM32_GCM_WIRE_PACKET_SIZE == 42U,
     "STM32 wire packet must be 42 bytes");
+
+_Static_assert(
+    ESP32_GCM_RESPONSE_WIRE_SIZE == 39U,
+    "ESP32 encrypted ACK/NACK wire packet must be 39 bytes");
 
 #if STM32_UART_TEST_MAX_FRAME_SIZE < STM32_GCM_WIRE_PACKET_SIZE
 #error "STM32_UART_TEST_MAX_FRAME_SIZE must be at least 42 bytes"
@@ -549,6 +554,11 @@ STM32_UART_Status_t STM32_UART_LinkTest_Start(void)
 
     ESP_LOGI(
         TAG,
+        "Encrypted ACK/NACK TX size: %u bytes (12 + 11 + 16)",
+        (unsigned int)ESP32_GCM_RESPONSE_WIRE_SIZE);
+
+    ESP_LOGI(
+        TAG,
         "UART event task will monitor incoming bytes continuously");
 
     ESP_LOGI(
@@ -652,6 +662,16 @@ void STM32_UART_LinkTest_PrintHealth(void)
         TAG,
         "rx_frames=%" PRIu32,
         stats.rx_frames);
+
+    ESP_LOGI(
+        TAG,
+        "tx_bytes=%" PRIu32,
+        stats.tx_bytes);
+
+    ESP_LOGI(
+        TAG,
+        "tx_frames=%" PRIu32,
+        stats.tx_frames);
 
     ESP_LOGI(
         TAG,
@@ -913,7 +933,7 @@ static void STM32_UART_ConsumeEncryptedBytes(
 
             ESP_LOGI(
                 TAG,
-                "42-byte encrypted packet candidate queued; awaiting AES-GCM authentication");
+                "42-byte encrypted STM32 request candidate queued; awaiting AES-GCM authentication");
 
             STM32_UART_ResetEncryptedAssembly();
         }

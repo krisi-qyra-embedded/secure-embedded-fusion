@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #include "mbedtls_aes_gcm.h"
@@ -14,10 +14,10 @@
 
 #include "esp_log.h"
 #include "esp_log_buffer.h"
+#include "esp_random.h"
 
 #include "mbedtls/build_info.h"
 #include "mbedtls/platform_util.h"
-#include "mbedtls/sha256.h"
 
 #if !defined(MBEDTLS_AES_C)
 #error "MBEDTLS_AES_C must be enabled"
@@ -27,19 +27,8 @@
 #error "MBEDTLS_GCM_C must be enabled"
 #endif
 
-#if !defined(MBEDTLS_SHA256_C)
-#error "MBEDTLS_SHA256_C must be enabled"
-#endif
 
 static const char *TAG = "ESP32_AES_GCM";
-
-static const uint8_t s_nonce_domain_label[] =
-{
-    'S', 'T', 'M', '3', '2',
-    '-', 'G', 'C', 'M',
-    '-', 'N', 'O', 'N', 'C', 'E',
-    '-', 'V', '1'
-};
 
 /* Encodes a 32-bit value in nonce byte order. */
 static void store_be32(
@@ -67,17 +56,6 @@ static void store_be64(
     out[5] = (uint8_t)(value >> 16);
     out[6] = (uint8_t)(value >> 8);
     out[7] = (uint8_t)value;
-}
-
-/* Decodes a four-byte big-endian value. */
-static uint32_t load_be32(
-    const uint8_t in[4])
-{
-    /* Rebuild the value from explicit byte shifts. */
-    return ((uint32_t)in[0] << 24) |
-           ((uint32_t)in[1] << 16) |
-           ((uint32_t)in[2] << 8)  |
-           ((uint32_t)in[3]);
 }
 
 /* Detects an empty or all-zero byte buffer. */
@@ -144,13 +122,16 @@ esp32_aes_gcm_status_t esp32_aes_gcm_init(
         sizeof(*ctx));
 
     mbedtls_gcm_init(
-        &ctx->gcm);
+        &ctx->gcm_tx);
+
+    mbedtls_gcm_init(
+        &ctx->gcm_rx);
 
     ctx->initialized = true;
 
     ESP_LOGI(
         TAG,
-        "AES-GCM context initialized");
+        "Independent AES-GCM TX and RX contexts initialized");
 
     return ESP32_AES_GCM_SUCCESS;
 }
@@ -167,7 +148,10 @@ void esp32_aes_gcm_free(
     if (ctx->initialized)
     {
         mbedtls_gcm_free(
-            &ctx->gcm);
+            &ctx->gcm_tx);
+
+        mbedtls_gcm_free(
+            &ctx->gcm_rx);
     }
 
     /* Zeroize the context after releasing the Mbed TLS state. */
@@ -176,23 +160,12 @@ void esp32_aes_gcm_free(
         sizeof(*ctx));
 }
 
-/* Derives a deterministic nonce session from public-key material. */
+/* Initializes the transmit nonce session for the derived key. */
 esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
     esp32_aes_gcm_ctx_t *ctx,
     const esp32_ecdh_ctx_t *ecdh_ctx)
 {
-    uint8_t material[
-        sizeof(s_nonce_domain_label) +
-        1U +
-        ESP32_ECDH_PUBLIC_KEY_SIZE +
-        1U +
-        ESP32_ECDH_PUBLIC_KEY_SIZE];
-
-    uint8_t digest[32];
-
-    size_t material_len = 0U;
     uint32_t session_id = 0U;
-    int rc;
 
     if ((ctx == NULL) ||
         (ecdh_ctx == NULL))
@@ -206,83 +179,35 @@ esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
     }
 
     if ((!ecdh_ctx->keypairs_generated) ||
-        (ecdh_ctx->sender.public_key_len !=
-            ESP32_ECDH_PUBLIC_KEY_SIZE) ||
-        (ecdh_ctx->receiver.public_key_len !=
-            ESP32_ECDH_PUBLIC_KEY_SIZE))
+        (!ecdh_ctx->derived_keys_ready) ||
+        (ecdh_ctx->aes_key_len !=
+            ESP32_AES_GCM_KEY_SIZE) ||
+        buffer_is_all_zero(
+            ecdh_ctx->aes_key,
+            ESP32_AES_GCM_KEY_SIZE))
     {
         return ESP32_AES_GCM_ERR_BAD_ECDH_STATE;
     }
 
-    mbedtls_platform_zeroize(
-        material,
-        sizeof(material));
-
-    mbedtls_platform_zeroize(
-        digest,
-        sizeof(digest));
-
-    memcpy(
-        &material[material_len],
-        s_nonce_domain_label,
-        sizeof(s_nonce_domain_label));
-
-    material_len +=
-        sizeof(s_nonce_domain_label);
-
-    material[material_len++] =
-        (uint8_t)ecdh_ctx->sender.public_key_len;
-
-    memcpy(
-        &material[material_len],
-        ecdh_ctx->sender.public_key_bytes,
-        ecdh_ctx->sender.public_key_len);
-
-    material_len +=
-        ecdh_ctx->sender.public_key_len;
-
-    material[material_len++] =
-        (uint8_t)ecdh_ctx->receiver.public_key_len;
-
-    memcpy(
-        &material[material_len],
-        ecdh_ctx->receiver.public_key_bytes,
-        ecdh_ctx->receiver.public_key_len);
-
-    material_len +=
-        ecdh_ctx->receiver.public_key_len;
-
-    /* Hash the domain label and public points before selecting a nonzero session. */
-    rc = mbedtls_sha256(
-        material,
-        material_len,
-        digest,
-        0);
-
-    mbedtls_platform_zeroize(
-        material,
-        sizeof(material));
-
-    if (rc != 0)
+    /*
+     * Generate a fresh nonzero 32-bit session prefix for the
+     * ESP32->STM32 transmit direction.
+     *
+     * app_main keeps bootloader_random_enable() active while this
+     * function runs. A fresh session prefix prevents reuse of:
+     *
+     *     session_id[4] || counter[8]
+     *
+     * with the same static ECDH-derived AES key after an ESP32 reboot.
+     */
+    for (unsigned int attempt = 0U;
+         attempt < 8U;
+         ++attempt)
     {
-        log_mbedtls_error(
-            "mbedtls_sha256(nonce session)",
-            rc);
-
-        mbedtls_platform_zeroize(
-            digest,
-            sizeof(digest));
-
-        return ESP32_AES_GCM_ERR_SESSION_HASH;
-    }
-
-    for (size_t offset = 0U;
-         offset < sizeof(digest);
-         offset += 4U)
-    {
-        session_id =
-            load_be32(
-                &digest[offset]);
+        /* Try up to eight random draws to obtain a nonzero transmit session. */
+        esp_fill_random(
+            &session_id,
+            sizeof(session_id));
 
         if (session_id != 0U)
         {
@@ -290,12 +215,12 @@ esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
         }
     }
 
-    mbedtls_platform_zeroize(
-        digest,
-        sizeof(digest));
-
     if (session_id == 0U)
     {
+        ESP_LOGE(
+            TAG,
+            "Failed to generate a nonzero GCM session identifier");
+
         return ESP32_AES_GCM_ERR_SESSION_HASH;
     }
 
@@ -321,8 +246,8 @@ esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
 
     ESP_LOGI(
         TAG,
-        "New GCM nonce session: session_id=%08lX "
-        "first_counter=%llu",
+        "New ESP32->STM32 GCM nonce session: "
+        "session_id=%08lX first_counter=%llu",
         (unsigned long)ctx->nonce_state.session_id,
         (unsigned long long)ctx->nonce_state.next_counter);
 
@@ -421,6 +346,7 @@ esp32_aes_gcm_status_t esp32_encrypt_aes_gcm(
     size_t output_capacity,
     size_t *output_len)
 {
+    uint8_t tag[ESP32_AES_GCM_TAG_SIZE];
     size_t required_size;
     int rc;
 
@@ -454,7 +380,8 @@ esp32_aes_gcm_status_t esp32_encrypt_aes_gcm(
     }
 
     if ((plaintext_len == 0U) ||
-        (plaintext_len > (SIZE_MAX - ESP32_AES_GCM_TAG_SIZE)))
+        (plaintext_len >
+            (SIZE_MAX - ESP32_AES_GCM_TAG_SIZE)))
     {
         return ESP32_AES_GCM_ERR_LENGTH;
     }
@@ -476,8 +403,16 @@ esp32_aes_gcm_status_t esp32_encrypt_aes_gcm(
         return ESP32_AES_GCM_ERR_BAD_KEY;
     }
 
+    mbedtls_platform_zeroize(
+        ciphertext_and_tag,
+        required_size);
+
+    mbedtls_platform_zeroize(
+        tag,
+        sizeof(tag));
+
     rc = mbedtls_gcm_setkey(
-        &ctx->gcm,
+        &ctx->gcm_tx,
         MBEDTLS_CIPHER_ID_AES,
         key,
         ESP32_AES_GCM_KEY_SIZE * 8U);
@@ -485,14 +420,18 @@ esp32_aes_gcm_status_t esp32_encrypt_aes_gcm(
     if (rc != 0)
     {
         log_mbedtls_error(
-            "mbedtls_gcm_setkey(encrypt)",
+            "mbedtls_gcm_setkey(gcm_tx)",
             rc);
+
+        mbedtls_platform_zeroize(
+            tag,
+            sizeof(tag));
 
         return ESP32_AES_GCM_ERR_SETKEY;
     }
 
     rc = mbedtls_gcm_crypt_and_tag(
-        &ctx->gcm,
+        &ctx->gcm_tx,
         MBEDTLS_GCM_ENCRYPT,
         plaintext_len,
         ctx->iv_gcm,
@@ -502,28 +441,41 @@ esp32_aes_gcm_status_t esp32_encrypt_aes_gcm(
         plaintext,
         ciphertext_and_tag,
         ESP32_AES_GCM_TAG_SIZE,
-        &ciphertext_and_tag[plaintext_len]);
+        tag);
 
     if (rc != 0)
     {
         log_mbedtls_error(
-            "mbedtls_gcm_crypt_and_tag",
+            "mbedtls_gcm_crypt_and_tag(gcm_tx)",
             rc);
 
         mbedtls_platform_zeroize(
             ciphertext_and_tag,
             required_size);
 
+        mbedtls_platform_zeroize(
+            tag,
+            sizeof(tag));
+
         return ESP32_AES_GCM_ERR_ENCRYPT;
     }
+
+    memcpy(
+        &ciphertext_and_tag[plaintext_len],
+        tag,
+        ESP32_AES_GCM_TAG_SIZE);
+
+    mbedtls_platform_zeroize(
+        tag,
+        sizeof(tag));
 
     *output_len =
         required_size;
 
     ESP_LOGI(
         TAG,
-        "AES-GCM encryption succeeded: plaintext=%u "
-        "ciphertext=%u tag=%u total=%u",
+        "AES-GCM TX encryption succeeded using dedicated gcm_tx: "
+        "plaintext=%u ciphertext=%u tag=%u total=%u",
         (unsigned int)plaintext_len,
         (unsigned int)plaintext_len,
         (unsigned int)ESP32_AES_GCM_TAG_SIZE,
@@ -677,8 +629,12 @@ esp32_decrypt_verify_aes_gcm_receiver(
     tag =
         &ciphertext_and_tag[ciphertext_len];
 
+    mbedtls_platform_zeroize(
+        plaintext,
+        plaintext_capacity);
+
     rc = mbedtls_gcm_setkey(
-        &ctx->gcm,
+        &ctx->gcm_rx,
         MBEDTLS_CIPHER_ID_AES,
         ecdh_ctx->aes_key_receiver,
         ESP32_AES_GCM_KEY_SIZE * 8U);
@@ -686,7 +642,7 @@ esp32_decrypt_verify_aes_gcm_receiver(
     if (rc != 0)
     {
         log_mbedtls_error(
-            "mbedtls_gcm_setkey(decrypt)",
+            "mbedtls_gcm_setkey(gcm_rx)",
             rc);
 
         return ESP32_AES_GCM_ERR_SETKEY;
@@ -694,7 +650,7 @@ esp32_decrypt_verify_aes_gcm_receiver(
 
     /* Only expose the plaintext length after GCM authentication succeeds. */
     rc = mbedtls_gcm_auth_decrypt(
-        &ctx->gcm,
+        &ctx->gcm_rx,
         ciphertext_len,
         nonce,
         ESP32_AES_GCM_NONCE_SIZE,
@@ -713,7 +669,7 @@ esp32_decrypt_verify_aes_gcm_receiver(
 
         ESP_LOGE(
             TAG,
-            "AES-GCM authentication/decryption failed");
+            "AES-GCM RX authentication/decryption failed");
 
         return ESP32_AES_GCM_ERR_DECRYPT_AUTH;
     }
@@ -723,8 +679,8 @@ esp32_decrypt_verify_aes_gcm_receiver(
 
     ESP_LOGI(
         TAG,
-        "AES-GCM authentication and decryption succeeded: "
-        "plaintext=%u bytes",
+        "AES-GCM RX authentication/decryption succeeded using "
+        "dedicated gcm_rx: plaintext=%u bytes",
         (unsigned int)*plaintext_len);
 
     return ESP32_AES_GCM_SUCCESS;
@@ -733,34 +689,85 @@ esp32_decrypt_verify_aes_gcm_receiver(
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-static const char *RUNTIME_TAG = "GCM_UART_RX";
+static const char *RUNTIME_TAG = "GCM_UART_DUPLEX";
 
-#define STM32_GCM_TEST_PLAINTEXT_SIZE       14U
-#define STM32_GCM_TEST_CIPHERTEXT_TAG_SIZE  \
-    (STM32_GCM_TEST_PLAINTEXT_SIZE + ESP32_AES_GCM_TAG_SIZE)
-#define STM32_GCM_TEST_WIRE_SIZE            \
-    (ESP32_AES_GCM_NONCE_SIZE + STM32_GCM_TEST_CIPHERTEXT_TAG_SIZE)
+/*
+ * Temporary development logging for the ESP32 -> STM32 encrypted
+ * ACK/NACK packet.
+ *
+ * Set to 0 after interoperability testing. It may also be overridden
+ * from the build system with:
+ *
+ *     -DESP32_GCM_DEBUG_PRINT_TX_PACKET=0
+ */
+#ifndef ESP32_GCM_DEBUG_PRINT_TX_PACKET
+#define ESP32_GCM_DEBUG_PRINT_TX_PACKET 1
+#endif
+
+#define STM32_GCM_REQUEST_PLAINTEXT_SIZE       14U
+#define STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE  \
+    (STM32_GCM_REQUEST_PLAINTEXT_SIZE + ESP32_AES_GCM_TAG_SIZE)
+#define STM32_GCM_REQUEST_WIRE_SIZE            \
+    (ESP32_AES_GCM_NONCE_SIZE + STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE)
+
+#define ESP32_GCM_RESPONSE_PLAINTEXT_SIZE       11U
+#define ESP32_GCM_RESPONSE_CIPHERTEXT_TAG_SIZE  \
+    (ESP32_GCM_RESPONSE_PLAINTEXT_SIZE + ESP32_AES_GCM_TAG_SIZE)
+#define ESP32_GCM_RESPONSE_WIRE_SIZE            \
+    (ESP32_AES_GCM_NONCE_SIZE + ESP32_GCM_RESPONSE_CIPHERTEXT_TAG_SIZE)
+
+#define STM32_TEST_MAGIC_0                      0xA5U
+#define STM32_TEST_MAGIC_1                      0x5AU
+#define STM32_TEST_PROTOCOL_VERSION             0x01U
+#define STM32_TEST_REQUEST_TYPE                 0x10U
+#define STM32_TEST_ACK_TYPE                     0x20U
+#define STM32_TEST_NACK_TYPE                    0x21U
+#define STM32_TEST_REQUEST_PAYLOAD_LENGTH       0x04U
+#define STM32_TEST_RESPONSE_PAYLOAD_LENGTH      0x01U
+#define STM32_UART_RESPONSE_TIMEOUT_MS          100U
 
 
 _Static_assert(
     ESP32_AES_GCM_NONCE_SIZE == 12U,
-    "STM32 interoperability test requires a 12-byte GCM nonce");
+    "Interoperability protocol requires a 12-byte GCM nonce");
 
 _Static_assert(
     ESP32_AES_GCM_TAG_SIZE == 16U,
-    "STM32 interoperability test requires a 16-byte GCM tag");
+    "Interoperability protocol requires a 16-byte GCM tag");
 
 _Static_assert(
-    STM32_GCM_TEST_PLAINTEXT_SIZE == 14U,
-    "STM32 plaintext UART frame must be 14 bytes");
+    STM32_GCM_REQUEST_PLAINTEXT_SIZE == 14U,
+    "STM32 request plaintext must be 14 bytes");
 
 _Static_assert(
-    STM32_GCM_TEST_CIPHERTEXT_TAG_SIZE == 30U,
-    "STM32 ciphertext || tag must be 30 bytes");
+    STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE == 30U,
+    "STM32 request ciphertext || tag must be 30 bytes");
 
 _Static_assert(
-    STM32_GCM_TEST_WIRE_SIZE == 42U,
-    "STM32 encrypted UART wire packet must be 42 bytes");
+    STM32_GCM_REQUEST_WIRE_SIZE == 42U,
+    "STM32 request wire packet must be 42 bytes");
+
+_Static_assert(
+    ESP32_GCM_RESPONSE_PLAINTEXT_SIZE == 11U,
+    "ESP32 ACK/NACK plaintext must be 11 bytes");
+
+_Static_assert(
+    ESP32_GCM_RESPONSE_CIPHERTEXT_TAG_SIZE == 27U,
+    "ESP32 ACK/NACK ciphertext || tag must be 27 bytes");
+
+_Static_assert(
+    ESP32_GCM_RESPONSE_WIRE_SIZE == 39U,
+    "ESP32 ACK/NACK wire packet must be 39 bytes");
+
+typedef enum
+{
+    ESP32_RESPONSE_REASON_NONE          = 0x00U,
+    ESP32_RESPONSE_REASON_BAD_CHECKSUM  = 0x01U,
+    ESP32_RESPONSE_REASON_BAD_MAGIC     = 0x02U,
+    ESP32_RESPONSE_REASON_BAD_FORMAT    = 0x03U,
+    ESP32_RESPONSE_REASON_GCM_AUTH      = 0x04U
+
+} esp32_response_reason_t;
 
 extern bool STM32_UART_ReceiveEncryptedPacket(
     uint8_t *packet,
@@ -826,52 +833,373 @@ static uint8_t runtime_checksum8(
     return sum;
 }
 
+/* Reads the transaction sequence from the plaintext frame. */
+static uint32_t runtime_load_sequence_le(
+    const uint8_t *frame)
+{
+    if (frame == NULL)
+    {
+        return 0U;
+    }
+
+    /* Decode the four sequence bytes at their fixed frame offsets. */
+    return ((uint32_t)frame[5] << 0U)  |
+           ((uint32_t)frame[6] << 8U)  |
+           ((uint32_t)frame[7] << 16U) |
+           ((uint32_t)frame[8] << 24U);
+}
+
 /* Checks the decrypted request's protocol fields and checksum. */
-static bool runtime_validate_plaintext_frame(
+static esp32_response_reason_t runtime_validate_plaintext_frame(
     const uint8_t *frame,
     size_t frame_len,
     uint32_t *sequence_out)
 {
-    uint32_t sequence;
+    uint32_t sequence = 0U;
+
+    if (sequence_out != NULL)
+    {
+        *sequence_out = 0U;
+    }
 
     if ((frame == NULL) ||
-        (frame_len != STM32_GCM_TEST_PLAINTEXT_SIZE))
+        (frame_len != STM32_GCM_REQUEST_PLAINTEXT_SIZE))
     {
-        return false;
-    }
-
-    /* Check the fixed magic, version and request fields before the checksum. */
-    if ((frame[0] != 0xA5U) ||
-        (frame[1] != 0x5AU) ||
-        (frame[2] != 0x01U) ||
-        (frame[3] != 0x10U) ||
-        (frame[4] != 4U))
-    {
-        return false;
-    }
-
-    if (runtime_checksum8(
-            frame,
-            frame_len - 1U) != frame[frame_len - 1U])
-    {
-        return false;
+        return ESP32_RESPONSE_REASON_BAD_FORMAT;
     }
 
     sequence =
-        ((uint32_t)frame[5] << 0U)  |
-        ((uint32_t)frame[6] << 8U)  |
-        ((uint32_t)frame[7] << 16U) |
-        ((uint32_t)frame[8] << 24U);
+        runtime_load_sequence_le(frame);
 
     if (sequence_out != NULL)
     {
         *sequence_out = sequence;
     }
 
-    return true;
+    /* Validate frame magic before accepting its type and payload length. */
+    if ((frame[0] != STM32_TEST_MAGIC_0) ||
+        (frame[1] != STM32_TEST_MAGIC_1))
+    {
+        return ESP32_RESPONSE_REASON_BAD_MAGIC;
+    }
+
+    if ((frame[2] != STM32_TEST_PROTOCOL_VERSION) ||
+        (frame[3] != STM32_TEST_REQUEST_TYPE) ||
+        (frame[4] != STM32_TEST_REQUEST_PAYLOAD_LENGTH))
+    {
+        return ESP32_RESPONSE_REASON_BAD_FORMAT;
+    }
+
+    if (runtime_checksum8(
+            frame,
+            frame_len - 1U) !=
+        frame[frame_len - 1U])
+    {
+        return ESP32_RESPONSE_REASON_BAD_CHECKSUM;
+    }
+
+    return ESP32_RESPONSE_REASON_NONE;
 }
 
-/* Authenticates received STM32 test frames. */
+/* Builds the ACK or NACK frame for a transaction. */
+static void runtime_build_response_plaintext(
+    uint8_t response[
+        ESP32_GCM_RESPONSE_PLAINTEXT_SIZE],
+    uint8_t message_type,
+    uint32_t sequence,
+    esp32_response_reason_t reason)
+{
+    if (response == NULL)
+    {
+        return;
+    }
+
+    mbedtls_platform_zeroize(
+        response,
+        ESP32_GCM_RESPONSE_PLAINTEXT_SIZE);
+
+    response[0] = STM32_TEST_MAGIC_0;
+    response[1] = STM32_TEST_MAGIC_1;
+    response[2] = STM32_TEST_PROTOCOL_VERSION;
+    response[3] = message_type;
+    response[4] = STM32_TEST_RESPONSE_PAYLOAD_LENGTH;
+
+    /* Echo the sequence in little-endian order before adding the checksum. */
+    response[5] = (uint8_t)(sequence >> 0U);
+    response[6] = (uint8_t)(sequence >> 8U);
+    response[7] = (uint8_t)(sequence >> 16U);
+    response[8] = (uint8_t)(sequence >> 24U);
+
+    response[9] = (uint8_t)reason;
+
+    response[10] =
+        runtime_checksum8(
+            response,
+            ESP32_GCM_RESPONSE_PLAINTEXT_SIZE - 1U);
+}
+
+/* Encrypts and transmits the transaction ACK or NACK. */
+static bool runtime_send_encrypted_response(
+    esp32_aes_gcm_runtime_state_t *runtime,
+    uint32_t sequence,
+    esp32_response_reason_t reason)
+{
+    const uint8_t *aad = NULL;
+    const size_t aad_len = 0U;
+
+    uint8_t plaintext[
+        ESP32_GCM_RESPONSE_PLAINTEXT_SIZE];
+
+    uint8_t nonce[
+        ESP32_AES_GCM_NONCE_SIZE];
+
+    uint8_t ciphertext_and_tag[
+        ESP32_GCM_RESPONSE_CIPHERTEXT_TAG_SIZE];
+
+    uint8_t wire_packet[
+        ESP32_GCM_RESPONSE_WIRE_SIZE];
+
+    const uint8_t message_type =
+        (reason == ESP32_RESPONSE_REASON_NONE) ?
+            STM32_TEST_ACK_TYPE :
+            STM32_TEST_NACK_TYPE;
+
+    size_t encrypted_len = 0U;
+    esp32_aes_gcm_status_t status;
+    STM32_UART_Status_t uart_status;
+    bool success = false;
+
+    if ((runtime == NULL) ||
+        (runtime->gcm_ctx == NULL) ||
+        (runtime->ecdh_ctx == NULL))
+    {
+        return false;
+    }
+
+    mbedtls_platform_zeroize(
+        plaintext,
+        sizeof(plaintext));
+
+    mbedtls_platform_zeroize(
+        nonce,
+        sizeof(nonce));
+
+    mbedtls_platform_zeroize(
+        ciphertext_and_tag,
+        sizeof(ciphertext_and_tag));
+
+    mbedtls_platform_zeroize(
+        wire_packet,
+        sizeof(wire_packet));
+
+    runtime_build_response_plaintext(
+        plaintext,
+        message_type,
+        sequence,
+        reason);
+
+    /* Use the sender key and a fresh nonce for every response. */
+    status =
+        esp32_generate_nonce_iv_encrypt_gcm_sender(
+            runtime->gcm_ctx,
+            runtime->ecdh_ctx,
+            plaintext,
+            sizeof(plaintext),
+            aad,
+            aad_len,
+            nonce,
+            ciphertext_and_tag,
+            sizeof(ciphertext_and_tag),
+            &encrypted_len);
+
+    if ((status != ESP32_AES_GCM_SUCCESS) ||
+        (encrypted_len !=
+            ESP32_GCM_RESPONSE_CIPHERTEXT_TAG_SIZE))
+    {
+        ESP_LOGE(
+            RUNTIME_TAG,
+            "Encrypted ACK/NACK generation failed: "
+            "status=%d encrypted_len=%u",
+            (int)status,
+            (unsigned int)encrypted_len);
+
+        goto cleanup;
+    }
+
+    memcpy(
+        &wire_packet[0],
+        nonce,
+        ESP32_AES_GCM_NONCE_SIZE);
+
+    memcpy(
+        &wire_packet[ESP32_AES_GCM_NONCE_SIZE],
+        ciphertext_and_tag,
+        encrypted_len);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "========== ESP32->STM32 ENCRYPTED %s ==========",
+        (message_type == STM32_TEST_ACK_TYPE) ?
+            "ACK" :
+            "NACK");
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Response metadata: sequence=%lu reason=%u "
+        "nonce_counter=%llu",
+        (unsigned long)sequence,
+        (unsigned int)reason,
+        (unsigned long long)
+            runtime->gcm_ctx->nonce_state.current_counter);
+
+#if ESP32_GCM_DEBUG_PRINT_TX_PACKET
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "----- TEMP TX PACKET DEBUG BEGIN -----");
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Response plaintext ACK/NACK [%u bytes]:",
+        (unsigned int)sizeof(plaintext));
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        plaintext,
+        sizeof(plaintext),
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Outgoing nonce [%u bytes]:",
+        (unsigned int)sizeof(nonce));
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        nonce,
+        sizeof(nonce),
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Internal IV_GCM [%u bytes]:",
+        (unsigned int)sizeof(runtime->gcm_ctx->iv_gcm));
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        runtime->gcm_ctx->iv_gcm,
+        sizeof(runtime->gcm_ctx->iv_gcm),
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Response ciphertext only [%u bytes]:",
+        (unsigned int)ESP32_GCM_RESPONSE_PLAINTEXT_SIZE);
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        ciphertext_and_tag,
+        ESP32_GCM_RESPONSE_PLAINTEXT_SIZE,
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Response authentication tag only [%u bytes]:",
+        (unsigned int)ESP32_AES_GCM_TAG_SIZE);
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        &ciphertext_and_tag[
+            ESP32_GCM_RESPONSE_PLAINTEXT_SIZE],
+        ESP32_AES_GCM_TAG_SIZE,
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Combined ciphertext || tag [%u bytes]:",
+        (unsigned int)encrypted_len);
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        ciphertext_and_tag,
+        encrypted_len,
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Complete TX wire packet: nonce || ciphertext || tag "
+        "[%u bytes]:",
+        (unsigned int)sizeof(wire_packet));
+
+    ESP_LOG_BUFFER_HEX_LEVEL(
+        RUNTIME_TAG,
+        wire_packet,
+        sizeof(wire_packet),
+        ESP_LOG_INFO);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "TX layout: nonce=%u ciphertext=%u tag=%u wire=%u",
+        (unsigned int)ESP32_AES_GCM_NONCE_SIZE,
+        (unsigned int)ESP32_GCM_RESPONSE_PLAINTEXT_SIZE,
+        (unsigned int)ESP32_AES_GCM_TAG_SIZE,
+        (unsigned int)sizeof(wire_packet));
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "----- TEMP TX PACKET DEBUG END -----");
+
+#endif /* ESP32_GCM_DEBUG_PRINT_TX_PACKET */
+
+    uart_status =
+        STM32_UART_Write(
+            wire_packet,
+            sizeof(wire_packet),
+            STM32_UART_RESPONSE_TIMEOUT_MS);
+
+    if (uart_status != STM32_UART_STATUS_OK)
+    {
+        ESP_LOGE(
+            RUNTIME_TAG,
+            "Encrypted ACK/NACK UART transmission failed: "
+            "status=%d",
+            (int)uart_status);
+
+        goto cleanup;
+    }
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "Encrypted %s sent successfully: wire=%u bytes",
+        (message_type == STM32_TEST_ACK_TYPE) ?
+            "ACK" :
+            "NACK",
+        (unsigned int)sizeof(wire_packet));
+
+    success = true;
+
+cleanup:
+
+    mbedtls_platform_zeroize(
+        plaintext,
+        sizeof(plaintext));
+
+    mbedtls_platform_zeroize(
+        nonce,
+        sizeof(nonce));
+
+    mbedtls_platform_zeroize(
+        ciphertext_and_tag,
+        sizeof(ciphertext_and_tag));
+
+    mbedtls_platform_zeroize(
+        wire_packet,
+        sizeof(wire_packet));
+
+    return success;
+}
+
+/* Authenticates UART requests and returns encrypted ACK/NACK frames. */
 static void esp32_aes_gcm_runtime_task(void *param)
 {
     esp32_aes_gcm_runtime_state_t *runtime =
@@ -880,20 +1208,31 @@ static void esp32_aes_gcm_runtime_task(void *param)
     const uint8_t *aad = NULL;
     const size_t aad_len = 0U;
 
-    uint8_t wire_packet[STM32_GCM_TEST_WIRE_SIZE];
-    uint8_t nonce[ESP32_AES_GCM_NONCE_SIZE];
+    uint8_t wire_packet[
+        STM32_GCM_REQUEST_WIRE_SIZE];
+
+    uint8_t nonce[
+        ESP32_AES_GCM_NONCE_SIZE];
+
     uint8_t ciphertext_and_tag[
-        STM32_GCM_TEST_CIPHERTEXT_TAG_SIZE];
+        STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE];
+
     uint8_t decrypted_plaintext[
-        STM32_GCM_TEST_PLAINTEXT_SIZE];
+        STM32_GCM_REQUEST_PLAINTEXT_SIZE];
 
     size_t wire_len = 0U;
     size_t decrypted_len = 0U;
+
     uint32_t sequence = 0U;
     uint32_t session_id = 0U;
     uint64_t nonce_counter = UINT64_C(0);
+
     uint32_t packet_counter = 0U;
     uint32_t auth_failure_counter = 0U;
+    uint32_t ack_counter = 0U;
+    uint32_t nack_counter = 0U;
+
+    esp32_response_reason_t response_reason;
     esp32_aes_gcm_status_t status;
 
     if ((runtime == NULL) ||
@@ -907,17 +1246,25 @@ static void esp32_aes_gcm_runtime_task(void *param)
         s_runtime_state.task_handle = NULL;
         s_runtime_state.gcm_ctx = NULL;
         s_runtime_state.ecdh_ctx = NULL;
+
         vTaskDelete(NULL);
+
         return;
     }
 
     ESP_LOGI(
         RUNTIME_TAG,
-        "Waiting continuously for STM32 encrypted UART packets");
+        "Full-duplex encrypted UART task started");
 
     ESP_LOGI(
         RUNTIME_TAG,
-        "Expected wire layout: nonce[12] || ciphertext[14] || tag[16]");
+        "RX request: nonce[12] || ciphertext[14] || tag[16] "
+        "= 42 bytes");
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "TX response: nonce[12] || ciphertext[11] || tag[16] "
+        "= 39 bytes");
 
     for (;;)
     {
@@ -942,6 +1289,8 @@ static void esp32_aes_gcm_runtime_task(void *param)
         sequence = 0U;
         session_id = 0U;
         nonce_counter = UINT64_C(0);
+        response_reason =
+            ESP32_RESPONSE_REASON_BAD_FORMAT;
 
         if (!STM32_UART_ReceiveEncryptedPacket(
                 wire_packet,
@@ -952,14 +1301,15 @@ static void esp32_aes_gcm_runtime_task(void *param)
             continue;
         }
 
-        if (wire_len != STM32_GCM_TEST_WIRE_SIZE)
+        if (wire_len !=
+            STM32_GCM_REQUEST_WIRE_SIZE)
         {
             ESP_LOGW(
                 RUNTIME_TAG,
-                "Discarding encrypted UART packet with invalid "
+                "Discarding request candidate with invalid "
                 "length: got=%u expected=%u",
                 (unsigned int)wire_len,
-                (unsigned int)STM32_GCM_TEST_WIRE_SIZE);
+                (unsigned int)STM32_GCM_REQUEST_WIRE_SIZE);
 
             continue;
         }
@@ -972,7 +1322,7 @@ static void esp32_aes_gcm_runtime_task(void *param)
         memcpy(
             ciphertext_and_tag,
             &wire_packet[ESP32_AES_GCM_NONCE_SIZE],
-            STM32_GCM_TEST_CIPHERTEXT_TAG_SIZE);
+            STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE);
 
         session_id =
             runtime_load_be32(
@@ -986,58 +1336,24 @@ static void esp32_aes_gcm_runtime_task(void *param)
 
         ESP_LOGI(
             RUNTIME_TAG,
-            "========== STM32->ESP32 ENCRYPTED PACKET %lu ==========",
+            "========== STM32->ESP32 ENCRYPTED REQUEST %lu ==========",
             (unsigned long)packet_counter);
 
         ESP_LOGI(
             RUNTIME_TAG,
-            "Complete UART wire packet [%u bytes]:",
+            "Request nonce metadata: session_id=%08lX counter=%llu",
+            (unsigned long)session_id,
+            (unsigned long long)nonce_counter);
+
+        ESP_LOGI(
+            RUNTIME_TAG,
+            "Complete request wire packet [%u bytes]:",
             (unsigned int)wire_len);
 
         ESP_LOG_BUFFER_HEX_LEVEL(
             RUNTIME_TAG,
             wire_packet,
             wire_len,
-            ESP_LOG_INFO);
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Nonce from STM32 [%u bytes]:",
-            (unsigned int)ESP32_AES_GCM_NONCE_SIZE);
-
-        ESP_LOG_BUFFER_HEX_LEVEL(
-            RUNTIME_TAG,
-            nonce,
-            sizeof(nonce),
-            ESP_LOG_INFO);
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Nonce metadata: session_id=%08lX counter=%llu",
-            (unsigned long)session_id,
-            (unsigned long long)nonce_counter);
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Ciphertext from STM32 [%u bytes]:",
-            (unsigned int)STM32_GCM_TEST_PLAINTEXT_SIZE);
-
-        ESP_LOG_BUFFER_HEX_LEVEL(
-            RUNTIME_TAG,
-            ciphertext_and_tag,
-            STM32_GCM_TEST_PLAINTEXT_SIZE,
-            ESP_LOG_INFO);
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Authentication tag from STM32 [%u bytes]:",
-            (unsigned int)ESP32_AES_GCM_TAG_SIZE);
-
-        ESP_LOG_BUFFER_HEX_LEVEL(
-            RUNTIME_TAG,
-            &ciphertext_and_tag[
-                STM32_GCM_TEST_PLAINTEXT_SIZE],
-            ESP32_AES_GCM_TAG_SIZE,
             ESP_LOG_INFO);
 
         /* Authenticate the encrypted bytes before inspecting plaintext fields. */
@@ -1047,7 +1363,7 @@ static void esp32_aes_gcm_runtime_task(void *param)
                 runtime->ecdh_ctx,
                 nonce,
                 ciphertext_and_tag,
-                STM32_GCM_TEST_CIPHERTEXT_TAG_SIZE,
+                STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE,
                 aad,
                 aad_len,
                 decrypted_plaintext,
@@ -1060,17 +1376,25 @@ static void esp32_aes_gcm_runtime_task(void *param)
 
             ESP_LOGE(
                 RUNTIME_TAG,
-                "STM32 packet authentication/decryption failed: "
+                "STM32 request authentication/decryption failed: "
                 "status=%d failures=%lu",
                 (int)status,
                 (unsigned long)auth_failure_counter);
+
+            if (runtime_send_encrypted_response(
+                    runtime,
+                    0U,
+                    ESP32_RESPONSE_REASON_GCM_AUTH))
+            {
+                nack_counter++;
+            }
 
             continue;
         }
 
         ESP_LOGI(
             RUNTIME_TAG,
-            "Recovered plaintext UART frame [%u bytes]:",
+            "Authenticated request plaintext [%u bytes]:",
             (unsigned int)decrypted_len);
 
         ESP_LOG_BUFFER_HEX_LEVEL(
@@ -1079,22 +1403,36 @@ static void esp32_aes_gcm_runtime_task(void *param)
             decrypted_len,
             ESP_LOG_INFO);
 
-        if (!runtime_validate_plaintext_frame(
+        response_reason =
+            runtime_validate_plaintext_frame(
                 decrypted_plaintext,
                 decrypted_len,
-                &sequence))
+                &sequence);
+
+        if (response_reason !=
+            ESP32_RESPONSE_REASON_NONE)
         {
-            ESP_LOGE(
+            ESP_LOGW(
                 RUNTIME_TAG,
-                "AES-GCM succeeded but recovered UART frame "
-                "format/checksum is invalid");
+                "Authenticated STM32 frame is invalid: "
+                "sequence=%lu reason=%u",
+                (unsigned long)sequence,
+                (unsigned int)response_reason);
+
+            if (runtime_send_encrypted_response(
+                    runtime,
+                    sequence,
+                    response_reason))
+            {
+                nack_counter++;
+            }
 
             continue;
         }
 
         ESP_LOGI(
             RUNTIME_TAG,
-            "Recovered frame valid: sequence=%lu "
+            "Valid STM32 request: sequence=%lu "
             "payload=%02X %02X %02X %02X",
             (unsigned long)sequence,
             decrypted_plaintext[9],
@@ -1102,9 +1440,29 @@ static void esp32_aes_gcm_runtime_task(void *param)
             decrypted_plaintext[11],
             decrypted_plaintext[12]);
 
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "STM32 packet authenticated and decrypted successfully");
+        if (runtime_send_encrypted_response(
+                runtime,
+                sequence,
+                ESP32_RESPONSE_REASON_NONE))
+        {
+            ack_counter++;
+
+            ESP_LOGI(
+                RUNTIME_TAG,
+                "Full encrypted request/ACK cycle completed: "
+                "sequence=%lu ack_total=%lu nack_total=%lu",
+                (unsigned long)sequence,
+                (unsigned long)ack_counter,
+                (unsigned long)nack_counter);
+        }
+        else
+        {
+            ESP_LOGE(
+                RUNTIME_TAG,
+                "Request was valid but encrypted ACK transmission "
+                "failed: sequence=%lu",
+                (unsigned long)sequence);
+        }
 
         ESP_LOGI(
             RUNTIME_TAG,
@@ -1139,11 +1497,21 @@ esp32_aes_gcm_status_t esp32_aes_gcm_runtime_task_start(
     if ((!ecdh_ctx->derived_keys_ready) ||
         (ecdh_ctx->aes_key_receiver_len !=
             ESP32_AES_GCM_KEY_SIZE) ||
+        (ecdh_ctx->aes_key_len !=
+            ESP32_AES_GCM_KEY_SIZE) ||
         buffer_is_all_zero(
             ecdh_ctx->aes_key_receiver,
+            ESP32_AES_GCM_KEY_SIZE) ||
+        buffer_is_all_zero(
+            ecdh_ctx->aes_key,
             ESP32_AES_GCM_KEY_SIZE))
     {
         return ESP32_AES_GCM_ERR_BAD_ECDH_STATE;
+    }
+
+    if (!gcm_ctx->nonce_state.initialized)
+    {
+        return ESP32_AES_GCM_ERR_NO_SESSION;
     }
 
     s_runtime_state.gcm_ctx = gcm_ctx;
@@ -1153,7 +1521,7 @@ esp32_aes_gcm_status_t esp32_aes_gcm_runtime_task_start(
     task_result =
         xTaskCreatePinnedToCore(
             esp32_aes_gcm_runtime_task,
-            "aes_gcm_uart_rx",
+            "aes_gcm_uart_duplex",
             AES_GCM_RUNTIME_TASK_STACK_SIZE,
             &s_runtime_state,
             AES_GCM_RUNTIME_TASK_PRIORITY,
@@ -1171,7 +1539,7 @@ esp32_aes_gcm_status_t esp32_aes_gcm_runtime_task_start(
 
     ESP_LOGI(
         RUNTIME_TAG,
-        "AES-GCM UART receiver task started on core=%u",
+        "AES-GCM UART full-duplex task started on core=%u",
         (unsigned int)AES_GCM_RUNTIME_TASK_CORE_ID);
 
     return ESP32_AES_GCM_SUCCESS;

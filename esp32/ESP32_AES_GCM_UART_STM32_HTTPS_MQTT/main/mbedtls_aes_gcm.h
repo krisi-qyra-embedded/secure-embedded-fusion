@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #ifndef MAIN_MBEDTLS_AES_GCM_H_
@@ -33,22 +33,22 @@ typedef enum
 {
     ESP32_AES_GCM_SUCCESS = 0,
 
-    ESP32_AES_GCM_ERR_BAD_PARAM              = -1,
-    ESP32_AES_GCM_ERR_ALREADY_INIT           = -2,
-    ESP32_AES_GCM_ERR_NOT_INITIALIZED        = -3,
-    ESP32_AES_GCM_ERR_BAD_ECDH_STATE         = -4,
-    ESP32_AES_GCM_ERR_SESSION_HASH           = -5,
-    ESP32_AES_GCM_ERR_NO_SESSION             = -6,
-    ESP32_AES_GCM_ERR_COUNTER_EXHAUSTED      = -7,
-    ESP32_AES_GCM_ERR_BAD_KEY                = -8,
-    ESP32_AES_GCM_ERR_OUTPUT_TOO_SMALL       = -9,
-    ESP32_AES_GCM_ERR_SETKEY                 = -10,
-    ESP32_AES_GCM_ERR_ENCRYPT                = -11,
-    ESP32_AES_GCM_ERR_DECRYPT_AUTH           = -12,
-    ESP32_AES_GCM_ERR_LENGTH                 = -13,
-    ESP32_AES_GCM_ERR_SELF_TEST_MISMATCH     = -14,
-    ESP32_AES_GCM_ERR_TASK_ALREADY_RUNNING   = -15,
-    ESP32_AES_GCM_ERR_TASK_CREATE            = -16
+    ESP32_AES_GCM_ERR_BAD_PARAM          = -1,
+    ESP32_AES_GCM_ERR_ALREADY_INIT       = -2,
+    ESP32_AES_GCM_ERR_NOT_INITIALIZED    = -3,
+    ESP32_AES_GCM_ERR_BAD_ECDH_STATE     = -4,
+    ESP32_AES_GCM_ERR_SESSION_HASH       = -5,
+    ESP32_AES_GCM_ERR_NO_SESSION         = -6,
+    ESP32_AES_GCM_ERR_COUNTER_EXHAUSTED  = -7,
+    ESP32_AES_GCM_ERR_BAD_KEY            = -8,
+    ESP32_AES_GCM_ERR_OUTPUT_TOO_SMALL   = -9,
+    ESP32_AES_GCM_ERR_SETKEY             = -10,
+    ESP32_AES_GCM_ERR_ENCRYPT            = -11,
+    ESP32_AES_GCM_ERR_DECRYPT_AUTH       = -12,
+    ESP32_AES_GCM_ERR_LENGTH             = -13,
+    ESP32_AES_GCM_ERR_SELF_TEST_MISMATCH = -14,
+    ESP32_AES_GCM_ERR_TASK_ALREADY_RUNNING = -15,
+    ESP32_AES_GCM_ERR_TASK_CREATE          = -16
 
 } esp32_aes_gcm_status_t;
 
@@ -63,7 +63,8 @@ typedef struct
 
 typedef struct
 {
-    mbedtls_gcm_context gcm;
+    mbedtls_gcm_context gcm_tx;
+    mbedtls_gcm_context gcm_rx;
 
     esp32_gcm_nonce_state_t nonce_state;
 
@@ -80,6 +81,17 @@ esp32_aes_gcm_status_t esp32_aes_gcm_init(
 void esp32_aes_gcm_free(
     esp32_aes_gcm_ctx_t *ctx);
 
+/*
+ * Initialize the ESP32->STM32 transmit nonce session.
+ *
+ * A fresh nonzero 32-bit session identifier is obtained from the
+ * ESP32 hardware-backed random source, then combined with a 64-bit
+ * incrementing counter:
+ *
+ *     nonce[12] = random_session_id[4] || counter[8]
+ *
+ * Call while the ESP32 entropy source is enabled.
+ */
 esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
     esp32_aes_gcm_ctx_t *ctx,
     const esp32_ecdh_ctx_t *ecdh_ctx);

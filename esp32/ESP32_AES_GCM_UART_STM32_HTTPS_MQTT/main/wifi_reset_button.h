@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #ifndef MAIN_WIFI_RESET_BUTTON_H_

@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-03
+ * Documentation date: 2026-07-27
  */
 
 #include "STM32_uart.h"
@@ -202,8 +202,8 @@ void wifi_application_connected_events(void)
     }
 }
 
-/* Prepares the STM32-to-ESP32 ECDH and GCM receive path. */
-static bool esp32_stm32_receiver_crypto_bringup(void)
+/* Prepares directional ECDH keys and the GCM transmit session. */
+static bool esp32_stm32_duplex_crypto_bringup(void)
 {
     esp32_ecdh_status_t ecdh_status;
     esp32_aes_gcm_status_t gcm_status;
@@ -222,7 +222,6 @@ static bool esp32_stm32_receiver_crypto_bringup(void)
         return false;
     }
 
-    /* Release ECDH state if provisioning or key derivation fails. */
     ecdh_status =
         esp32_ecdh_generate_keypairs(
             &g_ecdh_ctx);
@@ -231,7 +230,7 @@ static bool esp32_stm32_receiver_crypto_bringup(void)
     {
         ESP_LOGE(
             CRYPTO_TAG,
-            "Receiver key-material import failed: status=%d",
+            "Full-duplex ECDH material import failed: status=%d",
             (int)ecdh_status);
 
         esp32_ecdh_free(
@@ -248,7 +247,7 @@ static bool esp32_stm32_receiver_crypto_bringup(void)
     {
         ESP_LOGE(
             CRYPTO_TAG,
-            "STM32->ESP32 ECDH shared-secret computation failed: "
+            "Full-duplex ECDH shared-secret computation failed: "
             "status=%d",
             (int)ecdh_status);
 
@@ -266,8 +265,7 @@ static bool esp32_stm32_receiver_crypto_bringup(void)
     {
         ESP_LOGE(
             CRYPTO_TAG,
-            "STM32->ESP32 receiver key derivation failed: "
-            "status=%d",
+            "Full-duplex AES/MAC key derivation failed: status=%d",
             (int)ecdh_status);
 
         esp32_ecdh_free(
@@ -293,14 +291,37 @@ static bool esp32_stm32_receiver_crypto_bringup(void)
         return false;
     }
 
-    ESP_LOGI(
-        CRYPTO_TAG,
-        "STM32->ESP32 receiver crypto initialized");
+    /* Initialize the TX nonce session only after both keys are derived. */
+    gcm_status =
+        esp32_gcm_nonce_session_init(
+            &g_aes_gcm_ctx,
+            &g_ecdh_ctx);
+
+    if (gcm_status != ESP32_AES_GCM_SUCCESS)
+    {
+        ESP_LOGE(
+            CRYPTO_TAG,
+            "ESP32 transmit nonce-session initialization failed: "
+            "status=%d",
+            (int)gcm_status);
+
+        esp32_aes_gcm_free(
+            &g_aes_gcm_ctx);
+
+        esp32_ecdh_free(
+            &g_ecdh_ctx);
+
+        return false;
+    }
 
     ESP_LOGI(
         CRYPTO_TAG,
-        "Nonce generation disabled on ESP32 receive path; "
-        "nonce is read from UART packet");
+        "Full-duplex STM32/ESP32 crypto initialized");
+
+    ESP_LOGI(
+        CRYPTO_TAG,
+        "RX request wire size=42 bytes; "
+        "TX encrypted ACK/NACK wire size=39 bytes");
 
     return true;
 }
@@ -340,7 +361,7 @@ void app_main(void)
 
     ESP_LOGI(
         CRYPTO_TAG,
-        "STM32 UART receiver is running first; expecting one 42-byte packet");
+        "STM32 UART receiver is running first; expecting 42-byte encrypted requests");
 
     ESP_LOGI(
         CRYPTO_TAG,
@@ -349,7 +370,7 @@ void app_main(void)
     bootloader_random_enable();
 
     crypto_ready =
-        esp32_stm32_receiver_crypto_bringup();
+        esp32_stm32_duplex_crypto_bringup();
 
     bootloader_random_disable();
 
@@ -361,7 +382,7 @@ void app_main(void)
     {
         ESP_LOGE(
             CRYPTO_TAG,
-            "Receiver crypto initialization failed");
+            "Full-duplex crypto initialization failed");
 
         return;
     }
@@ -375,7 +396,7 @@ void app_main(void)
     {
         ESP_LOGE(
             CRYPTO_TAG,
-            "Failed to start UART AES-GCM receiver task: status=%d",
+            "Failed to start UART AES-GCM full-duplex task: status=%d",
             (int)gcm_status);
 
         esp32_aes_gcm_free(
@@ -389,7 +410,7 @@ void app_main(void)
 
     ESP_LOGI(
         CRYPTO_TAG,
-        "ESP32 ready: waiting for STM32 nonce[12] || ciphertext[14] || tag[16]");
+        "ESP32 ready: RX request=42 bytes, TX encrypted ACK/NACK=39 bytes");
 
 #if 0
     app_watchdog_init();
