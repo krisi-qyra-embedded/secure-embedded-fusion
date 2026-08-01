@@ -11,6 +11,7 @@
 #include "tim.h"
 #include "ecdh.h" /* your project header with macros & prototypes */
 #include "stm32_gcm_nvm.h"
+#include "i2c_dma.h"
 
 #define KEY_PRINT_DELAY_MS       20U
 #define KEY_BYTES_PER_LINE        8U
@@ -36,13 +37,14 @@ static int ct_memcmp(const void *a_, const void *b_, size_t n);
 //     0x4B, 0xDA, 0xCD, 0x60, 0x99, 0xEB, 0xE4, 0xBF,
 //     0x55, 0xEC, 0xD9, 0x11, 0x3F, 0x71, 0xE5, 0xEB,
 //     0xCB, 0x45, 0x75, 0xF3, 0xD6, 0xA6, 0x8A, 0x6B
-// };
+// };
 
 /* Reports a fatal error and halts normal execution. */
 void handle_error(const char *message) {
     /* Remain in the error loop after logging the failure. */
 
-    log_printf("ERROR: %s\r\n", message);
+    ECDH_LOG_PRINTF("ERROR: %s\r\n", message);
+    app_fault_delay_ms(20U);
 
     while (1) {
         // Toggle an LED to indicate an error (assuming LED_PIN is configured)
@@ -104,7 +106,7 @@ static uint64_t load_be64(const uint8_t in[8])
 static void crypto_uart_log_delay(void)
 {
     /* Allow buffered UART diagnostics to drain before the next message. */
-    tim2_delay_ms(CRYPTO_UART_LOG_DELAY_MS);
+    app_fault_delay_ms(CRYPTO_UART_LOG_DELAY_MS);
 }
 
 /* Logs a labeled byte buffer in hexadecimal. */
@@ -118,7 +120,7 @@ static void log_hex_buffer(
         return;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "%s [%u bytes]:\r\n",
         label,
         (unsigned)length
@@ -126,17 +128,17 @@ static void log_hex_buffer(
     crypto_uart_log_delay();
 
     for (size_t i = 0U; i < length; ++i) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "%02X",
             (unsigned)buffer[i]
         );
 
         if ((((i + 1U) % 16U) == 0U) ||
             ((i + 1U) == length)) {
-            log_printf("\r\n");
+            ECDH_LOG_PRINTF("\r\n");
             crypto_uart_log_delay();
         } else {
-            log_printf(" ");
+            ECDH_LOG_PRINTF(" ");
         }
     }
 }
@@ -152,7 +154,7 @@ static void log_adc_values(
         return;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "%s [%u samples]:\r\n",
         label,
         (unsigned)count
@@ -160,7 +162,7 @@ static void log_adc_values(
     crypto_uart_log_delay();
 
     for (size_t i = 0U; i < count; ++i) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "  sample[%u] = 0x%08lX (%lu)\r\n",
             (unsigned)i,
             (unsigned long)values[i],
@@ -384,7 +386,7 @@ static void print_key_as_c_array_uart(
         return;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "\r\n[KEY EXPORT] %s [%u bytes]\r\n",
         key_name,
         (unsigned)key_len
@@ -392,7 +394,7 @@ static void print_key_as_c_array_uart(
 
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "static const uint8_t %s[%u] = {\r\n",
         key_name,
         (unsigned)key_len
@@ -456,11 +458,11 @@ static void print_key_as_c_array_uart(
             return;
         }
 
-        log_printf("%s", line);
+        ECDH_LOG_PRINTF("%s", line);
         tim2_delay_ms(KEY_PRINT_DELAY_MS);
     }
 
-    log_printf("};\r\n");
+    ECDH_LOG_PRINTF("};\r\n");
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 }
 
@@ -571,24 +573,24 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
         ctx->keys.pub_len_receiver =
             sizeof(ecdh_provisioned_receiver_public_key);
 
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[KEYS] Complete six-key provisioning bundle found "
             "in ecdh.h.\r\n"
         );
         tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[KEYS] Four STM32 local keys and two ESP32 peer "
             "public keys are present.\r\n"
         );
         tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[KEYS] Local STM32 key generation is not required.\r\n"
         );
         tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[KEYS] Provisioned key material will not be printed.\r\n"
         );
         tim2_delay_ms(KEY_PRINT_DELAY_MS);
@@ -600,32 +602,35 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
      * The provisioning block exists, but at least one of the six
      * arrays is all-zero. Fall through to local STM32 key generation.
      */
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[KEYS][WARNING] Provisioned six-key bundle is incomplete "
         "or contains an all-zero key.\r\n"
     );
+    app_fault_delay_ms(20U);
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[KEYS][WARNING] Generating new local STM32 sender and "
         "receiver keypairs.\r\n"
     );
+    app_fault_delay_ms(20U);
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[KEYS][WARNING] ESP32 peer public keys must still be "
         "provisioned separately.\r\n"
     );
+    app_fault_delay_ms(20U);
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
 #else
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[KEYS] ECDH_PROVISIONED_KEYS_PRESENT is disabled.\r\n"
     );
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[KEYS] Generating new local STM32 sender and receiver "
         "keypairs.\r\n"
     );
@@ -640,7 +645,7 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
 
     memset(random_buf, 0, sizeof(random_buf));
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[KEYS] Generating new sender and receiver "
         "secp256r1 keypairs.\r\n"
     );
@@ -921,7 +926,7 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
         return GEN_KEYS_ERR_DRBG_CLEANUP;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "\r\n"
         "========== SECP256R1 KEY EXPORT BEGIN ==========\r\n"
     );
@@ -951,7 +956,7 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
         ctx->keys.pub_len_receiver
     );
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "========== SECP256R1 KEY EXPORT END ============\r\n"
     );
     tim2_delay_ms(KEY_PRINT_DELAY_MS);
@@ -1071,7 +1076,7 @@ static ecdh_status_t compute_cmox_ecdh_canonical32(
 
     *out_secret_len = ECDH_CANONICAL_SECRET_LEN;
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[INFO] C-MOX ECDH native_len=%u canonical_len=%u\r\n",
         (unsigned)raw_secret_len,
         (unsigned)*out_secret_len);
@@ -1162,7 +1167,7 @@ ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
         *out_len = ECDH_CANONICAL_SECRET_LEN;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[ECDH][TX] STM32 sender private x "
         "ESP32 receiver public succeeded\r\n"
     );
@@ -1201,9 +1206,10 @@ ecdh_status_t compute_ecdh_shared_as_receiver(
     (void)out_secret;
     (void)out_len;
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[ECDH][RX][ERROR] Provisioned ESP32 sender public key "
         "is required\r\n");
+    app_fault_delay_ms(20U);
 
     return ECDH_ERR_ECDH_FAILED;
 
@@ -1269,7 +1275,7 @@ ecdh_status_t compute_ecdh_shared_as_receiver(
         *out_len = ECDH_CANONICAL_SECRET_LEN;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[ECDH][RX] STM32 receiver private x "
         "ESP32 sender public succeeded\r\n");
 
@@ -1388,7 +1394,7 @@ kdf_status_t derive_keys_from_shared_secret_receiver(crypto_ctx_t *ctx)
  *  - Validates inputs and buffer sizes
  *  - Detects obviously-bad key/IV (all-zero) and rejects
  *  - Uses a local output-length variable and only commits the global
- *    `computed_size` on success (avoids partial state)
+ *    \`computed_size\` on success (avoids partial state)
  *  - Wipes output buffer on any failure
  *  - Returns clear, small-range negative error codes
  *
@@ -1707,10 +1713,11 @@ gen_iv_status_t generate_nonce_and_iv_per_transfer(
         secure_zero(ctx->IV_GCM,
                     sizeof(ctx->IV_GCM));
 
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] GCM nonce allocation failed (rc=%d)\r\n",
             nonce_ret
         );
+        app_fault_delay_ms(20U);
 
         return GEN_IV_ERR_GENERATE;
     }
@@ -1755,7 +1762,8 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
     /* ---------- 1) generate ECC keypairs ---------- */
     ret = generate_keypairs_cmox(ctx);
     if (ret != GEN_KEYS_SUCCESS) {
-        log_printf("[ERROR] sender_init_ecdh_crypto: generate_keypairs_cmox failed (rc=%d)\r\n", ret);
+        ECDH_LOG_PRINTF("[ERROR] sender_init_ecdh_crypto: generate_keypairs_cmox failed (rc=%d)\r\n", ret);
+        app_fault_delay_ms(20U);
 
         secure_zero(ctx->keys.private_key_sender,
                     sizeof(ctx->keys.private_key_sender));
@@ -1777,7 +1785,8 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
      */
     ret = compute_ecdh_shared_as_sender(ctx, NULL, NULL);
     if (ret != ECDH_SUCCESS) {
-        log_printf("[ERROR] sender_init_ecdh_crypto: compute_ecdh_shared_as_sender failed (rc=%d)\r\n", ret);
+        ECDH_LOG_PRINTF("[ERROR] sender_init_ecdh_crypto: compute_ecdh_shared_as_sender failed (rc=%d)\r\n", ret);
+        app_fault_delay_ms(20U);
 
         secure_zero(ctx->keys.private_key_sender,
                     sizeof(ctx->keys.private_key_sender));
@@ -1794,7 +1803,8 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
     /* ---------- 3) derive AES + MAC keys from 32-byte secret ---------- */
     ret = derive_keys_from_shared_secret(ctx, false);
     if (ret != KDF_SUCCESS) {
-        log_printf("[ERROR] sender_init_ecdh_crypto: derive_keys_from_shared_secret failed (rc=%d)\r\n", ret);
+        ECDH_LOG_PRINTF("[ERROR] sender_init_ecdh_crypto: derive_keys_from_shared_secret failed (rc=%d)\r\n", ret);
+        app_fault_delay_ms(20U);
 
         secure_zero(ctx->keys.private_key_sender,
                     sizeof(ctx->keys.private_key_sender));
@@ -1812,7 +1822,7 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
         return SENDER_INIT_ERR_KDF;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[INFO] sender_init_ecdh_crypto: success (shared_len=%u)\r\n",
         (unsigned)ctx->tmp.computed_secret_len);
 
@@ -1845,9 +1855,10 @@ receiver_init_status_t receiver_init_ecdh_crypto(
 
 #if !ECDH_PROVISIONED_KEYS_PRESENT
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[ERROR] receiver_init_ecdh_crypto: "
         "provisioned reverse-direction keys are required\r\n");
+    app_fault_delay_ms(20U);
 
     return RECEIVER_INIT_ERR_PUBKEY;
 
@@ -1865,10 +1876,11 @@ receiver_init_status_t receiver_init_ecdh_crypto(
             sizeof(esp32_provisioned_sender_public_key));
 
     if (ret != PUBKEY_OK) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] receiver_init_ecdh_crypto: "
             "ESP32 sender public key is invalid (rc=%d)\r\n",
             ret);
+        app_fault_delay_ms(20U);
 
         return RECEIVER_INIT_ERR_PUBKEY;
     }
@@ -1880,10 +1892,11 @@ receiver_init_status_t receiver_init_ecdh_crypto(
             NULL);
 
     if (ret != ECDH_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] receiver_init_ecdh_crypto: "
             "reverse-direction ECDH failed (rc=%d)\r\n",
             ret);
+        app_fault_delay_ms(20U);
 
         secure_zero(
             ctx->tmp.computed_secret_receiver,
@@ -1900,10 +1913,11 @@ receiver_init_status_t receiver_init_ecdh_crypto(
             true);
 
     if (ret != KDF_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] receiver_init_ecdh_crypto: "
             "receiver KDF failed (rc=%d)\r\n",
             ret);
+        app_fault_delay_ms(20U);
 
         secure_zero(
             ctx->tmp.computed_secret_receiver,
@@ -1922,19 +1936,19 @@ receiver_init_status_t receiver_init_ecdh_crypto(
         return RECEIVER_INIT_ERR_KDF;
     }
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[INFO] receiver_init_ecdh_crypto: "
         "ESP32->STM32 RX key ready (shared_len=%u)\r\n",
         (unsigned)ctx->tmp.computed_secret_receiver_len);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[INFO] Receiver KDF compatibility: "
         "AES=SHA256(shared||0x01), "
         "MAC=SHA256(shared||0x02)\r\n");
 
-#if ECDH_DEBUG_PRINT_RX_DERIVED_MATERIAL
+#if 0 /* runtime policy: derived key material never printed */
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[SECURITY WARNING] Printing reverse-direction development "
         "key material\r\n");
 
@@ -1974,20 +1988,22 @@ hmac_sender_status_t generate_nonce_iv_encrypt_hmac_sender(crypto_ctx_t *ctx)
 
     iv_rc = generate_nonce_and_iv_per_transfer(ctx);
     if (iv_rc != GEN_IV_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] generate_nonce_iv_encrypt_hmac_sender: IV generation failed (rc=%d)\r\n",
             iv_rc
         );
+        app_fault_delay_ms(20U);
         return HMAC_SENDER_ERR_GEN_IV;
     }
 
     /* 2) encrypt (AES-CTR) -> writes ciphertext and sets computed_size */
     enc_rc = encrypt_aes_ctr(ctx, &ctx->tmp.computed_size);
     if (enc_rc != AES_CTR_ENC_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] generate_nonce_iv_encrypt_hmac_sender: AES-CTR encrypt failed (rc=%d)\r\n",
             enc_rc
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->IV, sizeof(ctx->IV));
         return HMAC_SENDER_ERR_AES_CTR;
     }
@@ -1998,10 +2014,11 @@ hmac_sender_status_t generate_nonce_iv_encrypt_hmac_sender(crypto_ctx_t *ctx)
                     sizeof(ctx->auth.mac),
                     &ctx->auth.mac_len);
     if (hmac_rc != HMAC_IVC_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] generate_nonce_iv_encrypt_hmac_sender: HMAC computation failed (rc=%d)\r\n",
             hmac_rc
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->IV, sizeof(ctx->IV));
         return HMAC_SENDER_ERR_HMAC;
     }
@@ -2043,47 +2060,52 @@ verify_dec_status_t verify_mac_decrypt_recombine_receiver(crypto_ctx_t *ctx)
                  &ctx->auth.mac_check_len
              );
     if (hmac_rc != HMAC_IVC_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] verify_mac_decrypt_recombine_receiver: HMAC compute failed (rc=%d)\r\n",
             hmac_rc
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->auth.mac_check, sizeof(ctx->auth.mac_check));
         return VERIFY_DEC_ERR_HMAC_COMPUTE;
     }
 
     if (ctx->auth.mac_check_len != ctx->auth.mac_len) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] verify_mac_decrypt_recombine_receiver: MAC length mismatch (%zu != %zu)\r\n",
             ctx->auth.mac_check_len, ctx->auth.mac_len
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->auth.mac_check, sizeof(ctx->auth.mac_check));
         return VERIFY_DEC_ERR_MAC_LEN;
     }
 
     if (ct_memcmp(ctx->auth.mac_check, ctx->auth.mac, ctx->auth.mac_check_len) != 0) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] verify_mac_decrypt_recombine_receiver: MAC verification failed\r\n"
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->auth.mac_check, sizeof(ctx->auth.mac_check));
         return VERIFY_DEC_ERR_MAC_MISMATCH;
     }
 
     dec_rc = decrypt_aes_ctr(ctx, &dec_len);
     if (dec_rc != AES_CTR_DEC_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] verify_mac_decrypt_recombine_receiver: AES-CTR decrypt failed (rc=%d)\r\n",
             dec_rc
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->auth.mac_check, sizeof(ctx->auth.mac_check));
         secure_zero(ctx->buffers.decrypted_bytes, sizeof(ctx->buffers.decrypted_bytes));
         return VERIFY_DEC_ERR_AES_CTR_DEC;
     }
 
     if (dec_len != ctx->tmp.computed_size) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] verify_mac_decrypt_recombine_receiver: length mismatch (dec_len=%zu computed_size=%zu)\r\n",
             dec_len, ctx->tmp.computed_size
         );
+        app_fault_delay_ms(20U);
         secure_zero(ctx->auth.mac_check, sizeof(ctx->auth.mac_check));
         secure_zero(ctx->buffers.decrypted_bytes, sizeof(ctx->buffers.decrypted_bytes));
         return VERIFY_DEC_ERR_LENGTH_MISMATCH;
@@ -2094,12 +2116,13 @@ verify_dec_status_t verify_mac_decrypt_recombine_receiver(crypto_ctx_t *ctx)
     count = ctx->cfg.adc_sample_count;
     for (i = 0; i < count; ++i) {
         if (ctx->buffers.decrypted_adc_values[i] != ctx->buffers.adc_values[i]) {
-            log_printf(
+            ECDH_LOG_PRINTF(
                 "[ERROR] verify_mac_decrypt_recombine_receiver: ADC mismatch idx=%u (got=0x%08X exp=0x%08X)\r\n",
                 (unsigned)i,
                 (unsigned)ctx->buffers.decrypted_adc_values[i],
                 (unsigned)ctx->buffers.adc_values[i]
             );
+            app_fault_delay_ms(20U);
             secure_zero(ctx->auth.mac_check, sizeof(ctx->auth.mac_check));
             secure_zero(ctx->buffers.decrypted_bytes, sizeof(ctx->buffers.decrypted_bytes));
             return VERIFY_DEC_ERR_ADC_MISMATCH;
@@ -2370,11 +2393,12 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
 
     iv_rc = generate_nonce_and_iv_per_transfer(ctx);
     if (iv_rc != GEN_IV_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] generate_nonce_iv_encrypt_gcm_sender: "
             "IV generation failed (rc=%d)\r\n",
             iv_rc
         );
+        app_fault_delay_ms(20U);
 
         secure_zero(ctx->IV, sizeof(ctx->IV));
         secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
@@ -2394,11 +2418,12 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
      */
     gcm_rc = encrypt_aes_gcm_aead(ctx);
     if (gcm_rc != GCM_ENC_SUCCESS) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] generate_nonce_iv_encrypt_gcm_sender: "
             "GCM streaming encryption failed (rc=%d)\r\n",
             gcm_rc
         );
+        app_fault_delay_ms(20U);
 
         secure_zero(ctx->IV, sizeof(ctx->IV));
         secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
@@ -2422,10 +2447,11 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
          (sizeof(ctx->buffers.cipher_text_gcm_aead) -
           AES_GCM_TAG_SIZE))) {
 
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[ERROR] generate_nonce_iv_encrypt_gcm_sender: "
             "invalid ciphertext/tag buffer size\r\n"
         );
+        app_fault_delay_ms(20U);
 
         secure_zero(ctx->buffers.cipher_text_gcm_aead,
                     sizeof(ctx->buffers.cipher_text_gcm_aead));
@@ -2454,89 +2480,6 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
            AES_GCM_TAG_SIZE);
 
     ctx->auth.mac_len = AES_GCM_TAG_SIZE;
-
-    {
-        const size_t combined_len =
-            ctx->auth.ciphertext_len +
-            ctx->auth.mac_len;
-
-        const uint32_t counter_hi =
-            (uint32_t)(
-                ctx->gcm_nonce.current_counter >> 32);
-
-        const uint32_t counter_lo =
-            (uint32_t)(
-                ctx->gcm_nonce.current_counter &
-                UINT64_C(0xFFFFFFFF));
-
-        log_printf(
-            "\r\n"
-            "========== STM32 AES-256-GCM ENCRYPT PACKET ==========\r\n"
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "[TX][META] session=%08lX "
-            "counter=%08lX%08lX\r\n",
-            (unsigned long)ctx->gcm_nonce.session_id,
-            (unsigned long)counter_hi,
-            (unsigned long)counter_lo
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "[TX][LENGTHS] plaintext=%u "
-            "ciphertext=%u tag=%u combined=%u\r\n",
-            (unsigned)ctx->tmp.plain_len,
-            (unsigned)ctx->auth.ciphertext_len,
-            (unsigned)ctx->auth.mac_len,
-            (unsigned)combined_len
-        );
-        crypto_uart_log_delay();
-
-        log_hex_buffer(
-            "[TX][UART PLAINTEXT PACKET]",
-            ctx->buffers.plain_text_bytes,
-            ctx->tmp.plain_len
-        );
-
-        log_hex_buffer(
-            "[TX][NONCE IV_GCM]",
-            ctx->IV_GCM,
-            sizeof(ctx->IV_GCM)
-        );
-
-        log_hex_buffer(
-            "[TX][CIPHERTEXT ONLY]",
-            ctx->auth.ciphertext_sender,
-            ctx->auth.ciphertext_len
-        );
-
-        log_hex_buffer(
-            "[TX][AUTHENTICATION TAG]",
-            ctx->auth.tag_sender,
-            ctx->auth.mac_len
-        );
-
-        log_hex_buffer(
-            "[TX][CIPHERTEXT || TAG]",
-            ctx->buffers.cipher_text_gcm_aead,
-            combined_len
-        );
-
-        log_printf(
-            "[TX][ENCRYPTED SUCCESSFULLY] "
-            "AES-256-GCM produced authenticated ciphertext "
-            "using a fresh per-packet nonce.\r\n"
-        );
-        crypto_uart_log_delay();
-
-        log_printf(
-            "=======================================================\r\n"
-        );
-        crypto_uart_log_delay();
-        crypto_uart_log_delay();
-    }
 
     return GCM_SENDER_SUCCESS;
 }
@@ -2980,11 +2923,12 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
     if ((ctx->auth.ciphertext_len !=
             GCM_UART_RESPONSE_CIPHERTEXT_SIZE) ||
         (ctx->auth.mac_len != AES_GCM_TAG_SIZE)) {
-        log_printf(
-            "[RX][ERROR] Invalid encrypted ACK/NACK lengths: "
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][RX] Invalid encrypted ACK/NACK lengths: "
             "ciphertext=%u tag=%u\r\n",
             (unsigned)ctx->auth.ciphertext_len,
             (unsigned)ctx->auth.mac_len);
+        app_fault_delay_ms(20U);
 
         return GCM_RECEIVER_ERR_FRAME_LENGTH;
     }
@@ -2993,10 +2937,11 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         decrypt_verify_aes_gcm_receiver(ctx);
 
     if (gcm_rc != GCM_DEC_SUCCESS) {
-        log_printf(
-            "[RX][ERROR] ESP32 ACK/NACK GCM authentication failed "
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][AUTH] ESP32 ACK/NACK GCM authentication failed "
             "(rc=%d)\r\n",
             gcm_rc);
+        app_fault_delay_ms(20U);
 
         secure_zero(
             ctx->buffers.decrypted_bytes,
@@ -3009,10 +2954,11 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
 
     if (ctx->tmp.computed_size !=
         GCM_UART_RESPONSE_PLAINTEXT_SIZE) {
-        log_printf(
-            "[RX][ERROR] Decrypted ACK/NACK size=%u expected=%u\r\n",
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][RX] Decrypted ACK/NACK size=%u expected=%u\r\n",
             (unsigned)ctx->tmp.computed_size,
             (unsigned)GCM_UART_RESPONSE_PLAINTEXT_SIZE);
+        app_fault_delay_ms(20U);
 
         secure_zero(
             ctx->buffers.decrypted_bytes,
@@ -3034,11 +2980,12 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
             GCM_UART_RESPONSE_PLAINTEXT_SIZE - 1U];
 
     if (calculated_checksum != received_checksum) {
-        log_printf(
-            "[RX][ERROR] Authenticated ACK/NACK checksum invalid: "
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][RX] Authenticated ACK/NACK checksum invalid: "
             "calculated=0x%02X received=0x%02X\r\n",
             calculated_checksum,
             received_checksum);
+        app_fault_delay_ms(20U);
 
         return GCM_RECEIVER_ERR_FRAME_CHECKSUM;
     }
@@ -3047,8 +2994,9 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         (plaintext[1] != GCM_UART_MAGIC_1) ||
         (plaintext[2] != GCM_UART_PROTOCOL_VERSION) ||
         (plaintext[4] != GCM_UART_RESPONSE_PAYLOAD_LEN)) {
-        log_printf(
-            "[RX][ERROR] Authenticated ACK/NACK header invalid\r\n");
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][RX] Authenticated ACK/NACK header invalid\r\n");
+        app_fault_delay_ms(20U);
 
         return GCM_RECEIVER_ERR_FRAME_HEADER;
     }
@@ -3066,30 +3014,33 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         plaintext[9];
 
     if (received_sequence != expected_sequence) {
-        log_printf(
-            "[RX][ERROR] Authenticated stale response: "
+        ECDH_LOG_PRINTF(
+            "[WARN][LINK][STALE_RX] Authenticated stale response: "
             "expected_seq=%lu received_seq=%lu\r\n",
             (unsigned long)expected_sequence,
             (unsigned long)received_sequence);
+        app_fault_delay_ms(20U);
 
         return GCM_RECEIVER_ERR_STALE_SEQUENCE;
     }
 
     if ((message_type != GCM_UART_MSG_TYPE_ACK) &&
         (message_type != GCM_UART_MSG_TYPE_NACK)) {
-        log_printf(
-            "[RX][ERROR] Authenticated response type invalid: "
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][RX] Authenticated response type invalid: "
             "0x%02X\r\n",
             message_type);
+        app_fault_delay_ms(20U);
 
         return GCM_RECEIVER_ERR_FRAME_TYPE;
     }
 
     if ((message_type == GCM_UART_MSG_TYPE_ACK) &&
         (reason != 0U)) {
-        log_printf(
-            "[RX][ERROR] ACK carried nonzero reason=%u\r\n",
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][RX] ACK carried nonzero reason=%u\r\n",
             (unsigned)reason);
+        app_fault_delay_ms(20U);
 
         return GCM_RECEIVER_ERR_FRAME_TYPE;
     }
@@ -3102,6 +3053,13 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         load_be64(
             &ctx->IV_GCM_receiver[4]);
 
+    /*
+     * Authentication and protocol validation have succeeded.
+     *
+     * In the boot-write-only Flash configuration this updates the
+     * ESP32->STM32 replay high-water mark in RAM only. It does not append a
+     * Flash record for every ACK/NACK.
+     */
     replay_result =
         stm32_gcm_nvm_check_and_commit_rx(
             session_id,
@@ -3109,8 +3067,8 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
 
     if (replay_result ==
         STM32_GCM_REPLAY_DUPLICATE_LAST) {
-        log_printf(
-            "[RX][REPLAY] Duplicate ESP32 response suppressed: "
+        ECDH_LOG_PRINTF(
+            "[WARN][LINK][REPLAY_DUP] Duplicate ESP32 response suppressed: "
             "session=%08lX counter=%08lX%08lX",
             (unsigned long)session_id,
             (unsigned long)(counter >> 32),
@@ -3129,14 +3087,15 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
             STM32_GCM_REPLAY_REJECT_OLD) ||
         (replay_result ==
             STM32_GCM_REPLAY_BAD_NONCE)) {
-        log_printf(
-            "[RX][REPLAY] Old/replayed ESP32 response rejected: "
+        ECDH_LOG_PRINTF(
+            "[WARN][LINK][REPLAY_REJECT] Old/replayed ESP32 response rejected: "
             "session=%08lX counter=%08lX%08lX",
             (unsigned long)session_id,
             (unsigned long)(counter >> 32),
             (unsigned long)(
                 counter &
                 UINT64_C(0xFFFFFFFF)));
+        app_fault_delay_ms(20U);
 
         secure_zero(
             ctx->buffers.decrypted_bytes,
@@ -3147,9 +3106,9 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
 
     if (replay_result ==
         STM32_GCM_REPLAY_STORAGE_ERROR) {
-        log_printf(
-            "[RX][ERROR] Authenticated response rejected because "
-            "replay state could not be persisted");
+        ECDH_LOG_PRINTF(
+            "[ERROR][LINK][REPLAY_STATE] Authenticated response rejected: replay state unavailable");
+        app_fault_delay_ms(20U);
 
         secure_zero(
             ctx->buffers.decrypted_bytes,
@@ -3167,25 +3126,15 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
     response_out->sequence =
         received_sequence;
 
-    log_printf(
-        "[RX][REPLAY] Freshness state committed: "
-        "session=%08lX counter=%08lX%08lX "
-        "remaining_flash_records=%lu",
-        (unsigned long)session_id,
-        (unsigned long)(counter >> 32),
-        (unsigned long)(
-            counter &
-            UINT64_C(0xFFFFFFFF)),
-        (unsigned long)
-            stm32_gcm_nvm_remaining_record_slots());
+    /* Fresh authenticated RX state is RAM-only; normal success is silent. */
 
-#if ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET
+#if 0 /* runtime policy: raw decrypted RX packet dumps disabled */
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "\r\n"
         "========== ESP32 -> STM32 DECRYPTED ACK/NACK ==========\r\n");
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[RX][META] session=%08lX counter=%08lX%08lX\r\n",
         (unsigned long)session_id,
         (unsigned long)(counter >> 32),
@@ -3213,7 +3162,7 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         plaintext,
         ctx->tmp.computed_size);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[RX][PARSED] type=0x%02X sequence=%lu reason=%u "
         "checksum=0x%02X\r\n",
         message_type,
@@ -3221,11 +3170,11 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         (unsigned)reason,
         received_checksum);
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "[RX][AUTHENTICATED] GCM tag verified before protocol "
         "validation\r\n");
 
-    log_printf(
+    ECDH_LOG_PRINTF(
         "=======================================================\r\n");
 
 #endif /* ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET */
@@ -3257,11 +3206,7 @@ recombine_status_t recombine_adc_values(crypto_ctx_t *ctx)
     for (i = 0; i < ctx->cfg.adc_sample_count; i++) {
         size_t off = i * bps;
 
-        ctx->buffers.decrypted_adc_values[i] =
-              ((uint32_t)ctx->buffers.decrypted_bytes[off]     << 24)
-            | ((uint32_t)ctx->buffers.decrypted_bytes[off + 1] << 16)
-            | ((uint32_t)ctx->buffers.decrypted_bytes[off + 2] << 8)
-            | ((uint32_t)ctx->buffers.decrypted_bytes[off + 3]);
+        ctx->buffers.decrypted_adc_values[i] = ((uint32_t)ctx->buffers.decrypted_bytes[off]  << 24) | ((uint32_t)ctx->buffers.decrypted_bytes[off + 1] << 16) | ((uint32_t)ctx->buffers.decrypted_bytes[off + 2] << 8) | ((uint32_t)ctx->buffers.decrypted_bytes[off + 3]);
     }
 
     return RECOMBINE_OK;
@@ -3400,15 +3345,31 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
         return GCM_NONCE_ERR_BAD_KEY_STATE;
     }
 
+    if (ctx->gcm_nonce.initialized) {
+        ECDH_LOG_PRINTF(
+            "[NONCE][TX] Session already initialized: "
+            "session=%08lX next_counter=%08lX%08lX "
+            "(no additional Flash write)\r\n",
+            (unsigned long)ctx->gcm_nonce.session_id,
+            (unsigned long)(ctx->gcm_nonce.next_counter >> 32),
+            (unsigned long)(
+                ctx->gcm_nonce.next_counter &
+                UINT64_C(0xFFFFFFFF))
+        );
+
+        return GCM_NONCE_OK;
+    }
+
     nvm_status =
         stm32_gcm_nvm_reserve_tx_session(
             &session_id);
 
     if (nvm_status != STM32_GCM_NVM_OK) {
-        log_printf(
+        ECDH_LOG_PRINTF(
             "[NONCE][TX][ERROR] Persistent session reservation "
             "failed rc=%d\r\n",
             (int)nvm_status);
+        app_fault_delay_ms(20U);
 
         return GCM_NONCE_ERR_NVM;
     }
@@ -3423,15 +3384,10 @@ gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx)
 
     secure_zero(ctx->IV_GCM, sizeof(ctx->IV_GCM));
 
-    log_printf(
-        "[NONCE][TX] Reset-safe STM32->ESP32 GCM session reserved: "
-        "persistent_session=%08lX first_counter=%08lX%08lX "
-        "remaining_flash_records=%lu\r\n",
+    ECDH_LOG_PRINTF(
+        "[CRYPTO][BOOT] tx_session=%08lX counter_start=1 store=FLASH "
+        "remaining_records=%lu\r\n",
         (unsigned long)ctx->gcm_nonce.session_id,
-        (unsigned long)(ctx->gcm_nonce.next_counter >> 32),
-        (unsigned long)(
-            ctx->gcm_nonce.next_counter &
-            UINT64_C(0xFFFFFFFF)),
         (unsigned long)
             stm32_gcm_nvm_remaining_record_slots()
     );
@@ -3476,16 +3432,5 @@ gcm_nonce_status_t gcm_nonce_allocate(
     store_be64(&ctx->IV_GCM[4],
                counter);
 
-    log_printf(
-        "[NONCE] GCM nonce allocated: "
-        "session=%08lX counter=%08lX%08lX\r\n",
-        (unsigned long)ctx->gcm_nonce.session_id,
-        (unsigned long)(counter >> 32),
-        (unsigned long)(
-            counter &
-            UINT64_C(0xFFFFFFFF))
-    );
-
     return GCM_NONCE_OK;
 }
-

@@ -36,9 +36,12 @@ Core/Src/ESP32_uart.o: ../Core/Src/ESP32_uart.c ../Core/Inc/ESP32_uart.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  ../Core/Inc/uart.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h \
- ../Core/Inc/ecdh.h ../Core/Inc/uart.h ../Core/Inc/nonce.h \
+ ../Core/Inc/uart.h ../Core/Inc/ecdh.h ../Core/Inc/nonce.h \
  ../Core/Inc/pwm_dma.h ../Core/Inc/DMA.h \
  ../Core/Inc/entropy_personalization_nonce_gen.h \
  ../Core/Inc/sram_startup_entropy.h ../Core/Inc/device_uid_entropy.h \
@@ -102,7 +105,11 @@ Core/Src/ESP32_uart.o: ../Core/Src/ESP32_uart.c ../Core/Inc/ESP32_uart.h \
  ../Middlewares/ST/STM32_Cryptographic/include/drbg/cmox_drbg_retvals.h \
  ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h \
  ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h \
- ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h
+ ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h \
+ ../Core/Inc/i2c_dma.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
+ ../Core/Inc/iwdg.h ../Core/Inc/systick.h ../Core/Inc/i2c_dma.h
 ../Core/Inc/ESP32_uart.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
@@ -141,10 +148,13 @@ Core/Src/ESP32_uart.o: ../Core/Src/ESP32_uart.c ../Core/Inc/ESP32_uart.h \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 ../Core/Inc/uart.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
-../Core/Inc/ecdh.h:
 ../Core/Inc/uart.h:
+../Core/Inc/ecdh.h:
 ../Core/Inc/nonce.h:
 ../Core/Inc/pwm_dma.h:
 ../Core/Inc/DMA.h:
@@ -213,3 +223,9 @@ Core/Src/ESP32_uart.o: ../Core/Src/ESP32_uart.c ../Core/Inc/ESP32_uart.h \
 ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h:
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h:
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h:
+../Core/Inc/i2c_dma.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
+../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h:
+../Core/Inc/iwdg.h:
+../Core/Inc/systick.h:
+../Core/Inc/i2c_dma.h:

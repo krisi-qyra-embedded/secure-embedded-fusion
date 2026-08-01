@@ -5,19 +5,22 @@
 /*
  * stm32_gcm_nvm.c
  *
- * Append-only internal-flash journal for:
- *   - STM32->ESP32 persistent GCM session epochs
- *   - ESP32->STM32 persistent replay high-water state
+ * Based on the earlier working STM32 internal-Flash journal implementation.
  *
- * Power-failure behavior:
- *   - crc32 is written before commit
- *   - commit is programmed last
- *   - incomplete records are ignored during boot scan
- *   - the sector is NEVER erased automatically when full
+ * Requested write policy:
+ *   - STM32 TX session: ONE Flash append per boot/reset.
+ *   - TX packet counter: RAM-only.
+ *   - ESP32->STM32 RX replay high-water: RAM-only.
+ *   - Normal UART packets never call HAL_FLASH_Program().
  *
- * Failing closed when full avoids losing the last secure state during a
- * power interruption. Provision a dual-sector compactor or external FRAM
- * before using this journal at high packet rates.
+ * Flash record write sequence is kept the same as the earlier working code:
+ *   HAL_FLASH_Unlock()
+ *   clear flags
+ *   HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ...)
+ *   commit word last
+ *   HAL_FLASH_Lock()
+ *
+ * The journal is never erased automatically.
  */
 
 #include "stm32_gcm_nvm.h"
@@ -50,6 +53,13 @@ static stm32_gcm_nvm_record_t s_state;
 static uint32_t s_next_address;
 static bool s_initialized;
 
+/* RAM-only ESP32->STM32 replay high-water state. */
+static uint32_t s_rx_session_id;
+static uint64_t s_rx_counter;
+
+static bool s_tx_session_reserved_this_boot;
+static uint32_t s_tx_session_id_this_boot;
+
 /* Calculates the integrity CRC for a GCM state record. */
 static uint32_t stm32_gcm_crc32(
     const uint8_t *data,
@@ -79,41 +89,6 @@ static uint32_t stm32_gcm_crc32(
     }
 
     return ~crc;
-}
-
-/* Decodes the receive counter from its stored word pair. */
-static uint64_t stm32_gcm_record_rx_counter(
-    const stm32_gcm_nvm_record_t *record)
-{
-    /* Combine the high and low words into the 64-bit counter. */
-    if (record == NULL)
-    {
-        return UINT64_C(0);
-    }
-
-    return
-        ((uint64_t)record->rx_counter_hi << 32U) |
-        (uint64_t)record->rx_counter_lo;
-}
-
-/* Encodes the receive counter into its record word pair. */
-static void stm32_gcm_record_set_rx_counter(
-    stm32_gcm_nvm_record_t *record,
-    uint64_t counter)
-{
-    /* Store the upper and lower 32-bit halves separately. */
-    if (record == NULL)
-    {
-        return;
-    }
-
-    record->rx_counter_hi =
-        (uint32_t)(counter >> 32U);
-
-    record->rx_counter_lo =
-        (uint32_t)(
-            counter &
-            UINT64_C(0xFFFFFFFF));
 }
 
 /* Checks whether a Flash journal slot is erased. */
@@ -282,10 +257,34 @@ static stm32_gcm_nvm_status_t stm32_gcm_append_record(
                     (uint32_t)(i * sizeof(uint32_t)),
                 (uint64_t)words[i]);
 
+        /*if (hal_status != HAL_OK)
+        {
+            uint32_t flash_error = HAL_FLASH_GetError();
+
+            log_printf(
+                "[FLASH][FAIL] "
+                "status=%d error=0x%08lX "
+                "addr=0x%08lX data=0x%08lX "
+                "SR=0x%08lX CR=0x%08lX OPTCR=0x%08lX \r\n",
+                (int)hal_status,
+                (unsigned long)flash_error,
+                (unsigned long)(
+                    s_next_address +
+                    (uint32_t)(i * sizeof(uint32_t))),
+                (unsigned long)words[i],
+                (unsigned long)FLASH->SR,
+                (unsigned long)FLASH->CR,
+                (unsigned long)FLASH->OPTCR);
+            app_fault_delay_ms(100U);
+
+            break;
+        */
+
         if (hal_status != HAL_OK)
         {
             break;
         }
+
     }
 
     if (hal_status == HAL_OK)
@@ -301,6 +300,7 @@ static stm32_gcm_nvm_status_t stm32_gcm_append_record(
                         commit_index *
                         sizeof(uint32_t)),
                 (uint64_t)words[commit_index]);
+
     }
 
     if (unlocked)
@@ -382,6 +382,11 @@ stm32_gcm_nvm_status_t stm32_gcm_nvm_init(void)
         0,
         sizeof(s_state));
 
+    s_rx_session_id = 0U;
+    s_rx_counter = UINT64_C(0);
+    s_tx_session_reserved_this_boot = false;
+    s_tx_session_id_this_boot = 0U;
+
     for (address = STM32_GCM_NVM_FLASH_BASE;
          (address + sizeof(stm32_gcm_nvm_record_t)) <= sector_end;
          address += sizeof(stm32_gcm_nvm_record_t))
@@ -441,6 +446,7 @@ stm32_gcm_nvm_status_t stm32_gcm_nvm_reserve_tx_session(
     /* Reject session or generation exhaustion before advancing state. */
     stm32_gcm_nvm_record_t next;
     stm32_gcm_nvm_status_t status;
+    uint32_t previous_session;
 
     if (session_id_out == NULL)
     {
@@ -455,7 +461,27 @@ stm32_gcm_nvm_status_t stm32_gcm_nvm_reserve_tx_session(
         return status;
     }
 
-    if ((s_state.tx_session_id == UINT32_MAX) ||
+    if (s_tx_session_reserved_this_boot)
+    {
+        *session_id_out =
+            s_tx_session_id_this_boot;
+
+        return STM32_GCM_NVM_OK;
+    }
+
+    previous_session =
+        s_state.tx_session_id;
+
+#ifdef STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR
+    if (previous_session <
+        STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR)
+    {
+        previous_session =
+            STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR;
+    }
+#endif
+
+    if ((previous_session == UINT32_MAX) ||
         (s_state.generation == UINT32_MAX))
     {
         return STM32_GCM_NVM_ERR_EXHAUSTED;
@@ -465,7 +491,12 @@ stm32_gcm_nvm_status_t stm32_gcm_nvm_reserve_tx_session(
         s_state;
 
     next.generation++;
-    next.tx_session_id++;
+    next.tx_session_id =
+        previous_session + 1U;
+
+    next.rx_session_id = 0U;
+    next.rx_counter_hi = 0U;
+    next.rx_counter_lo = 0U;
 
     status =
         stm32_gcm_append_record(
@@ -475,6 +506,12 @@ stm32_gcm_nvm_status_t stm32_gcm_nvm_reserve_tx_session(
     {
         return status;
     }
+
+    s_tx_session_reserved_this_boot =
+        true;
+
+    s_tx_session_id_this_boot =
+        next.tx_session_id;
 
     *session_id_out =
         next.tx_session_id;
@@ -487,10 +524,8 @@ stm32_gcm_nvm_replay_result_t stm32_gcm_nvm_check_and_commit_rx(
     uint32_t session_id,
     uint64_t counter)
 {
-    /* Commit authenticated receive state before accepting the newer nonce. */
-    stm32_gcm_nvm_record_t next;
+    /* Track the accepted receive session and counter in RAM. */
     stm32_gcm_nvm_status_t status;
-    uint64_t highest_counter;
 
     if ((session_id == 0U) ||
         (counter == UINT64_C(0)))
@@ -506,59 +541,36 @@ stm32_gcm_nvm_replay_result_t stm32_gcm_nvm_check_and_commit_rx(
         return STM32_GCM_REPLAY_STORAGE_ERROR;
     }
 
-    highest_counter =
-        stm32_gcm_record_rx_counter(
-            &s_state);
-
-    if (s_state.rx_session_id != 0U)
+    if (s_rx_session_id != 0U)
     {
         if (session_id <
-            s_state.rx_session_id)
+            s_rx_session_id)
         {
             return STM32_GCM_REPLAY_REJECT_OLD;
         }
 
         if (session_id ==
-            s_state.rx_session_id)
+            s_rx_session_id)
         {
             if (counter <
-                highest_counter)
+                s_rx_counter)
             {
                 return STM32_GCM_REPLAY_REJECT_OLD;
             }
 
             if (counter ==
-                highest_counter)
+                s_rx_counter)
             {
                 return STM32_GCM_REPLAY_DUPLICATE_LAST;
             }
         }
     }
 
-    if (s_state.generation == UINT32_MAX)
-    {
-        return STM32_GCM_REPLAY_STORAGE_ERROR;
-    }
-
-    next =
-        s_state;
-
-    next.generation++;
-    next.rx_session_id =
+    s_rx_session_id =
         session_id;
 
-    stm32_gcm_record_set_rx_counter(
-        &next,
-        counter);
-
-    status =
-        stm32_gcm_append_record(
-            &next);
-
-    if (status != STM32_GCM_NVM_OK)
-    {
-        return STM32_GCM_REPLAY_STORAGE_ERROR;
-    }
+    s_rx_counter =
+        counter;
 
     return STM32_GCM_REPLAY_ACCEPT_NEW;
 }
@@ -584,7 +596,7 @@ uint32_t stm32_gcm_nvm_current_rx_session(void)
         return 0U;
     }
 
-    return s_state.rx_session_id;
+    return s_rx_session_id;
 }
 
 /* Returns the tracked GCM receive counter. */
@@ -596,8 +608,7 @@ uint64_t stm32_gcm_nvm_current_rx_counter(void)
         return UINT64_C(0);
     }
 
-    return stm32_gcm_record_rx_counter(
-        &s_state);
+    return s_rx_counter;
 }
 
 /* Reports the configured GCM storage capacity remaining. */

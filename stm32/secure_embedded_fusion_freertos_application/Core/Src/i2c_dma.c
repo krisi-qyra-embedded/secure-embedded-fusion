@@ -28,6 +28,14 @@
 #define SYSTEM_FAULT_MASK_DS18B20     (1UL << 4)
 #endif
 
+#ifndef SYSTEM_FAULT_OWNER_ESP32_UART_AES_GCM
+#define SYSTEM_FAULT_OWNER_ESP32_UART_AES_GCM  6U
+#endif
+
+#ifndef SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM
+#define SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM   (1UL << 5)
+#endif
+
 /*
  * Multi-sensor I2C DMA driver:
  *
@@ -183,6 +191,9 @@ volatile uint32_t system_fault_in_progress_mask = 0U;
 
          case SYSTEM_FAULT_OWNER_DS18B20:
              return SYSTEM_FAULT_MASK_DS18B20;
+
+         case SYSTEM_FAULT_OWNER_ESP32_UART_AES_GCM:
+             return SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM;
 
          default:
              return 0U;

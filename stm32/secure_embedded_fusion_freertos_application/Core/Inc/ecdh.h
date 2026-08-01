@@ -16,6 +16,9 @@
 #include "stm32f4xx.h"
 #include "cmox_crypto.h"
 #include <entropy_personalization_nonce_gen.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 
 #define AES_512_KEY_SIZE            64
@@ -29,6 +32,22 @@
 #define GCM_NONCE_SIZE_BYTES  		12U
 #define GCM_COUNTER_START     		1ULL
 #define ECDH_CANONICAL_SECRET_LEN   32U
+
+extern SemaphoreHandle_t xSerialSemaphore;
+
+#define ECDH_LOG_PRINTF(...)                                                 \
+    do {                                                                     \
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&           \
+            (xSerialSemaphore != NULL)) {                                    \
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) ==     \
+                pdTRUE) {                                                    \
+                log_printf(__VA_ARGS__);                                     \
+                (void)xSemaphoreGive(xSerialSemaphore);                      \
+            }                                                                \
+        } else {                                                             \
+            log_printf(__VA_ARGS__);                                         \
+        }                                                                    \
+    } while (0)
 
 
 /*

@@ -14,22 +14,20 @@ extern "C" {
 
 #include "stm32f4xx_hal.h"
 
-/*
- * STM32F411 sector 5:
- *   Base: 0x08020000
- *   End:  0x0803FFFF
- *   Size: 128 KiB = 0x00020000 bytes
- */
 #ifndef STM32_GCM_NVM_FLASH_SECTOR
-#define STM32_GCM_NVM_FLASH_SECTOR       FLASH_SECTOR_5
+#define STM32_GCM_NVM_FLASH_SECTOR     FLASH_SECTOR_7
 #endif
 
 #ifndef STM32_GCM_NVM_FLASH_BASE
-#define STM32_GCM_NVM_FLASH_BASE         UINT32_C(0x08020000)
+#define STM32_GCM_NVM_FLASH_BASE       UINT32_C(0x08060090)
 #endif
 
 #ifndef STM32_GCM_NVM_FLASH_SIZE
-#define STM32_GCM_NVM_FLASH_SIZE         UINT32_C(0x00020000)
+#define STM32_GCM_NVM_FLASH_SIZE       UINT32_C(0x0001FF70)
+#endif
+
+#ifndef STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR
+#define STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR UINT32_C(0x00010000)
 #endif
 
 typedef enum
@@ -55,22 +53,9 @@ typedef enum
 
 stm32_gcm_nvm_status_t stm32_gcm_nvm_init(void);
 
-/*
- * Atomically reserve the next STM32->ESP32 persistent session epoch.
- *
- * The journal record is committed before the value is returned. The packet
- * counter may then restart at 1 without reusing a 96-bit GCM nonce.
- */
 stm32_gcm_nvm_status_t stm32_gcm_nvm_reserve_tx_session(
     uint32_t *session_id_out);
 
-/*
- * Check an authenticated ESP32->STM32 nonce against the persistent receive
- * high-water mark. New state is committed before ACCEPT_NEW is returned.
- *
- * DUPLICATE_LAST may be a legitimate retransmission; the caller must not
- * execute side effects twice.
- */
 stm32_gcm_nvm_replay_result_t stm32_gcm_nvm_check_and_commit_rx(
     uint32_t session_id,
     uint64_t counter);

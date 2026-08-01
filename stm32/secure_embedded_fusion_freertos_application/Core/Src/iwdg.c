@@ -78,9 +78,18 @@ extern volatile uint32_t system_fault_in_progress_mask;
 #define SYSTEM_FAULT_MASK_DS18B20     (1UL << 4)
 #endif
 
+#ifndef SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM
+#define SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM  (1UL << 5)
+#endif
+
 #ifndef SYSTEM_FAULT_MASK_CRITICAL
 #define SYSTEM_FAULT_MASK_CRITICAL  \
-    (SYSTEM_FAULT_MASK_BME680 | SYSTEM_FAULT_MASK_MPU9250 | SYSTEM_FAULT_MASK_MAX31865 | SYSTEM_FAULT_MASK_PM25 | SYSTEM_FAULT_MASK_DS18B20)
+    (SYSTEM_FAULT_MASK_BME680 | \
+     SYSTEM_FAULT_MASK_MPU9250 | \
+     SYSTEM_FAULT_MASK_MAX31865 | \
+     SYSTEM_FAULT_MASK_PM25 | \
+     SYSTEM_FAULT_MASK_DS18B20 | \
+     SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM)
 #endif
 
 
@@ -168,6 +177,8 @@ volatile uint32_t hb_bme680main_ts;
 volatile uint32_t hb_mpu9250_ts;
 volatile uint32_t hb_mpu9250main_ts;
 
+volatile uint32_t hb_esp32_uart_aes_gcm_ts;
+
 volatile uint8_t  iwdg_reset_requested = 0U;
 volatile uint32_t iwdg_reset_request_ms = 0U;
 
@@ -185,6 +196,8 @@ void supervisor_heartbeats_init(void)
 
     hb_mpu9250_ts      = now;
     hb_mpu9250main_ts  = now;
+
+    hb_esp32_uart_aes_gcm_ts = now;
 }
 
 /*
@@ -232,6 +245,13 @@ void heartbeat_signal_mpu9250main(void)
 {
     /* Refresh the task heartbeat independently of DMA completion. */
     hb_mpu9250main_ts = ms_get();
+}
+
+/* Records progress in the encrypted ESP32 link task. */
+void heartbeat_signal_esp32_uart_aes_gcm(void)
+{
+    /* Update the link heartbeat even when the task is waiting for data. */
+    hb_esp32_uart_aes_gcm_ts = ms_get();
 }
 
 /* Reports whether the watchdog reset was intentionally requested. */
@@ -398,6 +418,8 @@ void supervisor_check_and_kick(void)
     uint32_t age_mpu9250     = now - hb_mpu9250_ts;
     uint32_t age_mpu9250main = now - hb_mpu9250main_ts;
 
+    uint32_t age_esp32_uart_aes_gcm = now - hb_esp32_uart_aes_gcm_ts;
+
     if (age_spi > HEARTBEAT_WINDOW_MS) {
         log_printf("SUPERVISOR: MAX31865 SPI/DMA heartbeat missed (age=%u ms)\r\n",
                    (unsigned)age_spi);
@@ -440,6 +462,18 @@ void supervisor_check_and_kick(void)
         escalate_to_iwdg_reset("MPU9250 main/task heartbeat missed");
     }
 
+if (age_esp32_uart_aes_gcm > HEARTBEAT_WINDOW_MS) {
+    log_printf(
+        "SUPERVISOR: ESP32 UART AES-GCM heartbeat missed "
+        "(age=%u ms)\r\n",
+        (unsigned)age_esp32_uart_aes_gcm);
+
+    app_fault_delay_ms(2U);
+
+    escalate_to_iwdg_reset(
+        "ESP32 UART AES-GCM heartbeat missed");
+    }
+
     /* Everything OK -> kick watchdog */
     if (iwdg_refresh() != IWDG_OK) {
         IWDG_ErrorHandler("iwdg_refresh failed", IWDG_ERR_HW);
@@ -470,6 +504,34 @@ void on_fatal_init_error(const char *msg)
     app_fault_delay_ms(2);
     escalate_to_iwdg_reset(msg);
 }
+
+ /* Resets the device after a failure before watchdog startup. */
+ void app_pre_iwdg_fatal_reset(const char *reason)
+{
+    /* Drain the diagnostic message before requesting the system reset. */
+    log_printf(
+        "[FATAL][PRE-IWDG] %s -> NVIC system reset\r\n",
+        (reason != NULL) ? reason : "(no reason)");
+
+    app_fault_delay_ms(20U);
+
+    __DSB();
+    __ISB();
+    NVIC_SystemReset();
+
+    for (;;)
+    {
+        __NOP();
+    }
+}
+
+///* Centralized error handling in main: replace all busy-wait error traps with this wrapper */
+//void on_fatal_init_error(const char *msg)
+//{
+//    log_printf("FATAL: %s -> escalating\r\n", msg ? msg : "(no reason)");
+//    app_fault_delay_ms(2);
+//    escalate_to_iwdg_reset(msg);
+//}
 
 /* Internal helper: wait for PVU/RVU == 0 with budget iterations */
 /* Waits for watchdog prescaler and reload updates. */
