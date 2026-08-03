@@ -33,6 +33,19 @@
 #include "stm32_gcm_nvm.h"
 #include "nonce.h"
 
+/*
+ * DEBUG ONLY:
+ * 1U = do not start the hardware IWDG, do not initialize heartbeat
+ *      supervision, and suspend the supervisor task immediately.
+ *      This prevents the 10-second ESP32 UART heartbeat miss from resetting
+ *      the MCU while the AES-GCM/UART path is being debugged.
+ *
+ * 0U = normal production/runtime watchdog + supervisor behavior.
+ */
+#ifndef DEBUG_DISABLE_IWDG_AND_SUPERVISOR
+#define DEBUG_DISABLE_IWDG_AND_SUPERVISOR    (1U)
+#endif
+
 /* ---------------- app status enum (declare in main.c as requested) ---------------- */
 static app_status_t app_bme680_sensor_stack_init_(void);
 static app_status_t app_bme680_peripherals_init(void);
@@ -60,7 +73,6 @@ void Error_Handler(void);
 #define PM25_SENSOR_TASK_PRIORITY    		BME680_SENSOR_TASK_PRIORITY
 #endif
 
-
 #ifndef DS18B20_TASK_STACK_WORDS
 #define DS18B20_TASK_STACK_WORDS       	(2048U)
 #endif
@@ -79,7 +91,6 @@ void Error_Handler(void);
 #ifndef ESP32_UART_AES_GCM_TASK_PERIOD_MS
 #define ESP32_UART_AES_GCM_TASK_PERIOD_MS     (1000U)
 #endif
-
 
 static void bme680_task(void *pvParameters);
 static void mpu9250_task(void *pvParameters);
@@ -145,7 +156,7 @@ crypto_ctx_t g_crypto_ctx;
 //typedef enum {
 //    APP_STATUS_OK = 0,
 //    APP_STATUS_INIT_FAIL = 1,
-//} app_status_t;
+//} app_status_t;
 
 /* Initializes the sensor application and starts FreeRTOS. */
 int main(void)
@@ -168,13 +179,19 @@ int main(void)
     	        NVIC_SystemReset();
     	    }
 
-            tim_st = MX_TIM3_Init();
-            if (tim_st != TIM_STATUS_OK)
-            {
-                log_printf("[ERR] MX_TIM3_Init failed\r\n");
-                delay_ms(10U);
-                Error_Handler();
-            }
+    tim_st = MX_TIM3_Init();
+
+    if (tim_st != TIM_STATUS_OK)
+    {
+        log_printf(
+            "[ERR] MX_TIM3_Init failed, status=%d\r\n",
+            (int)tim_st);
+
+        delay_ms(10U);
+
+        on_fatal_init_error(
+            "TIM3 1 MHz OneWire delay timer initialization failed");
+    }
 
     //	if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS) {
     //	        NVIC_SystemReset();
@@ -246,7 +263,12 @@ int main(void)
 
     app_crypto_and_esp32_link_init();
 
+#if (DEBUG_DISABLE_IWDG_AND_SUPERVISOR == 0U)
     supervisor_heartbeats_init();
+#else
+    log_printf(
+        "[DEBUG] Heartbeat supervision disabled; supervisor will be suspended.\r\n");
+#endif
 
     xSerialSemaphore = xSemaphoreCreateMutex();
     if (xSerialSemaphore == NULL) {
@@ -401,8 +423,10 @@ int main(void)
     	//NVIC_SystemReset();
     }
 
+#if (DEBUG_DISABLE_IWDG_AND_SUPERVISOR == 0U)
     {
-        const iwdg_status_t iwdg_status = iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
+        const iwdg_status_t iwdg_status =
+            iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
 
         if (iwdg_status != IWDG_OK)
         {
@@ -411,6 +435,10 @@ int main(void)
             NVIC_SystemReset();
         }
     }
+#else
+    log_printf(
+        "[DEBUG] Hardware IWDG disabled for AES-GCM/UART debugging.\r\n");
+#endif
 
     vTaskStartScheduler();
 
@@ -729,6 +757,14 @@ static void supervisor_task(void *pvParameters)
 
     (void)pvParameters;
 
+#if (DEBUG_DISABLE_IWDG_AND_SUPERVISOR == 1U)
+    vTaskSuspend(NULL);
+
+    for (;;)
+    {
+        vTaskDelay(portMAX_DELAY);
+    }
+#else
     vTaskDelay(pdMS_TO_TICKS(500U));
 
     last_wake = xTaskGetTickCount();
@@ -736,8 +772,11 @@ static void supervisor_task(void *pvParameters)
     for (;;) {
         supervisor_check_and_kick();
 
-        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
+        vTaskDelayUntil(
+            &last_wake,
+            pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
     }
+#endif
 }
 
 /* USER CODE BEGIN 4 */
@@ -840,6 +879,11 @@ static void app_crypto_and_esp32_link_init(void)
             "ESP32 UART link initialization failed");
     }
 
+    /*
+     * Scan and validate the configured append-only GCM journal.
+     * The flash sector is selected in stm32_gcm_nvm.h; it is deliberately
+     * not hard-coded in this startup routine.
+     */
     gcm_nvm_rc =
         stm32_gcm_nvm_init();
 
@@ -855,13 +899,6 @@ static void app_crypto_and_esp32_link_init(void)
         app_pre_iwdg_fatal_reset(
             "Persistent GCM journal initialization failed");
     }
-
-    ECDH_LOG_PRINTF(
-        "[SECURITY][GCM_NVM] TX boot/session journal ready: "
-        "base=0x%08lX size=%lu bytes remaining_records=%lu\r\n",
-        (unsigned long)STM32_GCM_NVM_FLASH_BASE,
-        (unsigned long)STM32_GCM_NVM_FLASH_SIZE,
-        (unsigned long)stm32_gcm_nvm_remaining_record_slots());
 
     adc_byte_buffers_init();
 
@@ -1070,4 +1107,3 @@ static app_status_t app_max31865_sensor_stack_init(void)
 
     return APP_STATUS_OK;
 }
-

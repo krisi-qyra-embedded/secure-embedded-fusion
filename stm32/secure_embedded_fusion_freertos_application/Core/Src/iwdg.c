@@ -496,15 +496,6 @@ void IWDG_ErrorHandler(const char *msg, iwdg_status_t code)
     }
 }
 
-/* Reports a fatal application initialization error. */
-void on_fatal_init_error(const char *msg)
-{
-    /* Pass the failure reason to the watchdog escalation path. */
-    log_printf("FATAL: %s -> escalating\r\n", msg ? msg : "(no reason)");
-    app_fault_delay_ms(2);
-    escalate_to_iwdg_reset(msg);
-}
-
  /* Resets the device after a failure before watchdog startup. */
  void app_pre_iwdg_fatal_reset(const char *reason)
 {
@@ -522,6 +513,23 @@ void on_fatal_init_error(const char *msg)
     for (;;)
     {
         __NOP();
+    }
+}
+
+/* Reports a fatal application initialization error. */
+void on_fatal_init_error(const char *msg)
+{
+    /* Pass the failure reason to the watchdog escalation path. */
+    log_printf(
+        "FATAL INIT: %s -> NVIC reset\r\n",
+        msg ? msg : "(no reason)");
+
+    app_fault_delay_ms(20U);
+
+    NVIC_SystemReset();
+
+    for (;;)
+    {
     }
 }
 

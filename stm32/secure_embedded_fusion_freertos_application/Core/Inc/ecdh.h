@@ -20,7 +20,6 @@
 #include "task.h"
 #include "semphr.h"
 
-
 #define AES_512_KEY_SIZE            64
 #define AES_256_KEY_SIZE            32  // 32 bytes = 256 bits
 #define AES_256_IV_SIZE             16  // 16 bytes (CTR counter block)
@@ -32,6 +31,11 @@
 #define GCM_NONCE_SIZE_BYTES  		12U
 #define GCM_COUNTER_START     		1ULL
 #define ECDH_CANONICAL_SECRET_LEN   32U
+
+
+#ifndef ECDH_COMPACT_RUNTIME_LOGS
+#define ECDH_COMPACT_RUNTIME_LOGS      1U
+#endif
 
 extern SemaphoreHandle_t xSerialSemaphore;
 
@@ -49,7 +53,6 @@ extern SemaphoreHandle_t xSerialSemaphore;
         }                                                                    \
     } while (0)
 
-
 /*
  * ESP32 -> STM32 encrypted ACK/NACK response format.
  *
@@ -62,10 +65,7 @@ extern SemaphoreHandle_t xSerialSemaphore;
  */
 #define GCM_UART_RESPONSE_PLAINTEXT_SIZE      11U
 #define GCM_UART_RESPONSE_CIPHERTEXT_SIZE     11U
-#define GCM_UART_RESPONSE_WIRE_SIZE           \
-    (AES_GCM_AEAD_IV_SIZE +                   \
-     GCM_UART_RESPONSE_CIPHERTEXT_SIZE +      \
-     AES_GCM_TAG_SIZE)
+#define GCM_UART_RESPONSE_WIRE_SIZE           AES_GCM_AEAD_IV_SIZE + GCM_UART_RESPONSE_CIPHERTEXT_SIZE + AES_GCM_TAG_SIZE
 
 #define GCM_UART_MAGIC_0                      0xA5U
 #define GCM_UART_MAGIC_1                      0x5AU
@@ -75,7 +75,7 @@ extern SemaphoreHandle_t xSerialSemaphore;
 #define GCM_UART_RESPONSE_PAYLOAD_LEN         0x01U
 
 #ifndef ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET
-#define ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET  1U
+#define ECDH_DEBUG_PRINT_RX_DECRYPTED_PACKET  0U
 #endif
 
 #ifndef ECDH_DEBUG_PRINT_RX_DERIVED_MATERIAL
@@ -169,7 +169,6 @@ static const uint8_t esp32_provisioned_sender_public_key[
 #error "Canonical secp256r1 ECDH secret must be 32 bytes"
 #endif
 
-
 typedef enum
 {
     GCM_NONCE_OK = 0,
@@ -179,7 +178,7 @@ typedef enum
     GCM_NONCE_ERR_BAD_KEY_STATE  = -3,
     GCM_NONCE_ERR_HASH           = -4,
     GCM_NONCE_ERR_EXHAUSTED      = -5,
-    GCM_NONCE_ERR_NVM            = -6
+    GCM_NONCE_ERR_NVM            = -6  
 
 } gcm_nonce_status_t;
 
@@ -337,7 +336,6 @@ typedef enum {
 #ifndef AES_GCM_TAG_SIZE
 #define AES_GCM_TAG_SIZE 16 /* recommended 128-bit tag */
 #endif
-
 
 /* Public-key format validator for your codebase.
  *

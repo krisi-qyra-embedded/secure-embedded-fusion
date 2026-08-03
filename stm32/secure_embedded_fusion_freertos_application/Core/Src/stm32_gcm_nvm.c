@@ -5,22 +5,27 @@
 /*
  * stm32_gcm_nvm.c
  *
- * Based on the earlier working STM32 internal-Flash journal implementation.
+ * STM32F411 AES-GCM session/replay state using RTC backup registers.
  *
- * Requested write policy:
- *   - STM32 TX session: ONE Flash append per boot/reset.
- *   - TX packet counter: RAM-only.
- *   - ESP32->STM32 RX replay high-water: RAM-only.
- *   - Normal UART packets never call HAL_FLASH_Program().
+ * NO FLASH IS READ, PROGRAMMED OR ERASED BY THIS FILE.
  *
- * Flash record write sequence is kept the same as the earlier working code:
- *   HAL_FLASH_Unlock()
- *   clear flags
- *   HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, ...)
- *   commit word last
- *   HAL_FLASH_Lock()
+ * Reserved registers:
+ *   slot A = BKP4R  .. BKP11R
+ *   slot B = BKP12R .. BKP19R
  *
- * The journal is never erased automatically.
+ * Each slot is eight 32-bit words:
+ *   [0] magic
+ *   [1] generation
+ *   [2] tx_session_id
+ *   [3] rx_session_id
+ *   [4] rx_counter_hi
+ *   [5] rx_counter_lo
+ *   [6] crc32(words 0..5)
+ *   [7] commit
+ *
+ * The inactive slot is written first and commit is written last. RAM copies
+ * are zeroized before return; only the small retained backup-register state
+ * remains available for future replay/session checks.
  */
 
 #include "stm32_gcm_nvm.h"
@@ -28,14 +33,13 @@
 #include <stddef.h>
 #include <string.h>
 
-#define STM32_GCM_NVM_MAGIC          UINT32_C(0x47434D32)
-#define STM32_GCM_NVM_VERSION        UINT32_C(1)
-#define STM32_GCM_NVM_COMMIT         UINT32_C(0xA55A3CC3)
+#define STM32_GCM_BKP_MAGIC      UINT32_C(0x47434D42) /* 'GCMB' */
+#define STM32_GCM_BKP_COMMIT     UINT32_C(0xA55A3CC3)
+#define STM32_GCM_BKP_NO_SLOT    UINT32_C(0xFFFFFFFF)
 
 typedef struct
 {
     uint32_t magic;
-    uint32_t version;
     uint32_t generation;
     uint32_t tx_session_id;
     uint32_t rx_session_id;
@@ -44,21 +48,28 @@ typedef struct
     uint32_t crc32;
     uint32_t commit;
 
-} stm32_gcm_nvm_record_t;
+} stm32_gcm_bkp_record_t;
 
-typedef char stm32_gcm_record_word_aligned[
-    (sizeof(stm32_gcm_nvm_record_t) % sizeof(uint32_t)) == 0U ? 1 : -1];
+typedef char stm32_gcm_bkp_record_size_check[
+    (sizeof(stm32_gcm_bkp_record_t) ==
+     (STM32_GCM_BKP_REGS_PER_SLOT * sizeof(uint32_t))) ? 1 : -1];
 
-static stm32_gcm_nvm_record_t s_state;
-static uint32_t s_next_address;
-static bool s_initialized;
+/* Clears temporary GCM storage state with volatile writes. */
+static void stm32_gcm_secure_zero(void *ptr, size_t len)
+{
+    /* Keep the byte stores observable under optimization. */
+    volatile uint8_t *p = (volatile uint8_t *)ptr;
 
-/* RAM-only ESP32->STM32 replay high-water state. */
-static uint32_t s_rx_session_id;
-static uint64_t s_rx_counter;
+    if (p == NULL)
+    {
+        return;
+    }
 
-static bool s_tx_session_reserved_this_boot;
-static uint32_t s_tx_session_id_this_boot;
+    while (len-- != 0U)
+    {
+        *p++ = 0U;
+    }
+}
 
 /* Calculates the integrity CRC for a GCM state record. */
 static uint32_t stm32_gcm_crc32(
@@ -91,39 +102,83 @@ static uint32_t stm32_gcm_crc32(
     return ~crc;
 }
 
-/* Checks whether a Flash journal slot is erased. */
-static bool stm32_gcm_record_erased(
-    const stm32_gcm_nvm_record_t *record)
+/* Decodes the receive counter from its stored word pair. */
+static uint64_t stm32_gcm_record_rx_counter(
+    const stm32_gcm_bkp_record_t *record)
 {
-    /* Require every record word to contain the erased all-ones value. */
-    const uint32_t *words;
-
+    /* Combine the high and low words into the 64-bit counter. */
     if (record == NULL)
     {
-        return false;
+        return UINT64_C(0);
     }
 
-    words =
-        (const uint32_t *)record;
-
-    for (size_t i = 0U;
-         i < (sizeof(*record) / sizeof(uint32_t));
-         ++i)
-    {
-        if (words[i] != UINT32_C(0xFFFFFFFF))
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return
+        ((uint64_t)record->rx_counter_hi << 32U) |
+        (uint64_t)record->rx_counter_lo;
 }
 
-/* Validates a committed Flash GCM state record. */
-static bool stm32_gcm_record_valid(
-    const stm32_gcm_nvm_record_t *record)
+/* Encodes the receive counter into its record word pair. */
+static void stm32_gcm_record_set_rx_counter(
+    stm32_gcm_bkp_record_t *record,
+    uint64_t counter)
 {
-    /* Check its magic, version, commit word and CRC. */
+    /* Store the upper and lower 32-bit halves separately. */
+    if (record == NULL)
+    {
+        return;
+    }
+
+    record->rx_counter_hi =
+        (uint32_t)(counter >> 32U);
+
+    record->rx_counter_lo =
+        (uint32_t)(counter & UINT64_C(0xFFFFFFFF));
+}
+
+/* Returns the RTC backup-register array base. */
+static volatile uint32_t *stm32_gcm_bkp_base(void)
+{
+    /* Index the retained registers starting at BKP0R. */
+    return &RTC->BKP0R;
+}
+
+/* Reads one RTC backup-register word. */
+static uint32_t stm32_gcm_bkp_reg_read(uint32_t reg_index)
+{
+    /* Use the register index within the configured backup area. */
+    volatile uint32_t *const bkp =
+        stm32_gcm_bkp_base();
+
+    return bkp[reg_index];
+}
+
+/* Writes one RTC backup-register word. */
+static void stm32_gcm_bkp_reg_write(
+    uint32_t reg_index,
+    uint32_t value)
+{
+    /* Complete the retained-register write before proceeding. */
+    volatile uint32_t *const bkp =
+        stm32_gcm_bkp_base();
+
+    bkp[reg_index] = value;
+    __DSB();
+}
+
+/* Calculates a GCM record's backup-register slot offset. */
+static uint32_t stm32_gcm_bkp_slot_base(uint32_t slot)
+{
+    /* Keep each record within its reserved group of eight registers. */
+    return
+        STM32_GCM_BKP_FIRST_REG +
+        (slot * STM32_GCM_BKP_REGS_PER_SLOT);
+}
+
+/* Validates a committed RTC GCM state record. */
+static bool stm32_gcm_bkp_record_valid(
+    const stm32_gcm_bkp_record_t *record)
+{
+    /* Require the expected magic and commit marker with a matching CRC. */
     uint32_t expected_crc;
 
     if (record == NULL)
@@ -131,9 +186,8 @@ static bool stm32_gcm_record_valid(
         return false;
     }
 
-    if ((record->magic != STM32_GCM_NVM_MAGIC) ||
-        (record->version != STM32_GCM_NVM_VERSION) ||
-        (record->commit != STM32_GCM_NVM_COMMIT))
+    if ((record->magic != STM32_GCM_BKP_MAGIC) ||
+        (record->commit != STM32_GCM_BKP_COMMIT))
     {
         return false;
     }
@@ -141,210 +195,250 @@ static bool stm32_gcm_record_valid(
     expected_crc =
         stm32_gcm_crc32(
             (const uint8_t *)record,
-            offsetof(
-                stm32_gcm_nvm_record_t,
-                crc32));
+            offsetof(stm32_gcm_bkp_record_t, crc32));
 
     return record->crc32 == expected_crc;
 }
 
-/* Clears available Flash status flags before journal programming. */
-static void stm32_gcm_clear_flash_flags(void)
+/* Checks whether a backup record belongs to GCM storage. */
+static bool stm32_gcm_bkp_record_looks_owned(
+    const stm32_gcm_bkp_record_t *record)
 {
-    /* Include only flags exposed by the target HAL headers. */
-    uint32_t flags = 0U;
-
-#ifdef FLASH_FLAG_EOP
-    flags |= FLASH_FLAG_EOP;
-#endif
-#ifdef FLASH_FLAG_OPERR
-    flags |= FLASH_FLAG_OPERR;
-#endif
-#ifdef FLASH_FLAG_WRPERR
-    flags |= FLASH_FLAG_WRPERR;
-#endif
-#ifdef FLASH_FLAG_PGAERR
-    flags |= FLASH_FLAG_PGAERR;
-#endif
-#ifdef FLASH_FLAG_PGPERR
-    flags |= FLASH_FLAG_PGPERR;
-#endif
-#ifdef FLASH_FLAG_PGSERR
-    flags |= FLASH_FLAG_PGSERR;
-#endif
-
-    if (flags != 0U)
+    /* Recognize either its magic or commit marker as prior ownership. */
+    if (record == NULL)
     {
-        __HAL_FLASH_CLEAR_FLAG(flags);
+        return false;
+    }
+
+    return
+        (record->magic == STM32_GCM_BKP_MAGIC) ||
+        (record->commit == STM32_GCM_BKP_COMMIT);
+}
+
+/* Reads one RTC GCM state slot into RAM. */
+static void stm32_gcm_bkp_read_slot(
+    uint32_t slot,
+    stm32_gcm_bkp_record_t *record)
+{
+    /* Reject an invalid slot index before reading its eight words. */
+    uint32_t *words;
+    const uint32_t base =
+        stm32_gcm_bkp_slot_base(slot);
+
+    if ((slot >= STM32_GCM_BKP_SLOT_COUNT) ||
+        (record == NULL))
+    {
+        return;
+    }
+
+    words = (uint32_t *)record;
+
+    for (uint32_t i = 0U;
+         i < STM32_GCM_BKP_REGS_PER_SLOT;
+         ++i)
+    {
+        words[i] =
+            stm32_gcm_bkp_reg_read(base + i);
     }
 }
 
-/* Appends and verifies a GCM security-state record in Flash. */
-static stm32_gcm_nvm_status_t stm32_gcm_append_record(
-    const stm32_gcm_nvm_record_t *candidate)
+/* Enables RTC backup-register writes while retaining prior settings. */
+static void stm32_gcm_backup_access_begin(
+    uint32_t *saved_apb1enr,
+    uint32_t *saved_pwr_cr)
 {
-    /* I commit the marker last so interrupted writes remain invalid. */
-    stm32_gcm_nvm_record_t record;
-    const uint32_t *words;
-    const stm32_gcm_nvm_record_t *slot;
-    const uint32_t sector_end =
-        STM32_GCM_NVM_FLASH_BASE +
-        STM32_GCM_NVM_FLASH_SIZE;
+    /* Save the power clock and DBP state before granting access. */
+    if ((saved_apb1enr == NULL) ||
+        (saved_pwr_cr == NULL))
+    {
+        return;
+    }
 
-    HAL_StatusTypeDef hal_status;
-    bool unlocked = false;
+    *saved_apb1enr = RCC->APB1ENR;
+
+    RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+    __DSB();
+
+    *saved_pwr_cr = PWR->CR;
+
+    PWR->CR |= PWR_CR_DBP;
+    __DSB();
+}
+
+/* Restores the previous RTC backup-write access settings. */
+static void stm32_gcm_backup_access_end(
+    uint32_t saved_apb1enr,
+    uint32_t saved_pwr_cr)
+{
+    /* Clear DBP and the power clock only if they were previously disabled. */
+    if ((saved_pwr_cr & PWR_CR_DBP) == 0U)
+    {
+        PWR->CR &= ~PWR_CR_DBP;
+        __DSB();
+    }
+
+    if ((saved_apb1enr & RCC_APB1ENR_PWREN) == 0U)
+    {
+        RCC->APB1ENR &= ~RCC_APB1ENR_PWREN;
+        __DSB();
+    }
+}
+
+/* Selects the newest valid RTC GCM state record. */
+static stm32_gcm_nvm_status_t stm32_gcm_bkp_load_newest(
+    stm32_gcm_bkp_record_t *record_out,
+    uint32_t *slot_out)
+{
+    /* Report corruption when owned records exist but neither validates. */
+    stm32_gcm_bkp_record_t slot0;
+    stm32_gcm_bkp_record_t slot1;
+    bool valid0;
+    bool valid1;
+    bool owned0;
+    bool owned1;
+
+    if ((record_out == NULL) ||
+        (slot_out == NULL))
+    {
+        return STM32_GCM_NVM_ERR_PARAM;
+    }
+
+    stm32_gcm_secure_zero(&slot0, sizeof(slot0));
+    stm32_gcm_secure_zero(&slot1, sizeof(slot1));
+    stm32_gcm_secure_zero(record_out, sizeof(*record_out));
+    *slot_out = STM32_GCM_BKP_NO_SLOT;
+
+    stm32_gcm_bkp_read_slot(0U, &slot0);
+    stm32_gcm_bkp_read_slot(1U, &slot1);
+
+    valid0 = stm32_gcm_bkp_record_valid(&slot0);
+    valid1 = stm32_gcm_bkp_record_valid(&slot1);
+    owned0 = stm32_gcm_bkp_record_looks_owned(&slot0);
+    owned1 = stm32_gcm_bkp_record_looks_owned(&slot1);
+
+    if (valid0 && valid1)
+    {
+        if (slot1.generation > slot0.generation)
+        {
+            *record_out = slot1;
+            *slot_out = 1U;
+        }
+        else
+        {
+            *record_out = slot0;
+            *slot_out = 0U;
+        }
+    }
+    else if (valid0)
+    {
+        *record_out = slot0;
+        *slot_out = 0U;
+    }
+    else if (valid1)
+    {
+        *record_out = slot1;
+        *slot_out = 1U;
+    }
+    else if (owned0 || owned1)
+    {
+        stm32_gcm_secure_zero(&slot0, sizeof(slot0));
+        stm32_gcm_secure_zero(&slot1, sizeof(slot1));
+        return STM32_GCM_NVM_ERR_CORRUPT;
+    }
+    else
+    {
+        stm32_gcm_secure_zero(record_out, sizeof(*record_out));
+        *slot_out = STM32_GCM_BKP_NO_SLOT;
+    }
+
+    stm32_gcm_secure_zero(&slot0, sizeof(slot0));
+    stm32_gcm_secure_zero(&slot1, sizeof(slot1));
+
+    return STM32_GCM_NVM_OK;
+}
+
+/* Commits and verifies GCM state in the alternate RTC slot. */
+static stm32_gcm_nvm_status_t stm32_gcm_bkp_commit(
+    const stm32_gcm_bkp_record_t *candidate,
+    uint32_t current_slot)
+{
+    /* Invalidate the target commit word before writing the new record. */
+    stm32_gcm_bkp_record_t record;
+    stm32_gcm_bkp_record_t verify;
+    uint32_t target_slot;
+    uint32_t base;
+    const uint32_t *words;
+    uint32_t saved_apb1enr;
+    uint32_t saved_pwr_cr;
+    uint32_t primask;
 
     if (candidate == NULL)
     {
         return STM32_GCM_NVM_ERR_PARAM;
     }
 
-    if ((!s_initialized) ||
-        ((s_next_address + sizeof(record)) > sector_end))
-    {
-        return STM32_GCM_NVM_ERR_FULL;
-    }
-
-    slot =
-        (const stm32_gcm_nvm_record_t *)s_next_address;
-
-    if (!stm32_gcm_record_erased(slot))
-    {
-        return STM32_GCM_NVM_ERR_FULL;
-    }
-
-    record =
-        *candidate;
-
-    record.magic =
-        STM32_GCM_NVM_MAGIC;
-
-    record.version =
-        STM32_GCM_NVM_VERSION;
-
+    record = *candidate;
+    record.magic = STM32_GCM_BKP_MAGIC;
     record.crc32 =
         stm32_gcm_crc32(
             (const uint8_t *)&record,
-            offsetof(
-                stm32_gcm_nvm_record_t,
-                crc32));
+            offsetof(stm32_gcm_bkp_record_t, crc32));
+    record.commit = STM32_GCM_BKP_COMMIT;
 
-    record.commit =
-        STM32_GCM_NVM_COMMIT;
-
-    words =
-        (const uint32_t *)&record;
-
-    hal_status =
-        HAL_FLASH_Unlock();
-
-    if (hal_status != HAL_OK)
+    if (current_slot == 0U)
     {
+        target_slot = 1U;
+    }
+    else
+    {
+        target_slot = 0U;
+    }
+
+    base = stm32_gcm_bkp_slot_base(target_slot);
+    words = (const uint32_t *)&record;
+
+    primask = __get_PRIMASK();
+    __disable_irq();
+
+    stm32_gcm_backup_access_begin(
+        &saved_apb1enr,
+        &saved_pwr_cr);
+
+    stm32_gcm_bkp_reg_write(base + 7U, 0U);
+
+    for (uint32_t i = 0U; i < 7U; ++i)
+    {
+        stm32_gcm_bkp_reg_write(
+            base + i,
+            words[i]);
+    }
+
+    stm32_gcm_bkp_reg_write(
+        base + 7U,
+        words[7U]);
+
+    stm32_gcm_secure_zero(&verify, sizeof(verify));
+    stm32_gcm_bkp_read_slot(target_slot, &verify);
+
+    stm32_gcm_backup_access_end(
+        saved_apb1enr,
+        saved_pwr_cr);
+
+    if (primask == 0U)
+    {
+        __enable_irq();
+    }
+
+    if ((!stm32_gcm_bkp_record_valid(&verify)) ||
+        (memcmp(&verify, &record, sizeof(record)) != 0))
+    {
+        stm32_gcm_secure_zero(&record, sizeof(record));
+        stm32_gcm_secure_zero(&verify, sizeof(verify));
         return STM32_GCM_NVM_ERR_FLASH;
     }
 
-    unlocked = true;
-    stm32_gcm_clear_flash_flags();
-
-    for (size_t i = 0U;
-         i < ((sizeof(record) / sizeof(uint32_t)) - 1U);
-         ++i)
-    {
-        hal_status =
-            HAL_FLASH_Program(
-                FLASH_TYPEPROGRAM_WORD,
-                s_next_address +
-                    (uint32_t)(i * sizeof(uint32_t)),
-                (uint64_t)words[i]);
-
-        /*if (hal_status != HAL_OK)
-        {
-            uint32_t flash_error = HAL_FLASH_GetError();
-
-            log_printf(
-                "[FLASH][FAIL] "
-                "status=%d error=0x%08lX "
-                "addr=0x%08lX data=0x%08lX "
-                "SR=0x%08lX CR=0x%08lX OPTCR=0x%08lX \r\n",
-                (int)hal_status,
-                (unsigned long)flash_error,
-                (unsigned long)(
-                    s_next_address +
-                    (uint32_t)(i * sizeof(uint32_t))),
-                (unsigned long)words[i],
-                (unsigned long)FLASH->SR,
-                (unsigned long)FLASH->CR,
-                (unsigned long)FLASH->OPTCR);
-            app_fault_delay_ms(100U);
-
-            break;
-        */
-
-        if (hal_status != HAL_OK)
-        {
-            break;
-        }
-
-    }
-
-    if (hal_status == HAL_OK)
-    {
-        const size_t commit_index =
-            (sizeof(record) / sizeof(uint32_t)) - 1U;
-
-        hal_status =
-            HAL_FLASH_Program(
-                FLASH_TYPEPROGRAM_WORD,
-                s_next_address +
-                    (uint32_t)(
-                        commit_index *
-                        sizeof(uint32_t)),
-                (uint64_t)words[commit_index]);
-
-    }
-
-    if (unlocked)
-    {
-        (void)HAL_FLASH_Lock();
-    }
-
-    if (hal_status != HAL_OK)
-    {
-        memset(
-            &record,
-            0,
-            sizeof(record));
-
-        return STM32_GCM_NVM_ERR_FLASH;
-    }
-
-    slot =
-        (const stm32_gcm_nvm_record_t *)s_next_address;
-
-    if ((!stm32_gcm_record_valid(slot)) ||
-        (memcmp(
-            slot,
-            &record,
-            sizeof(record)) != 0))
-    {
-        memset(
-            &record,
-            0,
-            sizeof(record));
-
-        return STM32_GCM_NVM_ERR_FLASH;
-    }
-
-    s_state =
-        record;
-
-    s_next_address +=
-        sizeof(record);
-
-    memset(
-        &record,
-        0,
-        sizeof(record));
+    stm32_gcm_secure_zero(&record, sizeof(record));
+    stm32_gcm_secure_zero(&verify, sizeof(verify));
 
     return STM32_GCM_NVM_OK;
 }
@@ -352,91 +446,22 @@ static stm32_gcm_nvm_status_t stm32_gcm_append_record(
 /* Loads the configured GCM security-state storage. */
 stm32_gcm_nvm_status_t stm32_gcm_nvm_init(void)
 {
-    /* Scan committed Flash records before permitting session allocation. */
-    const uint32_t sector_end =
-        STM32_GCM_NVM_FLASH_BASE +
-        STM32_GCM_NVM_FLASH_SIZE;
+    /* Recover the newest valid backup-register slot before using security state. */
+    stm32_gcm_bkp_record_t current;
+    uint32_t slot;
+    stm32_gcm_nvm_status_t status;
 
-    uint32_t address;
-    uint32_t last_used_end =
-        STM32_GCM_NVM_FLASH_BASE;
+    stm32_gcm_secure_zero(&current, sizeof(current));
 
-    bool any_programmed = false;
-    bool any_valid = false;
+    status =
+        stm32_gcm_bkp_load_newest(
+            &current,
+            &slot);
 
-    if (s_initialized)
-    {
-        return STM32_GCM_NVM_OK;
-    }
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    slot = 0U;
 
-    if (((STM32_GCM_NVM_FLASH_BASE &
-            (sizeof(uint32_t) - 1U)) != 0U) ||
-        (STM32_GCM_NVM_FLASH_SIZE <
-            sizeof(stm32_gcm_nvm_record_t)))
-    {
-        return STM32_GCM_NVM_ERR_PARAM;
-    }
-
-    memset(
-        &s_state,
-        0,
-        sizeof(s_state));
-
-    s_rx_session_id = 0U;
-    s_rx_counter = UINT64_C(0);
-    s_tx_session_reserved_this_boot = false;
-    s_tx_session_id_this_boot = 0U;
-
-    for (address = STM32_GCM_NVM_FLASH_BASE;
-         (address + sizeof(stm32_gcm_nvm_record_t)) <= sector_end;
-         address += sizeof(stm32_gcm_nvm_record_t))
-    {
-        const stm32_gcm_nvm_record_t *record =
-            (const stm32_gcm_nvm_record_t *)address;
-
-        if (stm32_gcm_record_erased(record))
-        {
-            continue;
-        }
-
-        any_programmed = true;
-        last_used_end =
-            address +
-            sizeof(stm32_gcm_nvm_record_t);
-
-        if (!stm32_gcm_record_valid(record))
-        {
-            continue;
-        }
-
-        if ((!any_valid) ||
-            (record->generation >
-                s_state.generation))
-        {
-            s_state =
-                *record;
-
-            any_valid = true;
-        }
-    }
-
-    if (any_programmed && !any_valid)
-    {
-        memset(
-            &s_state,
-            0,
-            sizeof(s_state));
-
-        return STM32_GCM_NVM_ERR_CORRUPT;
-    }
-
-    s_next_address =
-        last_used_end;
-
-    s_initialized =
-        true;
-
-    return STM32_GCM_NVM_OK;
+    return status;
 }
 
 /* Reserves the transmit session identifier for this boot. */
@@ -444,79 +469,58 @@ stm32_gcm_nvm_status_t stm32_gcm_nvm_reserve_tx_session(
     uint32_t *session_id_out)
 {
     /* Reject session or generation exhaustion before advancing state. */
-    stm32_gcm_nvm_record_t next;
+    stm32_gcm_bkp_record_t current;
+    stm32_gcm_bkp_record_t next;
+    uint32_t current_slot;
     stm32_gcm_nvm_status_t status;
-    uint32_t previous_session;
 
     if (session_id_out == NULL)
     {
         return STM32_GCM_NVM_ERR_PARAM;
     }
 
+    *session_id_out = 0U;
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    stm32_gcm_secure_zero(&next, sizeof(next));
+
     status =
-        stm32_gcm_nvm_init();
+        stm32_gcm_bkp_load_newest(
+            &current,
+            &current_slot);
 
     if (status != STM32_GCM_NVM_OK)
     {
-        return status;
+        goto cleanup;
     }
 
-    if (s_tx_session_reserved_this_boot)
+    if ((current.tx_session_id == UINT32_MAX) ||
+        (current.generation == UINT32_MAX))
+    {
+        status = STM32_GCM_NVM_ERR_EXHAUSTED;
+        goto cleanup;
+    }
+
+    next = current;
+    next.generation++;
+    next.tx_session_id++;
+
+    status =
+        stm32_gcm_bkp_commit(
+            &next,
+            current_slot);
+
+    if (status == STM32_GCM_NVM_OK)
     {
         *session_id_out =
-            s_tx_session_id_this_boot;
-
-        return STM32_GCM_NVM_OK;
+            next.tx_session_id;
     }
 
-    previous_session =
-        s_state.tx_session_id;
+cleanup:
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    stm32_gcm_secure_zero(&next, sizeof(next));
+    current_slot = 0U;
 
-#ifdef STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR
-    if (previous_session <
-        STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR)
-    {
-        previous_session =
-            STM32_GCM_NVM_BOOTSTRAP_TX_SESSION_FLOOR;
-    }
-#endif
-
-    if ((previous_session == UINT32_MAX) ||
-        (s_state.generation == UINT32_MAX))
-    {
-        return STM32_GCM_NVM_ERR_EXHAUSTED;
-    }
-
-    next =
-        s_state;
-
-    next.generation++;
-    next.tx_session_id =
-        previous_session + 1U;
-
-    next.rx_session_id = 0U;
-    next.rx_counter_hi = 0U;
-    next.rx_counter_lo = 0U;
-
-    status =
-        stm32_gcm_append_record(
-            &next);
-
-    if (status != STM32_GCM_NVM_OK)
-    {
-        return status;
-    }
-
-    s_tx_session_reserved_this_boot =
-        true;
-
-    s_tx_session_id_this_boot =
-        next.tx_session_id;
-
-    *session_id_out =
-        next.tx_session_id;
-
-    return STM32_GCM_NVM_OK;
+    return status;
 }
 
 /* Checks an authenticated receive nonce against replay state. */
@@ -524,8 +528,13 @@ stm32_gcm_nvm_replay_result_t stm32_gcm_nvm_check_and_commit_rx(
     uint32_t session_id,
     uint64_t counter)
 {
-    /* Track the accepted receive session and counter in RAM. */
+    /* Commit authenticated receive state before accepting the newer nonce. */
+    stm32_gcm_bkp_record_t current;
+    stm32_gcm_bkp_record_t next;
+    uint32_t current_slot;
+    uint64_t highest_counter;
     stm32_gcm_nvm_status_t status;
+    stm32_gcm_nvm_replay_result_t result;
 
     if ((session_id == 0U) ||
         (counter == UINT64_C(0)))
@@ -533,103 +542,186 @@ stm32_gcm_nvm_replay_result_t stm32_gcm_nvm_check_and_commit_rx(
         return STM32_GCM_REPLAY_BAD_NONCE;
     }
 
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    stm32_gcm_secure_zero(&next, sizeof(next));
+
     status =
-        stm32_gcm_nvm_init();
+        stm32_gcm_bkp_load_newest(
+            &current,
+            &current_slot);
 
     if (status != STM32_GCM_NVM_OK)
     {
-        return STM32_GCM_REPLAY_STORAGE_ERROR;
+        result = STM32_GCM_REPLAY_STORAGE_ERROR;
+        goto cleanup;
     }
 
-    if (s_rx_session_id != 0U)
+    highest_counter =
+        stm32_gcm_record_rx_counter(
+            &current);
+
+    if (current.rx_session_id != 0U)
     {
-        if (session_id <
-            s_rx_session_id)
+        if (session_id < current.rx_session_id)
         {
-            return STM32_GCM_REPLAY_REJECT_OLD;
+            result = STM32_GCM_REPLAY_REJECT_OLD;
+            goto cleanup;
         }
 
-        if (session_id ==
-            s_rx_session_id)
+        if (session_id == current.rx_session_id)
         {
-            if (counter <
-                s_rx_counter)
+            if (counter < highest_counter)
             {
-                return STM32_GCM_REPLAY_REJECT_OLD;
+                result = STM32_GCM_REPLAY_REJECT_OLD;
+                goto cleanup;
             }
 
-            if (counter ==
-                s_rx_counter)
+            if (counter == highest_counter)
             {
-                return STM32_GCM_REPLAY_DUPLICATE_LAST;
+                result = STM32_GCM_REPLAY_DUPLICATE_LAST;
+                goto cleanup;
             }
         }
     }
 
-    s_rx_session_id =
-        session_id;
+    if (current.generation == UINT32_MAX)
+    {
+        result = STM32_GCM_REPLAY_STORAGE_ERROR;
+        goto cleanup;
+    }
 
-    s_rx_counter =
-        counter;
+    next = current;
+    next.generation++;
+    next.rx_session_id = session_id;
+    stm32_gcm_record_set_rx_counter(&next, counter);
 
-    return STM32_GCM_REPLAY_ACCEPT_NEW;
+    status =
+        stm32_gcm_bkp_commit(
+            &next,
+            current_slot);
+
+    if (status != STM32_GCM_NVM_OK)
+    {
+        result = STM32_GCM_REPLAY_STORAGE_ERROR;
+        goto cleanup;
+    }
+
+    result = STM32_GCM_REPLAY_ACCEPT_NEW;
+
+cleanup:
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    stm32_gcm_secure_zero(&next, sizeof(next));
+    highest_counter = UINT64_C(0);
+    current_slot = 0U;
+
+    return result;
 }
 
 /* Returns the current GCM transmit session. */
 uint32_t stm32_gcm_nvm_current_tx_session(void)
 {
     /* Return zero when security-state initialization fails. */
-    if (stm32_gcm_nvm_init() != STM32_GCM_NVM_OK)
+    stm32_gcm_bkp_record_t current;
+    uint32_t slot;
+    uint32_t value = 0U;
+
+    stm32_gcm_secure_zero(&current, sizeof(current));
+
+    if (stm32_gcm_bkp_load_newest(&current, &slot) ==
+        STM32_GCM_NVM_OK)
     {
-        return 0U;
+        value = current.tx_session_id;
     }
 
-    return s_state.tx_session_id;
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    slot = 0U;
+
+    return value;
 }
 
 /* Returns the tracked GCM receive session. */
 uint32_t stm32_gcm_nvm_current_rx_session(void)
 {
     /* Require successful state initialization before reading the session. */
-    if (stm32_gcm_nvm_init() != STM32_GCM_NVM_OK)
+    stm32_gcm_bkp_record_t current;
+    uint32_t slot;
+    uint32_t value = 0U;
+
+    stm32_gcm_secure_zero(&current, sizeof(current));
+
+    if (stm32_gcm_bkp_load_newest(&current, &slot) ==
+        STM32_GCM_NVM_OK)
     {
-        return 0U;
+        value = current.rx_session_id;
     }
 
-    return s_rx_session_id;
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    slot = 0U;
+
+    return value;
 }
 
 /* Returns the tracked GCM receive counter. */
 uint64_t stm32_gcm_nvm_current_rx_counter(void)
 {
     /* Use zero to indicate unavailable receive state. */
-    if (stm32_gcm_nvm_init() != STM32_GCM_NVM_OK)
+    stm32_gcm_bkp_record_t current;
+    uint32_t slot;
+    uint64_t value = UINT64_C(0);
+
+    stm32_gcm_secure_zero(&current, sizeof(current));
+
+    if (stm32_gcm_bkp_load_newest(&current, &slot) ==
+        STM32_GCM_NVM_OK)
     {
-        return UINT64_C(0);
+        value =
+            stm32_gcm_record_rx_counter(
+                &current);
     }
 
-    return s_rx_counter;
+    stm32_gcm_secure_zero(&current, sizeof(current));
+    slot = 0U;
+
+    return value;
 }
 
-/* Reports the configured GCM storage capacity remaining. */
+/* Reports the backup-register backend capacity indicator. */
 uint32_t stm32_gcm_nvm_remaining_record_slots(void)
 {
-    /* Return no capacity when state initialization fails. */
-    const uint32_t sector_end =
-        STM32_GCM_NVM_FLASH_BASE +
-        STM32_GCM_NVM_FLASH_SIZE;
+    /* Return the maximum value because this backend does not consume Flash slots. */
+    return UINT32_MAX;
+}
 
-    if (stm32_gcm_nvm_init() != STM32_GCM_NVM_OK)
+/* Clears the reserved RTC GCM state registers. */
+stm32_gcm_nvm_status_t stm32_gcm_nvm_clear_security_state(void)
+{
+    /* Restore backup-write access and the prior interrupt state afterward. */
+    uint32_t saved_apb1enr;
+    uint32_t saved_pwr_cr;
+    uint32_t primask;
+
+    primask = __get_PRIMASK();
+    __disable_irq();
+
+    stm32_gcm_backup_access_begin(
+        &saved_apb1enr,
+        &saved_pwr_cr);
+
+    for (uint32_t reg = STM32_GCM_BKP_FIRST_REG;
+         reg < (STM32_GCM_BKP_FIRST_REG + STM32_GCM_BKP_TOTAL_REGS);
+         ++reg)
     {
-        return 0U;
+        stm32_gcm_bkp_reg_write(reg, 0U);
     }
 
-    if (s_next_address >= sector_end)
+    stm32_gcm_backup_access_end(
+        saved_apb1enr,
+        saved_pwr_cr);
+
+    if (primask == 0U)
     {
-        return 0U;
+        __enable_irq();
     }
 
-    return
-        (sector_end - s_next_address) /
-        sizeof(stm32_gcm_nvm_record_t);
+    return STM32_GCM_NVM_OK;
 }
