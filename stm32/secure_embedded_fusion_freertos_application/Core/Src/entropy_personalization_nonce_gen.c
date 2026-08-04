@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include <entropy_personalization_nonce_gen.h>

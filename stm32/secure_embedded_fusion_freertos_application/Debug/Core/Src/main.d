@@ -52,6 +52,8 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Core/Inc/main.h ../Core/Inc/pm2_5.h ../Core/Inc/pm25_uart.h \
  ../Core/Inc/pm2_5.h ../Core/Inc/ds18b20.h ../Core/Inc/onewire.h \
  ../Core/Inc/tim3.h ../Core/Inc/tim.h ../Core/Inc/ESP32_uart.h \
+ ../Core/Inc/telemetry.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Core/Inc/ecdh.h ../Core/Inc/nonce.h ../Core/Inc/pwm_dma.h \
  ../Core/Inc/DMA.h ../Core/Inc/entropy_personalization_nonce_gen.h \
  ../Core/Inc/sram_startup_entropy.h ../Core/Inc/device_uid_entropy.h \
@@ -116,7 +118,7 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h \
  ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h \
  ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h \
- ../Core/Inc/stm32_gcm_nvm.h
+ ../Core/Inc/stm32_gcm_nvm.h ../Core/Inc/telemetry.h
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
 ../Drivers/CMSIS/Include/core_cm4.h:
@@ -187,6 +189,8 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Core/Inc/tim3.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/ESP32_uart.h:
+../Core/Inc/telemetry.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Core/Inc/ecdh.h:
 ../Core/Inc/nonce.h:
 ../Core/Inc/pwm_dma.h:
@@ -257,3 +261,4 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h:
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h:
 ../Core/Inc/stm32_gcm_nvm.h:
+../Core/Inc/telemetry.h:

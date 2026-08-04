@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "ds18b20.h"
@@ -18,6 +18,8 @@
 #include "task.h"
 #include "semphr.h"
 #include "i2c_dma.h"
+#include "telemetry.h"
+
 
 static void DS18B20_LogGroupSeparator(void);
 static void DS18B20_LogTemperatureSample(uint8_t sensor_index, float temperature_c);
@@ -34,6 +36,9 @@ extern uint8_t system_fault_capture_or_critical_fault_active(void);
 static void DS18B20_AppMarkFaultInProgress(void);
 static void DS18B20_AppMarkFaultCompleted(void);
 static void DS18B20_AppClearFaultActive(void);
+
+extern QueueHandle_t q_ds18b20;
+extern uint32_t ds18b20_generation;
 
 /* Checks whether normal DS18B20 output is allowed. */
 static uint8_t DS18B20_NormalLoggingAllowed(void)
@@ -1247,6 +1252,52 @@ static void DS18B20_AppGpioInit(GPIO_TypeDef *Port, uint16_t Pin)
      return DS18B20_STATUS_OK;
  }
 
+ /* ------------------------------------------------------------
+  * DS18B20 x5
+  *
+  * IMPORTANT:
+  * This publishes the FIVE temperatures as ONE atomic sensor group.
+  *
+  * Call this only after:
+  *   1. all five DS18B20 reads succeeded
+  *   2. AlarmSearch passed
+  *
+  * A partial 1/5, 2/5, etc. group is never published.
+  * ------------------------------------------------------------ */
+ /* Publishes the latest DS18B20 group temperatures. */
+ bool telemetry_publish_ds18b20(
+     const float temperature_c[
+         TELEMETRY_DS18B20_COUNT])
+ {
+     /* Copy every configured sensor temperature into one generation-tagged sample. */
+     telemetry_ds18b20_t sample;
+
+     if ((q_ds18b20 == NULL) ||
+         (temperature_c == NULL))
+     {
+         return false;
+     }
+
+     memset(&sample, 0, sizeof(sample));
+
+     sample.sample_id =
+         telemetry_next_generation(
+             &ds18b20_generation);
+
+     for (uint32_t i = 0U;
+          i < TELEMETRY_DS18B20_COUNT;
+          ++i)
+     {
+         sample.temperature_c[i] =
+             temperature_c[i];
+     }
+
+     return
+         (xQueueOverwrite(
+             q_ds18b20,
+             &sample) == pdPASS);
+ }
+
  /* Advances DS18B20 conversion, readout and recovery handling. */
  DS18B20_AppRuntimeStatus_t DS18B20_AppRun(DS18B20_App_t *App)
  {
@@ -1393,6 +1444,9 @@ static void DS18B20_AppGpioInit(GPIO_TypeDef *Port, uint16_t Pin)
 
                  return DS18B20_APP_RUNTIME_RECOVERY_FAIL;
              }
+
+             (void)telemetry_publish_ds18b20(
+                 App->DS.Temperature);
 
              DS18B20_LogGroupSeparator();
 

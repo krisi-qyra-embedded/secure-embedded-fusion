@@ -31,6 +31,7 @@
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32f4xx.o"
 "./Core/Src/systick.o"
+"./Core/Src/telemetry.o"
 "./Core/Src/tim.o"
 "./Core/Src/tim3.o"
 "./Core/Src/uart.o"

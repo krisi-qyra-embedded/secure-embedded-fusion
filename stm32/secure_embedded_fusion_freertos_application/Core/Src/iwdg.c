@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "iwdg.h"
@@ -496,6 +496,35 @@ void IWDG_ErrorHandler(const char *msg, iwdg_status_t code)
     }
 }
 
+//void on_fatal_init_error(const char *msg)
+//{
+//    log_printf("FATAL: %s -> escalating\r\n", msg ? msg : "(no reason)");
+//    app_fault_delay_ms(2);
+//    escalate_to_iwdg_reset(msg);
+//
+//}
+
+/* Reports a fatal application initialization error. */
+void on_fatal_init_error(const char *msg)
+{
+    /* Pass the failure reason to the watchdog escalation path. */
+    log_printf(
+        "FATAL: %s -> NVIC system reset\r\n",
+        msg ? msg : "(no reason)");
+
+    app_fault_delay_ms(2U);
+
+    /*
+     * CMSIS software system reset through the Cortex-M AIRCR register.
+     */
+    NVIC_SystemReset();
+
+    for (;;)
+    {
+        __NOP();
+    }
+}
+
  /* Resets the device after a failure before watchdog startup. */
  void app_pre_iwdg_fatal_reset(const char *reason)
 {
@@ -513,23 +542,6 @@ void IWDG_ErrorHandler(const char *msg, iwdg_status_t code)
     for (;;)
     {
         __NOP();
-    }
-}
-
-/* Reports a fatal application initialization error. */
-void on_fatal_init_error(const char *msg)
-{
-    /* Pass the failure reason to the watchdog escalation path. */
-    log_printf(
-        "FATAL INIT: %s -> NVIC reset\r\n",
-        msg ? msg : "(no reason)");
-
-    app_fault_delay_ms(20U);
-
-    NVIC_SystemReset();
-
-    for (;;)
-    {
     }
 }
 

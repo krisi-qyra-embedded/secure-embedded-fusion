@@ -46,7 +46,8 @@ Core/Src/bme680.o: ../Core/Src/bme680.c ../Core/Inc/bme680.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h \
  ../Core/Inc/bme680_defs.h ../Core/Inc/tim.h ../Core/Inc/i2c_dma.h \
  ../Core/Inc/uart.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h \
- ../Core/Inc/pwr.h ../Core/Inc/sig_sensors.h
+ ../Core/Inc/pwr.h ../Core/Inc/sig_sensors.h ../Core/Inc/telemetry.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 ../Core/Inc/bme680.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
@@ -101,3 +102,5 @@ Core/Src/bme680.o: ../Core/Src/bme680.c ../Core/Inc/bme680.h \
 ../Core/Inc/systick.h:
 ../Core/Inc/pwr.h:
 ../Core/Inc/sig_sensors.h:
+../Core/Inc/telemetry.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:

@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #ifndef ESP32_UART_H_
@@ -12,7 +12,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
+#include "telemetry.h"
 #include "stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -173,7 +173,7 @@ void ESP32_UART_GetStats(ESP32_UART_Stats_t *stats);
 void ESP32_UART_ClearStats(void);
 
 ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void);
-ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void);
+ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(const telemetry_snapshot_t *snapshot);
 void ESP32_UART_LinkTest_DelayMs(uint32_t delay_ms);
 void ESP32_UART_LinkTest_PrintHealth(void);
 

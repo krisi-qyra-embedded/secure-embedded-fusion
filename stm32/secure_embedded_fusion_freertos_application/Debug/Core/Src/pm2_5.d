@@ -46,7 +46,9 @@ Core/Src/pm2_5.o: ../Core/Src/pm2_5.c ../Core/Inc/pm2_5.h \
  ../Core/Inc/i2c_dma.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
- ../Core/Inc/iwdg.h ../Core/Inc/systick.h ../Core/Inc/i2c_dma.h
+ ../Core/Inc/iwdg.h ../Core/Inc/systick.h ../Core/Inc/i2c_dma.h \
+ ../Core/Inc/telemetry.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 ../Core/Inc/pm2_5.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
@@ -100,3 +102,5 @@ Core/Src/pm2_5.o: ../Core/Src/pm2_5.c ../Core/Inc/pm2_5.h \
 ../Core/Inc/iwdg.h:
 ../Core/Inc/systick.h:
 ../Core/Inc/i2c_dma.h:
+../Core/Inc/telemetry.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:

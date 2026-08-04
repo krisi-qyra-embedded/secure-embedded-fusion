@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "stm32f4xx.h"
@@ -32,19 +32,7 @@
 #include "ecdh.h"
 #include "stm32_gcm_nvm.h"
 #include "nonce.h"
-
-/*
- * DEBUG ONLY:
- * 1U = do not start the hardware IWDG, do not initialize heartbeat
- *      supervision, and suspend the supervisor task immediately.
- *      This prevents the 10-second ESP32 UART heartbeat miss from resetting
- *      the MCU while the AES-GCM/UART path is being debugged.
- *
- * 0U = normal production/runtime watchdog + supervisor behavior.
- */
-#ifndef DEBUG_DISABLE_IWDG_AND_SUPERVISOR
-#define DEBUG_DISABLE_IWDG_AND_SUPERVISOR    (1U)
-#endif
+#include "telemetry.h"
 
 /* ---------------- app status enum (declare in main.c as requested) ---------------- */
 static app_status_t app_bme680_sensor_stack_init_(void);
@@ -73,6 +61,7 @@ void Error_Handler(void);
 #define PM25_SENSOR_TASK_PRIORITY    		BME680_SENSOR_TASK_PRIORITY
 #endif
 
+
 #ifndef DS18B20_TASK_STACK_WORDS
 #define DS18B20_TASK_STACK_WORDS       	(2048U)
 #endif
@@ -91,6 +80,7 @@ void Error_Handler(void);
 #ifndef ESP32_UART_AES_GCM_TASK_PERIOD_MS
 #define ESP32_UART_AES_GCM_TASK_PERIOD_MS     (1000U)
 #endif
+
 
 static void bme680_task(void *pvParameters);
 static void mpu9250_task(void *pvParameters);
@@ -156,12 +146,12 @@ crypto_ctx_t g_crypto_ctx;
 //typedef enum {
 //    APP_STATUS_OK = 0,
 //    APP_STATUS_INIT_FAIL = 1,
-//} app_status_t;
+//} app_status_t;
 
 /* Initializes the sensor application and starts FreeRTOS. */
 int main(void)
 {
-	/* Initialize the directional crypto state before creating the encrypted link task. */
+	/* Create the sensor snapshot queues before starting producer and encrypted link tasks. */
 
 	HAL_Init();
 	clock_100_mhz_init();
@@ -179,19 +169,13 @@ int main(void)
     	        NVIC_SystemReset();
     	    }
 
-    tim_st = MX_TIM3_Init();
-
-    if (tim_st != TIM_STATUS_OK)
-    {
-        log_printf(
-            "[ERR] MX_TIM3_Init failed, status=%d\r\n",
-            (int)tim_st);
-
-        delay_ms(10U);
-
-        on_fatal_init_error(
-            "TIM3 1 MHz OneWire delay timer initialization failed");
-    }
+            tim_st = MX_TIM3_Init();
+            if (tim_st != TIM_STATUS_OK)
+            {
+                log_printf("[ERR] MX_TIM3_Init failed\r\n");
+                delay_ms(10U);
+                Error_Handler();
+            }
 
     //	if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS) {
     //	        NVIC_SystemReset();
@@ -263,12 +247,7 @@ int main(void)
 
     app_crypto_and_esp32_link_init();
 
-#if (DEBUG_DISABLE_IWDG_AND_SUPERVISOR == 0U)
     supervisor_heartbeats_init();
-#else
-    log_printf(
-        "[DEBUG] Heartbeat supervision disabled; supervisor will be suspended.\r\n");
-#endif
 
     xSerialSemaphore = xSemaphoreCreateMutex();
     if (xSerialSemaphore == NULL) {
@@ -354,6 +333,12 @@ int main(void)
         on_fatal_init_error("esp32_uart_tx_sem create failed");
     }
 
+    if (!telemetry_queues_init())
+    {
+        on_fatal_init_error(
+            "telemetry queues creation failed");
+    }
+
     if (xTaskCreate(bme680_task,
                     "bme680_task",
                     BME680_TASK_STACK_WORDS,
@@ -413,32 +398,26 @@ int main(void)
         on_fatal_init_error("esp32_uart_aes_gcm_task create failed");
     }
 
-    if (xTaskCreate(supervisor_task,
-                    "supervisor_task",
-                    SUPERVISOR_TASK_STACK_WORDS,
-                    NULL,
-                    SUPERVISOR_TASK_PRIORITY,
-                    &supervisor_task_handle) != pdPASS) {
-        on_fatal_init_error("supervisor_task create failed");
-    	//NVIC_SystemReset();
-    }
+//    if (xTaskCreate(supervisor_task,
+//                    "supervisor_task",
+//                    SUPERVISOR_TASK_STACK_WORDS,
+//                    NULL,
+//                    SUPERVISOR_TASK_PRIORITY,
+//                    &supervisor_task_handle) != pdPASS) {
+//        on_fatal_init_error("supervisor_task create failed");
+//    	//NVIC_SystemReset();
+//    }
 
-#if (DEBUG_DISABLE_IWDG_AND_SUPERVISOR == 0U)
-    {
-        const iwdg_status_t iwdg_status =
-            iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
-
-        if (iwdg_status != IWDG_OK)
-        {
-            log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
-            app_fault_delay_ms(2U);
-            NVIC_SystemReset();
-        }
-    }
-#else
-    log_printf(
-        "[DEBUG] Hardware IWDG disabled for AES-GCM/UART debugging.\r\n");
-#endif
+//    {
+//        const iwdg_status_t iwdg_status = iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
+//
+//        if (iwdg_status != IWDG_OK)
+//        {
+//            log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
+//            app_fault_delay_ms(2U);
+//            NVIC_SystemReset();
+//        }
+//    }
 
     vTaskStartScheduler();
 
@@ -647,29 +626,52 @@ static void max31865_task(void *pvParameters)
     }
 }
 
-/* Runs encrypted ESP32 transactions under FreeRTOS. */
+/* Sends fresh five-sensor snapshots over the encrypted ESP32 link. */
 static void esp32_uart_aes_gcm_task(void *argument)
 {
-    /* Suspend the link task after reporting an unrecoverable transaction. */
-    TickType_t last_wake;
+    /* Commit sample IDs only after the encrypted transaction succeeds. */
+    telemetry_consumed_ids_t consumed;
+    telemetry_snapshot_t snapshot;
 
     (void)argument;
 
-    last_wake = xTaskGetTickCount();
+    memset(&consumed, 0, sizeof(consumed));
+    memset(&snapshot, 0, sizeof(snapshot));
 
     for (;;)
     {
+        if (system_fault_capture_or_critical_fault_active() != 0U)
+        {
+            heartbeat_signal_esp32_uart_aes_gcm();
+
+            vTaskDelay(pdMS_TO_TICKS(20U));
+            continue;
+        }
+
+        if (!telemetry_peek_fresh_snapshot(
+                &snapshot,
+                &consumed))
+        {
+            heartbeat_signal_esp32_uart_aes_gcm();
+
+            vTaskDelay(pdMS_TO_TICKS(20U));
+            continue;
+        }
+
+        if (system_fault_capture_or_critical_fault_active() != 0U)
+        {
+            heartbeat_signal_esp32_uart_aes_gcm();
+
+            vTaskDelay(pdMS_TO_TICKS(20U));
+            continue;
+        }
+
         const ESP32_UART_RuntimeStatus_t link_rc =
-            ESP32_UART_LinkTest_RunOnce();
+            ESP32_UART_LinkTest_RunOnce(
+                &snapshot);
 
         if (link_rc != ESP32_UART_RUNTIME_OK)
         {
-            /*
-             * Defensive task-level fault lifecycle:
-             * ESP32_uart.c marks the owner active/in-progress on the first
-             * failed attempt. The task guarantees active -> completed before
-             * requesting the coordinated watchdog reset.
-             */
             system_fault_mark_in_progress(
                 SYSTEM_FAULT_OWNER_ESP32_UART_AES_GCM);
 
@@ -690,8 +692,11 @@ static void esp32_uart_aes_gcm_task(void *argument)
             vTaskSuspend(NULL);
         }
 
-        vTaskDelayUntil(
-            &last_wake,
+        telemetry_commit_snapshot(
+            &consumed,
+            &snapshot);
+
+        vTaskDelay(
             pdMS_TO_TICKS(
                 ESP32_UART_AES_GCM_TASK_PERIOD_MS));
     }
@@ -749,35 +754,22 @@ static void debug_log_bme680_task_state(void)
     app_fault_delay_ms(20U);
 }
 
-/* Runs periodic heartbeat and watchdog supervision. */
-static void supervisor_task(void *pvParameters)
-{
-    /* Allow a startup interval before the first supervisor check. */
-    TickType_t last_wake;
-
-    (void)pvParameters;
-
-#if (DEBUG_DISABLE_IWDG_AND_SUPERVISOR == 1U)
-    vTaskSuspend(NULL);
-
-    for (;;)
-    {
-        vTaskDelay(portMAX_DELAY);
-    }
-#else
-    vTaskDelay(pdMS_TO_TICKS(500U));
-
-    last_wake = xTaskGetTickCount();
-
-    for (;;) {
-        supervisor_check_and_kick();
-
-        vTaskDelayUntil(
-            &last_wake,
-            pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
-    }
-#endif
-}
+//static void supervisor_task(void *pvParameters)
+//{
+//    TickType_t last_wake;
+//
+//    (void)pvParameters;
+//
+//    vTaskDelay(pdMS_TO_TICKS(500U));
+//
+//    last_wake = xTaskGetTickCount();
+//
+//    for (;;) {
+//        supervisor_check_and_kick();
+//
+//        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
+//    }
+//}
 
 /* USER CODE BEGIN 4 */
 /* Sets the BME680 air-quality reference and weighting values. */
@@ -879,11 +871,6 @@ static void app_crypto_and_esp32_link_init(void)
             "ESP32 UART link initialization failed");
     }
 
-    /*
-     * Scan and validate the configured append-only GCM journal.
-     * The flash sector is selected in stm32_gcm_nvm.h; it is deliberately
-     * not hard-coded in this startup routine.
-     */
     gcm_nvm_rc =
         stm32_gcm_nvm_init();
 
@@ -899,6 +886,13 @@ static void app_crypto_and_esp32_link_init(void)
         app_pre_iwdg_fatal_reset(
             "Persistent GCM journal initialization failed");
     }
+
+    ECDH_LOG_PRINTF(
+        "[SECURITY][GCM_NVM] TX boot/session journal ready: "
+        "base=0x%08lX size=%lu bytes remaining_records=%lu\r\n",
+        (unsigned long)STM32_GCM_NVM_FLASH_BASE,
+        (unsigned long)STM32_GCM_NVM_FLASH_SIZE,
+        (unsigned long)stm32_gcm_nvm_remaining_record_slots());
 
     adc_byte_buffers_init();
 
@@ -1107,3 +1101,4 @@ static app_status_t app_max31865_sensor_stack_init(void)
 
     return APP_STATUS_OK;
 }
+

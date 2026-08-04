@@ -45,7 +45,9 @@ Core/Src/mpu9250.o: ../Core/Src/mpu9250.c ../Core/Inc/mpu9250.h \
  ../Core/Inc/uart.h \
  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h \
  ../Core/Inc/tim.h ../Core/Inc/i2c_dma.h ../Core/Inc/uart.h \
- ../Core/Inc/pwr.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h
+ ../Core/Inc/pwr.h ../Core/Inc/iwdg.h ../Core/Inc/systick.h \
+ ../Core/Inc/telemetry.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 ../Core/Inc/mpu9250.h:
 ../Core/Inc/i2c_dma.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
@@ -98,3 +100,5 @@ Core/Src/mpu9250.o: ../Core/Src/mpu9250.c ../Core/Inc/mpu9250.h \
 ../Core/Inc/pwr.h:
 ../Core/Inc/iwdg.h:
 ../Core/Inc/systick.h:
+../Core/Inc/telemetry.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:

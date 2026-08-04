@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "max31865.h"
@@ -14,6 +14,8 @@
 #include "semphr.h"
 #include "spi_dma.h"
 #include "i2c_dma.h"   /* for app_fault_delay_ms/system fault helpers if needed */
+#include "telemetry.h"
+
 
 extern SemaphoreHandle_t max31865_spi_rx_sem;
 extern SemaphoreHandle_t max31865_spi_tx_sem;
@@ -21,6 +23,9 @@ extern SemaphoreHandle_t xSerialSemaphore;
 extern volatile uint8_t system_fault_logging_active;
 extern volatile uint8_t system_fault_owner;
 extern float temperatureC;
+
+extern QueueHandle_t q_max31865;
+extern uint32_t max31865_generation;
 
 #ifndef MAX31865_BIAS_SETTLE_MS
 #define MAX31865_BIAS_SETTLE_MS          10U
@@ -712,6 +717,8 @@ max31865_status_t Max31865_readTempC(Max31865_t *max31865, float *readTemp)
                 sample_failed = false;
                 *readTemp = temp;
 
+                (void)telemetry_publish_max31865(temp);
+
                 if (system_fault_logging_active == 0U) {
                     MAX31865_LOG_PRINTF("[MAX31865] OK: TempC = %.4f C (raw=0x%04X, dec=%lu, approx_Rt=%.3f ohm)\r\n",
                                         temp,
@@ -860,6 +867,39 @@ static void app_max31865_log_local_runtime_error(const char *tag,
                         attempt,
                         max_attempts);
     app_fault_delay_ms(20U);
+}
+
+/* ------------------------------------------------------------
+ * MAX31865
+ *
+ * Publish only when Max31865_readTempC() has produced a valid
+ * fault-free converted temperature.
+ * ------------------------------------------------------------ */
+/* Publishes the latest RTD temperature to its telemetry queue. */
+bool telemetry_publish_max31865(
+    float temperature_c)
+{
+    /* Attach a new sample generation before overwriting the queue slot. */
+    telemetry_max31865_t sample;
+
+    if (q_max31865 == NULL)
+    {
+        return false;
+    }
+
+    memset(&sample, 0, sizeof(sample));
+
+    sample.sample_id =
+        telemetry_next_generation(
+            &max31865_generation);
+
+    sample.temperature_c =
+        temperature_c;
+
+    return
+        (xQueueOverwrite(
+            q_max31865,
+            &sample) == pdPASS);
 }
 
 /* Runs one supervised MAX31865 measurement. */

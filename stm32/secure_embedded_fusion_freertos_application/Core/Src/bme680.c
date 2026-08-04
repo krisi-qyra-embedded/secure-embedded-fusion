@@ -9,6 +9,8 @@
 #include "task.h"
 #include "semphr.h"
 #include <string.h>
+#include "telemetry.h"
+
 /**@PINOUT
 
  *	PB8 :  SCL
@@ -25,6 +27,11 @@
 #ifndef BME680_USER_I2C_RTOS_TIMEOUT_MS
 #define BME680_USER_I2C_RTOS_TIMEOUT_MS    (100U)
 #endif
+
+
+extern uint32_t bme680_generation;
+extern QueueHandle_t q_bme680;
+
 
 /* FreeRTOS binary semaphores owned by i2c_dma.c and given by DMA1_Stream5/6 IRQs. */
 extern SemaphoreHandle_t bme680_rx_sem;
@@ -2371,10 +2378,53 @@ sensor_stack_init_status_t app_bme680_sensor_stack_init(void)
 
 
 
+bool telemetry_publish_bme680(
+    float temperature_c,
+    float pressure_hpa,
+    float humidity_pct,
+    int16_t iaq_score,
+    const char *iaq_label)
+{
+    telemetry_bme680_t sample;
+
+    if (q_bme680 == NULL)
+    {
+        return false;
+    }
+
+    memset(&sample, 0, sizeof(sample));
+
+    sample.sample_id =
+        telemetry_next_generation(&bme680_generation);
+
+    sample.temperature_c = temperature_c;
+    sample.pressure_hpa  = pressure_hpa;
+    sample.humidity_pct  = humidity_pct;
+    sample.iaq_score     = iaq_score;
+
+    if (iaq_label != NULL)
+    {
+        strncpy(
+            sample.iaq_label,
+            iaq_label,
+            TELEMETRY_IAQ_LABEL_SIZE - 1U);
+
+        sample.iaq_label[
+            TELEMETRY_IAQ_LABEL_SIZE - 1U] = '\0';
+    }
+
+    return
+        (xQueueOverwrite(q_bme680, &sample) == pdPASS);
+}
+
+
 
 app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
 {
     enum { MAX_ATTEMPTS = 3 };
+
+    int16_t iaq_score = 0;
+    const char *iaq_label = "Unknown";
 
     heartbeat_signal_bme680main();
 
@@ -2502,7 +2552,10 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
             gas_score = bme_GetGasScore();
             raw_score = (int16_t)(hum_score + gas_score);
 
-            bme_calculateIAQ(raw_score);
+            iaq_score =
+                bme_calculateIAQ(
+                    raw_score,
+                    &iaq_label);
         }
 
         if (bme.gas_sensor.power_mode == BME680_FORCED_MODE) {
@@ -2541,6 +2594,15 @@ app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void)
                 continue;
             }
         }
+
+
+        (void)telemetry_publish_bme680(
+            bme.temperature,
+            bme.pressure,
+            bme.humidity,
+            iaq_score,
+            iaq_label);
+
 
         heartbeat_signal_bme680main();
 

@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "sig_sensors.h"
@@ -395,30 +395,55 @@ int16_t bme_GetHumidityScore(void)
 }
 
 /* Logs the air-quality category derived from the combined score. */
-void bme_calculateIAQ(int16_t score)
+int16_t bme_calculateIAQ(
+    int16_t score,
+    const char **label_out)
 {
     /* Convert the input score to the implementation's IAQ scale. */
     const char *iaq_label;
+    int16_t iaq_score;
 
-    if (system_fault_logging_active != 0U) {
-        return;
-    }
+    iaq_score =
+        (int16_t)((100 - score) * 5);
 
-    score = (100 - score) * 5;
-
-    if (score >= 301) {
+    if (iaq_score >= 301)
+    {
         iaq_label = "Hazardous";
-    } else if (score >= 201) {
+    }
+    else if (iaq_score >= 201)
+    {
         iaq_label = "Very Unhealthy";
-    } else if (score >= 176) {
+    }
+    else if (iaq_score >= 176)
+    {
         iaq_label = "Unhealthy";
-    } else if (score >= 151) {
-        iaq_label = "Unhealthy for Sensitive Groups";
-    } else if (score >= 51) {
+    }
+    else if (iaq_score >= 151)
+    {
+        iaq_label =
+            "Unhealthy for Sensitive Groups";
+    }
+    else if (iaq_score >= 51)
+    {
         iaq_label = "Moderate";
-    } else {
+    }
+    else
+    {
         iaq_label = "Good";
     }
 
-    BME680_LOG_PRINTF("IAQ: %d IAQ %s\r\n", score, iaq_label);
+    if (label_out != NULL)
+    {
+        *label_out = iaq_label;
+    }
+
+    if (system_fault_logging_active == 0U)
+    {
+        BME680_LOG_PRINTF(
+            "IAQ: %d IAQ %s\r\n",
+            iaq_score,
+            iaq_label);
+    }
+
+    return iaq_score;
 }

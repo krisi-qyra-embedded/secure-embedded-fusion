@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "pm2_5.h"
@@ -10,6 +10,7 @@
 #include "i2c_dma.h"   /* app_fault_delay_ms + system fault helpers */
 #include "iwdg.h"
 #include <string.h>
+#include "telemetry.h"
 
 #define PMS25_FRAME_SIZE               32U
 #define PMS25_HEADER_BYTE_0            0x42U
@@ -49,6 +50,9 @@ static void PMS25_LogRuntimeReadFailure(PMS25_Status_t pm_st,
 static PMS25_Status_t PMS25_ReadInternal(PMS25_Data_t *out,
                                          uint32_t timeout_ms,
                                          uint8_t *frame_available_out);
+
+extern QueueHandle_t q_pm25;
+extern uint32_t pm25_generation;
 
 /* Decodes a big-endian PM2.5 frame field. */
 static uint16_t PMS25_ReadBE16(const uint8_t *p)
@@ -381,6 +385,87 @@ PMS25_AppRuntimeStatus_t PMS25_AppInit(PMS25_App_t *app,
     return PMS25_APP_RUNTIME_OK;
 }
 
+/* ------------------------------------------------------------
+ * PM2.5 / PMS5003
+ *
+ * Publish only after the complete PMS5003 frame has passed:
+ *   - synchronization
+ *   - checksum
+ *   - frame-length validation
+ * ------------------------------------------------------------ */
+/* Publishes decoded PM2.5 concentrations and particle counts. */
+bool telemetry_publish_pm25(
+    uint16_t pm1_0_standard,
+    uint16_t pm2_5_standard,
+    uint16_t pm10_standard,
+
+    uint16_t pm1_0_atmospheric,
+    uint16_t pm2_5_atmospheric,
+    uint16_t pm10_atmospheric,
+
+    uint16_t particles_0_3um,
+    uint16_t particles_0_5um,
+    uint16_t particles_1_0um,
+    uint16_t particles_2_5um,
+    uint16_t particles_5_0um,
+    uint16_t particles_10um)
+{
+    /* Assign a new generation ID before replacing the latest queue sample. */
+    telemetry_pm25_t sample;
+
+    if (q_pm25 == NULL)
+    {
+        return false;
+    }
+
+    memset(&sample, 0, sizeof(sample));
+
+    sample.sample_id =
+        telemetry_next_generation(
+            &pm25_generation);
+
+    sample.pm1_0_standard =
+        pm1_0_standard;
+
+    sample.pm2_5_standard =
+        pm2_5_standard;
+
+    sample.pm10_standard =
+        pm10_standard;
+
+    sample.pm1_0_atmospheric =
+        pm1_0_atmospheric;
+
+    sample.pm2_5_atmospheric =
+        pm2_5_atmospheric;
+
+    sample.pm10_atmospheric =
+        pm10_atmospheric;
+
+    sample.particles_0_3um =
+        particles_0_3um;
+
+    sample.particles_0_5um =
+        particles_0_5um;
+
+    sample.particles_1_0um =
+        particles_1_0um;
+
+    sample.particles_2_5um =
+        particles_2_5um;
+
+    sample.particles_5_0um =
+        particles_5_0um;
+
+    sample.particles_10um =
+        particles_10um;
+
+    return
+        (xQueueOverwrite(
+            q_pm25,
+            &sample) == pdPASS);
+}
+
 /* Runs PM2.5 sampling and bounded UART recovery. */
 PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app)
 {
@@ -425,7 +510,24 @@ PMS25_AppRuntimeStatus_t PMS25_AppRun(PMS25_App_t *app)
 
         PMS25_ClearFaultActive();
 
-        if (system_fault_capture_or_critical_fault_active() == 0U) {
+        (void)telemetry_publish_pm25(
+            app->Data.pm1_0_standard,
+            app->Data.pm2_5_standard,
+            app->Data.pm10_standard,
+
+            app->Data.pm1_0_atmospheric,
+            app->Data.pm2_5_atmospheric,
+            app->Data.pm10_atmospheric,
+
+            app->Data.particles_0_3um,
+            app->Data.particles_0_5um,
+            app->Data.particles_1_0um,
+            app->Data.particles_2_5um,
+            app->Data.particles_5_0um,
+            app->Data.particles_10um);
+
+        if (system_fault_capture_or_critical_fault_active() == 0U)
+        {
             PMS25_LogSample(&app->Data);
         }
 

@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "mpu9250.h"
@@ -12,6 +12,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "telemetry.h"
+
 
 /** @PINOUT
  *
@@ -50,6 +52,9 @@ extern SemaphoreHandle_t mpu9250_tx_sem;
 extern SemaphoreHandle_t xSerialSemaphore;
 extern volatile uint8_t system_fault_logging_active;
 extern volatile uint8_t system_fault_owner;
+
+extern QueueHandle_t q_mpu9250;
+extern uint32_t mpu9250_generation;
 
 static app_status_t app_mpu9250_runtime_restore_config_only(void);
 
@@ -652,6 +657,14 @@ mpu9250_status_t MPU_readProcessedData(MPU9250_t *pMPU9250)
                            pMPU9250->sensorData.gz);
     }
 
+    (void)telemetry_publish_mpu9250(
+        pMPU9250->sensorData.ax,
+        pMPU9250->sensorData.ay,
+        pMPU9250->sensorData.az,
+        pMPU9250->sensorData.gx,
+        pMPU9250->sensorData.gy,
+        pMPU9250->sensorData.gz);
+
     return MPU9250_STATUS_OK;
 }
 
@@ -781,6 +794,49 @@ static app_status_t app_mpu9250_runtime_restore_config_only(void)
     }
 
     return APP_STATUS_OK;
+}
+
+/* ------------------------------------------------------------
+ * MPU9250
+ *
+ * Publish only after BOTH accelerometer and gyroscope data have
+ * been successfully read and converted.
+ * ------------------------------------------------------------ */
+/* Publishes the latest acceleration and gyro sample. */
+bool telemetry_publish_mpu9250(
+    float ax,
+    float ay,
+    float az,
+    float gx,
+    float gy,
+    float gz)
+{
+    /* Overwrite the single queue slot with a new generation ID. */
+    telemetry_mpu9250_t sample;
+
+    if (q_mpu9250 == NULL)
+    {
+        return false;
+    }
+
+    memset(&sample, 0, sizeof(sample));
+
+    sample.sample_id =
+        telemetry_next_generation(
+            &mpu9250_generation);
+
+    sample.ax_g = ax;
+    sample.ay_g = ay;
+    sample.az_g = az;
+
+    sample.gx_dps = gx;
+    sample.gy_dps = gy;
+    sample.gz_dps = gz;
+
+    return
+        (xQueueOverwrite(
+            q_mpu9250,
+            &sample) == pdPASS);
 }
 
 /* Reads the MPU9250 with bounded recovery attempts. */

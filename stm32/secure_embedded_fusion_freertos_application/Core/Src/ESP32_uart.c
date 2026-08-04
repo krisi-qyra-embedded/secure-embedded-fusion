@@ -1,12 +1,11 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #include "ESP32_uart.h"
-
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
-
+#include "telemetry.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
@@ -64,14 +63,9 @@ volatile ESP32_UART_TransferState_t esp32_uart_tx_cmplt =
 #define TEST_MAGIC_0                0xA5U
 #define TEST_MAGIC_1                0x5AU
 #define TEST_PROTO_VERSION          0x01U
+#define TEST_MSG_TYPE_TELEMETRY     0x11U
 
-
-#define ESP32_UART_SENSOR_FAULT_MASK                                      \
-    (SYSTEM_FAULT_MASK_BME680   |                                        \
-     SYSTEM_FAULT_MASK_MPU9250  |                                        \
-     SYSTEM_FAULT_MASK_MAX31865 |                                        \
-     SYSTEM_FAULT_MASK_PM25     |                                        \
-     SYSTEM_FAULT_MASK_DS18B20)
+#define ESP32_UART_SENSOR_FAULT_MASK (SYSTEM_FAULT_MASK_BME680   |  SYSTEM_FAULT_MASK_MPU9250  |  SYSTEM_FAULT_MASK_MAX31865 |  SYSTEM_FAULT_MASK_PM25     |    SYSTEM_FAULT_MASK_DS18B20)
 
 static uint32_t g_test_sequence = 0U;
 static uint32_t g_tx_ok_count = 0U;
@@ -102,6 +96,11 @@ static void ESP32_UART_TestPrintHex(const uint8_t *data, uint16_t len);
 static uint16_t ESP32_UART_BuildTestFrame(uint8_t *buf,
                                           uint16_t buf_size,
                                           uint32_t seq);
+static uint16_t ESP32_UART_BuildTelemetryFrame(
+    uint8_t *buf,
+    uint16_t buf_size,
+    uint32_t seq,
+    const telemetry_snapshot_t *t);
 
 typedef enum {
     TEST_NACK_REASON_NONE             = 0x00U,
@@ -140,7 +139,9 @@ static bool ESP32_UART_LoadEncryptedResponse(
 static const char *ESP32_UART_NackReasonToString(
     uint8_t reason);
 
-static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
+static ESP32_LinkResponse_t
+ESP32_UART_RunEncryptedAttempt(
+    const telemetry_snapshot_t *snapshot,
     uint8_t *nack_reason);
 
 static bool ESP32_UART_PeriodicLogAllowed(void);
@@ -498,8 +499,7 @@ void ESP32_UART_DeInit(void)
     USART6->CR2 = 0U;
     USART6->CR3 = 0U;
 
-    RCC->APB2ENR &=
-        ~RCC_APB2ENR_USART6EN;
+    RCC->APB2ENR &= ~RCC_APB2ENR_USART6EN;
 
     g_initialized = 0U;
     g_tx_busy = 0U;
@@ -812,8 +812,7 @@ void ESP32_UART_FlushTx(void)
     esp32_uart_tx_cmplt =
         ESP32_UART_TRANSFER_IDLE;
 
-    USART6->CR1 &=
-        ~(USART_CR1_TXEIE | USART_CR1_TCIE);
+    USART6->CR1 &= ~(USART_CR1_TXEIE | USART_CR1_TCIE);
 
     esp32_uart_exit_critical(primask);
 
@@ -885,7 +884,7 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     if (st != ESP32_UART_STATUS_OK)
     {
         ESP32_LOG_PRINTF(
-            "[FATAL] ESP32_UART_Init failed, status=%d\r\n",
+            "[ERROR][LINK][INIT] ESP32_UART_Init failed, status=%d\r\n",
             (int)st);
 
         app_fault_delay_ms(20U);
@@ -893,7 +892,8 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
     }
 
     ESP32_LOG_PRINTF(
-        "[LINK][INIT] USART6 PC6/PC7 baud=%lu AES-GCM TX=42B RX=39B AUTH-before-parse\r\n",
+        "[INFO][LINK][INIT] uptime_ms=%lu USART6=%lu AES-GCM tx=42B rx=39B auth-before-parse\r\n",
+        (unsigned long)HAL_GetTick(),
         (unsigned long)ESP32_UART_BAUDRATE);
 
     return ESP32_UART_STATUS_OK;
@@ -903,21 +903,24 @@ ESP32_UART_Status_t ESP32_UART_LinkTest_Init(void)
  * Execute one encrypted request/response attempt.
  * ------------------------------------------------------------ */
 /* Sends one encrypted ESP32 request and awaits its response. */
-static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
+static ESP32_LinkResponse_t
+ESP32_UART_RunEncryptedAttempt(
+    const telemetry_snapshot_t *snapshot,
     uint8_t *nack_reason)
 {
-    /* Wait for physical TX completion before receiving the encrypted ACK or NACK. */
-    uint8_t tx_frame[32];
-    uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
+	/* Wait for physical TX completion before receiving the encrypted ACK or NACK. */
+	uint8_t tx_frame[STM32_TELEMETRY_FRAME_LEN];
 
-    uint8_t ciphertext_and_tag[
-        ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE +
-        AES_GCM_TAG_SIZE];
+	uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
 
-    uint8_t wire_packet[
-        AES_GCM_AEAD_IV_SIZE +
-        ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE +
-        AES_GCM_TAG_SIZE];
+	uint8_t ciphertext_and_tag[
+	    STM32_TELEMETRY_FRAME_LEN +
+	    AES_GCM_TAG_SIZE];
+
+	uint8_t wire_packet[
+	    AES_GCM_AEAD_IV_SIZE +
+	    STM32_TELEMETRY_FRAME_LEN +
+	    AES_GCM_TAG_SIZE];
 
     uint16_t tx_len;
     uint16_t wire_len;
@@ -942,21 +945,22 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
     memset(wire_packet, 0, sizeof(wire_packet));
 
     tx_len =
-        ESP32_UART_BuildTestFrame(
+        ESP32_UART_BuildTelemetryFrame(
             tx_frame,
             sizeof(tx_frame),
-            g_test_sequence);
+            g_test_sequence,
+            snapshot);
 
     if (tx_len == 0U)
     {
         ESP32_LOG_PRINTF(
-            "[TX][ERROR] Failed to build UART plaintext frame\r\n");
+            "[ERROR][LINK][TX] Failed to build UART plaintext frame\r\n");
         app_fault_delay_ms(20U);
 
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
-#if ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET
+#if 0 /* expert runtime logging: raw TX packet dumps disabled */
     ESP32_LOG_PRINTF(
         "[TX][PLAINTEXT] Original UART frame [%u bytes]: ",
         (unsigned)tx_len);
@@ -981,7 +985,7 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
     if (crypto_status != GCM_SENDER_SUCCESS)
     {
         ESP32_LOG_PRINTF(
-            "[TX][ERROR] UART AES-GCM encryption failed, rc=%d\r\n",
+            "[ERROR][LINK][TX] UART AES-GCM encryption failed, rc=%d\r\n",
             (int)crypto_status);
         app_fault_delay_ms(20U);
 
@@ -993,7 +997,7 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
         (encrypted_len > UINT16_MAX))
     {
         ESP32_LOG_PRINTF(
-            "[TX][ERROR] Invalid encrypted size=%u\r\n",
+            "[ERROR][LINK][TX] Invalid encrypted size=%u\r\n",
             (unsigned)encrypted_len);
         app_fault_delay_ms(20U);
 
@@ -1019,7 +1023,7 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
             AES_GCM_AEAD_IV_SIZE +
             encrypted_len);
 
-#if ESP32_UART_DEBUG_PRINT_TX_ENCRYPTED_PACKET
+#if 0 /* expert runtime logging: raw TX packet dumps disabled */
     ESP32_LOG_PRINTF(
         "[TX][NONCE] [%u bytes]: ",
         (unsigned)AES_GCM_AEAD_IV_SIZE);
@@ -1069,13 +1073,14 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
         ESP32_UART_Write(
             wire_packet,
             wire_len,
-            200U);
+            500U);
 
     if (uart_status != ESP32_UART_STATUS_OK)
     {
         ESP32_LOG_PRINTF(
-            "[TX][ERROR] USART6 queue failed, status=%d\r\n",
+            "[ERROR][LINK][TX] USART6 queue failed, status=%d\r\n",
             (int)uart_status);
+
         app_fault_delay_ms(20U);
 
         return ESP32_LINK_RESPONSE_INVALID;
@@ -1087,12 +1092,22 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
     if (uart_status != ESP32_UART_STATUS_OK)
     {
         ESP32_LOG_PRINTF(
-            "[TX][ERROR] USART6 transmission completion failed, status=%d\r\n",
+            "[ERROR][LINK][TX] USART6 transmission completion failed, status=%d\r\n",
             (int)uart_status);
         app_fault_delay_ms(20U);
 
         ESP32_UART_FlushTx();
         return ESP32_LINK_RESPONSE_INVALID;
+    }
+
+    if (ESP32_UART_PeriodicLogAllowed())
+    {
+        ESP32_LOG_PRINTF(
+            "[INFO][LINK][TX] uptime_ms=%lu seq=%lu payload=REDACTED | "
+            "crypto=AES-256-GCM | wire=%uB | route=USART6->ESP32 | status=SENT\r\n",
+            (unsigned long)HAL_GetTick(),
+            (unsigned long)g_test_sequence,
+            (unsigned)wire_len);
     }
 
     response =
@@ -1128,7 +1143,7 @@ static ESP32_LinkResponse_t ESP32_UART_RunEncryptedAttempt(
  * FreeRTOS encrypted runtime cycle with a three-attempt recovery budget.
  * ------------------------------------------------------------ */
 /* Runs one ESP32 request/response transaction. */
-ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
+ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(const telemetry_snapshot_t *snapshot)
 {
     /* Advance the message sequence only after the expected ACK is accepted. */
     uint8_t nack_reason =
@@ -1139,15 +1154,12 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
          ++attempt)
     {
         const ESP32_LinkResponse_t response =
-            ESP32_UART_RunEncryptedAttempt(
-                &nack_reason);
+        		ESP32_UART_RunEncryptedAttempt(snapshot,&nack_reason);
 
         g_loop_count++;
 
         if (response == ESP32_LINK_RESPONSE_ACK)
         {
-            const uint32_t completed_sequence = g_test_sequence;
-
             g_ack_count++;
             g_tx_ok_count++;
             g_test_sequence++;
@@ -1157,21 +1169,17 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
             system_fault_clear_active(
                 SYSTEM_FAULT_OWNER_ESP32_UART_AES_GCM);
 
-#if ESP32_UART_COMPACT_LOGS
-            if (ESP32_UART_PeriodicLogAllowed())
+            /*
+             * Per-packet logging is intentionally compact:
+             * one TX summary + one authenticated RX/ACK summary.
+             * Emit an aggregate health record after every 10 complete,
+             * authenticated STM32->ESP32->STM32 transactions.
+             */
+            if (((g_tx_ok_count % 10U) == 0U) &&
+                ESP32_UART_PeriodicLogAllowed())
             {
-                ESP32_LOG_PRINTF(
-                    "[LINK][OK] seq=%lu AES-GCM ENC=OK AUTH+DEC=OK data=********** tx=42B rx=39B retries=%lu\r\n",
-                    (unsigned long)completed_sequence,
-                    (unsigned long)(attempt - 1U));
-
-                if ((ESP32_UART_HEALTH_EVERY_N_OK != 0U) &&
-                    ((g_tx_ok_count % ESP32_UART_HEALTH_EVERY_N_OK) == 0U))
-                {
-                    ESP32_UART_LinkTest_PrintHealth();
-                }
+                ESP32_UART_LinkTest_PrintHealth();
             }
-#endif
 
             return ESP32_UART_RUNTIME_OK;
         }
@@ -1185,8 +1193,8 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
             g_nack_count++;
 
             ESP32_LOG_PRINTF(
-                "[LINK][NACK] ESP32 rejected sequence=%lu "
-                "reason=%u (%s), attempt %lu/%u\r\n",
+                "[WARN][LINK][NACK] uptime_ms=%lu seq=%lu reason=%u (%s) attempt=%lu/%u\r\n",
+                (unsigned long)HAL_GetTick(),
                 (unsigned long)g_test_sequence,
                 (unsigned)nack_reason,
                 ESP32_UART_NackReasonToString(
@@ -1201,8 +1209,8 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
             g_ack_timeout_count++;
 
             ESP32_LOG_PRINTF(
-                "[LINK][TIMEOUT] No complete encrypted ACK/NACK "
-                "within %lu ms, attempt %lu/%u\r\n",
+                "[WARN][LINK][TIMEOUT] uptime_ms=%lu ack_timeout_ms=%lu attempt=%lu/%u\r\n",
+                (unsigned long)HAL_GetTick(),
                 (unsigned long)ESP32_ACK_TIMEOUT_MS,
                 (unsigned long)attempt,
                 (unsigned)ESP32_UART_RUNTIME_MAX_ATTEMPTS);
@@ -1214,14 +1222,13 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
             g_bad_response_count++;
 
             ESP32_LOG_PRINTF(
-                "[LINK][ERROR] AES-GCM/UART transaction failed attempt=%lu/%u\r\n",
+                "[ERROR][LINK][TXN] uptime_ms=%lu AES-GCM/UART transaction failed attempt=%lu/%u\r\n",
+                (unsigned long)HAL_GetTick(),
                 (unsigned long)attempt,
                 (unsigned)ESP32_UART_RUNTIME_MAX_ATTEMPTS);
 
             app_fault_delay_ms(20U);
         }
-
-        ESP32_UART_LinkTest_PrintHealth();
 
         if (attempt <
             ESP32_UART_RUNTIME_MAX_ATTEMPTS)
@@ -1229,7 +1236,8 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
             g_retry_count++;
 
             ESP32_LOG_PRINTF(
-                "[LINK][RETRY] next=%lu/%u\r\n",
+                "[WARN][LINK][RETRY] uptime_ms=%lu next=%lu/%u\r\n",
+                (unsigned long)HAL_GetTick(),
                 (unsigned long)(attempt + 1U),
                 (unsigned)ESP32_UART_RUNTIME_MAX_ATTEMPTS);
 
@@ -1242,7 +1250,8 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(void)
     }
 
     ESP32_LOG_PRINTF(
-        "[FATAL][ESP32_UART_AES_GCM] Recovery budget exhausted after %u attempts\r\n",
+        "[ERROR][LINK][FATAL] uptime_ms=%lu recovery_budget_exhausted attempts=%u\r\n",
+        (unsigned long)HAL_GetTick(),
         (unsigned)ESP32_UART_RUNTIME_MAX_ATTEMPTS);
 
     app_fault_delay_ms(20U);
@@ -1263,11 +1272,15 @@ void ESP32_UART_LinkTest_PrintHealth(void)
     ESP32_UART_GetStats(&stats);
 
     ESP32_LOG_PRINTF(
-        "[LINK][HEALTH] ok=%lu fail=%lu ack=%lu nack=%lu timeout=%lu retry=%lu "
-        "uart_err={ovf:%lu par:%lu frm:%lu ovr:%lu}\r\n",
+        "[INFO][LINK][HEALTH] uptime_ms=%lu cycles=%lu last_seq=%lu tx_ok=%lu rx_auth_ack=%lu "
+        "fail=%lu nack=%lu timeout=%lu retry=%lu "
+        "uart={ovf:%lu par:%lu frm:%lu ovr:%lu}\r\n",
+        (unsigned long)HAL_GetTick(),
         (unsigned long)g_tx_ok_count,
-        (unsigned long)g_tx_fail_count,
+        (unsigned long)((g_test_sequence == 0U) ? 0U : (g_test_sequence - 1U)),
+        (unsigned long)g_tx_ok_count,
         (unsigned long)g_ack_count,
+        (unsigned long)g_tx_fail_count,
         (unsigned long)g_nack_count,
         (unsigned long)g_ack_timeout_count,
         (unsigned long)g_retry_count,
@@ -1285,6 +1298,333 @@ void ESP32_UART_LinkTest_DelayMs(uint32_t delay_ms)
 {
     /* Use elapsed HAL ticks to measure the requested interval. */
     app_fault_delay_ms(delay_ms);
+}
+
+/* Appends a 16-bit telemetry field in little-endian order. */
+static void telemetry_put_u16_le(
+    uint8_t *buf,
+    uint16_t *index,
+    uint16_t value)
+{
+    /* Store the low byte before the high byte. */
+    buf[(*index)++] =
+        (uint8_t)(value & 0xFFU);
+
+    buf[(*index)++] =
+        (uint8_t)((value >> 8U) & 0xFFU);
+}
+
+/* Appends a signed 16-bit telemetry field. */
+static void telemetry_put_i16_le(
+    uint8_t *buf,
+    uint16_t *index,
+    int16_t value)
+{
+    /* Preserve the signed bit pattern through the unsigned encoder. */
+    telemetry_put_u16_le(
+        buf,
+        index,
+        (uint16_t)value);
+}
+
+/* Appends a 32-bit telemetry field in little-endian order. */
+static void telemetry_put_u32_le(
+    uint8_t *buf,
+    uint16_t *index,
+    uint32_t value)
+{
+    /* Advance the output index for each of the four bytes. */
+    buf[(*index)++] =
+        (uint8_t)((value >> 0U) & 0xFFU);
+
+    buf[(*index)++] =
+        (uint8_t)((value >> 8U) & 0xFFU);
+
+    buf[(*index)++] =
+        (uint8_t)((value >> 16U) & 0xFFU);
+
+    buf[(*index)++] =
+        (uint8_t)((value >> 24U) & 0xFFU);
+}
+
+/* Appends the raw floating-point telemetry representation. */
+static void telemetry_put_float_le(
+    uint8_t *buf,
+    uint16_t *index,
+    float value)
+{
+    /* Copy the float bits into a word before little-endian encoding. */
+    uint32_t raw;
+
+    memcpy(
+        &raw,
+        &value,
+        sizeof(raw));
+
+    telemetry_put_u32_le(
+        buf,
+        index,
+        raw);
+}
+
+/* Appends a length-prefixed telemetry label. */
+static void telemetry_put_label(
+    uint8_t *buf,
+    uint16_t *index,
+    const char *label,
+    uint8_t label_len)
+{
+    /* Store the label length before copying its configured bytes. */
+    buf[(*index)++] =
+        label_len;
+
+    memcpy(
+        &buf[*index],
+        label,
+        label_len);
+
+    *index =
+        (uint16_t)(
+            *index + label_len);
+}
+
+/* Appends a zero-padded 32-byte telemetry text field. */
+static void telemetry_put_fixed_string32(
+    uint8_t *buf,
+    uint16_t *index,
+    const char *text)
+{
+    /* Reserve the final byte for termination when copying text. */
+    uint8_t field[32];
+
+    memset(
+        field,
+        0,
+        sizeof(field));
+
+    if (text != NULL)
+    {
+        strncpy(
+            (char *)field,
+            text,
+            sizeof(field) - 1U);
+    }
+
+    memcpy(
+        &buf[*index],
+        field,
+        sizeof(field));
+
+    *index =
+        (uint16_t)(
+            *index + sizeof(field));
+}
+
+/* Serializes the five-sensor snapshot into the ESP32 telemetry frame. */
+static uint16_t ESP32_UART_BuildTelemetryFrame(
+    uint8_t *buf,
+    uint16_t buf_size,
+    uint32_t seq,
+    const telemetry_snapshot_t *t)
+{
+    /* Check the final encoded length before adding the checksum. */
+    uint16_t i = 0U;
+    uint8_t checksum;
+
+    if ((buf == NULL) ||
+        (t == NULL) ||
+        (buf_size < STM32_TELEMETRY_FRAME_LEN))
+    {
+        return 0U;
+    }
+
+    buf[i++] = TEST_MAGIC_0;
+    buf[i++] = TEST_MAGIC_1;
+    buf[i++] = TEST_PROTO_VERSION;
+    buf[i++] = TEST_MSG_TYPE_TELEMETRY;
+
+    buf[i++] =
+        (uint8_t)STM32_TELEMETRY_PAYLOAD_LEN;
+
+    telemetry_put_u32_le(
+        buf,
+        &i,
+        seq);
+
+    /* --------------------------------
+     * BME680
+     * -------------------------------- */
+    telemetry_put_label(
+        buf,
+        &i,
+        "bme680",
+        6U);
+
+    telemetry_put_float_le(
+        buf,
+        &i,
+        t->bme680.temperature_c);
+
+    telemetry_put_float_le(
+        buf,
+        &i,
+        t->bme680.pressure_hpa);
+
+    telemetry_put_float_le(
+        buf,
+        &i,
+        t->bme680.humidity_pct);
+
+    telemetry_put_i16_le(
+        buf,
+        &i,
+        t->bme680.iaq_score);
+
+    telemetry_put_fixed_string32(
+        buf,
+        &i,
+        t->bme680.iaq_label);
+
+    /* --------------------------------
+     * MAX31865
+     * -------------------------------- */
+    telemetry_put_label(
+        buf,
+        &i,
+        "max31865",
+        8U);
+
+    telemetry_put_float_le(
+        buf,
+        &i,
+        t->max31865.temperature_c);
+
+    /* --------------------------------
+     * DS18B20 x5
+     * -------------------------------- */
+    telemetry_put_label(
+        buf,
+        &i,
+        "ds18b20x5",
+        10U);
+
+    for (uint32_t n = 0U;
+         n < TELEMETRY_DS18B20_COUNT;
+         ++n)
+    {
+        telemetry_put_float_le(
+            buf,
+            &i,
+            t->ds18b20.temperature_c[n]);
+    }
+
+    /* --------------------------------
+     * PM2.5
+     * -------------------------------- */
+    telemetry_put_label(
+        buf,
+        &i,
+        "pm2.5",
+        5U);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.pm1_0_standard);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.pm2_5_standard);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.pm10_standard);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.pm1_0_atmospheric);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.pm2_5_atmospheric);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.pm10_atmospheric);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.particles_0_3um);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.particles_0_5um);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.particles_1_0um);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.particles_2_5um);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.particles_5_0um);
+
+    telemetry_put_u16_le(
+        buf, &i,
+        t->pm25.particles_10um);
+
+    /* --------------------------------
+     * MPU9250
+     * -------------------------------- */
+    telemetry_put_label(
+        buf,
+        &i,
+        "mpu9250",
+        7U);
+
+    telemetry_put_float_le(
+        buf, &i,
+        t->mpu9250.ax_g);
+
+    telemetry_put_float_le(
+        buf, &i,
+        t->mpu9250.ay_g);
+
+    telemetry_put_float_le(
+        buf, &i,
+        t->mpu9250.az_g);
+
+    telemetry_put_float_le(
+        buf, &i,
+        t->mpu9250.gx_dps);
+
+    telemetry_put_float_le(
+        buf, &i,
+        t->mpu9250.gy_dps);
+
+    telemetry_put_float_le(
+        buf, &i,
+        t->mpu9250.gz_dps);
+
+    if (i !=
+        (STM32_TELEMETRY_FRAME_LEN - 1U))
+    {
+        return 0U;
+    }
+
+    checksum =
+        ESP32_UART_TestChecksum8(
+            buf,
+            i);
+
+    buf[i++] = checksum;
+
+    /*
+     * EXACT result = 169 bytes.
+     */
+    return i;
 }
 
 /* ------------------------------------------------------------
@@ -1424,8 +1764,8 @@ static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
         (bytes_read != sizeof(wire_packet)))
     {
         ESP32_LOG_PRINTF(
-            "[RX][TIMEOUT] Encrypted response bytes=%u/%u "
-            "status=%d\r\n",
+            "[WARN][LINK][RX_TIMEOUT] uptime_ms=%lu bytes=%u/%u status=%d\r\n",
+            (unsigned long)HAL_GetTick(),
             (unsigned)bytes_read,
             (unsigned)sizeof(wire_packet),
             (int)uart_status);
@@ -1452,7 +1792,7 @@ static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
-#if ESP32_UART_DEBUG_PRINT_RX_ENCRYPTED_PACKET
+#if 0 /* expert runtime logging: raw RX packet dumps disabled */
 
     ESP32_LOG_PRINTF(
         "\r\n"
@@ -1514,8 +1854,8 @@ static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
     if (crypto_status != GCM_RECEIVER_SUCCESS)
     {
         ESP32_LOG_PRINTF(
-            "[RX][ERROR] Encrypted ACK/NACK processing failed "
-            "(rc=%d)\r\n",
+            "[ERROR][LINK][RX] uptime_ms=%lu encrypted ACK/NACK processing failed rc=%d\r\n",
+            (unsigned long)HAL_GetTick(),
             (int)crypto_status);
         app_fault_delay_ms(20U);
 
@@ -1529,6 +1869,16 @@ static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
         (decoded_response.reason ==
             TEST_NACK_REASON_NONE))
     {
+        if (ESP32_UART_PeriodicLogAllowed())
+        {
+            ESP32_LOG_PRINTF(
+                "[INFO][LINK][RX] uptime_ms=%lu seq=%lu source=ESP32 | wire=%uB | "
+                "auth=OK | decrypt=OK | ack=VALID\r\n",
+                (unsigned long)HAL_GetTick(),
+                (unsigned long)decoded_response.sequence,
+                (unsigned)sizeof(wire_packet));
+        }
+
         return ESP32_LINK_RESPONSE_ACK;
     }
 
@@ -1542,8 +1892,8 @@ static ESP32_LinkResponse_t ESP32_UART_WaitForEncryptedResponse(
         }
 
         ESP32_LOG_PRINTF(
-            "[RX][NACK] Authenticated NACK accepted for "
-            "seq=%lu reason=%u (%s)\r\n",
+            "[WARN][LINK][RX_NACK] uptime_ms=%lu seq=%lu reason=%u (%s) auth=OK\r\n",
+            (unsigned long)HAL_GetTick(),
             (unsigned long)decoded_response.sequence,
             (unsigned)decoded_response.reason,
             ESP32_UART_NackReasonToString(
@@ -1781,8 +2131,7 @@ void ESP32_UART_IRQHandler(void)
         }
         else
         {
-            USART6->CR1 &=
-                ~USART_CR1_TXEIE;
+            USART6->CR1 &= ~USART_CR1_TXEIE;
 
             USART6->CR1 |=
                 USART_CR1_TCIE;
@@ -1792,11 +2141,9 @@ void ESP32_UART_IRQHandler(void)
     if (((sr & USART_SR_TC) != 0U) &&
         ((USART6->CR1 & USART_CR1_TCIE) != 0U))
     {
-        USART6->CR1 &=
-            ~USART_CR1_TCIE;
+        USART6->CR1 &= ~USART_CR1_TCIE;
 
-        USART6->SR &=
-            ~USART_SR_TC;
+        USART6->SR &= ~USART_SR_TC;
 
         g_tx_busy = 0U;
 

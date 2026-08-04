@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-08-18
  */
 
 #ifndef SIG_SENSORS_H_
@@ -78,7 +78,9 @@ int8_t  init_bme680(void);
 int8_t  bme_GetGasReference(void);
 int16_t bme_GetGasScore(void);
 int16_t bme_GetHumidityScore(void);
-void    bme_calculateIAQ(int16_t score);
+int16_t bme_calculateIAQ(
+    int16_t score,
+    const char **label_out);
 
 sensor_stack_init_status_t app_bme680_sensor_stack_init(void);
 app_bme680_runtime_status_t app_bme680_sensor_runtime_process(void);
