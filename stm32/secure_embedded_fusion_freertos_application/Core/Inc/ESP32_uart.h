@@ -127,7 +127,6 @@ extern SemaphoreHandle_t esp32_uart_rx_sem;
 extern SemaphoreHandle_t esp32_uart_tx_sem;
 extern volatile ESP32_UART_TransferState_t esp32_uart_rx_cmplt;
 extern volatile ESP32_UART_TransferState_t esp32_uart_tx_cmplt;
-
 extern SemaphoreHandle_t xSerialSemaphore;
 
 #define ESP32_LOG_PRINTF(...)                                                \

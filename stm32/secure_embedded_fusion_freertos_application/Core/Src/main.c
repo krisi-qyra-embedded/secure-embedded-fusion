@@ -398,26 +398,26 @@ int main(void)
         on_fatal_init_error("esp32_uart_aes_gcm_task create failed");
     }
 
-//    if (xTaskCreate(supervisor_task,
-//                    "supervisor_task",
-//                    SUPERVISOR_TASK_STACK_WORDS,
-//                    NULL,
-//                    SUPERVISOR_TASK_PRIORITY,
-//                    &supervisor_task_handle) != pdPASS) {
-//        on_fatal_init_error("supervisor_task create failed");
-//    	//NVIC_SystemReset();
-//    }
+    if (xTaskCreate(supervisor_task,
+                    "supervisor_task",
+                    SUPERVISOR_TASK_STACK_WORDS,
+                    NULL,
+                    SUPERVISOR_TASK_PRIORITY,
+                    &supervisor_task_handle) != pdPASS) {
+        on_fatal_init_error("supervisor_task create failed");
+    	//NVIC_SystemReset();
+    }
 
-//    {
-//        const iwdg_status_t iwdg_status = iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
-//
-//        if (iwdg_status != IWDG_OK)
-//        {
-//            log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
-//            app_fault_delay_ms(2U);
-//            NVIC_SystemReset();
-//        }
-//    }
+    {
+        const iwdg_status_t iwdg_status = iwdg_init(IWDG_PRESCALER_128, 2499U, 0U);
+
+        if (iwdg_status != IWDG_OK)
+        {
+            log_printf("iwdg_init() failed: %d\r\n", (int)iwdg_status);
+            app_fault_delay_ms(2U);
+            NVIC_SystemReset();
+        }
+    }
 
     vTaskStartScheduler();
 
@@ -754,22 +754,24 @@ static void debug_log_bme680_task_state(void)
     app_fault_delay_ms(20U);
 }
 
-//static void supervisor_task(void *pvParameters)
-//{
-//    TickType_t last_wake;
-//
-//    (void)pvParameters;
-//
-//    vTaskDelay(pdMS_TO_TICKS(500U));
-//
-//    last_wake = xTaskGetTickCount();
-//
-//    for (;;) {
-//        supervisor_check_and_kick();
-//
-//        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
-//    }
-//}
+/* Runs periodic heartbeat and watchdog supervision. */
+static void supervisor_task(void *pvParameters)
+{
+    /* Allow a startup interval before the first supervisor check. */
+    TickType_t last_wake;
+
+    (void)pvParameters;
+
+    vTaskDelay(pdMS_TO_TICKS(500U));
+
+    last_wake = xTaskGetTickCount();
+
+    for (;;) {
+        supervisor_check_and_kick();
+
+        vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(SUPERVISOR_TASK_PERIOD_MS));
+    }
+}
 
 /* USER CODE BEGIN 4 */
 /* Sets the BME680 air-quality reference and weighting values. */

@@ -1,5 +1,5 @@
 ../Drivers/CMSIS/Include/core_cm4.h:1939:34:__NVIC_SystemReset	1
-../Core/Src/main.c:155:5:main	27
+../Core/Src/main.c:155:5:main	28
 ../Core/Src/main.c:469:13:bme680_task	5
 ../Core/Src/main.c:505:13:mpu9250_task	5
 ../Core/Src/main.c:541:13:pm25_task	13
@@ -8,6 +8,7 @@
 ../Core/Src/main.c:674:13:esp32_uart_aes_gcm_task	8
 ../Core/Src/main.c:783:20:task_state_to_str	7
 ../Core/Src/main.c:797:13:debug_log_bme680_task_state	9
+../Core/Src/main.c:834:13:supervisor_task	1
 ../Core/Src/main.c:854:6:fnAPP_Init_Standard_Values	1
 ../Core/Src/main.c:869:21:app_bme680_peripherals_init	4
 ../Core/Src/main.c:920:13:app_pre_iwdg_fatal_reset	1
