@@ -72,7 +72,7 @@ static uint32_t g_tx_ok_count = 0U;
 static uint32_t g_tx_fail_count = 0U;
 static uint32_t g_rx_packet_count = 0U;
 static uint32_t g_loop_count = 0U;
-static uint8_t test_cont = 0;
+
 /* ---------------- private driver state ---------------- */
 
 static volatile uint8_t g_initialized = 0U;
@@ -908,34 +908,19 @@ ESP32_UART_RunEncryptedAttempt(
     const telemetry_snapshot_t *snapshot,
     uint8_t *nack_reason)
 {
-    /* Wait for physical TX completion before receiving the encrypted ACK or NACK. */
-    uint8_t tx_frame[STM32_TELEMETRY_FRAME_LEN];
-    uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
-    static uint8_t saved_nonce[AES_GCM_AEAD_IV_SIZE];
-    static uint8_t saved_nonce_valid = 0U;
-    static uint8_t saved_wire_packet[
-            AES_GCM_AEAD_IV_SIZE +
-            STM32_TELEMETRY_FRAME_LEN +
-            AES_GCM_TAG_SIZE];
+	/* Wait for physical TX completion before receiving the encrypted ACK or NACK. */
+	uint8_t tx_frame[STM32_TELEMETRY_FRAME_LEN];
 
-    static uint16_t saved_wire_len = 0U;
-    static uint8_t saved_wire_packet_valid = 0U;
-    static uint8_t old_wire_packet[
-        AES_GCM_AEAD_IV_SIZE +
-        STM32_TELEMETRY_FRAME_LEN +
-        AES_GCM_TAG_SIZE];
+	uint8_t nonce[AES_GCM_AEAD_IV_SIZE];
 
-    static uint16_t old_wire_len = 0U;
-    static uint8_t old_packet_saved = 0U;
+	uint8_t ciphertext_and_tag[
+	    STM32_TELEMETRY_FRAME_LEN +
+	    AES_GCM_TAG_SIZE];
 
-    uint8_t ciphertext_and_tag[
-        STM32_TELEMETRY_FRAME_LEN +
-        AES_GCM_TAG_SIZE];
-
-    uint8_t wire_packet[
-        AES_GCM_AEAD_IV_SIZE +
-        STM32_TELEMETRY_FRAME_LEN +
-        AES_GCM_TAG_SIZE];
+	uint8_t wire_packet[
+	    AES_GCM_AEAD_IV_SIZE +
+	    STM32_TELEMETRY_FRAME_LEN +
+	    AES_GCM_TAG_SIZE];
 
     uint16_t tx_len;
     uint16_t wire_len;
@@ -947,12 +932,16 @@ ESP32_UART_RunEncryptedAttempt(
 
     if (nack_reason != NULL)
     {
-        *nack_reason = TEST_NACK_REASON_NONE;
+        *nack_reason =
+            TEST_NACK_REASON_NONE;
     }
 
     memset(tx_frame, 0, sizeof(tx_frame));
     memset(nonce, 0, sizeof(nonce));
-    memset(ciphertext_and_tag, 0, sizeof(ciphertext_and_tag));
+    memset(
+        ciphertext_and_tag,
+        0,
+        sizeof(ciphertext_and_tag));
     memset(wire_packet, 0, sizeof(wire_packet));
 
     tx_len =
@@ -966,13 +955,12 @@ ESP32_UART_RunEncryptedAttempt(
     {
         ESP32_LOG_PRINTF(
             "[ERROR][LINK][TX] Failed to build UART plaintext frame\r\n");
-
         app_fault_delay_ms(20U);
+
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
 #if 0 /* expert runtime logging: raw TX packet dumps disabled */
-
     ESP32_LOG_PRINTF(
         "[TX][PLAINTEXT] Original UART frame [%u bytes]: ",
         (unsigned)tx_len);
@@ -982,7 +970,6 @@ ESP32_UART_RunEncryptedAttempt(
         tx_len);
 
     ESP32_LOG_PRINTF("\r\n");
-
 #endif
 
     crypto_status =
@@ -1000,8 +987,8 @@ ESP32_UART_RunEncryptedAttempt(
         ESP32_LOG_PRINTF(
             "[ERROR][LINK][TX] UART AES-GCM encryption failed, rc=%d\r\n",
             (int)crypto_status);
-
         app_fault_delay_ms(20U);
+
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
@@ -1012,8 +999,8 @@ ESP32_UART_RunEncryptedAttempt(
         ESP32_LOG_PRINTF(
             "[ERROR][LINK][TX] Invalid encrypted size=%u\r\n",
             (unsigned)encrypted_len);
-
         app_fault_delay_ms(20U);
+
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
@@ -1037,7 +1024,6 @@ ESP32_UART_RunEncryptedAttempt(
             encrypted_len);
 
 #if 0 /* expert runtime logging: raw TX packet dumps disabled */
-
     ESP32_LOG_PRINTF(
         "[TX][NONCE] [%u bytes]: ",
         (unsigned)AES_GCM_AEAD_IV_SIZE);
@@ -1077,94 +1063,12 @@ ESP32_UART_RunEncryptedAttempt(
         wire_len);
 
     ESP32_LOG_PRINTF("\r\n");
-
 #endif
 
     ESP32_UART_FlushRx();
 
     g_tx_attempt_count++;
 
-    /* ------------------------------------------------------------
-     * Fault injection test: integrity corruption
-     * ------------------------------------------------------------ */
-
-//    for (int i = AES_GCM_AEAD_IV_SIZE;
-//         i < AES_GCM_AEAD_IV_SIZE + STM32_TELEMETRY_FRAME_LEN;
-//         i++)
-//    {
-//        wire_packet[i] ^= 0x01U;
-//    }
-
-    /* ------------------------------------------------------------
-     * Fault injection test: authenticity/tag corruption
-     * ------------------------------------------------------------ */
-
-//    for (int i = AES_GCM_AEAD_IV_SIZE + STM32_TELEMETRY_FRAME_LEN;
-//         i < AES_GCM_AEAD_IV_SIZE +
-//             STM32_TELEMETRY_FRAME_LEN +
-//             AES_GCM_TAG_SIZE;
-//         i++)
-//    {
-//        wire_packet[i] ^= 0x01U;
-//    }
-
-    /* ------------------------------------------------------------
-     * Fault injection test: true replay of old packet
-     * ------------------------------------------------------------ */
-
-//    if (old_packet_saved == 0U)
-//    {
-//        memcpy(
-//            old_wire_packet,
-//            wire_packet,
-//            wire_len);
-//
-//        old_wire_len = wire_len;
-//        old_packet_saved = 1U;
-//    }
-//
-//    test_cont++;
-//
-//    if (test_cont > 3U)
-//    {
-//        memcpy(
-//            wire_packet,
-//            old_wire_packet,
-//            old_wire_len);
-//
-//        wire_len = old_wire_len;
-//    }
-
-    /* ------------------------------------------------------------
-     * Fault injection test: replay previous complete packet
-     * Forces the previously transmitted nonce + ciphertext + GCM tag
-     * to be transmitted again as one complete authenticated packet.
-     * ------------------------------------------------------------ */
-
-//    if (saved_wire_packet_valid == 0U)
-//    {
-//        memcpy(
-//            saved_wire_packet,
-//            wire_packet,
-//            wire_len);
-//
-//        saved_wire_len = wire_len;
-//        saved_wire_packet_valid = 1U;
-//    }
-//
-//    test_cont++;
-//
-//    if (test_cont > 3U)
-//    {
-//        memcpy(
-//            wire_packet,
-//            saved_wire_packet,
-//            saved_wire_len);
-//
-//        wire_len = saved_wire_len;
-//    }
-//
-//
     uart_status =
         ESP32_UART_Write(
             wire_packet,
@@ -1178,6 +1082,7 @@ ESP32_UART_RunEncryptedAttempt(
             (int)uart_status);
 
         app_fault_delay_ms(20U);
+
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
@@ -1189,11 +1094,9 @@ ESP32_UART_RunEncryptedAttempt(
         ESP32_LOG_PRINTF(
             "[ERROR][LINK][TX] USART6 transmission completion failed, status=%d\r\n",
             (int)uart_status);
-
         app_fault_delay_ms(20U);
 
         ESP32_UART_FlushTx();
-
         return ESP32_LINK_RESPONSE_INVALID;
     }
 
@@ -1213,10 +1116,25 @@ ESP32_UART_RunEncryptedAttempt(
             ESP32_ACK_TIMEOUT_MS,
             nack_reason);
 
-    memset(tx_frame, 0, sizeof(tx_frame));
-    memset(nonce, 0, sizeof(nonce));
-    memset(ciphertext_and_tag, 0, sizeof(ciphertext_and_tag));
-    memset(wire_packet, 0, sizeof(wire_packet));
+    memset(
+        tx_frame,
+        0,
+        sizeof(tx_frame));
+
+    memset(
+        nonce,
+        0,
+        sizeof(nonce));
+
+    memset(
+        ciphertext_and_tag,
+        0,
+        sizeof(ciphertext_and_tag));
+
+    memset(
+        wire_packet,
+        0,
+        sizeof(wire_packet));
 
     return response;
 }
