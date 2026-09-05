@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-08-18
+ * Documentation date: 2026-09-05
  */
 
 #include "device_uid_entropy.h"

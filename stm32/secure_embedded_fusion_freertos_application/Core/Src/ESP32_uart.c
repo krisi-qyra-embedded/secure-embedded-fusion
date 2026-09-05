@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-08-18
+ * Documentation date: 2026-09-05
  */
 
 #include "ESP32_uart.h"
@@ -1069,6 +1069,20 @@ ESP32_UART_RunEncryptedAttempt(
 
     g_tx_attempt_count++;
 
+    //Fault injection test, integrity corruption.
+//    for(int i = AES_GCM_AEAD_IV_SIZE;i < AES_GCM_AEAD_IV_SIZE + STM32_TELEMETRY_FRAME_LEN;i++)
+//    {
+//    wire_packet[i] ^= 0x01U;/*replace the ciphertext with corrupted val*/
+//    }
+
+    //Fault injection test, authenticity(tag) corruption.
+//    for(int i = AES_GCM_AEAD_IV_SIZE + STM32_TELEMETRY_FRAME_LEN;
+//    i < AES_GCM_AEAD_IV_SIZE + STM32_TELEMETRY_FRAME_LEN +
+    //AES_GCM_TAG_SIZE;i++)
+//    {
+//    wire_packet[i] ^= 0x01U;/*replace the ciphertext with corrupted val*/
+//    }
+
     uart_status =
         ESP32_UART_Write(
             wire_packet,
@@ -1170,9 +1184,9 @@ ESP32_UART_RuntimeStatus_t ESP32_UART_LinkTest_RunOnce(const telemetry_snapshot_
                 SYSTEM_FAULT_OWNER_ESP32_UART_AES_GCM);
 
             /*
-             * Per-packet logging is intentionally compact:
+             * Per-packet logging:
              * one TX summary + one authenticated RX/ACK summary.
-             * Emit an aggregate health record after every 10 complete,
+             * print a health record after every 10 complete,
              * authenticated STM32->ESP32->STM32 transactions.
              */
             if (((g_tx_ok_count % 10U) == 0U) &&

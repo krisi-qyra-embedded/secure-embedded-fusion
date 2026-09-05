@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-08-18
+ * Documentation date: 2026-09-05
  */
 
 #include "stm32f4xx.h"
@@ -33,6 +33,7 @@
 #include "stm32_gcm_nvm.h"
 #include "nonce.h"
 #include "telemetry.h"
+#include "public_key_fault_injection_patch.h"
 
 #define VECT_TAB_BASE_ADDRESS          FLASH_BASE
 #define VECT_TAB_OFFSET                UINT32_C(0x00020000)
@@ -274,6 +275,27 @@ int main(void)
 	tim2_1s_init();
 
 	uart2_tx_rx_init();
+
+#if TEST_CORRUPT_STORED_BOOT_PUBLIC_KEY
+
+    if (fault_inject_corrupt_stored_boot_public_key())
+    {
+        log_printf(
+            "[FAULT_INJECT][AUTH] "
+            "Public-key corruption completed -> resetting\r\n");
+
+        delay_ms(20U);
+
+        NVIC_SystemReset();
+    }
+    else
+    {
+        log_printf(
+            "[FAULT_INJECT][AUTH][ERROR] "
+            "Public-key corruption failed\r\n");
+    }
+
+#endif
 
     if (systick_init(96000000U, 6U) != SYSTICK_OK) {
 
@@ -581,7 +603,7 @@ int main(void)
 
     if (xTaskCreate(bme680_task,
 
-                    "bme680_task_secure_boot_test",
+                    "bme680_task",
 
                     BME680_TASK_STACK_WORDS,
 
@@ -725,7 +747,7 @@ int main(void)
 
     while (1) {
 
-        /*NVIC_SystemReset();*/
+        NVIC_SystemReset();
 
     }
 

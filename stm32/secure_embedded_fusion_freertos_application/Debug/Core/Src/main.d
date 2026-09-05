@@ -118,7 +118,8 @@ Core/Src/main.o: ../Core/Src/main.c \
  ../Middlewares/ST/STM32_Cryptographic/include/utils/cmox_utils_compare.h \
  ../Middlewares/ST/STM32_Cryptographic/include/cmox_info.h \
  ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h \
- ../Core/Inc/stm32_gcm_nvm.h ../Core/Inc/telemetry.h
+ ../Core/Inc/stm32_gcm_nvm.h ../Core/Inc/telemetry.h \
+ ../Core/Inc/public_key_fault_injection_patch.h
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:
 ../Drivers/CMSIS/Include/core_cm4.h:
@@ -262,3 +263,4 @@ Core/Src/main.o: ../Core/Src/main.c \
 ../Middlewares/ST/STM32_Cryptographic/include/cmox_init.h:
 ../Core/Inc/stm32_gcm_nvm.h:
 ../Core/Inc/telemetry.h:
+../Core/Inc/public_key_fault_injection_patch.h:

@@ -20,6 +20,7 @@
 "./Core/Src/onewire.o"
 "./Core/Src/pm25_uart.o"
 "./Core/Src/pm2_5.o"
+"./Core/Src/public_key_fault_injection_patch.o"
 "./Core/Src/pwm_dma.o"
 "./Core/Src/pwr.o"
 "./Core/Src/sig_sensors.o"
