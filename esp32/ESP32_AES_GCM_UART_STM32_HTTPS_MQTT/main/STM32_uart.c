@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include "STM32_uart.h"
@@ -24,17 +24,23 @@
 static const char *TAG = "STM32_UART";
 
 #define STM32_GCM_NONCE_SIZE              12U
-#define STM32_GCM_PLAINTEXT_SIZE          14U
+#define STM32_GCM_PLAINTEXT_SIZE          169U
 #define STM32_GCM_TAG_SIZE                16U
 #define STM32_GCM_CIPHERTEXT_TAG_SIZE     \
     (STM32_GCM_PLAINTEXT_SIZE + STM32_GCM_TAG_SIZE)
-#define STM32_GCM_WIRE_PACKET_SIZE        \
-    (STM32_GCM_NONCE_SIZE + STM32_GCM_CIPHERTEXT_TAG_SIZE)
-#define STM32_GCM_PACKET_QUEUE_LENGTH     4U
-#define ESP32_GCM_RESPONSE_WIRE_SIZE       39U
 
-#define STM32_UART_RESYNC_QUIET_US        INT64_C(50000)
-#define STM32_UART_READ_TIMEOUT_MS        20U
+#define STM32_GCM_PACKET_QUEUE_LENGTH     4U
+#define ESP32_GCM_RESPONSE_WIRE_SIZE      39U
+
+#define STM32_UART_RESYNC_QUIET_US             INT64_C(50000)
+
+#define STM32_UART_PARTIAL_FRAME_TIMEOUT_US    INT64_C(400000)
+
+#define STM32_UART_EVENT_POLL_MS                20U
+
+#define STM32_UART_HEALTH_PERIOD_US             INT64_C(10000000)
+
+#define STM32_UART_READ_TIMEOUT_MS              20U
 
 
 _Static_assert(
@@ -42,34 +48,39 @@ _Static_assert(
     "STM32 nonce must be 12 bytes");
 
 _Static_assert(
-    STM32_GCM_PLAINTEXT_SIZE == 14U,
-    "STM32 ciphertext must be 14 bytes");
+    STM32_GCM_PLAINTEXT_SIZE == 169U,
+    "STM32 telemetry plaintext/ciphertext must be 169 bytes");
 
 _Static_assert(
     STM32_GCM_TAG_SIZE == 16U,
     "STM32 GCM tag must be 16 bytes");
 
 _Static_assert(
-    STM32_GCM_CIPHERTEXT_TAG_SIZE == 30U,
-    "STM32 ciphertext || tag must be 30 bytes");
+    STM32_GCM_CIPHERTEXT_TAG_SIZE == 185U,
+    "STM32 ciphertext || tag must be 185 bytes");
 
 _Static_assert(
-    STM32_GCM_WIRE_PACKET_SIZE == 42U,
-    "STM32 wire packet must be 42 bytes");
+    STM32_GCM_WIRE_PACKET_SIZE ==
+        (STM32_GCM_NONCE_SIZE + STM32_GCM_CIPHERTEXT_TAG_SIZE),
+    "STM32 public wire-size macro does not match nonce+ciphertext+tag");
+
+_Static_assert(
+    STM32_GCM_WIRE_PACKET_SIZE == 197U,
+    "STM32 telemetry wire packet must be 197 bytes");
 
 _Static_assert(
     ESP32_GCM_RESPONSE_WIRE_SIZE == 39U,
     "ESP32 encrypted ACK/NACK wire packet must be 39 bytes");
 
 #if STM32_UART_TEST_MAX_FRAME_SIZE < STM32_GCM_WIRE_PACKET_SIZE
-#error "STM32_UART_TEST_MAX_FRAME_SIZE must be at least 42 bytes"
+#error "STM32_UART_TEST_MAX_FRAME_SIZE must be at least 197 bytes"
 #endif
 
 
 typedef struct
 {
-    size_t len;
-    uint8_t bytes[STM32_GCM_WIRE_PACKET_SIZE];
+    size_t len;  
+    uint8_t bytes[STM32_GCM_WIRE_PACKET_SIZE];  
 
 } STM32_UART_EncryptedPacket_t;
 
@@ -80,6 +91,7 @@ static TaskHandle_t g_stm32_uart_event_task_handle = NULL;
 static volatile bool g_stm32_uart_initialized = false;
 static volatile bool g_stm32_uart_test_started = false;
 static int64_t g_uart_resync_until_us = 0;
+static int64_t g_last_rx_byte_us = 0;
 static STM32_UART_Stats_t g_stats;
 
 static uint8_t g_encrypted_assembly[
@@ -93,11 +105,13 @@ static void STM32_UART_EventTask(void *arg);
 static void STM32_UART_ConsumeEncryptedBytes(
     const uint8_t *data,
     size_t len);
+static void STM32_UART_CheckPartialAssemblyTimeout(void);
 
 /* Discards the partial encrypted packet assembly. */
 static void STM32_UART_ResetEncryptedAssembly(void)
 {
     g_encrypted_assembly_count = 0U;
+    g_last_rx_byte_us = 0;
 
     /* Clear the staging buffer before collecting another fixed-size packet. */
     memset(
@@ -131,6 +145,12 @@ static void STM32_UART_EnterResynchronization(void)
         /* Discard queued UART events before assembling the next packet. */
         xQueueReset(
             g_stm32_uart_event_queue);
+    }
+
+    if (g_encrypted_packet_queue != NULL)
+    {
+        xQueueReset(
+            g_encrypted_packet_queue);
     }
 }
 
@@ -249,6 +269,7 @@ STM32_UART_Status_t STM32_UART_Init(void)
         return STM32_UART_STATUS_ERROR;
     }
 
+    /* Deliver RX bursts promptly; assembly still uses the fixed packet size. */
     (void)uart_set_rx_timeout(
         STM32_UART_PORT,
         2U);
@@ -461,6 +482,18 @@ void STM32_UART_FlushRx(void)
     STM32_UART_ResetEncryptedAssembly();
 }
 
+/* Requests RX resynchronization from the crypto task. */
+void STM32_UART_ResyncRx(void)
+{
+    /* Only flush and restart assembly when the UART driver is initialized. */
+    if (!g_stm32_uart_initialized)
+    {
+        return;
+    }
+
+    STM32_UART_EnterResynchronization();
+}
+
 /* Copies the current UART transport counters. */
 void STM32_UART_GetStats(
     STM32_UART_Stats_t *stats)
@@ -545,11 +578,11 @@ STM32_UART_Status_t STM32_UART_LinkTest_Start(void)
 
     ESP_LOGI(
         TAG,
-        "Wire format: nonce[12] || ciphertext[14] || tag[16]");
+        "Wire format: nonce[12] || ciphertext[169] || tag[16]");
 
     ESP_LOGI(
         TAG,
-        "Fixed startup-test packet size: %u bytes (12 + 14 + 16)",
+        "Fixed telemetry packet size: %u bytes (12 + 169 + 16)",
         (unsigned int)STM32_GCM_WIRE_PACKET_SIZE);
 
     ESP_LOGI(
@@ -727,14 +760,14 @@ static void STM32_UART_EventTask(void *arg)
 
     uart_event_t event;
     uint8_t rx_data[STM32_UART_TEST_MAX_FRAME_SIZE];
-    uint32_t health_counter = 0U;
+    int64_t last_health_us = esp_timer_get_time();
 
     for (;;)
     {
         if (xQueueReceive(
                 g_stm32_uart_event_queue,
                 &event,
-                pdMS_TO_TICKS(1000)) == pdTRUE)
+                pdMS_TO_TICKS(STM32_UART_EVENT_POLL_MS)) == pdTRUE)
         {
             switch (event.type)
             {
@@ -862,11 +895,16 @@ static void STM32_UART_EventTask(void *arg)
             }
         }
 
-        health_counter++;
+        STM32_UART_CheckPartialAssemblyTimeout();
 
-        if ((health_counter % 10U) == 0U)
         {
-            STM32_UART_LinkTest_PrintHealth();
+            const int64_t now_us = esp_timer_get_time();
+
+            if ((now_us - last_health_us) >= STM32_UART_HEALTH_PERIOD_US)
+            {
+                STM32_UART_LinkTest_PrintHealth();
+                last_health_us = now_us;
+            }
         }
     }
 }
@@ -882,13 +920,14 @@ static void STM32_UART_ConsumeEncryptedBytes(
         return;
     }
 
+    g_last_rx_byte_us = esp_timer_get_time();
+
     for (size_t i = 0U; i < len; ++i)
     {
         g_encrypted_assembly[
             g_encrypted_assembly_count++] =
                 data[i];
 
-        /* Queue a candidate only after all required wire bytes are collected. */
         if (g_encrypted_assembly_count ==
             STM32_GCM_WIRE_PACKET_SIZE)
         {
@@ -912,6 +951,7 @@ static void STM32_UART_ConsumeEncryptedBytes(
                     &packet,
                     0U) != pdTRUE)
             {
+                /* Drop the oldest queued candidate if a new complete packet finds the queue full. */
                 STM32_UART_EncryptedPacket_t discarded;
 
                 (void)xQueueReceive(
@@ -933,10 +973,52 @@ static void STM32_UART_ConsumeEncryptedBytes(
 
             ESP_LOGI(
                 TAG,
-                "42-byte encrypted STM32 request candidate queued; awaiting AES-GCM authentication");
+                "197-byte encrypted STM32 telemetry request candidate queued; awaiting AES-GCM authentication");
 
             STM32_UART_ResetEncryptedAssembly();
         }
     }
 }
 
+/* Discards a partial packet after its receive deadline. */
+static void STM32_UART_CheckPartialAssemblyTimeout(void)
+{
+    int64_t now_us;
+    int64_t age_us;
+    size_t stale_bytes;
+
+    if (g_encrypted_assembly_count == 0U)
+    {
+        return;
+    }
+
+    if (g_last_rx_byte_us == 0)
+    {
+        return;
+    }
+
+    if (STM32_UART_ResynchronizationActive())
+    {
+        return;
+    }
+
+    now_us = esp_timer_get_time();
+    age_us = now_us - g_last_rx_byte_us;
+
+    /* Resynchronize RX when the last byte is older than the frame timeout. */
+    if (age_us < STM32_UART_PARTIAL_FRAME_TIMEOUT_US)
+    {
+        return;
+    }
+
+    stale_bytes = g_encrypted_assembly_count;
+
+    ESP_LOGW(
+        TAG,
+        "Partial encrypted STM32 packet timed out: %u/%u bytes; "
+        "flushing RX and resynchronizing",
+        (unsigned int)stale_bytes,
+        (unsigned int)STM32_GCM_WIRE_PACKET_SIZE);
+
+    STM32_UART_EnterResynchronization();
+}

@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include <stdio.h>
@@ -265,10 +265,6 @@ static void bmp280_test(void *pvParameters)
 
     ESP_ERROR_CHECK(bmp280_init_default_params(&params));
 
-    /*
-     * Normal mode = continuous measurement.
-     * Standard oversampling is a good stable default.
-     */
     params.mode = BMP280_MODE_NORMAL;
     params.filter = BMP280_FILTER_OFF;
     params.oversampling_pressure = BMP280_STANDARD;

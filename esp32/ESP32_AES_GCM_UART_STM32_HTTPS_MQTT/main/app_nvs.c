@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include <stdbool.h>
@@ -147,4 +147,3 @@ esp_err_t app_nvs_clear_sta_creds(void)
 	printf("app_nvs_clear_sta_creds: returned ESP_OK\n");
 	return ESP_OK;
 }
-

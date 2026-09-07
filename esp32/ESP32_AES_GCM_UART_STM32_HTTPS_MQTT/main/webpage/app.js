@@ -1,17 +1,14 @@
 /**
- * Add globals here
+ * Secure Fusion dashboard client.
+ * Dependency-free: no jQuery required.
  */
+
 var seconds = null;
 var otaTimerVar = null;
 var wifiConnectInterval = null;
 var sensorInterval = null;
+var sensorPollBusy = false;
 
-/**
- * API endpoints.
- * These are relative URLs.
- * If the page is opened with https://esp32.secure-fusion-iot.com/
- * or https://192.168.4.1/, the browser sends these requests to the ESP32.
- */
 var API = {
     otaUpdate: "/OTAupdate",
     otaStatus: "/OTAstatus",
@@ -21,435 +18,1322 @@ var API = {
     wifiDisconnect: "/wifiDisconnect.json",
     localTime: "/localTime.json",
     apSSID: "/apSSID.json",
-
-    /*
-     * Sensor JSON endpoints from http_server.c
-     */
     ccs811Sensor: "/ccs811Sensor.json",
     bme280Sensor: "/bme280Sensor.json",
-    bmp280Sensor: "/bmp280Sensor.json"
+    stm32Telemetry: "/stm32Telemetry.json"
 };
 
-/**
- * Initialize functions here.
- */
-$(document).ready(function(){
-    getUpdateStatus();
-    startLocalTimeInterval();
-    getConnectInfo();
-    getAPSSID();
-
-    getSensorReadings();
-    startSensorInterval();
-
-    $("#connect_wifi").on("click", function(){
-        checkCredentials();
-    });
-
-    $("#disconnect_wifi").on("click", function(){
-        disconnectWifi();
-    });
-});
-
-/**
- * Gets file name and size for display on the web page.
- */
-function getFileInfo()
+function byId(id)
 {
-    var x = document.getElementById("selected_file");
+    return document.getElementById(id);
+}
 
-    if (!x.files || x.files.length === 0)
+function setText(id, value)
+{
+    var element = byId(id);
+
+    if (element)
     {
-        document.getElementById("file_info").innerHTML = "";
+        element.textContent = value;
+    }
+}
+
+function setHTML(id, value)
+{
+    var element = byId(id);
+
+    if (element)
+    {
+        element.innerHTML = value;
+    }
+}
+
+function setPill(id, state, text)
+{
+    var element = byId(id);
+
+    if (!element)
+    {
         return;
     }
 
-    var file = x.files[0];
+    element.classList.remove(
+        "waiting",
+        "online",
+        "offline"
+    );
 
-    document.getElementById("file_info").innerHTML =
-        "<h4>File: " + file.name + "<br>Size: " + file.size + " bytes</h4>";
+    element.classList.add(state);
+    element.textContent = text;
 }
 
-/**
- * Handles the firmware update.
- */
-function updateFirmware()
+function setSecureLinkState(state, text)
 {
-    var formData = new FormData();
-    var fileSelect = document.getElementById("selected_file");
+    setText(
+        "stm32_secure_status",
+        text
+    );
 
-    if (fileSelect.files && fileSelect.files.length === 1)
+    var badge =
+        byId("stm32_security_badge");
+
+    if (!badge)
     {
-        var file = fileSelect.files[0];
-
-        formData.set("file", file, file.name);
-
-        document.getElementById("ota_update_status").innerHTML =
-            "Uploading " + file.name + ", Firmware Update in Progress...";
-
-        var request = new XMLHttpRequest();
-
-        request.upload.addEventListener("progress", updateProgress);
-        request.open("POST", API.otaUpdate);
-        request.responseType = "blob";
-        request.send(formData);
+        return;
     }
-    else
+
+    var dot =
+        badge.querySelector(
+            ".status-dot"
+        );
+
+    if (dot)
     {
-        window.alert("Select A File First");
+        dot.classList.remove(
+            "waiting",
+            "online",
+            "offline"
+        );
+
+        dot.classList.add(state);
     }
 }
 
-/**
- * Progress on transfers from the client to the server.
- */
-function updateProgress(oEvent)
+function formatNumber(value, digits)
 {
-    if (oEvent.lengthComputable)
+    var number =
+        Number(value);
+
+    if (!Number.isFinite(number))
+    {
+        return "--";
+    }
+
+    return number.toFixed(digits);
+}
+
+function dataValid(data)
+{
+    return data &&
+           (
+               data.valid === true ||
+               data.valid === 1
+           );
+}
+
+async function requestJSON(
+    url,
+    options
+)
+{
+    var requestOptions =
+        options || {};
+
+    requestOptions.cache =
+        "no-store";
+
+    var separator =
+        url.indexOf("?") >= 0
+            ? "&"
+            : "?";
+
+    var response =
+        await fetch(
+            url +
+            separator +
+            "_=" +
+            Date.now(),
+            requestOptions
+        );
+
+    if (!response.ok)
+    {
+        throw new Error(
+            "HTTP " +
+            response.status +
+            " for " +
+            url
+        );
+    }
+
+    return response.json();
+}
+
+window.addEventListener(
+    "DOMContentLoaded",
+    function()
     {
         getUpdateStatus();
+
+        getLocalTime();
+
+        startLocalTimeInterval();
+
+        getConnectInfo();
+
+        getAPSSID();
+
+        getSensorReadings();
+
+        startSensorInterval();
+
+        var connectButton =
+            byId("connect_wifi");
+
+        var disconnectButton =
+            byId("disconnect_wifi");
+
+        if (connectButton)
+        {
+            connectButton.addEventListener(
+                "click",
+                checkCredentials
+            );
+        }
+
+        if (disconnectButton)
+        {
+            disconnectButton.addEventListener(
+                "click",
+                disconnectWifi
+            );
+        }
     }
-    else
+);
+
+function getFileInfo()
+{
+    var input =
+        byId("selected_file");
+
+    if (!input ||
+        !input.files ||
+        input.files.length === 0)
     {
-        window.alert("Total size is unknown");
+        setText(
+            "file_info",
+            ""
+        );
+
+        return;
     }
+
+    var file =
+        input.files[0];
+
+    setText(
+        "file_info",
+        "File: " +
+        file.name +
+        " • " +
+        file.size +
+        " bytes"
+    );
 }
 
-/**
- * Posts the firmware update status.
- */
-function getUpdateStatus()
+function updateFirmware()
 {
-    var xhr = new XMLHttpRequest();
+    var fileSelect =
+        byId("selected_file");
 
-    xhr.open("POST", API.otaStatus, false);
-    xhr.send("ota_update_status");
-
-    if (xhr.readyState === 4 && xhr.status === 200)
+    if (!fileSelect ||
+        !fileSelect.files ||
+        fileSelect.files.length !== 1)
     {
-        var response = JSON.parse(xhr.responseText);
+        window.alert(
+            "Select a firmware file first"
+        );
 
-        document.getElementById("latest_firmware").innerHTML =
-            response.compile_date + " - " + response.compile_time;
+        return;
+    }
 
-        if (response.ota_update_status === 1)
+    var file =
+        fileSelect.files[0];
+
+    var formData =
+        new FormData();
+
+    formData.set(
+        "file",
+        file,
+        file.name
+    );
+
+    setText(
+        "ota_update_status",
+        "Uploading " +
+        file.name +
+        " — firmware update in progress..."
+    );
+
+    var request =
+        new XMLHttpRequest();
+
+    request.upload.addEventListener(
+        "progress",
+        function(event)
+        {
+            if (event.lengthComputable)
+            {
+                getUpdateStatus();
+            }
+        }
+    );
+
+    request.open(
+        "POST",
+        API.otaUpdate
+    );
+
+    request.responseType =
+        "blob";
+
+    request.send(
+        formData
+    );
+}
+
+async function getUpdateStatus()
+{
+    try
+    {
+        var data =
+            await requestJSON(
+                API.otaStatus,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "text/plain"
+                    },
+
+                    body:
+                        "ota_update_status"
+                }
+            );
+
+        if (data.compile_date ||
+            data.compile_time)
+        {
+            setText(
+                "latest_firmware",
+
+                (data.compile_date || "") +
+                " — " +
+                (data.compile_time || "")
+            );
+        }
+
+        if (data.ota_update_status === 1)
         {
             seconds = 10;
+
             otaRebootTimer();
         }
-        else if (response.ota_update_status === -1)
+        else if (
+            data.ota_update_status === -1
+        )
         {
-            document.getElementById("ota_update_status").innerHTML = "!!! Upload Error !!!";
+            setHTML(
+                "ota_update_status",
+                "<span class='rd'>" +
+                "Upload failed" +
+                "</span>"
+            );
         }
     }
+    catch (error)
+    {
+        console.warn(
+            "OTA status request failed:",
+            error
+        );
+    }
 }
 
-/**
- * Displays the reboot countdown.
- */
 function otaRebootTimer()
 {
-    document.getElementById("ota_update_status").innerHTML =
-        "OTA Firmware Update Complete. This page will close shortly. Rebooting in: " + seconds;
+    setText(
+        "ota_update_status",
+        "OTA complete. Rebooting in " +
+        seconds +
+        " s"
+    );
 
-    if (--seconds === 0)
+    seconds--;
+
+    if (seconds <= 0)
     {
-        clearTimeout(otaTimerVar);
+        clearTimeout(
+            otaTimerVar
+        );
+
         window.location.reload();
+
+        return;
     }
-    else
-    {
-        otaTimerVar = setTimeout(otaRebootTimer, 1000);
-    }
+
+    otaTimerVar =
+        setTimeout(
+            otaRebootTimer,
+            1000
+        );
 }
 
-/**
- * Clears the connection status interval.
- */
 function stopWifiConnectStatusInterval()
 {
     if (wifiConnectInterval !== null)
     {
-        clearInterval(wifiConnectInterval);
-        wifiConnectInterval = null;
+        clearInterval(
+            wifiConnectInterval
+        );
+
+        wifiConnectInterval =
+            null;
     }
 }
 
-/**
- * Gets the WiFi connection status.
- */
-function getWifiConnectStatus()
+async function getWifiConnectStatus()
 {
-    var xhr = new XMLHttpRequest();
-
-    xhr.open("POST", API.wifiConnectStatus, false);
-    xhr.send("wifi_connect_status");
-
-    if (xhr.readyState === 4 && xhr.status === 200)
+    try
     {
-        var response = JSON.parse(xhr.responseText);
+        var data =
+            await requestJSON(
+                API.wifiConnectStatus,
+                {
+                    method: "POST",
 
-        document.getElementById("wifi_connect_status").innerHTML = "Connecting...";
+                    headers: {
+                        "Content-Type":
+                            "text/plain"
+                    },
 
-        if (response.wifi_connect_status === 2)
+                    body:
+                        "wifi_connect_status"
+                }
+            );
+
+        setText(
+            "wifi_connect_status",
+            "Connecting..."
+        );
+
+        if (data.wifi_connect_status === 2)
         {
-            document.getElementById("wifi_connect_status").innerHTML =
-                "<h4 class='rd'>Failed to Connect. Please check your AP credentials and compatibility.</h4>";
+            setHTML(
+                "wifi_connect_status",
+                "<span class='rd'>" +
+                "Connection failed. " +
+                "Check AP credentials." +
+                "</span>"
+            );
 
             stopWifiConnectStatusInterval();
         }
-        else if (response.wifi_connect_status === 3)
+        else if (
+            data.wifi_connect_status === 3
+        )
         {
-            document.getElementById("wifi_connect_status").innerHTML =
-                "<h4 class='gr'>Connection Success!</h4>";
+            setHTML(
+                "wifi_connect_status",
+                "<span class='gr'>" +
+                "Connection established" +
+                "</span>"
+            );
 
             stopWifiConnectStatusInterval();
+
             getConnectInfo();
         }
     }
+    catch (error)
+    {
+        console.warn(
+            "Wi-Fi status request failed:",
+            error
+        );
+    }
 }
 
-/**
- * Starts the interval for checking the connection status.
- */
 function startWifiConnectStatusInterval()
 {
     stopWifiConnectStatusInterval();
-    wifiConnectInterval = setInterval(getWifiConnectStatus, 2800);
+
+    wifiConnectInterval =
+        setInterval(
+            getWifiConnectStatus,
+            2800
+        );
 }
 
-/**
- * Connect WiFi function called using the SSID and password entered into the text fields.
- */
-function connectWifi()
+async function connectWifi()
 {
-    var selectedSSID = $("#connect_ssid").val();
-    var pwd = $("#connect_pass").val();
+    var ssidInput =
+        byId("connect_ssid");
 
-    $.ajax({
-        url: API.wifiConnect,
-        dataType: "json",
-        method: "POST",
-        cache: false,
-        headers: {
-            "my-connect-ssid": selectedSSID,
-            "my-connect-pwd": pwd
-        },
-        data: {
-            "timestamp": Date.now()
+    var passwordInput =
+        byId("connect_pass");
+
+    var ssid =
+        ssidInput
+            ? ssidInput.value
+            : "";
+
+    var password =
+        passwordInput
+            ? passwordInput.value
+            : "";
+
+    try
+    {
+        var response =
+            await fetch(
+                API.wifiConnect +
+                "?_=" +
+                Date.now(),
+                {
+                    method: "POST",
+                    cache: "no-store",
+
+                    headers: {
+                        "my-connect-ssid": ssid,
+                        "my-connect-pwd": password
+                    }
+                }
+            );
+
+        if (!response.ok)
+        {
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
         }
-    });
 
-    startWifiConnectStatusInterval();
+        var result =
+            await response.json();
+
+        if (!result.accepted)
+        {
+            throw new Error(
+                "ESP32 rejected credentials"
+            );
+        }
+
+        setText(
+            "wifi_connect_status",
+            "Credentials accepted. Connecting..."
+        );
+
+        startWifiConnectStatusInterval();
+    }
+    catch (error)
+    {
+        setHTML(
+            "wifi_connect_status",
+            "<span class='rd'>" +
+            "Unable to send Wi-Fi connection request." +
+            "</span>"
+        );
+
+        console.error(
+            "Wi-Fi connect request failed:",
+            error
+        );
+    }
 }
 
-/**
- * Checks credentials on connect_wifi button click.
- */
+
 function checkCredentials()
 {
-    var errorList = "";
-    var credsOk = true;
+    var ssidInput =
+        byId("connect_ssid");
 
-    var selectedSSID = $("#connect_ssid").val();
-    var pwd = $("#connect_pass").val();
+    var passwordInput =
+        byId("connect_pass");
 
-    if (selectedSSID === "")
+    var ssid =
+        ssidInput
+            ? ssidInput.value.trim()
+            : "";
+
+    var password =
+        passwordInput
+            ? passwordInput.value
+            : "";
+
+    var errors = [];
+
+    if (ssid === "")
     {
-        errorList += "<h4 class='rd'>SSID cannot be empty!</h4>";
-        credsOk = false;
+        errors.push(
+            "SSID cannot be empty"
+        );
     }
 
-    if (pwd === "")
+    if (password === "")
     {
-        errorList += "<h4 class='rd'>Password cannot be empty!</h4>";
-        credsOk = false;
+        errors.push(
+            "Password cannot be empty"
+        );
     }
 
-    if (credsOk === false)
+    if (errors.length > 0)
     {
-        $("#wifi_connect_credentials_errors").html(errorList);
+        setHTML(
+            "wifi_connect_credentials_errors",
+
+            "<span class='rd'>" +
+            errors.join(" • ") +
+            "</span>"
+        );
+
+        return;
     }
-    else
-    {
-        $("#wifi_connect_credentials_errors").html("");
-        connectWifi();
-    }
+
+    setText(
+        "wifi_connect_credentials_errors",
+        ""
+    );
+
+    connectWifi();
 }
 
-/**
- * Shows the WiFi password if the box is checked.
- */
 function showPassword()
 {
-    var x = document.getElementById("connect_pass");
+    var input =
+        byId("connect_pass");
 
-    if (x.type === "password")
+    if (input)
     {
-        x.type = "text";
-    }
-    else
-    {
-        x.type = "password";
+        input.type =
+            input.type === "password"
+                ? "text"
+                : "password";
     }
 }
 
-/**
- * Gets the connection information for displaying on the web page.
- */
-function getConnectInfo()
+async function getConnectInfo()
 {
-    $.getJSON(API.wifiConnectInfo, function(data)
+    try
     {
-        $("#connected_ap_label").html("Connected to: ");
-        $("#connected_ap").text(data["ap"]);
+        var data =
+            await requestJSON(
+                API.wifiConnectInfo
+            );
 
-        $("#ip_address_label").html("IP Address: ");
-        $("#wifi_connect_ip").text(data["ip"]);
+        if (data.ap)
+        {
+            setText(
+                "connected_ap",
+                data.ap
+            );
 
-        $("#netmask_label").html("Netmask: ");
-        $("#wifi_connect_netmask").text(data["netmask"]);
+            setText(
+                "wifi_connect_ip",
+                data.ip || "--"
+            );
 
-        $("#gateway_label").html("Gateway: ");
-        $("#wifi_connect_gw").text(data["gw"]);
+            setText(
+                "wifi_connect_netmask",
+                data.netmask || "--"
+            );
 
-        document.getElementById("disconnect_wifi").style.display = "block";
-    });
-}
+            setText(
+                "wifi_connect_gw",
+                data.gw || "--"
+            );
 
-/**
- * Disconnects WiFi once the disconnect button is pressed and reloads the web page.
- */
-function disconnectWifi()
-{
-    $.ajax({
-        url: API.wifiDisconnect,
-        dataType: "json",
-        method: "DELETE",
-        cache: false,
-        data: {
-            "timestamp": Date.now()
+            var button =
+                byId("disconnect_wifi");
+
+            if (button)
+            {
+                button.style.display =
+                    "inline-block";
+            }
         }
-    });
-
-    setTimeout(function(){
-        location.reload(true);
-    }, 2000);
+    }
+    catch (error)
+    {
+        console.warn(
+            "Wi-Fi info request failed:",
+            error
+        );
+    }
 }
 
-/**
- * Sets the interval for displaying local time.
- */
+
+
+
+async function disconnectWifi()
+{
+    setText(
+        "wifi_connect_status",
+        "Disconnecting..."
+    );
+
+    try
+    {
+        var response =
+            await fetch(
+                API.wifiDisconnect +
+                "?_=" +
+                Date.now(),
+                {
+                    method: "DELETE",
+                    cache: "no-store"
+                }
+            );
+
+        if (!response.ok)
+        {
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+        }
+
+        var result =
+            await response.json();
+
+        if (!result.disconnected)
+        {
+            throw new Error(
+                "Disconnect request rejected"
+            );
+        }
+
+        setText(
+            "wifi_connect_status",
+            "Disconnected"
+        );
+
+        setText(
+            "connected_ap",
+            "--"
+        );
+
+        setText(
+            "wifi_connect_ip",
+            "--"
+        );
+
+        setText(
+            "wifi_connect_netmask",
+            "--"
+        );
+
+        setText(
+            "wifi_connect_gw",
+            "--"
+        );
+
+        var disconnectButton =
+            byId("disconnect_wifi");
+
+        if (disconnectButton)
+        {
+            disconnectButton.style.display =
+                "none";
+        }
+
+        setTimeout(
+            function()
+            {
+                window.location.reload();
+            },
+            1500
+        );
+    }
+    catch (error)
+    {
+        setHTML(
+            "wifi_connect_status",
+            "<span class='rd'>" +
+            "Unable to disconnect Wi-Fi." +
+            "</span>"
+        );
+
+        console.error(
+            "Wi-Fi disconnect failed:",
+            error
+        );
+    }
+}
+
+
+
 function startLocalTimeInterval()
 {
-    setInterval(getLocalTime, 10000);
+    setInterval(
+        getLocalTime,
+        10000
+    );
 }
 
-/**
- * Gets the local time.
- * Connect the ESP32 to the internet and the time will be updated.
- */
-function getLocalTime()
+async function getLocalTime()
 {
-    $.getJSON(API.localTime, function(data) {
-        $("#local_time").text(data["time"]);
-    });
-}
-
-/**
- * Gets the ESP32 Access Point SSID.
- */
-function getAPSSID()
-{
-    $.getJSON(API.apSSID, function(data)
+    try
     {
-        $("#ap_ssid").text(data["ssid"]);
-    });
+        var data =
+            await requestJSON(
+                API.localTime
+            );
+
+        if (data.time)
+        {
+            setText(
+                "local_time",
+                data.time
+            );
+        }
+    }
+    catch (error)
+    {
+        console.warn(
+            "Local time request failed:",
+            error
+        );
+    }
 }
 
-/**
- * Starts automatic refresh for sensor values.
- */
+async function getAPSSID()
+{
+    try
+    {
+        var data =
+            await requestJSON(
+                API.apSSID
+            );
+
+        if (data.ssid)
+        {
+            setText(
+                "ap_ssid",
+                data.ssid
+            );
+        }
+    }
+    catch (error)
+    {
+        console.warn(
+            "AP SSID request failed:",
+            error
+        );
+    }
+}
+
 function startSensorInterval()
 {
     if (sensorInterval !== null)
     {
-        clearInterval(sensorInterval);
+        clearInterval(
+            sensorInterval
+        );
     }
 
-    sensorInterval = setInterval(getSensorReadings, 5000);
+    sensorInterval =
+        setInterval(
+            getSensorReadings,
+            2000
+        );
 }
 
-/**
- * Gets all sensor readings.
- */
-function getSensorReadings()
+async function getSensorReadings()
 {
-    getCCS811SensorReadings();
-    getBME280SensorReadings();
-}
-
-/**
- * Gets CCS811 eCO2/TVOC data.
- */
-function getCCS811SensorReadings()
-{
-    $.getJSON(API.ccs811Sensor, function(data)
+    if (sensorPollBusy)
     {
-        if (data["valid"] === true || data["valid"] === 1)
+        return;
+    }
+
+    sensorPollBusy = true;
+
+    try
+    {
+        await Promise.allSettled(
+            [
+                getCCS811SensorReadings(),
+                getBME280SensorReadings(),
+                getSTM32Telemetry()
+            ]
+        );
+    }
+    finally
+    {
+        sensorPollBusy = false;
+    }
+}
+
+async function getCCS811SensorReadings()
+{
+    try
+    {
+        var data =
+            await requestJSON(
+                API.ccs811Sensor
+            );
+
+        if (!dataValid(data))
         {
-            $("#ccs811_eco2").text(data["eco2"]);
-            $("#ccs811_tvoc").text(data["tvoc"]);
-            $("#ccs811_current").text(data["raw_current"]);
-            $("#ccs811_adc").text(data["raw_voltage_adc"]);
-            $("#ccs811_voltage").text(data["raw_voltage"]);
-            $("#ccs811_status").html("<span class='gr'>Online</span>");
+            setPill(
+                "ccs811_status",
+                "waiting",
+                "Waiting"
+            );
+
+            return;
+        }
+
+        setText(
+            "ccs811_eco2",
+            data.eco2 !== undefined
+                ? data.eco2
+                : "--"
+        );
+
+        setText(
+            "ccs811_tvoc",
+            data.tvoc !== undefined
+                ? data.tvoc
+                : "--"
+        );
+
+        setText(
+            "ccs811_current",
+            data.raw_current !== undefined
+                ? data.raw_current
+                : "--"
+        );
+
+        setText(
+            "ccs811_adc",
+            data.raw_voltage_adc !== undefined
+                ? data.raw_voltage_adc
+                : "--"
+        );
+
+        setText(
+            "ccs811_voltage",
+            data.raw_voltage !== undefined
+                ? data.raw_voltage
+                : "--"
+        );
+
+        setPill(
+            "ccs811_status",
+            "online",
+            "Online"
+        );
+    }
+    catch (error)
+    {
+        setPill(
+            "ccs811_status",
+            "offline",
+            "Read failed"
+        );
+
+        console.warn(
+            "CCS811 request failed:",
+            error
+        );
+    }
+}
+
+async function getBME280SensorReadings()
+{
+    try
+    {
+        var data =
+            await requestJSON(
+                API.bme280Sensor
+            );
+
+        if (!dataValid(data))
+        {
+            setPill(
+                "bme280_status",
+                "waiting",
+                "Waiting"
+            );
+
+            return;
+        }
+
+        setText(
+            "bme280_sensor_type",
+            data.sensor || "--"
+        );
+
+        setText(
+            "bme280_chip_id",
+            data.chip_id !== undefined
+                ? data.chip_id
+                : "--"
+        );
+
+        setText(
+            "bme280_temperature",
+            formatNumber(
+                data.temperature,
+                2
+            )
+        );
+
+        setText(
+            "bme280_pressure_pa",
+            formatNumber(
+                data.pressure_pa,
+                2
+            )
+        );
+
+        setText(
+            "bme280_pressure_hpa",
+            formatNumber(
+                data.pressure_hpa,
+                2
+            )
+        );
+
+        if (data.humidity_available === true ||
+            data.humidity_available === 1)
+        {
+            setText(
+                "bme280_humidity",
+                formatNumber(
+                    data.humidity,
+                    2
+                )
+            );
         }
         else
         {
-            $("#ccs811_status").html("<span class='rd'>Waiting for valid data</span>");
+            setText(
+                "bme280_humidity",
+                "N/A"
+            );
         }
-    }).fail(function()
+
+        setPill(
+            "bme280_status",
+            "online",
+            "Online"
+        );
+    }
+    catch (error)
     {
-        $("#ccs811_status").html("<span class='rd'>Read failed</span>");
-    });
+        setPill(
+            "bme280_status",
+            "offline",
+            "Read failed"
+        );
+
+        console.warn(
+            "BME280 request failed:",
+            error
+        );
+    }
 }
 
-/**
- * Gets BME280 temperature/pressure/humidity data.
- *
- * Your physical sensor is BME280, even though the low-level driver is named bmp280.
- * The webpage uses /bme280Sensor.json.
- */
-function getBME280SensorReadings()
+function markSTM32Cards(
+    state,
+    text
+)
 {
-    $.getJSON(API.bme280Sensor, function(data)
-    {
-        if (data["valid"] === true || data["valid"] === 1)
+    [
+        "bme680_status",
+        "max31865_status",
+        "ds18b20_status",
+        "pm25_status",
+        "mpu9250_status"
+    ].forEach(
+        function(id)
         {
-            $("#bme280_sensor_type").text(data["sensor"]);
-            $("#bme280_chip_id").text(data["chip_id"]);
-            $("#bme280_temperature").text(data["temperature"]);
-            $("#bme280_pressure_pa").text(data["pressure_pa"]);
-            $("#bme280_pressure_hpa").text(data["pressure_hpa"]);
-
-            if (data["humidity_available"] === true || data["humidity_available"] === 1)
-            {
-                $("#bme280_humidity").text(data["humidity"]);
-            }
-            else
-            {
-                $("#bme280_humidity").text("N/A");
-            }
-
-            $("#bme280_status").html("<span class='gr'>Online</span>");
+            setPill(
+                id,
+                state,
+                text
+            );
         }
-        else
-        {
-            $("#bme280_status").html("<span class='rd'>Waiting for valid data</span>");
-        }
-    }).fail(function()
+    );
+}
+
+async function getSTM32Telemetry()
+{
+    try
     {
-        $("#bme280_status").html("<span class='rd'>Read failed</span>");
-    });
+        var data =
+            await requestJSON(
+                API.stm32Telemetry
+            );
+
+        if (!dataValid(data))
+        {
+            markSTM32Cards(
+                "waiting",
+                "Waiting"
+            );
+
+            setSecureLinkState(
+                "waiting",
+                "WAITING"
+            );
+
+            setText(
+                "stm32_sequence",
+                "--"
+            );
+
+            return;
+        }
+
+        markSTM32Cards(
+            "online",
+            "Authenticated"
+        );
+
+        setSecureLinkState(
+            "online",
+            "AUTHENTICATED"
+        );
+
+        setText(
+            "stm32_sequence",
+            data.sequence !== undefined
+                ? data.sequence
+                : "--"
+        );
+
+        var bme680 =
+            data.bme680 || {};
+
+        setText(
+            "bme680_temperature",
+            formatNumber(
+                bme680.temperature,
+                2
+            )
+        );
+
+        setText(
+            "bme680_pressure",
+            formatNumber(
+                bme680.pressure,
+                2
+            )
+        );
+
+        setText(
+            "bme680_humidity",
+            formatNumber(
+                bme680.humidity,
+                2
+            )
+        );
+
+        setText(
+            "bme680_iaq_score",
+            bme680.iaq_score !== undefined
+                ? bme680.iaq_score
+                : "--"
+        );
+
+        setText(
+            "bme680_iaq_label",
+            bme680.iaq_label || "--"
+        );
+
+        var max31865 =
+            data.max31865 || {};
+
+        setText(
+            "max31865_temperature",
+            formatNumber(
+                max31865.temperature,
+                3
+            )
+        );
+
+        var ds18b20 =
+            data.ds18b20 || {};
+
+        var temperatures =
+            Array.isArray(
+                ds18b20.temperature
+            )
+                ? ds18b20.temperature
+                : [];
+
+        for (var i = 0; i < 5; i++)
+        {
+            setText(
+                "ds18b20_t" + i,
+
+                temperatures[i] !== undefined
+                    ? formatNumber(
+                        temperatures[i],
+                        3
+                    )
+                    : "--"
+            );
+        }
+
+        var pm =
+            data.pm25 || {};
+
+        setText(
+            "pm1_std",
+            pm.pm1_0_standard !== undefined
+                ? pm.pm1_0_standard
+                : "--"
+        );
+
+        setText(
+            "pm25_std",
+            pm.pm2_5_standard !== undefined
+                ? pm.pm2_5_standard
+                : "--"
+        );
+
+        setText(
+            "pm10_std",
+            pm.pm10_standard !== undefined
+                ? pm.pm10_standard
+                : "--"
+        );
+
+        setText(
+            "pm1_atm",
+            pm.pm1_0_atmospheric !== undefined
+                ? pm.pm1_0_atmospheric
+                : "--"
+        );
+
+        setText(
+            "pm25_atm",
+            pm.pm2_5_atmospheric !== undefined
+                ? pm.pm2_5_atmospheric
+                : "--"
+        );
+
+        setText(
+            "pm10_atm",
+            pm.pm10_atmospheric !== undefined
+                ? pm.pm10_atmospheric
+                : "--"
+        );
+
+        setText(
+            "p03",
+            pm.particles_0_3um !== undefined
+                ? pm.particles_0_3um
+                : "--"
+        );
+
+        setText(
+            "p05",
+            pm.particles_0_5um !== undefined
+                ? pm.particles_0_5um
+                : "--"
+        );
+
+        setText(
+            "p10",
+            pm.particles_1_0um !== undefined
+                ? pm.particles_1_0um
+                : "--"
+        );
+
+        setText(
+            "p25",
+            pm.particles_2_5um !== undefined
+                ? pm.particles_2_5um
+                : "--"
+        );
+
+        setText(
+            "p50",
+            pm.particles_5_0um !== undefined
+                ? pm.particles_5_0um
+                : "--"
+        );
+
+        setText(
+            "p100",
+            pm.particles_10um !== undefined
+                ? pm.particles_10um
+                : "--"
+        );
+
+        var imu =
+            data.mpu9250 || {};
+
+        setText(
+            "mpu_ax",
+            formatNumber(
+                imu.ax,
+                3
+            )
+        );
+
+        setText(
+            "mpu_ay",
+            formatNumber(
+                imu.ay,
+                3
+            )
+        );
+
+        setText(
+            "mpu_az",
+            formatNumber(
+                imu.az,
+                3
+            )
+        );
+
+        setText(
+            "mpu_gx",
+            formatNumber(
+                imu.gx,
+                3
+            )
+        );
+
+        setText(
+            "mpu_gy",
+            formatNumber(
+                imu.gy,
+                3
+            )
+        );
+
+        setText(
+            "mpu_gz",
+            formatNumber(
+                imu.gz,
+                3
+            )
+        );
+    }
+    catch (error)
+    {
+        markSTM32Cards(
+            "offline",
+            "Unavailable"
+        );
+
+        setSecureLinkState(
+            "offline",
+            "UNAVAILABLE"
+        );
+
+        console.warn(
+            "STM32 telemetry request failed:",
+            error
+        );
+    }
 }

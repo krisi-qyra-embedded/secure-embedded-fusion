@@ -1,0 +1,8 @@
+idf.py encrypted-flash monitor
+
+
+
+W (199037) main: AP client connected to ESP32_AP
+W (199037) main: MODE_SWITCH | entering LOCAL DASHBOARD mode
+W (199037) app_watchdog: WATCHDOG | task=aws | disabled
+I (199047) main: MODE_ACTIVE | LOCAL | HTTPS dashboard active | AWS stopped

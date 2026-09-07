@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #define ESP32_ECDH_DEFINE_PROVISIONED_KEYS 1
@@ -41,6 +41,7 @@
 
 static const char *TAG = "ESP32_ECDH";
 
+/* Public DRBG personalization string; it adds no secret entropy. */
 static const unsigned char s_drbg_personalization[] =
     "ESP32-LOCAL-ECDH-SECP256R1-V1";
 
@@ -571,16 +572,6 @@ static void print_key_as_c_array(
     fflush(stdout);
 }
 
-/*
- * Import one fixed secp256r1 keypair from raw big-endian arrays.
- *
- * private_key[32]
- * public_key[64] = X[32] || Y[32]
- *
- * The function imports and validates both values. The existing
- * sender/receiver shared-secret comparison later detects a mismatched
- * private/public pair before derived keys are accepted.
- */
 /* Imports and validates a provisioned scalar and public point. */
 static esp32_ecdh_status_t import_provisioned_keypair(
     esp32_ecdh_ctx_t *ctx,
@@ -1601,12 +1592,6 @@ esp32_ecdh_status_t esp32_ecdh_print_shared_secrets(
     return ESP32_ECDH_SUCCESS;
 }
 
-/*
- * Exact compatibility KDF used by your STM32 code:
- *
- * AES key = SHA256(shared || 0x01)
- * MAC key = SHA256(shared || 0x02)
- */
 /* Derives AES and MAC keys from a shared secret using SHA-256. */
 static esp32_ecdh_status_t derive_keys_internal(
     const uint8_t *shared_secret,
@@ -1668,6 +1653,7 @@ static esp32_ecdh_status_t derive_keys_internal(
         shared_secret,
         shared_secret_len);
 
+    /* AES key = SHA256(shared_secret || 0x01). */
     /* Use separate trailing domain bytes for the AES and MAC hashes. */
     kdf_input[shared_secret_len] =
         0x01U;
@@ -1702,6 +1688,7 @@ static esp32_ecdh_status_t derive_keys_internal(
     *aes_key_len =
         ESP32_ECDH_DERIVED_KEY_SIZE;
 
+    /* MAC key = SHA256(shared_secret || 0x02). */
     kdf_input[shared_secret_len] =
         0x02U;
 
@@ -1848,12 +1835,6 @@ esp32_ecdh_status_t esp32_ecdh_derive_and_verify_keys(
     /* Clear stale derived material before starting the KDF. */
     ecdh_clear_derived_state(ctx);
 
-    /*
-     * ESP32->STM32 transmit keys:
-     *
-     * aes_key = SHA256(tx_shared_secret || 0x01)
-     * mac_key = SHA256(tx_shared_secret || 0x02)
-     */
     status =
         esp32_ecdh_derive_sender_keys(ctx);
 
@@ -1864,12 +1845,6 @@ esp32_ecdh_status_t esp32_ecdh_derive_and_verify_keys(
         return status;
     }
 
-    /*
-     * STM32->ESP32 receive keys:
-     *
-     * aes_key_receiver = SHA256(rx_shared_secret || 0x01)
-     * mac_key_receiver = SHA256(rx_shared_secret || 0x02)
-     */
     status =
         esp32_ecdh_derive_receiver_keys(ctx);
 

@@ -1,11 +1,14 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include "mbedtls_aes_gcm.h"
 
 #include <limits.h>
+#include <stddef.h>
 #include <string.h>
+
+#include "stm32_telemetry_public.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,8 +16,11 @@
 #include "STM32_uart.h"
 
 #include "esp_log.h"
+#include "esp_log_timestamp.h"
 #include "esp_log_buffer.h"
 #include "esp_random.h"
+#include "nvs.h"
+#include "esp_err.h"
 
 #include "mbedtls/build_info.h"
 #include "mbedtls/platform_util.h"
@@ -29,6 +35,680 @@
 
 
 static const char *TAG = "ESP32_AES_GCM";
+static const char *RUNTIME_TAG = "GCM_UART_DUPLEX";
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+/* NVS is initialized by app_main. TX sessions are persisted; counters stay in RAM.
+ * The zero RX seed is stored once. Incoming packets update only the RAM watermark.
+ * Erasing NVS allows the seed to be provisioned again. */
+#define ESP32_GCM_NVS_NAMESPACE        "gcmsecv1"
+#define ESP32_GCM_NVS_STATE_KEY        "state"
+#define ESP32_GCM_NVS_MAGIC            UINT32_C(0x47434D31)
+#define ESP32_GCM_NVS_VERSION          UINT32_C(1)
+
+#define ESP32_GCM_NVS_RX_SEED_KEY      "rxseed0v1"
+#define ESP32_GCM_NVS_RX_SEED_MAGIC    UINT32_C(0x52585330)
+#define ESP32_GCM_NVS_RX_SEED_VERSION  UINT32_C(1)
+
+typedef struct
+{
+    uint32_t magic;  
+    uint32_t version;  
+    uint32_t generation;  
+
+    uint32_t tx_session_id;  
+
+    /* Legacy RX fields stay zero; live RX replay state is held in RAM. */
+    uint32_t rx_session_id;  
+    uint32_t rx_counter_hi;  
+    uint32_t rx_counter_lo;  
+
+    uint32_t crc32;  
+
+} esp32_gcm_nvs_record_t;
+
+typedef struct
+{
+    uint32_t magic;  
+    uint32_t version;  
+    uint32_t session_id;  
+    uint32_t counter_hi;  
+    uint32_t counter_lo;  
+    uint32_t crc32;  
+
+} esp32_gcm_rx_seed_record_t;
+
+typedef enum
+{
+    ESP32_GCM_REPLAY_ACCEPT_NEW = 0, /**< New nonce; RAM watermark advanced. */
+    ESP32_GCM_REPLAY_DUPLICATE_LAST,  
+    ESP32_GCM_REPLAY_REJECT_OLD,  
+    ESP32_GCM_REPLAY_STORAGE_ERROR,  
+    ESP32_GCM_REPLAY_BAD_NONCE  
+
+} esp32_gcm_replay_result_t;
+
+static nvs_handle_t s_gcm_nvs_handle;
+static bool s_gcm_nvs_open;
+static bool s_gcm_nvs_loaded;
+static esp32_gcm_nvs_record_t s_gcm_nvs_state;
+
+static uint32_t s_gcm_rx_session_id_ram;
+static uint64_t s_gcm_rx_counter_ram;
+static bool s_gcm_rx_ram_initialized;
+
+/* Computes the CRC for a persistent GCM state record. */
+static uint32_t esp32_gcm_crc32(
+    const uint8_t *data,
+    size_t length)
+{
+    uint32_t crc = UINT32_C(0xFFFFFFFF);
+
+    if ((data == NULL) && (length != 0U))
+    {
+        return 0U;
+    }
+
+    for (size_t i = 0U; i < length; ++i)
+    {
+        crc ^= data[i];
+
+        for (unsigned int bit = 0U; bit < 8U; ++bit)
+        {
+            /* Apply the reflected CRC polynomial to each record byte. */
+            const uint32_t mask =
+                (uint32_t)(0U - (crc & 1U));
+
+            crc =
+                (crc >> 1U) ^
+                (UINT32_C(0xEDB88320) & mask);
+        }
+    }
+
+    return ~crc;
+}
+
+/* Reconstructs the RX seed's 64-bit counter. */
+static uint64_t esp32_gcm_rx_seed_counter(
+    const esp32_gcm_rx_seed_record_t *record)
+{
+    if (record == NULL)
+    {
+        /* Combine the stored high and low words without signed extension. */
+        return UINT64_C(0);
+    }
+
+    return
+        ((uint64_t)record->counter_hi << 32U) |
+        (uint64_t)record->counter_lo;
+}
+
+/* Checks the persistent TX record header and CRC. */
+static bool esp32_gcm_nvs_record_valid(
+    const esp32_gcm_nvs_record_t *record)
+{
+    uint32_t expected_crc;
+
+    if (record == NULL)
+    {
+        return false;
+    }
+
+    if ((record->magic != ESP32_GCM_NVS_MAGIC) ||
+        (record->version != ESP32_GCM_NVS_VERSION))
+    {
+        return false;
+    }
+
+    /* Exclude the CRC field itself when calculating the expected checksum. */
+    expected_crc =
+        esp32_gcm_crc32(
+            (const uint8_t *)record,
+            offsetof(
+                esp32_gcm_nvs_record_t,
+                crc32));
+
+    return record->crc32 == expected_crc;
+}
+
+/* Validates the one-time RX seed record. */
+static bool esp32_gcm_rx_seed_record_valid(
+    const esp32_gcm_rx_seed_record_t *record)
+{
+    uint32_t expected_crc;
+
+    if (record == NULL)
+    {
+        return false;
+    }
+
+    /* Check the seed format before accepting its CRC. */
+    if ((record->magic != ESP32_GCM_NVS_RX_SEED_MAGIC) ||
+        (record->version != ESP32_GCM_NVS_RX_SEED_VERSION))
+    {
+        return false;
+    }
+
+    expected_crc =
+        esp32_gcm_crc32(
+            (const uint8_t *)record,
+            offsetof(
+                esp32_gcm_rx_seed_record_t,
+                crc32));
+
+    return record->crc32 == expected_crc;
+}
+
+/* Loads or creates the fixed zero RX seed in NVS. */
+static bool esp32_gcm_nvs_load_or_provision_rx_seed_once(void)
+{
+    esp32_gcm_rx_seed_record_t seed;
+    esp_err_t err;
+    size_t blob_size;
+
+    if (!s_gcm_nvs_open)
+    {
+        return false;
+    }
+
+    mbedtls_platform_zeroize(
+        &seed,
+        sizeof(seed));
+
+    blob_size =
+        sizeof(seed);
+
+    err =
+        nvs_get_blob(
+            s_gcm_nvs_handle,
+            ESP32_GCM_NVS_RX_SEED_KEY,
+            &seed,
+            &blob_size);
+
+    if (err == ESP_ERR_NVS_NOT_FOUND)
+    {
+        seed.magic =
+            ESP32_GCM_NVS_RX_SEED_MAGIC;
+
+        seed.version =
+            ESP32_GCM_NVS_RX_SEED_VERSION;
+
+        seed.session_id = 0U;
+        seed.counter_hi = 0U;
+        seed.counter_lo = 0U;
+
+        seed.crc32 =
+            esp32_gcm_crc32(
+                (const uint8_t *)&seed,
+                offsetof(
+                    esp32_gcm_rx_seed_record_t,
+                    crc32));
+
+        err =
+            nvs_set_blob(
+                s_gcm_nvs_handle,
+                ESP32_GCM_NVS_RX_SEED_KEY,
+                &seed,
+                sizeof(seed));
+
+        if (err == ESP_OK)
+        {
+            err =
+                nvs_commit(
+                    s_gcm_nvs_handle);
+        }
+
+        if (err != ESP_OK)
+        {
+            ESP_LOGE(
+                TAG,
+                "One-time RX seed provisioning failed: %s",
+                esp_err_to_name(err));
+
+            mbedtls_platform_zeroize(
+                &seed,
+                sizeof(seed));
+
+            return false;
+        }
+
+        ESP_LOGI(
+            TAG,
+            "One-time NVS RX seed programmed: "
+            "session=00000000 counter=0 key=%s",
+            ESP32_GCM_NVS_RX_SEED_KEY);
+    }
+    else
+    {
+        if (err != ESP_OK)
+        {
+            ESP_LOGE(
+                TAG,
+                "nvs_get_blob(%s) failed: %s",
+                ESP32_GCM_NVS_RX_SEED_KEY,
+                esp_err_to_name(err));
+
+            mbedtls_platform_zeroize(
+                &seed,
+                sizeof(seed));
+
+            return false;
+        }
+
+        /* Existing seeds must remain zero; runtime RX progress stays in RAM. */
+        if ((blob_size != sizeof(seed)) ||
+            (!esp32_gcm_rx_seed_record_valid(
+                &seed)) ||
+            (seed.session_id != 0U) ||
+            (esp32_gcm_rx_seed_counter(
+                &seed) != UINT64_C(0)))
+        {
+            ESP_LOGE(
+                TAG,
+                "One-time RX seed is invalid or not {session=0,counter=0}; "
+                "failing closed");
+
+            mbedtls_platform_zeroize(
+                &seed,
+                sizeof(seed));
+
+            return false;
+        }
+
+        ESP_LOGI(
+            TAG,
+            "One-time NVS RX seed already provisioned: "
+            "session=00000000 counter=0 (no NVS rewrite)");
+    }
+
+    s_gcm_rx_session_id_ram = 0U;
+    s_gcm_rx_counter_ram = UINT64_C(0);
+    s_gcm_rx_ram_initialized = true;
+
+    mbedtls_platform_zeroize(
+        &seed,
+        sizeof(seed));
+
+    return true;
+}
+
+/* Closes GCM storage and clears its cached state. */
+static void esp32_gcm_nvs_close(void)
+{
+    if (s_gcm_nvs_open)
+    {
+        nvs_close(
+            s_gcm_nvs_handle);
+    }
+
+    s_gcm_nvs_handle = 0U;
+    s_gcm_nvs_open = false;
+    s_gcm_nvs_loaded = false;
+
+    /* Clear RAM replay state when the storage context is released. */
+    s_gcm_rx_session_id_ram = 0U;
+    s_gcm_rx_counter_ram = UINT64_C(0);
+    s_gcm_rx_ram_initialized = false;
+
+    mbedtls_platform_zeroize(
+        &s_gcm_nvs_state,
+        sizeof(s_gcm_nvs_state));
+}
+
+/* Loads and validates persistent GCM session state. */
+static bool esp32_gcm_nvs_load_once(void)
+{
+    esp_err_t err;
+    size_t blob_size;
+
+    if (s_gcm_nvs_loaded)
+    {
+        return true;
+    }
+
+    if (!s_gcm_nvs_open)
+    {
+        err =
+            nvs_open(
+                ESP32_GCM_NVS_NAMESPACE,
+                NVS_READWRITE,
+                &s_gcm_nvs_handle);
+
+        if (err != ESP_OK)
+        {
+            ESP_LOGE(
+                TAG,
+                "nvs_open(%s) failed: %s",
+                ESP32_GCM_NVS_NAMESPACE,
+                esp_err_to_name(err));
+
+            return false;
+        }
+
+        s_gcm_nvs_open = true;
+    }
+
+    mbedtls_platform_zeroize(
+        &s_gcm_nvs_state,
+        sizeof(s_gcm_nvs_state));
+
+    blob_size =
+        sizeof(s_gcm_nvs_state);
+
+    err =
+        nvs_get_blob(
+            s_gcm_nvs_handle,
+            ESP32_GCM_NVS_STATE_KEY,
+            &s_gcm_nvs_state,
+            &blob_size);
+
+    if (err == ESP_ERR_NVS_NOT_FOUND)
+    {
+        s_gcm_nvs_state.magic =
+            ESP32_GCM_NVS_MAGIC;
+
+        s_gcm_nvs_state.version =
+            ESP32_GCM_NVS_VERSION;
+
+        s_gcm_nvs_state.rx_session_id = 0U;
+        s_gcm_nvs_state.rx_counter_hi = 0U;
+        s_gcm_nvs_state.rx_counter_lo = 0U;
+
+        ESP_LOGI(
+            TAG,
+            "Persistent TX GCM state is blank; first TX reserve "
+            "will create generation 1");
+    }
+    else
+    {
+        if (err != ESP_OK)
+        {
+            ESP_LOGE(
+                TAG,
+                "nvs_get_blob(%s) failed: %s",
+                ESP32_GCM_NVS_STATE_KEY,
+                esp_err_to_name(err));
+
+            esp32_gcm_nvs_close();
+            return false;
+        }
+
+        /* Fail closed on a corrupt record instead of resetting its session counter. */
+        if ((blob_size != sizeof(s_gcm_nvs_state)) ||
+            (!esp32_gcm_nvs_record_valid(
+                &s_gcm_nvs_state)))
+        {
+            ESP_LOGE(
+                TAG,
+                "Persistent GCM TX state is invalid or corrupted; "
+                "failing closed");
+
+            esp32_gcm_nvs_close();
+            return false;
+        }
+
+        ESP_LOGI(
+            TAG,
+            "Persistent GCM TX state loaded: generation=%lu "
+            "tx_session=%lu",
+            (unsigned long)s_gcm_nvs_state.generation,
+            (unsigned long)s_gcm_nvs_state.tx_session_id);
+    }
+
+    if (!esp32_gcm_nvs_load_or_provision_rx_seed_once())
+    {
+        esp32_gcm_nvs_close();
+        return false;
+    }
+
+    s_gcm_nvs_loaded = true;
+
+    ESP_LOGI(
+        TAG,
+        "STM32->ESP32 replay policy: "
+        "NVS seed={session=00000000,counter=0} "
+        "runtime_high_water=RAM_ONLY");
+
+    return true;
+}
+
+/* Commits a candidate TX session record to NVS. */
+static bool esp32_gcm_nvs_commit(
+    const esp32_gcm_nvs_record_t *candidate)
+{
+    esp32_gcm_nvs_record_t record;
+    esp_err_t err;
+
+    if ((candidate == NULL) ||
+        (!esp32_gcm_nvs_load_once()))
+    {
+        return false;
+    }
+
+    record =
+        *candidate;
+
+    record.magic =
+        ESP32_GCM_NVS_MAGIC;
+
+    record.version =
+        ESP32_GCM_NVS_VERSION;
+
+    /* Keep persistent RX fields zero; RX high-water marks are RAM-only. */
+    record.rx_session_id = 0U;
+    record.rx_counter_hi = 0U;
+    record.rx_counter_lo = 0U;
+
+    record.crc32 =
+        esp32_gcm_crc32(
+            (const uint8_t *)&record,
+            offsetof(
+                esp32_gcm_nvs_record_t,
+                crc32));
+
+    err =
+        nvs_set_blob(
+            s_gcm_nvs_handle,
+            ESP32_GCM_NVS_STATE_KEY,
+            &record,
+            sizeof(record));
+
+    if (err == ESP_OK)
+    {
+        err =
+            nvs_commit(
+                s_gcm_nvs_handle);
+    }
+
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(
+            TAG,
+            "Persistent GCM state commit failed: %s",
+            esp_err_to_name(err));
+
+        mbedtls_platform_zeroize(
+            &record,
+            sizeof(record));
+
+        return false;
+    }
+
+    s_gcm_nvs_state =
+        record;
+
+    mbedtls_platform_zeroize(
+        &record,
+        sizeof(record));
+
+    return true;
+}
+
+/* Reserves the next persistent transmit session ID. */
+static bool esp32_gcm_nvs_reserve_tx_session(
+    uint32_t *session_id_out)
+{
+    esp32_gcm_nvs_record_t next;
+
+    if ((session_id_out == NULL) ||
+        (!esp32_gcm_nvs_load_once()))
+    {
+        return false;
+    }
+
+    if (s_gcm_nvs_state.tx_session_id == UINT32_MAX)
+    {
+        ESP_LOGE(
+            TAG,
+            "Persistent TX session counter is exhausted");
+
+        return false;
+    }
+
+    next =
+        s_gcm_nvs_state;
+
+    if (next.generation == UINT32_MAX)
+    {
+        ESP_LOGE(
+            TAG,
+            "Persistent GCM generation counter is exhausted");
+
+        return false;
+    }
+
+    next.generation++;
+    next.tx_session_id++;
+
+    /* I commit the new session before allowing it to be used for transmission. */
+    if (!esp32_gcm_nvs_commit(
+            &next))
+    {
+        return false;
+    }
+
+    *session_id_out =
+        next.tx_session_id;
+
+    return true;
+}
+
+/* Returns the current RAM replay high-water mark. */
+static bool esp32_gcm_get_rx_replay_state(
+    uint32_t *session_id_out,
+    uint64_t *counter_out)
+{
+    if ((session_id_out == NULL) ||
+        (counter_out == NULL))
+    {
+        return false;
+    }
+
+    /* Require a loaded zero seed before exposing runtime RX state. */
+    if ((!esp32_gcm_nvs_load_once()) ||
+        (!s_gcm_rx_ram_initialized))
+    {
+        return false;
+    }
+
+    *session_id_out =
+        s_gcm_rx_session_id_ram;
+
+    *counter_out =
+        s_gcm_rx_counter_ram;
+
+    return true;
+}
+
+/* Classifies an authenticated nonce and updates RAM replay state. */
+static esp32_gcm_replay_result_t
+esp32_gcm_replay_check_and_commit(
+    uint32_t session_id,
+    uint64_t counter)
+{
+    if ((session_id == 0U) ||
+        (counter == UINT64_C(0)))
+    {
+        return ESP32_GCM_REPLAY_BAD_NONCE;
+    }
+
+#if ESP32_TEST_FAULT_REPLAY_DUPLICATE_LAST
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][REPLAY] Forcing "
+        "ESP32_GCM_REPLAY_DUPLICATE_LAST");
+
+    return ESP32_GCM_REPLAY_DUPLICATE_LAST;
+#endif
+
+#if ESP32_TEST_FAULT_REPLAY_REJECT_OLD
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][REPLAY] Forcing "
+        "ESP32_GCM_REPLAY_REJECT_OLD");
+
+    return ESP32_GCM_REPLAY_REJECT_OLD;
+#endif
+
+#if ESP32_TEST_FAULT_REPLAY_BAD_NONCE
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][REPLAY] Forcing "
+        "ESP32_GCM_REPLAY_BAD_NONCE");
+
+    return ESP32_GCM_REPLAY_BAD_NONCE;
+#endif
+
+#if ESP32_TEST_FAULT_REPLAY_STORAGE_ERROR
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][REPLAY] Forcing "
+        "ESP32_GCM_REPLAY_STORAGE_ERROR");
+
+    return ESP32_GCM_REPLAY_STORAGE_ERROR;
+#endif
+
+    if ((!esp32_gcm_nvs_load_once()) ||
+        (!s_gcm_rx_ram_initialized))
+    {
+        return ESP32_GCM_REPLAY_STORAGE_ERROR;
+    }
+
+    if (s_gcm_rx_session_id_ram != 0U)
+    {
+        if (session_id <
+            s_gcm_rx_session_id_ram)
+        {
+            return ESP32_GCM_REPLAY_REJECT_OLD;
+        }
+
+        if (session_id ==
+            s_gcm_rx_session_id_ram)
+        {
+            if (counter <
+                s_gcm_rx_counter_ram)
+            {
+                return ESP32_GCM_REPLAY_REJECT_OLD;
+            }
+
+            /* Reject older counters and identify an exact repeat of the last nonce. */
+            if (counter ==
+                s_gcm_rx_counter_ram)
+            {
+                return ESP32_GCM_REPLAY_DUPLICATE_LAST;
+            }
+        }
+    }
+
+    s_gcm_rx_session_id_ram =
+        session_id;
+
+    s_gcm_rx_counter_ram =
+        counter;
+
+    return ESP32_GCM_REPLAY_ACCEPT_NEW;
+}
 
 /* Encodes a 32-bit value in nonce byte order. */
 static void store_be32(
@@ -154,6 +834,8 @@ void esp32_aes_gcm_free(
             &ctx->gcm_rx);
     }
 
+    esp32_gcm_nvs_close();
+
     /* Zeroize the context after releasing the Mbed TLS state. */
     mbedtls_platform_zeroize(
         ctx,
@@ -189,39 +871,11 @@ esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
         return ESP32_AES_GCM_ERR_BAD_ECDH_STATE;
     }
 
-    /*
-     * Generate a fresh nonzero 32-bit session prefix for the
-     * ESP32->STM32 transmit direction.
-     *
-     * app_main keeps bootloader_random_enable() active while this
-     * function runs. A fresh session prefix prevents reuse of:
-     *
-     *     session_id[4] || counter[8]
-     *
-     * with the same static ECDH-derived AES key after an ESP32 reboot.
-     */
-    for (unsigned int attempt = 0U;
-         attempt < 8U;
-         ++attempt)
+    /* Reserve the persistent TX session before initializing the RAM counter. */
+    if (!esp32_gcm_nvs_reserve_tx_session(
+            &session_id))
     {
-        /* Try up to eight random draws to obtain a nonzero transmit session. */
-        esp_fill_random(
-            &session_id,
-            sizeof(session_id));
-
-        if (session_id != 0U)
-        {
-            break;
-        }
-    }
-
-    if (session_id == 0U)
-    {
-        ESP_LOGE(
-            TAG,
-            "Failed to generate a nonzero GCM session identifier");
-
-        return ESP32_AES_GCM_ERR_SESSION_HASH;
+        return ESP32_AES_GCM_ERR_NVS;
     }
 
     mbedtls_platform_zeroize(
@@ -246,8 +900,8 @@ esp32_aes_gcm_status_t esp32_gcm_nonce_session_init(
 
     ESP_LOGI(
         TAG,
-        "New ESP32->STM32 GCM nonce session: "
-        "session_id=%08lX first_counter=%llu",
+        "Reset-safe ESP32->STM32 GCM nonce session reserved: "
+        "persistent_session=%08lX first_counter=%llu",
         (unsigned long)ctx->nonce_state.session_id,
         (unsigned long long)ctx->nonce_state.next_counter);
 
@@ -295,12 +949,6 @@ esp32_aes_gcm_status_t esp32_gcm_nonce_allocate(
     store_be64(
         &ctx->iv_gcm[4],
         counter);
-
-    ESP_LOGI(
-        TAG,
-        "GCM nonce allocated: session=%08lX counter=%llu",
-        (unsigned long)ctx->nonce_state.session_id,
-        (unsigned long long)counter);
 
     return ESP32_AES_GCM_SUCCESS;
 }
@@ -472,15 +1120,6 @@ esp32_aes_gcm_status_t esp32_encrypt_aes_gcm(
     *output_len =
         required_size;
 
-    ESP_LOGI(
-        TAG,
-        "AES-GCM TX encryption succeeded using dedicated gcm_tx: "
-        "plaintext=%u ciphertext=%u tag=%u total=%u",
-        (unsigned int)plaintext_len,
-        (unsigned int)plaintext_len,
-        (unsigned int)ESP32_AES_GCM_TAG_SIZE,
-        (unsigned int)*output_len);
-
     return ESP32_AES_GCM_SUCCESS;
 }
 
@@ -648,6 +1287,19 @@ esp32_decrypt_verify_aes_gcm_receiver(
         return ESP32_AES_GCM_ERR_SETKEY;
     }
 
+#if ESP32_TEST_FAULT_GCM_RX_AUTH_FAILURE
+    ESP_LOGW(
+        TAG,
+        "[WARN][FAULT_INJECT][GCM_RX] Forcing "
+        "ESP32_AES_GCM_ERR_DECRYPT_AUTH");
+
+    mbedtls_platform_zeroize(
+        plaintext,
+        plaintext_capacity);
+
+    return ESP32_AES_GCM_ERR_DECRYPT_AUTH;
+#endif
+
     /* Only expose the plaintext length after GCM authentication succeeds. */
     rc = mbedtls_gcm_auth_decrypt(
         &ctx->gcm_rx,
@@ -677,34 +1329,20 @@ esp32_decrypt_verify_aes_gcm_receiver(
     *plaintext_len =
         ciphertext_len;
 
-    ESP_LOGI(
-        TAG,
-        "AES-GCM RX authentication/decryption succeeded using "
-        "dedicated gcm_rx: plaintext=%u bytes",
-        (unsigned int)*plaintext_len);
-
     return ESP32_AES_GCM_SUCCESS;
 }
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-static const char *RUNTIME_TAG = "GCM_UART_DUPLEX";
 
-/*
- * Temporary development logging for the ESP32 -> STM32 encrypted
- * ACK/NACK packet.
- *
- * Set to 0 after interoperability testing. It may also be overridden
- * from the build system with:
- *
- *     -DESP32_GCM_DEBUG_PRINT_TX_PACKET=0
- */
 #ifndef ESP32_GCM_DEBUG_PRINT_TX_PACKET
-#define ESP32_GCM_DEBUG_PRINT_TX_PACKET 1
+#define ESP32_GCM_DEBUG_PRINT_TX_PACKET 0
 #endif
 
-#define STM32_GCM_REQUEST_PLAINTEXT_SIZE       14U
+/* Request: nonce[12] || ciphertext[169] || tag[16] = 197 bytes.
+ * Response: nonce[12] || ciphertext[11] || tag[16] = 39 bytes. */
+#define STM32_GCM_REQUEST_PLAINTEXT_SIZE       STM32_TELEMETRY_PLAINTEXT_SIZE
 #define STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE  \
     (STM32_GCM_REQUEST_PLAINTEXT_SIZE + ESP32_AES_GCM_TAG_SIZE)
 #define STM32_GCM_REQUEST_WIRE_SIZE            \
@@ -719,10 +1357,10 @@ static const char *RUNTIME_TAG = "GCM_UART_DUPLEX";
 #define STM32_TEST_MAGIC_0                      0xA5U
 #define STM32_TEST_MAGIC_1                      0x5AU
 #define STM32_TEST_PROTOCOL_VERSION             0x01U
-#define STM32_TEST_REQUEST_TYPE                 0x10U
+#define STM32_TEST_REQUEST_TYPE                 0x11U
 #define STM32_TEST_ACK_TYPE                     0x20U
 #define STM32_TEST_NACK_TYPE                    0x21U
-#define STM32_TEST_REQUEST_PAYLOAD_LENGTH       0x04U
+#define STM32_TEST_REQUEST_PAYLOAD_LENGTH       STM32_TELEMETRY_PAYLOAD_SIZE
 #define STM32_TEST_RESPONSE_PAYLOAD_LENGTH      0x01U
 #define STM32_UART_RESPONSE_TIMEOUT_MS          100U
 
@@ -736,16 +1374,16 @@ _Static_assert(
     "Interoperability protocol requires a 16-byte GCM tag");
 
 _Static_assert(
-    STM32_GCM_REQUEST_PLAINTEXT_SIZE == 14U,
-    "STM32 request plaintext must be 14 bytes");
+    STM32_GCM_REQUEST_PLAINTEXT_SIZE == 169U,
+    "STM32 telemetry plaintext must be 169 bytes");
 
 _Static_assert(
-    STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE == 30U,
-    "STM32 request ciphertext || tag must be 30 bytes");
+    STM32_GCM_REQUEST_CIPHERTEXT_TAG_SIZE == 185U,
+    "STM32 telemetry ciphertext || tag must be 185 bytes");
 
 _Static_assert(
-    STM32_GCM_REQUEST_WIRE_SIZE == 42U,
-    "STM32 request wire packet must be 42 bytes");
+    STM32_GCM_REQUEST_WIRE_SIZE == 197U,
+    "STM32 telemetry wire packet must be 197 bytes");
 
 _Static_assert(
     ESP32_GCM_RESPONSE_PLAINTEXT_SIZE == 11U,
@@ -759,13 +1397,19 @@ _Static_assert(
     ESP32_GCM_RESPONSE_WIRE_SIZE == 39U,
     "ESP32 ACK/NACK wire packet must be 39 bytes");
 
+_Static_assert(
+    sizeof(float) == 4U,
+    "STM32 telemetry protocol requires 32-bit float values");
+
 typedef enum
 {
-    ESP32_RESPONSE_REASON_NONE          = 0x00U,
-    ESP32_RESPONSE_REASON_BAD_CHECKSUM  = 0x01U,
-    ESP32_RESPONSE_REASON_BAD_MAGIC     = 0x02U,
-    ESP32_RESPONSE_REASON_BAD_FORMAT    = 0x03U,
-    ESP32_RESPONSE_REASON_GCM_AUTH      = 0x04U
+    ESP32_RESPONSE_REASON_NONE          = 0x00U, /**< Successful request; ACK. */
+    ESP32_RESPONSE_REASON_BAD_CHECKSUM  = 0x01U,  
+    ESP32_RESPONSE_REASON_BAD_MAGIC     = 0x02U,  
+    ESP32_RESPONSE_REASON_BAD_FORMAT    = 0x03U,  
+    ESP32_RESPONSE_REASON_GCM_AUTH      = 0x04U,  
+    ESP32_RESPONSE_REASON_REPLAY        = 0x05U,  
+    ESP32_RESPONSE_REASON_STORAGE       = 0x06U  
 
 } esp32_response_reason_t;
 
@@ -777,13 +1421,65 @@ extern bool STM32_UART_ReceiveEncryptedPacket(
 
 typedef struct
 {
-    esp32_aes_gcm_ctx_t *gcm_ctx;
-    esp32_ecdh_ctx_t *ecdh_ctx;
-    TaskHandle_t task_handle;
+    esp32_aes_gcm_ctx_t *gcm_ctx;  
+    esp32_ecdh_ctx_t *ecdh_ctx;  
+    TaskHandle_t task_handle;  
 
 } esp32_aes_gcm_runtime_state_t;
 
 static esp32_aes_gcm_runtime_state_t s_runtime_state;
+
+static stm32_telemetry_packet_t s_latest_telemetry = {0};
+static portMUX_TYPE s_latest_telemetry_mux = portMUX_INITIALIZER_UNLOCKED;
+
+/* Publishes a validated STM32 snapshot to the shared cache. */
+static void runtime_store_latest_telemetry(
+    const stm32_telemetry_packet_t *telemetry)
+{
+    if ((telemetry == NULL) || (!telemetry->valid))
+    {
+        return;
+    }
+
+    /* Update the complete snapshot under the telemetry lock. */
+    portENTER_CRITICAL(&s_latest_telemetry_mux);
+
+    s_latest_telemetry = *telemetry;
+
+    portEXIT_CRITICAL(&s_latest_telemetry_mux);
+}
+
+/* Copies the latest validated STM32 snapshot. */
+bool stm32_telemetry_get_latest(stm32_telemetry_packet_t *out)
+{
+    if (out == NULL)
+    {
+        return false;
+    }
+
+    /* Hold the cache lock while copying data and validity together. */
+    portENTER_CRITICAL(&s_latest_telemetry_mux);
+
+    *out = s_latest_telemetry;
+    bool valid = s_latest_telemetry.valid;
+
+    portEXIT_CRITICAL(&s_latest_telemetry_mux);
+
+    return valid;
+}
+
+static stm32_telemetry_packet_t s_latest_telemetry;
+;
+
+static bool s_last_app_transaction_valid = false;
+static uint32_t s_last_app_session_id = 0U;
+static uint32_t s_last_app_sequence = 0U;
+static uint32_t s_app_duplicate_counter = 0U;
+
+#if ESP32_TEST_DROP_ONE_SUCCESS_ACK
+static bool s_test_success_ack_dropped = false;
+#endif
+
 
 /* Reads the session ID from a wire nonce. */
 static uint32_t runtime_load_be32(
@@ -849,6 +1545,68 @@ static uint32_t runtime_load_sequence_le(
            ((uint32_t)frame[8] << 24U);
 }
 
+/* Decodes an unsigned 16-bit telemetry field. */
+static uint16_t runtime_load_u16_le(
+    const uint8_t *data)
+{
+    if (data == NULL)
+    {
+        return 0U;
+    }
+
+    /* Use byte shifts so the source buffer need not be aligned. */
+    return (uint16_t)(
+        ((uint16_t)data[0] << 0U) |
+        ((uint16_t)data[1] << 8U));
+}
+
+/* Decodes a signed 16-bit telemetry field. */
+static int16_t runtime_load_i16_le(
+    const uint8_t *data)
+{
+    /* Reuse the unsigned byte decode before applying the signed interpretation. */
+    return (int16_t)runtime_load_u16_le(data);
+}
+
+/* Decodes an unsigned 32-bit telemetry field. */
+static uint32_t runtime_load_u32_le(
+    const uint8_t *data)
+{
+    if (data == NULL)
+    {
+        return 0U;
+    }
+
+    /* Assemble little-endian bytes without an unaligned word access. */
+    return ((uint32_t)data[0] << 0U)  |
+           ((uint32_t)data[1] << 8U)  |
+           ((uint32_t)data[2] << 16U) |
+           ((uint32_t)data[3] << 24U);
+}
+
+/* Decodes a little-endian telemetry float. */
+static float runtime_load_float_le(
+    const uint8_t *data)
+{
+    uint32_t bits;
+    float value = 0.0f;
+
+    if (data == NULL)
+    {
+        return 0.0f;
+    }
+
+    bits = runtime_load_u32_le(data);
+
+    /* Copy decoded bits into the float without pointer aliasing. */
+    memcpy(
+        &value,
+        &bits,
+        sizeof(value));
+
+    return value;
+}
+
 /* Checks the decrypted request's protocol fields and checksum. */
 static esp32_response_reason_t runtime_validate_plaintext_frame(
     const uint8_t *frame,
@@ -876,6 +1634,33 @@ static esp32_response_reason_t runtime_validate_plaintext_frame(
         *sequence_out = sequence;
     }
 
+#if ESP32_TEST_FAULT_FRAME_BAD_MAGIC
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][FRAME] Forcing "
+        "ESP32_RESPONSE_REASON_BAD_MAGIC");
+
+    return ESP32_RESPONSE_REASON_BAD_MAGIC;
+#endif
+
+#if ESP32_TEST_FAULT_FRAME_BAD_FORMAT
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][FRAME] Forcing "
+        "ESP32_RESPONSE_REASON_BAD_FORMAT");
+
+    return ESP32_RESPONSE_REASON_BAD_FORMAT;
+#endif
+
+#if ESP32_TEST_FAULT_FRAME_BAD_CHECKSUM
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][FAULT_INJECT][FRAME] Forcing "
+        "ESP32_RESPONSE_REASON_BAD_CHECKSUM");
+
+    return ESP32_RESPONSE_REASON_BAD_CHECKSUM;
+#endif
+
     /* Validate frame magic before accepting its type and payload length. */
     if ((frame[0] != STM32_TEST_MAGIC_0) ||
         (frame[1] != STM32_TEST_MAGIC_1))
@@ -899,6 +1684,317 @@ static esp32_response_reason_t runtime_validate_plaintext_frame(
     }
 
     return ESP32_RESPONSE_REASON_NONE;
+}
+
+/* Decodes the fixed STM32 sensor snapshot layout. */
+static bool runtime_parse_telemetry_frame(
+    const uint8_t *frame,
+    size_t frame_len,
+    uint32_t sequence,
+    stm32_telemetry_packet_t *out)
+{
+    if ((frame == NULL) ||
+        (out == NULL) ||
+        (frame_len != STM32_TELEMETRY_PLAINTEXT_SIZE))
+    {
+        return false;
+    }
+
+    /* Verify each sensor identifier before reading its indexed fields. */
+    if ((frame[STM32_TELEM_BME680_NAME_LEN_INDEX] !=
+            STM32_TELEM_BME680_NAME_LENGTH) ||
+        (memcmp(
+            &frame[STM32_TELEM_BME680_NAME_INDEX],
+            "bme680",
+            STM32_TELEM_BME680_NAME_LENGTH) != 0))
+    {
+        return false;
+    }
+
+    if ((frame[STM32_TELEM_MAX31865_NAME_LEN_INDEX] !=
+            STM32_TELEM_MAX31865_NAME_LENGTH) ||
+        (memcmp(
+            &frame[STM32_TELEM_MAX31865_NAME_INDEX],
+            "max31865",
+            STM32_TELEM_MAX31865_NAME_LENGTH) != 0))
+    {
+        return false;
+    }
+
+    if ((frame[STM32_TELEM_DS18B20_NAME_LEN_INDEX] !=
+            STM32_TELEM_DS18B20_NAME_LENGTH) ||
+        (memcmp(
+            &frame[STM32_TELEM_DS18B20_NAME_INDEX],
+            "ds18b20x5",
+            STM32_TELEM_DS18B20_NAME_LENGTH) != 0))
+    {
+        return false;
+    }
+
+    if ((frame[STM32_TELEM_PM25_NAME_LEN_INDEX] !=
+            STM32_TELEM_PM25_NAME_LENGTH) ||
+        (memcmp(
+            &frame[STM32_TELEM_PM25_NAME_INDEX],
+            "pm2.5",
+            STM32_TELEM_PM25_NAME_LENGTH) != 0))
+    {
+        return false;
+    }
+
+    if ((frame[STM32_TELEM_MPU9250_NAME_LEN_INDEX] !=
+            STM32_TELEM_MPU9250_NAME_LENGTH) ||
+        (memcmp(
+            &frame[STM32_TELEM_MPU9250_NAME_INDEX],
+            "mpu9250",
+            STM32_TELEM_MPU9250_NAME_LENGTH) != 0))
+    {
+        return false;
+    }
+
+    memset(out, 0, sizeof(*out));
+
+    out->sequence = sequence;
+    out->sequence_index = STM32_TELEMETRY_SEQUENCE_INDEX;
+    out->checksum_index = STM32_TELEMETRY_CHECKSUM_INDEX;
+
+    memcpy(out->bme680.name, "bme680", sizeof("bme680"));
+    out->bme680.name_index = STM32_TELEM_BME680_NAME_INDEX;
+
+    out->bme680.temperature =
+        runtime_load_float_le(
+            &frame[STM32_TELEM_BME680_TEMP_INDEX]);
+    out->bme680.temperature_index = STM32_TELEM_BME680_TEMP_INDEX;
+    memcpy(out->bme680.temperature_unit, "C", sizeof("C"));
+
+    out->bme680.pressure =
+        runtime_load_float_le(
+            &frame[STM32_TELEM_BME680_PRESSURE_INDEX]);
+    out->bme680.pressure_index = STM32_TELEM_BME680_PRESSURE_INDEX;
+    memcpy(out->bme680.pressure_unit, "hPa", sizeof("hPa"));
+
+    out->bme680.humidity =
+        runtime_load_float_le(
+            &frame[STM32_TELEM_BME680_HUMIDITY_INDEX]);
+    out->bme680.humidity_index = STM32_TELEM_BME680_HUMIDITY_INDEX;
+    memcpy(out->bme680.humidity_unit, "%RH", sizeof("%RH"));
+
+    out->bme680.iaq_score =
+        runtime_load_i16_le(
+            &frame[STM32_TELEM_BME680_IAQ_SCORE_INDEX]);
+    out->bme680.iaq_score_index = STM32_TELEM_BME680_IAQ_SCORE_INDEX;
+    memcpy(out->bme680.iaq_unit, "index", sizeof("index"));
+
+    memcpy(
+        out->bme680.iaq_label,
+        &frame[STM32_TELEM_BME680_IAQ_LABEL_INDEX],
+        STM32_TELEM_BME680_IAQ_LABEL_LENGTH);
+    out->bme680.iaq_label[
+        STM32_TELEMETRY_IAQ_LABEL_BUFFER_SIZE - 1U] = '\0';
+    out->bme680.iaq_label_index = STM32_TELEM_BME680_IAQ_LABEL_INDEX;
+
+    memcpy(out->max31865.name, "max31865", sizeof("max31865"));
+    out->max31865.name_index = STM32_TELEM_MAX31865_NAME_INDEX;
+
+    out->max31865.temperature =
+        runtime_load_float_le(
+            &frame[STM32_TELEM_MAX31865_TEMP_INDEX]);
+    out->max31865.temperature_index = STM32_TELEM_MAX31865_TEMP_INDEX;
+    memcpy(out->max31865.temperature_unit, "C", sizeof("C"));
+
+    memcpy(out->ds18b20.name, "ds18b20x5", sizeof("ds18b20x5"));
+    out->ds18b20.name_index = STM32_TELEM_DS18B20_NAME_INDEX;
+    memcpy(out->ds18b20.temperature_unit, "C", sizeof("C"));
+
+    out->ds18b20.temperature[0] =
+        runtime_load_float_le(&frame[STM32_TELEM_DS18B20_TEMP1_INDEX]);
+    out->ds18b20.temperature_index[0] = STM32_TELEM_DS18B20_TEMP1_INDEX;
+
+    out->ds18b20.temperature[1] =
+        runtime_load_float_le(&frame[STM32_TELEM_DS18B20_TEMP2_INDEX]);
+    out->ds18b20.temperature_index[1] = STM32_TELEM_DS18B20_TEMP2_INDEX;
+
+    out->ds18b20.temperature[2] =
+        runtime_load_float_le(&frame[STM32_TELEM_DS18B20_TEMP3_INDEX]);
+    out->ds18b20.temperature_index[2] = STM32_TELEM_DS18B20_TEMP3_INDEX;
+
+    out->ds18b20.temperature[3] =
+        runtime_load_float_le(&frame[STM32_TELEM_DS18B20_TEMP4_INDEX]);
+    out->ds18b20.temperature_index[3] = STM32_TELEM_DS18B20_TEMP4_INDEX;
+
+    out->ds18b20.temperature[4] =
+        runtime_load_float_le(&frame[STM32_TELEM_DS18B20_TEMP5_INDEX]);
+    out->ds18b20.temperature_index[4] = STM32_TELEM_DS18B20_TEMP5_INDEX;
+
+    memcpy(out->pm25.name, "pm2.5", sizeof("pm2.5"));
+    out->pm25.name_index = STM32_TELEM_PM25_NAME_INDEX;
+    memcpy(out->pm25.concentration_unit, "ug/m3", sizeof("ug/m3"));
+    memcpy(out->pm25.particle_count_unit, "count", sizeof("count"));
+
+    out->pm25.pm1_0_standard =
+        runtime_load_u16_le(&frame[STM32_TELEM_PM1_STD_INDEX]);
+    out->pm25.pm1_0_standard_index = STM32_TELEM_PM1_STD_INDEX;
+
+    out->pm25.pm2_5_standard =
+        runtime_load_u16_le(&frame[STM32_TELEM_PM25_STD_INDEX]);
+    out->pm25.pm2_5_standard_index = STM32_TELEM_PM25_STD_INDEX;
+
+    out->pm25.pm10_standard =
+        runtime_load_u16_le(&frame[STM32_TELEM_PM10_STD_INDEX]);
+    out->pm25.pm10_standard_index = STM32_TELEM_PM10_STD_INDEX;
+
+    out->pm25.pm1_0_atmospheric =
+        runtime_load_u16_le(&frame[STM32_TELEM_PM1_ATM_INDEX]);
+    out->pm25.pm1_0_atmospheric_index = STM32_TELEM_PM1_ATM_INDEX;
+
+    out->pm25.pm2_5_atmospheric =
+        runtime_load_u16_le(&frame[STM32_TELEM_PM25_ATM_INDEX]);
+    out->pm25.pm2_5_atmospheric_index = STM32_TELEM_PM25_ATM_INDEX;
+
+    out->pm25.pm10_atmospheric =
+        runtime_load_u16_le(&frame[STM32_TELEM_PM10_ATM_INDEX]);
+    out->pm25.pm10_atmospheric_index = STM32_TELEM_PM10_ATM_INDEX;
+
+    out->pm25.particles_0_3um =
+        runtime_load_u16_le(&frame[STM32_TELEM_PARTICLE_03_INDEX]);
+    out->pm25.particles_0_3um_index = STM32_TELEM_PARTICLE_03_INDEX;
+
+    out->pm25.particles_0_5um =
+        runtime_load_u16_le(&frame[STM32_TELEM_PARTICLE_05_INDEX]);
+    out->pm25.particles_0_5um_index = STM32_TELEM_PARTICLE_05_INDEX;
+
+    out->pm25.particles_1_0um =
+        runtime_load_u16_le(&frame[STM32_TELEM_PARTICLE_10_INDEX]);
+    out->pm25.particles_1_0um_index = STM32_TELEM_PARTICLE_10_INDEX;
+
+    out->pm25.particles_2_5um =
+        runtime_load_u16_le(&frame[STM32_TELEM_PARTICLE_25_INDEX]);
+    out->pm25.particles_2_5um_index = STM32_TELEM_PARTICLE_25_INDEX;
+
+    out->pm25.particles_5_0um =
+        runtime_load_u16_le(&frame[STM32_TELEM_PARTICLE_50_INDEX]);
+    out->pm25.particles_5_0um_index = STM32_TELEM_PARTICLE_50_INDEX;
+
+    out->pm25.particles_10um =
+        runtime_load_u16_le(&frame[STM32_TELEM_PARTICLE_100_INDEX]);
+    out->pm25.particles_10um_index = STM32_TELEM_PARTICLE_100_INDEX;
+
+    memcpy(out->mpu9250.name, "mpu9250", sizeof("mpu9250"));
+    out->mpu9250.name_index = STM32_TELEM_MPU9250_NAME_INDEX;
+    memcpy(out->mpu9250.acceleration_unit, "g", sizeof("g"));
+    memcpy(out->mpu9250.gyroscope_unit, "dps", sizeof("dps"));
+
+    out->mpu9250.ax =
+        runtime_load_float_le(&frame[STM32_TELEM_MPU9250_AX_INDEX]);
+    out->mpu9250.ax_index = STM32_TELEM_MPU9250_AX_INDEX;
+
+    out->mpu9250.ay =
+        runtime_load_float_le(&frame[STM32_TELEM_MPU9250_AY_INDEX]);
+    out->mpu9250.ay_index = STM32_TELEM_MPU9250_AY_INDEX;
+
+    out->mpu9250.az =
+        runtime_load_float_le(&frame[STM32_TELEM_MPU9250_AZ_INDEX]);
+    out->mpu9250.az_index = STM32_TELEM_MPU9250_AZ_INDEX;
+
+    out->mpu9250.gx =
+        runtime_load_float_le(&frame[STM32_TELEM_MPU9250_GX_INDEX]);
+    out->mpu9250.gx_index = STM32_TELEM_MPU9250_GX_INDEX;
+
+    out->mpu9250.gy =
+        runtime_load_float_le(&frame[STM32_TELEM_MPU9250_GY_INDEX]);
+    out->mpu9250.gy_index = STM32_TELEM_MPU9250_GY_INDEX;
+
+    out->mpu9250.gz =
+        runtime_load_float_le(&frame[STM32_TELEM_MPU9250_GZ_INDEX]);
+    out->mpu9250.gz_index = STM32_TELEM_MPU9250_GZ_INDEX;
+
+    out->valid = true;
+
+    return true;
+}
+
+/* Logs the decoded STM32 sensor measurements. */
+static void runtime_log_telemetry(
+    const stm32_telemetry_packet_t *t)
+{
+    /* Log only snapshots marked valid by the telemetry parser. */
+    if ((t == NULL) || (!t->valid))
+    {
+        return;
+    }
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][RX_OK] seq=%lu STM32->ESP32 complete sensor snapshot transferred successfully",
+        (unsigned long)t->sequence);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][%s] temperature=%.2f %s | pressure=%.2f %s | humidity=%.2f %s | IAQ=%d %s | class=%s",
+        t->bme680.name,
+        (double)t->bme680.temperature,
+        t->bme680.temperature_unit,
+        (double)t->bme680.pressure,
+        t->bme680.pressure_unit,
+        (double)t->bme680.humidity,
+        t->bme680.humidity_unit,
+        (int)t->bme680.iaq_score,
+        t->bme680.iaq_unit,
+        t->bme680.iaq_label);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][%s] temperature=%.4f %s",
+        t->max31865.name,
+        (double)t->max31865.temperature,
+        t->max31865.temperature_unit);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][%s] T1=%.4f %s | T2=%.4f %s | T3=%.4f %s | T4=%.4f %s | T5=%.4f %s",
+        t->ds18b20.name,
+        (double)t->ds18b20.temperature[0], t->ds18b20.temperature_unit,
+        (double)t->ds18b20.temperature[1], t->ds18b20.temperature_unit,
+        (double)t->ds18b20.temperature[2], t->ds18b20.temperature_unit,
+        (double)t->ds18b20.temperature[3], t->ds18b20.temperature_unit,
+        (double)t->ds18b20.temperature[4], t->ds18b20.temperature_unit);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][%s][MASS] STD={PM1.0:%u PM2.5:%u PM10:%u} %s | ATM={PM1.0:%u PM2.5:%u PM10:%u} %s",
+        t->pm25.name,
+        (unsigned)t->pm25.pm1_0_standard,
+        (unsigned)t->pm25.pm2_5_standard,
+        (unsigned)t->pm25.pm10_standard,
+        t->pm25.concentration_unit,
+        (unsigned)t->pm25.pm1_0_atmospheric,
+        (unsigned)t->pm25.pm2_5_atmospheric,
+        (unsigned)t->pm25.pm10_atmospheric,
+        t->pm25.concentration_unit);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][%s][PARTICLES] >0.3um=%u | >0.5um=%u | >1.0um=%u | >2.5um=%u | >5.0um=%u | >10um=%u | unit=%s",
+        t->pm25.name,
+        (unsigned)t->pm25.particles_0_3um,
+        (unsigned)t->pm25.particles_0_5um,
+        (unsigned)t->pm25.particles_1_0um,
+        (unsigned)t->pm25.particles_2_5um,
+        (unsigned)t->pm25.particles_5_0um,
+        (unsigned)t->pm25.particles_10um,
+        t->pm25.particle_count_unit);
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[TELEMETRY][%s] ACCEL={X:%.3f Y:%.3f Z:%.3f} %s | GYRO={X:%.3f Y:%.3f Z:%.3f} %s",
+        t->mpu9250.name,
+        (double)t->mpu9250.ax,
+        (double)t->mpu9250.ay,
+        (double)t->mpu9250.az,
+        t->mpu9250.acceleration_unit,
+        (double)t->mpu9250.gx,
+        (double)t->mpu9250.gy,
+        (double)t->mpu9250.gz,
+        t->mpu9250.gyroscope_unit);
 }
 
 /* Builds the ACK or NACK frame for a transaction. */
@@ -1036,121 +2132,6 @@ static bool runtime_send_encrypted_response(
         ciphertext_and_tag,
         encrypted_len);
 
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "========== ESP32->STM32 ENCRYPTED %s ==========",
-        (message_type == STM32_TEST_ACK_TYPE) ?
-            "ACK" :
-            "NACK");
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Response metadata: sequence=%lu reason=%u "
-        "nonce_counter=%llu",
-        (unsigned long)sequence,
-        (unsigned int)reason,
-        (unsigned long long)
-            runtime->gcm_ctx->nonce_state.current_counter);
-
-#if ESP32_GCM_DEBUG_PRINT_TX_PACKET
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "----- TEMP TX PACKET DEBUG BEGIN -----");
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Response plaintext ACK/NACK [%u bytes]:",
-        (unsigned int)sizeof(plaintext));
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        plaintext,
-        sizeof(plaintext),
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Outgoing nonce [%u bytes]:",
-        (unsigned int)sizeof(nonce));
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        nonce,
-        sizeof(nonce),
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Internal IV_GCM [%u bytes]:",
-        (unsigned int)sizeof(runtime->gcm_ctx->iv_gcm));
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        runtime->gcm_ctx->iv_gcm,
-        sizeof(runtime->gcm_ctx->iv_gcm),
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Response ciphertext only [%u bytes]:",
-        (unsigned int)ESP32_GCM_RESPONSE_PLAINTEXT_SIZE);
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        ciphertext_and_tag,
-        ESP32_GCM_RESPONSE_PLAINTEXT_SIZE,
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Response authentication tag only [%u bytes]:",
-        (unsigned int)ESP32_AES_GCM_TAG_SIZE);
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        &ciphertext_and_tag[
-            ESP32_GCM_RESPONSE_PLAINTEXT_SIZE],
-        ESP32_AES_GCM_TAG_SIZE,
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Combined ciphertext || tag [%u bytes]:",
-        (unsigned int)encrypted_len);
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        ciphertext_and_tag,
-        encrypted_len,
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Complete TX wire packet: nonce || ciphertext || tag "
-        "[%u bytes]:",
-        (unsigned int)sizeof(wire_packet));
-
-    ESP_LOG_BUFFER_HEX_LEVEL(
-        RUNTIME_TAG,
-        wire_packet,
-        sizeof(wire_packet),
-        ESP_LOG_INFO);
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "TX layout: nonce=%u ciphertext=%u tag=%u wire=%u",
-        (unsigned int)ESP32_AES_GCM_NONCE_SIZE,
-        (unsigned int)ESP32_GCM_RESPONSE_PLAINTEXT_SIZE,
-        (unsigned int)ESP32_AES_GCM_TAG_SIZE,
-        (unsigned int)sizeof(wire_packet));
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "----- TEMP TX PACKET DEBUG END -----");
-
-#endif /* ESP32_GCM_DEBUG_PRINT_TX_PACKET */
-
     uart_status =
         STM32_UART_Write(
             wire_packet,
@@ -1167,14 +2148,6 @@ static bool runtime_send_encrypted_response(
 
         goto cleanup;
     }
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "Encrypted %s sent successfully: wire=%u bytes",
-        (message_type == STM32_TEST_ACK_TYPE) ?
-            "ACK" :
-            "NACK",
-        (unsigned int)sizeof(wire_packet));
 
     success = true;
 
@@ -1199,7 +2172,7 @@ cleanup:
     return success;
 }
 
-/* Authenticates UART requests and returns encrypted ACK/NACK frames. */
+/* Authenticates STM32 telemetry and returns encrypted responses. */
 static void esp32_aes_gcm_runtime_task(void *param)
 {
     esp32_aes_gcm_runtime_state_t *runtime =
@@ -1227,12 +2200,20 @@ static void esp32_aes_gcm_runtime_task(void *param)
     uint32_t session_id = 0U;
     uint64_t nonce_counter = UINT64_C(0);
 
+    uint32_t stored_rx_session_id = 0U;
+    uint64_t stored_rx_counter = UINT64_C(0);
+    bool stored_rx_state_valid = false;
+
     uint32_t packet_counter = 0U;
+    uint32_t success_cycle_counter = 0U;
     uint32_t auth_failure_counter = 0U;
     uint32_t ack_counter = 0U;
     uint32_t nack_counter = 0U;
+    uint32_t duplicate_counter = 0U;
+    uint32_t replay_reject_counter = 0U;
 
     esp32_response_reason_t response_reason;
+    esp32_gcm_replay_result_t replay_result;
     esp32_aes_gcm_status_t status;
 
     if ((runtime == NULL) ||
@@ -1254,17 +2235,8 @@ static void esp32_aes_gcm_runtime_task(void *param)
 
     ESP_LOGI(
         RUNTIME_TAG,
-        "Full-duplex encrypted UART task started");
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "RX request: nonce[12] || ciphertext[14] || tag[16] "
-        "= 42 bytes");
-
-    ESP_LOGI(
-        RUNTIME_TAG,
-        "TX response: nonce[12] || ciphertext[11] || tag[16] "
-        "= 39 bytes");
+        "[INFO][LINK][INIT] uptime_ms=%lu AES-GCM UART rx=197B tx=39B plaintext_rx=169B auth-before-parse",
+        (unsigned long)esp_log_timestamp());
 
     for (;;)
     {
@@ -1289,8 +2261,14 @@ static void esp32_aes_gcm_runtime_task(void *param)
         sequence = 0U;
         session_id = 0U;
         nonce_counter = UINT64_C(0);
+        stored_rx_session_id = 0U;
+        stored_rx_counter = UINT64_C(0);
+        stored_rx_state_valid = false;
         response_reason =
             ESP32_RESPONSE_REASON_BAD_FORMAT;
+
+        replay_result =
+            ESP32_GCM_REPLAY_BAD_NONCE;
 
         if (!STM32_UART_ReceiveEncryptedPacket(
                 wire_packet,
@@ -1334,28 +2312,6 @@ static void esp32_aes_gcm_runtime_task(void *param)
 
         packet_counter++;
 
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "========== STM32->ESP32 ENCRYPTED REQUEST %lu ==========",
-            (unsigned long)packet_counter);
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Request nonce metadata: session_id=%08lX counter=%llu",
-            (unsigned long)session_id,
-            (unsigned long long)nonce_counter);
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Complete request wire packet [%u bytes]:",
-            (unsigned int)wire_len);
-
-        ESP_LOG_BUFFER_HEX_LEVEL(
-            RUNTIME_TAG,
-            wire_packet,
-            wire_len,
-            ESP_LOG_INFO);
-
         /* Authenticate the encrypted bytes before inspecting plaintext fields. */
         status =
             esp32_decrypt_verify_aes_gcm_receiver(
@@ -1376,11 +2332,12 @@ static void esp32_aes_gcm_runtime_task(void *param)
 
             ESP_LOGE(
                 RUNTIME_TAG,
-                "STM32 request authentication/decryption failed: "
-                "status=%d failures=%lu",
+                "[ERROR][LINK][AUTH] uptime_ms=%lu status=%d total=%lu",
+                (unsigned long)esp_log_timestamp(),
                 (int)status,
                 (unsigned long)auth_failure_counter);
 
+            /* Authentication failed; send the GCM NACK with sequence zero. */
             if (runtime_send_encrypted_response(
                     runtime,
                     0U,
@@ -1391,17 +2348,6 @@ static void esp32_aes_gcm_runtime_task(void *param)
 
             continue;
         }
-
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Authenticated request plaintext [%u bytes]:",
-            (unsigned int)decrypted_len);
-
-        ESP_LOG_BUFFER_HEX_LEVEL(
-            RUNTIME_TAG,
-            decrypted_plaintext,
-            decrypted_len,
-            ESP_LOG_INFO);
 
         response_reason =
             runtime_validate_plaintext_frame(
@@ -1414,8 +2360,8 @@ static void esp32_aes_gcm_runtime_task(void *param)
         {
             ESP_LOGW(
                 RUNTIME_TAG,
-                "Authenticated STM32 frame is invalid: "
-                "sequence=%lu reason=%u",
+                "[WARN][LINK][FRAME_REJECT] uptime_ms=%lu seq=%lu reason=%u",
+                (unsigned long)esp_log_timestamp(),
                 (unsigned long)sequence,
                 (unsigned int)response_reason);
 
@@ -1430,43 +2376,295 @@ static void esp32_aes_gcm_runtime_task(void *param)
             continue;
         }
 
-        ESP_LOGI(
-            RUNTIME_TAG,
-            "Valid STM32 request: sequence=%lu "
-            "payload=%02X %02X %02X %02X",
-            (unsigned long)sequence,
-            decrypted_plaintext[9],
-            decrypted_plaintext[10],
-            decrypted_plaintext[11],
-            decrypted_plaintext[12]);
+        stored_rx_state_valid =
+            esp32_gcm_get_rx_replay_state(
+                &stored_rx_session_id,
+                &stored_rx_counter);
 
-        if (runtime_send_encrypted_response(
-                runtime,
-                sequence,
-                ESP32_RESPONSE_REASON_NONE))
+        if (!stored_rx_state_valid)
         {
-            ack_counter++;
-
-            ESP_LOGI(
+            ESP_LOGW(
                 RUNTIME_TAG,
-                "Full encrypted request/ACK cycle completed: "
-                "sequence=%lu ack_total=%lu nack_total=%lu",
-                (unsigned long)sequence,
-                (unsigned long)ack_counter,
-                (unsigned long)nack_counter);
+                "[WARN][LINK][REPLAY_STATE] Could not read ESP32 RAM RX replay "
+                "state | STM32_INCOMING: session=%08lX counter=%llu",
+                (unsigned long)session_id,
+                (unsigned long long)nonce_counter);
         }
-        else
+
+        replay_result =
+            esp32_gcm_replay_check_and_commit(
+                session_id,
+                nonce_counter);
+
+        if (replay_result ==
+            ESP32_GCM_REPLAY_DUPLICATE_LAST)
+        {
+            duplicate_counter++;
+
+            if (stored_rx_state_valid)
+            {
+                ESP_LOGW(
+                    RUNTIME_TAG,
+                    "[WARN][LINK][REPLAY_DUP] Authenticated duplicate request suppressed: "
+                    "ESP32_RAM_RX={session=%08lX counter=%llu} "
+                    "STM32_INCOMING={session=%08lX counter=%llu} "
+                    "sequence=%lu duplicates=%lu",
+                    (unsigned long)stored_rx_session_id,
+                    (unsigned long long)stored_rx_counter,
+                    (unsigned long)session_id,
+                    (unsigned long long)nonce_counter,
+                    (unsigned long)sequence,
+                    (unsigned long)duplicate_counter);
+            }
+            else
+            {
+                ESP_LOGW(
+                    RUNTIME_TAG,
+                    "[WARN][LINK][REPLAY_DUP] Authenticated duplicate request suppressed: "
+                    "STM32_INCOMING={session=%08lX counter=%llu} "
+                    "sequence=%lu duplicates=%lu "
+                    "(ESP32 RAM RX state unavailable)",
+                    (unsigned long)session_id,
+                    (unsigned long long)nonce_counter,
+                    (unsigned long)sequence,
+                    (unsigned long)duplicate_counter);
+            }
+
+            if (runtime_send_encrypted_response(
+                    runtime,
+                    sequence,
+                    ESP32_RESPONSE_REASON_NONE))
+            {
+                ack_counter++;
+            }
+
+            continue;
+        }
+
+        if ((replay_result ==
+                ESP32_GCM_REPLAY_REJECT_OLD) ||
+            (replay_result ==
+                ESP32_GCM_REPLAY_BAD_NONCE))
+        {
+            replay_reject_counter++;
+
+            if (stored_rx_state_valid)
+            {
+                ESP_LOGW(
+                    RUNTIME_TAG,
+                    "[WARN][LINK][REPLAY_REJECT] Authenticated replay rejected: result=%s "
+                    "ESP32_RAM_RX={session=%08lX counter=%llu} "
+                    "STM32_INCOMING={session=%08lX counter=%llu} "
+                    "sequence=%lu rejections=%lu",
+                    (replay_result == ESP32_GCM_REPLAY_REJECT_OLD) ?
+                        "REJECT_OLD" :
+                        "BAD_NONCE",
+                    (unsigned long)stored_rx_session_id,
+                    (unsigned long long)stored_rx_counter,
+                    (unsigned long)session_id,
+                    (unsigned long long)nonce_counter,
+                    (unsigned long)sequence,
+                    (unsigned long)replay_reject_counter);
+            }
+            else
+            {
+                ESP_LOGW(
+                    RUNTIME_TAG,
+                    "[WARN][LINK][REPLAY_REJECT] Authenticated replay rejected: result=%s "
+                    "STM32_INCOMING={session=%08lX counter=%llu} "
+                    "sequence=%lu rejections=%lu "
+                    "(ESP32 RAM RX state unavailable)",
+                    (replay_result == ESP32_GCM_REPLAY_REJECT_OLD) ?
+                        "REJECT_OLD" :
+                        "BAD_NONCE",
+                    (unsigned long)session_id,
+                    (unsigned long long)nonce_counter,
+                    (unsigned long)sequence,
+                    (unsigned long)replay_reject_counter);
+            }
+
+            if (runtime_send_encrypted_response(
+                    runtime,
+                    sequence,
+                    ESP32_RESPONSE_REASON_REPLAY))
+            {
+                nack_counter++;
+            }
+
+            continue;
+        }
+
+        if (replay_result ==
+            ESP32_GCM_REPLAY_STORAGE_ERROR)
         {
             ESP_LOGE(
                 RUNTIME_TAG,
-                "Request was valid but encrypted ACK transmission "
-                "failed: sequence=%lu",
-                (unsigned long)sequence);
+                "[ERROR][LINK][REPLAY_STATE] uptime_ms=%lu state=UNAVAILABLE",
+                (unsigned long)esp_log_timestamp());
+
+            if (runtime_send_encrypted_response(
+                    runtime,
+                    sequence,
+                    ESP32_RESPONSE_REASON_STORAGE))
+            {
+                nack_counter++;
+            }
+
+            continue;
         }
+
+if (s_last_app_transaction_valid &&
+    (s_last_app_session_id == session_id) &&
+    (s_last_app_sequence == sequence))
+{
+    s_app_duplicate_counter++;
+
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][LINK][APP_DUP] "
+        "Authenticated telemetry retry suppressed | "
+        "session=%08lX seq=%lu nonce_counter=%llu "
+        "app_duplicates=%lu | "
+        "payload NOT processed again; ACK will be resent",
+        (unsigned long)session_id,
+        (unsigned long)sequence,
+        (unsigned long long)nonce_counter,
+        (unsigned long)s_app_duplicate_counter);
+
+    if (runtime_send_encrypted_response(
+            runtime,
+            sequence,
+            ESP32_RESPONSE_REASON_NONE))
+    {
+        ack_counter++;
+        success_cycle_counter++;
 
         ESP_LOGI(
             RUNTIME_TAG,
-            "======================================================");
+            "[INFO][LINK][APP_DUP_ACK] "
+            "seq=%lu duplicate transaction ACK resent",
+            (unsigned long)sequence);
+    }
+
+    continue;
+}
+
+stm32_telemetry_packet_t parsed_telemetry = {0};
+
+if (!runtime_parse_telemetry_frame(
+        decrypted_plaintext,
+        decrypted_len,
+        sequence,
+        &parsed_telemetry))
+{
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[WARN][TELEMETRY][PARSE] "
+        "Authenticated telemetry payload structure invalid seq=%lu",
+        (unsigned long)sequence);
+
+    if (runtime_send_encrypted_response(
+            runtime,
+            sequence,
+            ESP32_RESPONSE_REASON_BAD_FORMAT))
+    {
+        nack_counter++;
+    }
+
+    continue;
+}
+
+runtime_store_latest_telemetry(&parsed_telemetry);
+
+runtime_log_telemetry(&parsed_telemetry);
+
+			s_last_app_session_id = session_id;
+			s_last_app_sequence = sequence;
+			s_last_app_transaction_valid = true;  
+
+        ESP_LOGI(
+    RUNTIME_TAG,
+    "[INFO][LINK][RX] uptime_ms=%lu seq=%lu source=STM32 | "
+    "payload=REDACTED | wire=%uB | "
+    "auth=OK | decrypt=OK | replay=NEW",
+    (unsigned long)esp_log_timestamp(),
+    (unsigned long)sequence,
+    (unsigned int)wire_len);
+
+#if ESP32_TEST_DROP_ONE_SUCCESS_ACK
+
+if (!s_test_success_ack_dropped)
+{
+    s_test_success_ack_dropped = true;
+
+    ESP_LOGW(
+        RUNTIME_TAG,
+        "[FAULT_INJECT][ACK_DROP] "
+        "Suppressing one successful ACK after processing | "
+        "session=%08lX seq=%lu nonce_counter=%llu",
+        (unsigned long)session_id,
+        (unsigned long)sequence,
+        (unsigned long long)nonce_counter);
+
+    continue;
+}
+
+#endif /* ESP32_TEST_DROP_ONE_SUCCESS_ACK */
+
+
+if (runtime_send_encrypted_response(
+        runtime,
+        sequence,
+        ESP32_RESPONSE_REASON_NONE))
+{
+    ack_counter++;
+    success_cycle_counter++;
+
+    ESP_LOGI(
+        RUNTIME_TAG,
+        "[INFO][LINK][TX] uptime_ms=%lu seq=%lu ack=ENCRYPTED | wire=%uB | "
+        "route=UART->STM32 | status=SENT",
+        (unsigned long)esp_log_timestamp(),
+        (unsigned long)sequence,
+        (unsigned int)ESP32_GCM_RESPONSE_WIRE_SIZE);
+
+    if ((ESP32_GCM_HEALTH_EVERY_N_OK != 0U) &&
+        ((success_cycle_counter %
+          ESP32_GCM_HEALTH_EVERY_N_OK) == 0U))
+    {
+        ESP_LOGI(
+            RUNTIME_TAG,
+            "[INFO][LINK][HEALTH] uptime_ms=%lu cycles=%lu rx_packets=%lu last_seq=%lu "
+            "rx={session=%08lX counter=%llu} "
+            "tx={session=%08lX counter=%llu} "
+            "ack=%lu nack=%lu auth_fail=%lu "
+            "duplicate=%lu app_duplicate=%lu replay_reject=%lu",
+            (unsigned long)esp_log_timestamp(),
+            (unsigned long)success_cycle_counter,
+            (unsigned long)packet_counter,
+            (unsigned long)sequence,
+            (unsigned long)session_id,
+            (unsigned long long)nonce_counter,
+            (unsigned long)runtime->gcm_ctx->nonce_state.session_id,
+            (unsigned long long)
+                runtime->gcm_ctx->nonce_state.current_counter,
+            (unsigned long)ack_counter,
+            (unsigned long)nack_counter,
+            (unsigned long)auth_failure_counter,
+            (unsigned long)duplicate_counter,
+            (unsigned long)s_app_duplicate_counter,
+            (unsigned long)replay_reject_counter);
+    }
+}
+else
+{
+    ESP_LOGE(
+        RUNTIME_TAG,
+        "[ERROR][LINK][TX] uptime_ms=%lu "
+        "encrypted ACK transmission failed seq=%lu",
+        (unsigned long)esp_log_timestamp(),
+        (unsigned long)sequence);
+}
     }
 }
 
@@ -1568,4 +2766,3 @@ bool esp32_aes_gcm_runtime_task_is_running(void)
     /* The stored task handle tracks whether runtime processing is active. */
     return s_runtime_state.task_handle != NULL;
 }
-

@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #ifndef APP_WATCHDOG_H
@@ -9,12 +9,12 @@
 
 typedef enum
 {
-    APP_WD_CCS811 = 0,
-    APP_WD_BME280,
-    APP_WD_WIFI,
-    APP_WD_AWS,
-    APP_WD_HTTPS,
-    APP_WD_COUNT
+    APP_WD_CCS811 = 0,  
+    APP_WD_BME280,  
+    APP_WD_WIFI,  
+    APP_WD_AWS,  
+    APP_WD_HTTPS,  
+    APP_WD_COUNT  
 } app_watchdog_task_id_t;
 
 void app_watchdog_init(void);

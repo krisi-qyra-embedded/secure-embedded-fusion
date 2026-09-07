@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include "freertos/FreeRTOS.h"
@@ -57,4 +57,3 @@ void wifi_reset_button_config(void)
 
 	gpio_isr_handler_add(WIFI_RESET_BUTTON, wifi_reset_button_isr_handler, NULL);
 }
-

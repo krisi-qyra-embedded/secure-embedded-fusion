@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #ifndef STM32_UART_H_
@@ -17,14 +17,8 @@ extern "C" {
 #include "driver/uart.h"
 #include "driver/gpio.h"
 
-/*
- * ESP32 UART used for STM32 <-> ESP32 communication.
- *
- * Recommended:
- *   UART_NUM_2
- *   GPIO17 = ESP32 TX -> STM32 USART6_RX PC7
- *   GPIO16 = ESP32 RX <- STM32 USART6_TX PC6
- */
+#define STM32_GCM_WIRE_PACKET_SIZE    197U
+
 #ifndef STM32_UART_PORT
 #define STM32_UART_PORT                 UART_NUM_2
 #endif
@@ -62,53 +56,76 @@ extern "C" {
 #endif
 
 #ifndef STM32_UART_TEST_MAX_FRAME_SIZE
-#define STM32_UART_TEST_MAX_FRAME_SIZE  128
+#define STM32_UART_TEST_MAX_FRAME_SIZE  256U
 #endif
 
-typedef enum {
-    STM32_UART_STATUS_OK = 0,
-    STM32_UART_STATUS_ERROR,
-    STM32_UART_STATUS_INVALID_PARAM,
-    STM32_UART_STATUS_NOT_INITIALIZED,
-    STM32_UART_STATUS_TIMEOUT,
-    STM32_UART_STATUS_NO_DATA
+#if STM32_UART_TEST_MAX_FRAME_SIZE < STM32_GCM_WIRE_PACKET_SIZE
+#error "STM32_UART_TEST_MAX_FRAME_SIZE must be at least 197 bytes"
+#endif
+
+typedef enum
+{
+    STM32_UART_STATUS_OK = 0,  
+    STM32_UART_STATUS_ERROR,  
+    STM32_UART_STATUS_INVALID_PARAM,  
+    STM32_UART_STATUS_NOT_INITIALIZED,  
+    STM32_UART_STATUS_TIMEOUT,  
+    STM32_UART_STATUS_NO_DATA  
+
 } STM32_UART_Status_t;
 
-typedef struct {
-    uint32_t rx_bytes;
-    uint32_t tx_bytes;
-    uint32_t rx_frames;
-    uint32_t tx_frames;
-    uint32_t checksum_ok;
-    uint32_t checksum_bad;
-    uint32_t fifo_overflows;
-    uint32_t buffer_full;
-    uint32_t parity_errors;
-    uint32_t frame_errors;
-    uint32_t pattern_detected;
-    uint32_t unknown_events;
+typedef struct
+{
+    uint32_t rx_bytes;  
+    uint32_t tx_bytes;  
+    uint32_t rx_frames;  
+    uint32_t tx_frames;  
+    uint32_t checksum_ok;  
+    uint32_t checksum_bad;  
+    uint32_t fifo_overflows;  
+    uint32_t buffer_full;  
+    uint32_t parity_errors;  
+    uint32_t frame_errors;  
+    uint32_t pattern_detected;  
+    uint32_t unknown_events;  
+
 } STM32_UART_Stats_t;
 
 STM32_UART_Status_t STM32_UART_Init(void);
+
 void STM32_UART_DeInit(void);
 
-STM32_UART_Status_t STM32_UART_Write(const uint8_t *data,
-                                     size_t len,
-                                     uint32_t timeout_ms);
+STM32_UART_Status_t STM32_UART_Write(
+    const uint8_t *data,
+    size_t len,
+    uint32_t timeout_ms);
 
-STM32_UART_Status_t STM32_UART_Read(uint8_t *data,
-                                    size_t max_len,
-                                    uint32_t timeout_ms,
-                                    size_t *bytes_read);
+STM32_UART_Status_t STM32_UART_Read(
+    uint8_t *data,
+    size_t max_len,
+    uint32_t timeout_ms,
+    size_t *bytes_read);
 
 int STM32_UART_RxAvailable(void);
 
 void STM32_UART_FlushRx(void);
-void STM32_UART_GetStats(STM32_UART_Stats_t *stats);
+
+void STM32_UART_ResyncRx(void);
+
+void STM32_UART_GetStats(
+    STM32_UART_Stats_t *stats);
+
 void STM32_UART_ClearStats(void);
 
 STM32_UART_Status_t STM32_UART_LinkTest_Start(void);
+
 void STM32_UART_LinkTest_PrintHealth(void);
+
+bool STM32_UART_ReceiveEncryptedPacket(
+    uint8_t *packet,
+    size_t packet_capacity,
+    size_t *packet_len,
+    uint32_t timeout_ms);
 
 #ifdef __cplusplus
 }

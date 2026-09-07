@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #ifndef MAIN_CCS811_SENSOR_H_
@@ -13,12 +13,12 @@
 
 typedef struct
 {
-    bool valid;
-    uint16_t eco2_ppm;
-    uint16_t tvoc_ppb;
-    uint8_t raw_current_ua;
-    uint16_t raw_voltage_adc;
-    float raw_voltage;
+    bool valid;  
+    uint16_t eco2_ppm;  
+    uint16_t tvoc_ppb;  
+    uint8_t raw_current_ua;  
+    uint16_t raw_voltage_adc;  
+    float raw_voltage;  
 } ccs811_sensor_data_t;
 
 void CCS811_task_start(void);

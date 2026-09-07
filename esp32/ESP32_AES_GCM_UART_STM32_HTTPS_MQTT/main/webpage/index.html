@@ -1,178 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
 
-        <script src="/jquery-3.3.1.min.js"></script>
-        <link rel="stylesheet" href="/app.css">
-        <script defer src="/app.js"></script>
+    <link rel="stylesheet" href="/app.css">
+    <script defer src="/app.js"></script>
 
-        <title>ESP32 HTTPS IoT Web Server</title>
-    </head>
+    <title>Secure Fusion IoT Console</title>
+</head>
+<body>
+    <div class="background-grid"></div>
 
-    <body>
-        <header>
-            <h1>ESP32 HTTPS IoT Web Server</h1>
+    <main class="shell">
+        <header class="hero panel">
+            <div>
+                <div class="eyebrow">SECURE EMBEDDED TELEMETRY</div>
+                <h1>Secure Fusion IoT Console</h1>
+                <p class="hero-copy">ESP32 HTTPS gateway • authenticated STM32 telemetry • real-time environmental and motion sensing</p>
+            </div>
+            <div class="security-badge" id="stm32_security_badge">
+                <span class="status-dot waiting"></span>
+                <div>
+                    <span class="badge-label">STM32 SECURE LINK</span>
+                    <strong id="stm32_secure_status">WAITING</strong>
+                </div>
+            </div>
         </header>
 
-        <div id="EspSSID">
-            <h2>ESP32 SSID</h2>
-            <label for="ap_ssid">Access Point SSID: </label>
-            <div id="ap_ssid"></div>
-        </div>
-        <hr>
+        <section class="system-strip">
+            <article class="mini-panel">
+                <span class="mini-label">ACCESS POINT</span>
+                <strong id="ap_ssid">--</strong>
+            </article>
+            <article class="mini-panel">
+                <span class="mini-label">LOCAL TIME</span>
+                <strong id="local_time">Waiting for SNTP</strong>
+            </article>
+            <article class="mini-panel">
+                <span class="mini-label">STM32 SEQUENCE</span>
+                <strong id="stm32_sequence">--</strong>
+            </article>
+            <article class="mini-panel">
+                <span class="mini-label">DASHBOARD REFRESH</span>
+                <strong>2 s</strong>
+            </article>
+        </section>
 
-        <div id="LocalTime">
-            <h2>SNTP Time Synchronization</h2>
-            <label for="local_time">Connect to WiFi for Local Time: </label>
-            <div id="local_time"></div>
-        </div>
-        <hr>
+        <section class="section-head">
+            <div>
+                <span class="eyebrow">LIVE SENSOR FABRIC</span>
+                <h2>Telemetry Dashboard</h2>
+            </div>
+            <span class="section-note">ESP32 local sensors + STM32 authenticated sensor domain</span>
+        </section>
 
-        <div id="Sensors">
-            <h2>ESP32 Sensor Readings</h2>
+        <section class="sensor-grid">
+            <article class="sensor-card accent-cyan" id="bme680_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">STM32 • ENVIRONMENT</span><h3>BME680</h3></div>
+                    <span id="bme680_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <div class="metric hero-metric"><span>Temperature</span><strong><b id="bme680_temperature">--</b><small>°C</small></strong></div>
+                <div class="metric-grid">
+                    <div class="metric"><span>Pressure</span><strong><b id="bme680_pressure">--</b><small>hPa</small></strong></div>
+                    <div class="metric"><span>Humidity</span><strong><b id="bme680_humidity">--</b><small>%</small></strong></div>
+                    <div class="metric"><span>IAQ Score</span><strong><b id="bme680_iaq_score">--</b></strong></div>
+                    <div class="metric"><span>IAQ State</span><strong class="text-value" id="bme680_iaq_label">--</strong></div>
+                </div>
+            </article>
 
-            <div class="sensor-grid">
-                <div class="sensor-card" id="ccs811_card">
-                    <h3>CCS811 Air Quality Sensor</h3>
+            <article class="sensor-card accent-blue" id="bme280_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">ESP32 • ENVIRONMENT</span><h3>BME280</h3></div>
+                    <span id="bme280_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <div class="metric hero-metric"><span>Temperature</span><strong><b id="bme280_temperature">--</b><small>°C</small></strong></div>
+                <div class="metric-grid">
+                    <div class="metric"><span>Pressure</span><strong><b id="bme280_pressure_hpa">--</b><small>hPa</small></strong></div>
+                    <div class="metric"><span>Humidity</span><strong><b id="bme280_humidity">--</b><small>%</small></strong></div>
+                    <div class="metric"><span>Chip ID</span><strong class="text-value" id="bme280_chip_id">--</strong></div>
+                    <div class="metric"><span>Driver Type</span><strong class="text-value" id="bme280_sensor_type">--</strong></div>
+                </div>
+                <div class="micro-row">Pressure raw: <span id="bme280_pressure_pa">--</span> Pa</div>
+            </article>
 
-                    <div class="sensor-row">
-                        <span class="sensor-label">Status: </span>
-                        <span id="ccs811_status" class="sensor-value">Loading...</span>
+            <article class="sensor-card accent-violet" id="ccs811_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">ESP32 • AIR QUALITY</span><h3>CCS811</h3></div>
+                    <span id="ccs811_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <div class="metric hero-metric"><span>eCO₂</span><strong><b id="ccs811_eco2">--</b><small>ppm</small></strong></div>
+                <div class="metric-grid">
+                    <div class="metric"><span>TVOC</span><strong><b id="ccs811_tvoc">--</b><small>ppb</small></strong></div>
+                    <div class="metric"><span>Raw Current</span><strong><b id="ccs811_current">--</b><small>µA</small></strong></div>
+                    <div class="metric"><span>ADC</span><strong><b id="ccs811_adc">--</b></strong></div>
+                    <div class="metric"><span>Raw Voltage</span><strong><b id="ccs811_voltage">--</b><small>V</small></strong></div>
+                </div>
+            </article>
+
+            <article class="sensor-card accent-amber" id="max31865_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">STM32 • PRECISION RTD</span><h3>MAX31865</h3></div>
+                    <span id="max31865_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <div class="metric hero-metric"><span>RTD Temperature</span><strong><b id="max31865_temperature">--</b><small>°C</small></strong></div>
+                <div class="sensor-summary">Precision temperature channel received through the authenticated STM32 link.</div>
+            </article>
+
+            <article class="sensor-card accent-green wide-card" id="ds18b20_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">STM32 • MULTI-PROBE TEMPERATURE</span><h3>DS18B20 × 5</h3></div>
+                    <span id="ds18b20_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <div class="probe-grid">
+                    <div class="probe"><span>Probe 1</span><strong><b id="ds18b20_t0">--</b><small>°C</small></strong></div>
+                    <div class="probe"><span>Probe 2</span><strong><b id="ds18b20_t1">--</b><small>°C</small></strong></div>
+                    <div class="probe"><span>Probe 3</span><strong><b id="ds18b20_t2">--</b><small>°C</small></strong></div>
+                    <div class="probe"><span>Probe 4</span><strong><b id="ds18b20_t3">--</b><small>°C</small></strong></div>
+                    <div class="probe"><span>Probe 5</span><strong><b id="ds18b20_t4">--</b><small>°C</small></strong></div>
+                </div>
+            </article>
+
+            <article class="sensor-card accent-rose wide-card" id="pm25_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">STM32 • PARTICULATE MONITOR</span><h3>PMS5003 / PM2.5</h3></div>
+                    <span id="pm25_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <h4 class="subhead">Mass concentration</h4>
+                <div class="pm-grid">
+                    <div class="metric"><span>PM1.0 Standard</span><strong><b id="pm1_std">--</b><small>µg/m³</small></strong></div>
+                    <div class="metric"><span>PM2.5 Standard</span><strong><b id="pm25_std">--</b><small>µg/m³</small></strong></div>
+                    <div class="metric"><span>PM10 Standard</span><strong><b id="pm10_std">--</b><small>µg/m³</small></strong></div>
+                    <div class="metric"><span>PM1.0 Atmos.</span><strong><b id="pm1_atm">--</b><small>µg/m³</small></strong></div>
+                    <div class="metric"><span>PM2.5 Atmos.</span><strong><b id="pm25_atm">--</b><small>µg/m³</small></strong></div>
+                    <div class="metric"><span>PM10 Atmos.</span><strong><b id="pm10_atm">--</b><small>µg/m³</small></strong></div>
+                </div>
+                <h4 class="subhead">Particle counts</h4>
+                <div class="particle-grid">
+                    <div><span>&gt;0.3µm</span><strong id="p03">--</strong></div>
+                    <div><span>&gt;0.5µm</span><strong id="p05">--</strong></div>
+                    <div><span>&gt;1.0µm</span><strong id="p10">--</strong></div>
+                    <div><span>&gt;2.5µm</span><strong id="p25">--</strong></div>
+                    <div><span>&gt;5.0µm</span><strong id="p50">--</strong></div>
+                    <div><span>&gt;10µm</span><strong id="p100">--</strong></div>
+                </div>
+            </article>
+
+            <article class="sensor-card accent-indigo wide-card" id="mpu9250_card">
+                <div class="card-head">
+                    <div><span class="card-kicker">STM32 • INERTIAL</span><h3>MPU9250</h3></div>
+                    <span id="mpu9250_status" class="status-pill waiting">Waiting</span>
+                </div>
+                <div class="imu-columns">
+                    <div>
+                        <h4 class="subhead">Acceleration</h4>
+                        <div class="axis-grid">
+                            <div><span>X</span><strong id="mpu_ax">--</strong><small>g</small></div>
+                            <div><span>Y</span><strong id="mpu_ay">--</strong><small>g</small></div>
+                            <div><span>Z</span><strong id="mpu_az">--</strong><small>g</small></div>
+                        </div>
                     </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">eCO2: </span>
-                        <span id="ccs811_eco2" class="sensor-value">--</span>
-                        <span> ppm</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">TVOC: </span>
-                        <span id="ccs811_tvoc" class="sensor-value">--</span>
-                        <span> ppb</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Raw Current: </span>
-                        <span id="ccs811_current" class="sensor-value">--</span>
-                        <span> uA</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">ADC: </span>
-                        <span id="ccs811_adc" class="sensor-value">--</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Raw Voltage: </span>
-                        <span id="ccs811_voltage" class="sensor-value">--</span>
-                        <span> V</span>
+                    <div>
+                        <h4 class="subhead">Gyroscope</h4>
+                        <div class="axis-grid">
+                            <div><span>X</span><strong id="mpu_gx">--</strong><small>°/s</small></div>
+                            <div><span>Y</span><strong id="mpu_gy">--</strong><small>°/s</small></div>
+                            <div><span>Z</span><strong id="mpu_gz">--</strong><small>°/s</small></div>
+                        </div>
                     </div>
                 </div>
+            </article>
+        </section>
 
-                <div class="sensor-card" id="bme280_card">
-                    <h3>BME280 Environment Sensor</h3>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Status: </span>
-                        <span id="bme280_status" class="sensor-value">Loading...</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Sensor: </span>
-                        <span id="bme280_sensor_type" class="sensor-value">--</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Chip ID: </span>
-                        <span id="bme280_chip_id" class="sensor-value">--</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Temperature: </span>
-                        <span id="bme280_temperature" class="sensor-value">--</span>
-                        <span> °C</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Pressure: </span>
-                        <span id="bme280_pressure_pa" class="sensor-value">--</span>
-                        <span> Pa</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Pressure: </span>
-                        <span id="bme280_pressure_hpa" class="sensor-value">--</span>
-                        <span> hPa</span>
-                    </div>
-
-                    <div class="sensor-row">
-                        <span class="sensor-label">Humidity: </span>
-                        <span id="bme280_humidity" class="sensor-value">--</span>
-                        <span> %</span>
-                    </div>
+        <section class="control-grid">
+            <article class="panel control-card">
+                <div class="section-head compact"><div><span class="eyebrow">CONNECTIVITY</span><h2>Wi-Fi Station</h2></div></div>
+                <div id="ConnectInfo" class="network-info">
+                    <div><span>Connected AP</span><strong id="connected_ap">--</strong></div>
+                    <div><span>IP Address</span><strong id="wifi_connect_ip">--</strong></div>
+                    <div><span>Netmask</span><strong id="wifi_connect_netmask">--</strong></div>
+                    <div><span>Gateway</span><strong id="wifi_connect_gw">--</strong></div>
                 </div>
-            </div>
-        </div>
-        <hr>
+                <div id="WiFiConnect" class="form-stack">
+                    <input id="connect_ssid" type="text" maxlength="32" placeholder="Wi-Fi SSID" value="">
+                    <input id="connect_pass" type="password" maxlength="64" placeholder="Password" value="">
+                    <label class="checkbox-row"><input type="checkbox" onclick="showPassword()"> Show password</label>
+                    <div id="wifi_connect_credentials_errors"></div>
+                    <div id="wifi_connect_status"></div>
+                    <div class="buttons"><input id="connect_wifi" type="button" value="Connect" /><input id="disconnect_wifi" type="button" value="Disconnect" /></div>
+                </div>
+            </article>
 
-        <div id="OTA">
-            <h2>ESP32 Firmware Update</h2>
+            <article class="panel control-card" id="OTA">
+                <div class="section-head compact"><div><span class="eyebrow">FIRMWARE CONTROL</span><h2>ESP32 OTA Update</h2></div></div>
+                <div class="firmware-line"><span>Current build</span><strong id="latest_firmware">--</strong></div>
+                <input type="file" id="selected_file" accept=".bin" style="display:none" onchange="getFileInfo()" />
+                <div class="buttons">
+                    <input type="button" value="Select Firmware" onclick="document.getElementById('selected_file').click();" />
+                    <input type="button" value="Deploy Update" onclick="updateFirmware()" />
+                </div>
+                <div id="file_info"></div>
+                <div id="ota_update_status"></div>
+            </article>
+        </section>
 
-            <label id="latest_firmware_label">Latest Firmware: </label>
-            <div id="latest_firmware"></div>
-
-            <input type="file" id="selected_file" accept=".bin" style="display: none;" onchange="getFileInfo()" />
-
-            <div class="buttons">
-                <input type="button" value="Select File" onclick="document.getElementById('selected_file').click();" />
-                <input type="button" value="Update Firmware" onclick="updateFirmware()" />
-            </div>
-
-            <h4 id="file_info"></h4>
-            <h4 id="ota_update_status"></h4>
-        </div>
-        <hr>
-
-        <div id="WiFiConnect">
-            <h2>ESP32 WiFi Connect</h2>
-
-            <section>
-                <input id="connect_ssid" type="text" maxlength="32" placeholder="SSID" value="">
-                <input id="connect_pass" type="password" maxlength="64" placeholder="Password" value="">
-                <input type="checkbox" onclick="showPassword()">Show Password
-            </section>
-
-            <div class="buttons">
-                <input id="connect_wifi" type="button" value="Connect" />
-            </div>
-
-            <div id="wifi_connect_credentials_errors"></div>
-            <h4 id="wifi_connect_status"></h4>
-        </div>
-
-        <div id="ConnectInfo">
-            <section>
-                <div id="connected_ap_label"></div>
-                <div id="connected_ap"></div>
-            </section>
-
-            <div id="ip_address_label"></div>
-            <div id="wifi_connect_ip"></div>
-
-            <div id="netmask_label"></div>
-            <div id="wifi_connect_netmask"></div>
-
-            <div id="gateway_label"></div>
-            <div id="wifi_connect_gw"></div>
-
-            <div class="buttons">
-                <input id="disconnect_wifi" type="button" value="Disconnect" />
-            </div>
-        </div>
-        <hr>
-    </body>
+        <footer>Secure Fusion • ESP32 HTTPS Gateway • STM32 Authenticated Telemetry</footer>
+    </main>
+</body>
 </html>

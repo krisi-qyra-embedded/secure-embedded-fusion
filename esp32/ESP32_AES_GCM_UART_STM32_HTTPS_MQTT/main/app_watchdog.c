@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include "app_watchdog.h"
@@ -24,10 +24,10 @@ static const char *TAG = "app_watchdog";
 
 typedef struct
 {
-    const char *name;
-    uint32_t max_age_ms;
-    volatile uint32_t last_kick_ms;
-    volatile bool enabled;
+    const char *name;  
+    uint32_t max_age_ms;  
+    volatile uint32_t last_kick_ms;  
+    volatile bool enabled;  
 } app_watchdog_entry_t;
 
 static app_watchdog_entry_t s_wd[APP_WD_COUNT] =
@@ -183,4 +183,3 @@ void app_watchdog_task_start(void)
         0
     );
 }
-

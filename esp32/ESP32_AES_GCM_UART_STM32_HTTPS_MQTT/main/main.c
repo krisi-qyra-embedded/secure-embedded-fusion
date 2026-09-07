@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include "STM32_uart.h"
@@ -22,15 +22,17 @@
 #include "mbedtls_ecdh.h"
 #include "mbedtls_aes_gcm.h"
 #include "bootloader_random.h"
+#include <stdlib.h>
+#include "esp_heap_caps.h"
 
 static const char TAG[] = "main";
 static const char *CRYPTO_TAG = "CRYPTO_BRINGUP";
 
 typedef enum
 {
-    APP_MODE_UNKNOWN = 0,
-    APP_MODE_LOCAL_DASHBOARD,
-    APP_MODE_CLOUD
+    APP_MODE_UNKNOWN = 0,  
+    APP_MODE_LOCAL_DASHBOARD,  
+    APP_MODE_CLOUD  
 } app_mode_e;
 
 static app_mode_e g_app_mode = APP_MODE_UNKNOWN;
@@ -38,6 +40,7 @@ static bool g_sta_has_internet = false;
 static bool g_sntp_started = false;
 static TaskHandle_t g_cloud_debounce_task = NULL;
 
+/* Start both crypto contexts from zeroed static storage. */
 static esp32_aes_gcm_ctx_t g_aes_gcm_ctx;
 static esp32_ecdh_ctx_t g_ecdh_ctx;
 
@@ -89,21 +92,41 @@ static void wait_for_aws_to_stop(void)
 static void app_enter_local_dashboard_mode(void)
 {
     if (g_app_mode == APP_MODE_LOCAL_DASHBOARD)
-    {
         return;
-    }
 
     ESP_LOGW(TAG, "MODE_SWITCH | entering LOCAL DASHBOARD mode");
 
     /* Request AWS shutdown before starting the HTTPS server. */
     aws_iot_stop();
+
     wait_for_aws_to_stop();
+
+    ESP_LOGI(
+        TAG,
+        "HEAP_BEFORE_HTTPS | internal_free=%u | largest_internal=%u | total_free=%u",
+        (unsigned)heap_caps_get_free_size(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+        (unsigned)heap_caps_get_largest_free_block(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+        (unsigned)esp_get_free_heap_size()
+    );
 
     http_server_start();
 
+    ESP_LOGI(
+        TAG,
+        "HEAP_AFTER_HTTPS_START | internal_free=%u | largest_internal=%u | total_free=%u",
+        (unsigned)heap_caps_get_free_size(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+        (unsigned)heap_caps_get_largest_free_block(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+        (unsigned)esp_get_free_heap_size()
+    );
+
     g_app_mode = APP_MODE_LOCAL_DASHBOARD;
 
-    ESP_LOGI(TAG, "MODE_ACTIVE | LOCAL | HTTPS dashboard active | AWS stopped");
+    ESP_LOGI(TAG,
+             "MODE_ACTIVE | LOCAL | HTTPS dashboard active | AWS stopped");
 }
 
 /* Starts cloud services when the SoftAP is idle. */
@@ -326,7 +349,7 @@ static bool esp32_stm32_duplex_crypto_bringup(void)
     return true;
 }
 
-/* Initializes storage and starts the encrypted UART application. */
+/* Starts encrypted UART, sensor tasks and local/cloud services. */
 void app_main(void)
 {
     esp_err_t ret;
@@ -334,21 +357,54 @@ void app_main(void)
     esp32_aes_gcm_status_t gcm_status;
 
     ret =
-        nvs_flash_init();
+    nvs_flash_init();
 
-    if ((ret == ESP_ERR_NVS_NO_FREE_PAGES) ||
-        (ret == ESP_ERR_NVS_NEW_VERSION_FOUND))
-    {
-        ESP_ERROR_CHECK(
-            nvs_flash_erase());
+	/* Preserve persistent GCM state by refusing to erase NVS on initialization failure. */
+	if (ret != ESP_OK)
+	{
+    	ESP_LOGE(
+        "NVS_SECURITY",
+        "NVS initialization failed: %s. "
+        "Persistent AES-GCM state was not erased. "
+        "Refusing to start encrypted communication.",
+        esp_err_to_name(ret));
 
-        ret =
-            nvs_flash_init();
-    }
+       abort();
+	 }
 
     ESP_ERROR_CHECK(ret);
 
-    /* Start UART reception before preparing the cryptographic contexts. */
+    ESP_LOGI(
+        TAG,
+        "RAM_INFO | "
+        "internal_total=%u | "
+        "internal_free=%u | "
+        "internal_largest=%u | "
+        "8bit_total=%u | "
+        "8bit_free=%u | "
+        "spiram_total=%u | "
+        "spiram_free=%u",
+        (unsigned)heap_caps_get_total_size(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+        (unsigned)heap_caps_get_free_size(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+        (unsigned)heap_caps_get_largest_free_block(
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT),
+
+        (unsigned)heap_caps_get_total_size(
+            MALLOC_CAP_8BIT),
+        (unsigned)heap_caps_get_free_size(
+            MALLOC_CAP_8BIT),
+
+        (unsigned)heap_caps_get_total_size(
+            MALLOC_CAP_SPIRAM),
+        (unsigned)heap_caps_get_free_size(
+            MALLOC_CAP_SPIRAM)
+    );
+
+    app_watchdog_init();
+    app_watchdog_task_start();
+
     if (STM32_UART_LinkTest_Start() !=
         STM32_UART_STATUS_OK)
     {
@@ -412,9 +468,8 @@ void app_main(void)
         CRYPTO_TAG,
         "ESP32 ready: RX request=42 bytes, TX encrypted ACK/NACK=39 bytes");
 
-#if 0
-    app_watchdog_init();
-    app_watchdog_task_start();
+#if 1
+
 
     ESP_ERROR_CHECK(i2cdev_init());
 

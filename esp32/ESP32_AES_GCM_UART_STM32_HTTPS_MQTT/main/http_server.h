@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #ifndef MAIN_HTTP_SERVER_H_
@@ -15,27 +15,27 @@
 
 typedef enum http_server_wifi_connect_status
 {
-	NONE = 0,
-	HTTP_WIFI_STATUS_CONNECTING,
-	HTTP_WIFI_STATUS_CONNECT_FAILED,
-	HTTP_WIFI_STATUS_CONNECT_SUCCESS,
-	HTTP_WIFI_STATUS_DISCONNECTED,
+	NONE = 0,  
+	HTTP_WIFI_STATUS_CONNECTING,  
+	HTTP_WIFI_STATUS_CONNECT_FAILED,  
+	HTTP_WIFI_STATUS_CONNECT_SUCCESS,  
+	HTTP_WIFI_STATUS_DISCONNECTED,  
 } http_server_wifi_connect_status_e;
 
 typedef enum http_server_message
 {
-	HTTP_MSG_WIFI_CONNECT_INIT = 0,
-	HTTP_MSG_WIFI_CONNECT_SUCCESS,
-	HTTP_MSG_WIFI_CONNECT_FAIL,
-	HTTP_MSG_WIFI_USER_DISCONNECT,
-	HTTP_MSG_OTA_UPDATE_SUCCESSFUL,
-	HTTP_MSG_OTA_UPDATE_FAILED,
-	HTTP_MSG_TIME_SERVICE_INITIALIZED,
+	HTTP_MSG_WIFI_CONNECT_INIT = 0,  
+	HTTP_MSG_WIFI_CONNECT_SUCCESS,  
+	HTTP_MSG_WIFI_CONNECT_FAIL,  
+	HTTP_MSG_WIFI_USER_DISCONNECT,  
+	HTTP_MSG_OTA_UPDATE_SUCCESSFUL, /**< OTA succeeded; schedule the restart timer. */
+	HTTP_MSG_OTA_UPDATE_FAILED,  
+	HTTP_MSG_TIME_SERVICE_INITIALIZED,  
 } http_server_message_e;
 
 typedef struct http_server_queue_message
 {
-	http_server_message_e msgID;
+	http_server_message_e msgID;  
 } http_server_queue_message_t;
 
 BaseType_t http_server_monitor_send_message(http_server_message_e msgID);

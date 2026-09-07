@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #include <stdio.h>
@@ -53,17 +53,6 @@
 #define CCS811_SAMPLE_DELAY_MS             1100U
 #endif
 
-/*
- * Your log showed:
- *
- * Sensor resistance measurement has reached or exceeded the maximum range.
- * CCS811 read failed: 40970 - ERROR
- *
- * 40970 decimal = 0xA00A.
- *
- * This is a CCS811 internal gas-sensor range issue.
- * It is not the same as unplugged SDA/SCL/VCC.
- */
 #define CCS811_ERR_SENSOR_RESISTANCE_MAX   ((esp_err_t)0xA00A)
 
 static const char *TAG = "ccs811_sensor";
@@ -355,6 +344,7 @@ static void ccs811_test(void *pvParameters)
         /* Missing fresh data keeps the task alive without counting as a severe fault. */
         else if (res == CCS811_ERR_NO_NEW_DATA)
         {
+            /* No sample ready yet; keep the task healthy. */
             s_consecutive_severe_failures = 0;
             s_no_new_data_count++;
 

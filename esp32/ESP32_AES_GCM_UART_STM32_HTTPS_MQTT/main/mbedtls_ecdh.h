@@ -1,5 +1,5 @@
 /* Author: i fiksuari pas prog
- * Documentation date: 2026-07-27
+ * Documentation date: 2026-09-05
  */
 
 #ifndef MAIN_MBEDTLS_ECDH_H_
@@ -73,6 +73,8 @@ static const uint8_t esp32_provisioned_receiver_public_key[
     0x49, 0xD4, 0x3F, 0xB2, 0x1C, 0xCD, 0xA0, 0x9C
 };
 
+/* STM32 receiver point for ESP32 TX; STM32 sender point for ESP32 RX. */
+
 static const uint8_t stm32_provisioned_sender_public_key[
     ESP32_ECDH_PUBLIC_KEY_SIZE
 ] = {
@@ -131,97 +133,97 @@ _Static_assert(
 
 typedef enum
 {
-    ESP32_ECDH_SUCCESS = 0,
+    ESP32_ECDH_SUCCESS = 0,  
 
-    ESP32_ECDH_ERR_BAD_PARAM               = -1,
-    ESP32_ECDH_ERR_ALREADY_INIT            = -2,
-    ESP32_ECDH_ERR_NOT_INITIALIZED         = -3,
-    ESP32_ECDH_ERR_DRBG_SEED               = -4,
-    ESP32_ECDH_ERR_CURVE_UNSUPPORTED       = -5,
-    ESP32_ECDH_ERR_CURVE_LOAD              = -6,
-    ESP32_ECDH_ERR_SENDER_KEYGEN           = -7,
-    ESP32_ECDH_ERR_RECEIVER_KEYGEN         = -8,
-    ESP32_ECDH_ERR_PRIVATE_KEY_CHECK       = -9,
-    ESP32_ECDH_ERR_PUBLIC_KEY_CHECK        = -10,
-    ESP32_ECDH_ERR_PRIVATE_EXPORT          = -11,
-    ESP32_ECDH_ERR_PUBLIC_EXPORT           = -12,
-    ESP32_ECDH_ERR_PUBLIC_LENGTH           = -13,
-    ESP32_ECDH_ERR_ALREADY_GENERATED       = -14,
-    ESP32_ECDH_ERR_KEYS_NOT_READY          = -15,
-    ESP32_ECDH_ERR_SENDER_SHARED           = -16,
-    ESP32_ECDH_ERR_RECEIVER_SHARED         = -17,
-    ESP32_ECDH_ERR_SHARED_EXPORT           = -18,
-    ESP32_ECDH_ERR_SHARED_LENGTH           = -19,
-    ESP32_ECDH_ERR_SHARED_MISMATCH         = -20,
-    ESP32_ECDH_ERR_SHARED_NOT_READY        = -21,
-    ESP32_ECDH_ERR_SENDER_KDF              = -22,
-    ESP32_ECDH_ERR_RECEIVER_KDF            = -23,
-    ESP32_ECDH_ERR_KDF_AES_HASH            = -24,
-    ESP32_ECDH_ERR_KDF_MAC_HASH            = -25,
-    ESP32_ECDH_ERR_DERIVED_KEY_MISMATCH    = -26,
-    ESP32_ECDH_ERR_DERIVED_KEYS_NOT_READY  = -27,
-    ESP32_ECDH_ERR_PROVISIONED_KEY_EMPTY   = -28,
-    ESP32_ECDH_ERR_PROVISIONED_KEY_IMPORT  = -29,
-    ESP32_ECDH_ERR_PROVISIONED_KEY_MISMATCH = -30
+    ESP32_ECDH_ERR_BAD_PARAM               = -1,  
+    ESP32_ECDH_ERR_ALREADY_INIT            = -2,  
+    ESP32_ECDH_ERR_NOT_INITIALIZED         = -3,  
+    ESP32_ECDH_ERR_DRBG_SEED               = -4,  
+    ESP32_ECDH_ERR_CURVE_UNSUPPORTED       = -5,  
+    ESP32_ECDH_ERR_CURVE_LOAD              = -6,  
+    ESP32_ECDH_ERR_SENDER_KEYGEN           = -7,  
+    ESP32_ECDH_ERR_RECEIVER_KEYGEN         = -8,  
+    ESP32_ECDH_ERR_PRIVATE_KEY_CHECK       = -9,  
+    ESP32_ECDH_ERR_PUBLIC_KEY_CHECK        = -10,  
+    ESP32_ECDH_ERR_PRIVATE_EXPORT          = -11,  
+    ESP32_ECDH_ERR_PUBLIC_EXPORT           = -12,  
+    ESP32_ECDH_ERR_PUBLIC_LENGTH           = -13,  
+    ESP32_ECDH_ERR_ALREADY_GENERATED       = -14,  
+    ESP32_ECDH_ERR_KEYS_NOT_READY          = -15,  
+    ESP32_ECDH_ERR_SENDER_SHARED           = -16,  
+    ESP32_ECDH_ERR_RECEIVER_SHARED         = -17,  
+    ESP32_ECDH_ERR_SHARED_EXPORT           = -18,  
+    ESP32_ECDH_ERR_SHARED_LENGTH           = -19,  
+    ESP32_ECDH_ERR_SHARED_MISMATCH         = -20,  
+    ESP32_ECDH_ERR_SHARED_NOT_READY        = -21,  
+    ESP32_ECDH_ERR_SENDER_KDF              = -22,  
+    ESP32_ECDH_ERR_RECEIVER_KDF            = -23,  
+    ESP32_ECDH_ERR_KDF_AES_HASH            = -24,  
+    ESP32_ECDH_ERR_KDF_MAC_HASH            = -25,  
+    ESP32_ECDH_ERR_DERIVED_KEY_MISMATCH    = -26,  
+    ESP32_ECDH_ERR_DERIVED_KEYS_NOT_READY  = -27,  
+    ESP32_ECDH_ERR_PROVISIONED_KEY_EMPTY   = -28,  
+    ESP32_ECDH_ERR_PROVISIONED_KEY_IMPORT  = -29,  
+    ESP32_ECDH_ERR_PROVISIONED_KEY_MISMATCH = -30  
 
 } esp32_ecdh_status_t;
 
 typedef struct
 {
-    mbedtls_mpi private_key;
-    mbedtls_ecp_point public_key;
+    mbedtls_mpi private_key;  
+    mbedtls_ecp_point public_key;  
 
     uint8_t private_key_bytes[
-        ESP32_ECDH_PRIVATE_KEY_SIZE];
+        ESP32_ECDH_PRIVATE_KEY_SIZE];  
 
     uint8_t public_key_bytes[
-        ESP32_ECDH_PUBLIC_KEY_SIZE];
+        ESP32_ECDH_PUBLIC_KEY_SIZE];  
 
-    size_t public_key_len;
+    size_t public_key_len;  
 
 } esp32_ecdh_party_t;
 
 typedef struct
 {
-    mbedtls_entropy_context entropy;
-    mbedtls_ctr_drbg_context ctr_drbg;
-    mbedtls_ecp_group group;
+    mbedtls_entropy_context entropy;  
+    mbedtls_ctr_drbg_context ctr_drbg;  
+    mbedtls_ecp_group group;  
 
-    esp32_ecdh_party_t sender;
-    esp32_ecdh_party_t receiver;
+    esp32_ecdh_party_t sender;  
+    esp32_ecdh_party_t receiver;  
 
     uint8_t computed_secret[
-        ESP32_ECDH_SHARED_SECRET_SIZE];
+        ESP32_ECDH_SHARED_SECRET_SIZE];  
 
-    size_t computed_secret_len;
+    size_t computed_secret_len;  
 
     uint8_t computed_secret_receiver[
-        ESP32_ECDH_SHARED_SECRET_SIZE];
+        ESP32_ECDH_SHARED_SECRET_SIZE];  
 
-    size_t computed_secret_receiver_len;
+    size_t computed_secret_receiver_len;  
 
     uint8_t aes_key[
-        ESP32_ECDH_DERIVED_KEY_SIZE];
+        ESP32_ECDH_DERIVED_KEY_SIZE];  
 
     uint8_t aes_key_receiver[
-        ESP32_ECDH_DERIVED_KEY_SIZE];
+        ESP32_ECDH_DERIVED_KEY_SIZE];  
 
     uint8_t mac_key[
-        ESP32_ECDH_DERIVED_KEY_SIZE];
+        ESP32_ECDH_DERIVED_KEY_SIZE];  
 
     uint8_t mac_key_receiver[
-        ESP32_ECDH_DERIVED_KEY_SIZE];
+        ESP32_ECDH_DERIVED_KEY_SIZE];  
 
-    size_t aes_key_len;
-    size_t aes_key_receiver_len;
-    size_t mac_key_len;
-    size_t mac_key_receiver_len;
+    size_t aes_key_len;  
+    size_t aes_key_receiver_len;  
+    size_t mac_key_len;  
+    size_t mac_key_receiver_len;  
 
-    bool objects_initialized;
-    bool drbg_seeded;
-    bool keypairs_generated;
-    bool shared_secrets_computed;
-    bool derived_keys_ready;
+    bool objects_initialized;  
+    bool drbg_seeded;  
+    bool keypairs_generated;  
+    bool shared_secrets_computed;  
+    bool derived_keys_ready;  
 
 } esp32_ecdh_ctx_t;
 
