@@ -1,10 +1,10 @@
 ../Drivers/CMSIS/Include/core_cm4.h:1688:22:__NVIC_EnableIRQ	16	static
 ../Drivers/CMSIS/Include/core_cm4.h:1777:22:__NVIC_ClearPendingIRQ	16	static
 ../Drivers/CMSIS/Include/core_cm4.h:1816:22:__NVIC_SetPriority	16	static
-../Core/Src/DMA.c:33:6:dma2_ADC_pc45	32	static,ignoring_inline_asm
-../Core/Src/DMA.c:171:6:adc_byte_buffers_init	8	static
-../Core/Src/DMA.c:180:6:store_adc_byte_values	16	static
-../Core/Src/DMA.c:195:6:adc_get_latest_triplet	32	static
-../Core/Src/DMA.c:230:5:collect_adc_samples_until_full	16	static,ignoring_inline_asm
-../Core/Src/DMA.c:268:5:ADC_DMA_INIT	24	static,ignoring_inline_asm
-../Core/Src/DMA.c:303:6:DMA2_Stream4_IRQHandler	16	static
+../Core/Src/DMA.c:49:6:dma2_ADC_pc45	32	static,ignoring_inline_asm
+../Core/Src/DMA.c:251:6:adc_byte_buffers_init	8	static
+../Core/Src/DMA.c:274:6:store_adc_byte_values	16	static
+../Core/Src/DMA.c:307:6:adc_get_latest_triplet	32	static
+../Core/Src/DMA.c:331:5:collect_adc_samples_until_full	16	static,ignoring_inline_asm
+../Core/Src/DMA.c:386:5:ADC_DMA_INIT	24	static,ignoring_inline_asm
+../Core/Src/DMA.c:447:6:DMA2_Stream4_IRQHandler	16	static

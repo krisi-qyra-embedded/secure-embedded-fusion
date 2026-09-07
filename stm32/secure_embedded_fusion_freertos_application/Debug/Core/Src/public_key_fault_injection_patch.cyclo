@@ -1,1 +1,0 @@
-../Core/Src/public_key_fault_injection_patch.c:42:6:fault_inject_corrupt_stored_boot_public_key	12

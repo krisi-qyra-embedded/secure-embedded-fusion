@@ -48,12 +48,13 @@ int device_uid_read(void)
 }
 
 /* Returns the cached device UID bytes. */
-const uint8_t* device_uid_get_buffer(void)
+const uint8_t *device_uid_get_buffer(void)
 {
     /* Read the UID first if the cache has not been populated. */
     if (!uid_read) {
         device_uid_read();
     }
+
     return device_uid_buffer;
 }
 
@@ -76,7 +77,8 @@ uint32_t device_uid_get_bytes(uint8_t *out_buffer, uint32_t out_len)
         device_uid_read();
     }
 
-    uint32_t to_copy = (out_len < UID_SIZE_BYTES) ? out_len : UID_SIZE_BYTES;
+    uint32_t to_copy =
+        (out_len < UID_SIZE_BYTES) ? out_len : UID_SIZE_BYTES;
 
     for (uint32_t i = 0; i < to_copy; i++) {
         out_buffer[i] = device_uid_buffer[i];
@@ -86,7 +88,9 @@ uint32_t device_uid_get_bytes(uint8_t *out_buffer, uint32_t out_len)
 }
 
 /* Reconstructs the three cached UID words. */
-void device_uid_get_words(uint32_t *uid0, uint32_t *uid1, uint32_t *uid2)
+void device_uid_get_words(uint32_t *uid0,
+                          uint32_t *uid1,
+                          uint32_t *uid2)
 {
     /* Fill only the output word pointers supplied by the caller. */
     if (!uid_read) {
@@ -145,6 +149,7 @@ uint32_t device_uid_hash(void)
     }
 
     uint32_t uid0, uid1, uid2;
+
     device_uid_get_words(&uid0, &uid1, &uid2);
 
     return uid0 ^ uid1 ^ uid2;
@@ -161,9 +166,13 @@ void device_uid_print(void)
     }
 
     uint32_t uid0, uid1, uid2;
+
     device_uid_get_words(&uid0, &uid1, &uid2);
 
-    log_printf("Device UID: %08lX-%08lX-%08lX\r\n", uid0, uid1, uid2);
+    log_printf("Device UID: %08lX-%08lX-%08lX\r\n",
+               uid0,
+               uid1,
+               uid2);
 }
 
 /* Logs the cached UID byte sequence. */
@@ -177,12 +186,15 @@ void device_uid_print_bytes(void)
     }
 
     log_printf("Device UID (bytes): ");
+
     for (uint32_t i = 0; i < UID_SIZE_BYTES; i++) {
-    	log_printf("0x%02X", device_uid_buffer[i]);
+        log_printf("0x%02X", device_uid_buffer[i]);
+
         if (i < UID_SIZE_BYTES - 1) {
-        	log_printf(", ");
+            log_printf(", ");
         }
     }
+
     log_printf("\r\n");
 }
 
@@ -198,8 +210,13 @@ uint8_t device_uid_is_valid(void)
     uint8_t all_ff = 1;
 
     for (uint32_t i = 0; i < UID_SIZE_BYTES; i++) {
-        if (device_uid_buffer[i] != 0x00) all_zero = 0;
-        if (device_uid_buffer[i] != 0xFF) all_ff = 0;
+        if (device_uid_buffer[i] != 0x00) {
+            all_zero = 0;
+        }
+
+        if (device_uid_buffer[i] != 0xFF) {
+            all_ff = 0;
+        }
     }
 
     return (!all_zero && !all_ff) ? 1 : 0;
@@ -208,7 +225,8 @@ uint8_t device_uid_is_valid(void)
 /* ========== Advanced: UID-based Device Fingerprint ========== */
 
 /* Builds a device fingerprint from UID and chip metadata. */
-uint32_t device_generate_fingerprint(uint8_t *out_buffer, uint32_t out_len)
+uint32_t device_generate_fingerprint(uint8_t *out_buffer,
+                                     uint32_t out_len)
 {
     /* Append flash size and debug identification only when space remains. */
     if (out_buffer == NULL || out_len < 16) {
@@ -220,22 +238,41 @@ uint32_t device_generate_fingerprint(uint8_t *out_buffer, uint32_t out_len)
     }
 
     uint32_t offset = 0;
-    for (uint32_t i = 0; i < UID_SIZE_BYTES && offset < out_len; i++) {
+
+    for (uint32_t i = 0;
+         i < UID_SIZE_BYTES && offset < out_len;
+         i++) {
+
         out_buffer[offset++] = device_uid_buffer[i];
     }
 
     if (offset + 2 <= out_len) {
-        uint16_t flash_size = *(volatile uint16_t *)0x1FFF7A22;
-        out_buffer[offset++] = (flash_size >> 0) & 0xFF;
-        out_buffer[offset++] = (flash_size >> 8) & 0xFF;
+
+        uint16_t flash_size =
+            *(volatile uint16_t *)0x1FFF7A22;
+
+        out_buffer[offset++] =
+            (flash_size >> 0) & 0xFF;
+
+        out_buffer[offset++] =
+            (flash_size >> 8) & 0xFF;
     }
 
     if (offset + 4 <= out_len) {
+
         uint32_t dbgmcu_idcode = DBGMCU->IDCODE;
-        out_buffer[offset++] = (dbgmcu_idcode >> 0)  & 0xFF;   
-        out_buffer[offset++] = (dbgmcu_idcode >> 8)  & 0xFF;   
-        out_buffer[offset++] = (dbgmcu_idcode >> 16) & 0xFF;   
-        out_buffer[offset++] = (dbgmcu_idcode >> 24) & 0xFF;   
+
+        out_buffer[offset++] =
+            (dbgmcu_idcode >> 0) & 0xFF;    
+
+        out_buffer[offset++] =
+            (dbgmcu_idcode >> 8) & 0xFF;    
+
+        out_buffer[offset++] =
+            (dbgmcu_idcode >> 16) & 0xFF;   
+
+        out_buffer[offset++] =
+            (dbgmcu_idcode >> 24) & 0xFF;   
     }
 
     return offset;
@@ -247,16 +284,20 @@ uint32_t device_generate_fingerprint(uint8_t *out_buffer, uint32_t out_len)
  * UID as Personalization String:
  *
  * const uint8_t *uid = device_uid_get_buffer();
+ *
  * cmox_drbg_init(drbg_ctx,
  *                entropy, 32,
- *                uid, 12,        // Use UID as personalization
+ *                uid, 12,
  *                nonce, 16);
  *
  *
  * UID for Device-Specific Keys:
  *
  * uint8_t fingerprint[16];
- * device_generate_fingerprint(fingerprint, sizeof(fingerprint));
+ *
+ * device_generate_fingerprint(
+ *     fingerprint,
+ *     sizeof(fingerprint));
  *
  * // Mix with DRBG output for device-specific key
  * for (int i = 0; i < 16; i++) {
@@ -271,8 +312,7 @@ uint32_t device_generate_fingerprint(uint8_t *out_buffer, uint32_t out_len)
  *
  * // At runtime, verify
  * if (!device_uid_compare(expected_uid)) {
- *     // Device cloned or tampered!
+ *     // Device cloned or tampered
  *     halt_system();
  * }
  */
-

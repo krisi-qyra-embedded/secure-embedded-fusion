@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include "tim.h"
-#include "ecdh.h" /* your project header with macros & prototypes */
+#include "ecdh.h"
 #include "stm32_gcm_nvm.h"
 #include "i2c_dma.h"
 
@@ -47,7 +47,7 @@ void handle_error(const char *message) {
     app_fault_delay_ms(20U);
 
     while (1) {
-        // Toggle an LED to indicate an error (assuming LED_PIN is configured)
+        // Optional LED indication
         //GPIOA->ODR ^= LED_PIN;  // Toggle LED
         for (volatile int i = 0; i < 1000000; i++);   
     }
@@ -532,11 +532,6 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
             sizeof(esp32_provisioned_sender_public_key));
 
     if (complete_provisioned_bundle) {
-        /*
-         * Only the four local STM32 keys belong in ctx->keys.
-         * The two ESP32 peer public keys remain pinned constants in
-         * ecdh.h and are used later by cross-device ECDH functions.
-         */
         memcpy(
             ctx->keys.private_key_sender,
             ecdh_provisioned_sender_private_key,
@@ -598,10 +593,6 @@ gen_keys_status_t generate_keypairs_cmox(crypto_ctx_t *ctx)
         return GEN_KEYS_SUCCESS;
     }
 
-    /*
-     * The provisioning block exists, but at least one of the six
-     * arrays is all-zero. Fall through to local STM32 key generation.
-     */
     ECDH_LOG_PRINTF(
         "[KEYS][WARNING] Provisioned six-key bundle is incomplete "
         "or contains an all-zero key.\r\n"
@@ -1056,10 +1047,6 @@ static ecdh_status_t compute_cmox_ecdh_canonical32(
         return ECDH_ERR_ECDH_FAILED;
     }
 
-    /*
-     * Canonical STM32<->ESP32 representation:
-     * keep exactly the first 32 bytes returned by C-MOX.
-     */
     memcpy(out_secret,
            raw_secret,
            ECDH_CANONICAL_SECRET_LEN);
@@ -1087,22 +1074,6 @@ static ecdh_status_t compute_cmox_ecdh_canonical32(
     return ECDH_SUCCESS;
 }
 
-/**
- * Compute the STM32 -> ESP32 sender-side ECDH secret:
- *
- *     STM32 provisioned sender private key
- *     x
- *     ESP32 provisioned receiver public key
- *
- * The peer public key is deliberately taken from the pinned ESP32
- * provisioning array. ctx->keys.public_key_receiver remains the local
- * STM32 receiver public key and is not used for this TX direction.
- *
- * The result is normalized to exactly 32 bytes and stored in:
- *
- *     ctx->tmp.computed_secret[32]
- *     ctx->tmp.computed_secret_len = 32
- */
 /* Computes the sender's ECDH shared secret. */
 ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
                                             uint8_t *out_secret,
@@ -1176,17 +1147,6 @@ ecdh_status_t compute_ecdh_shared_as_sender(crypto_ctx_t *ctx,
 
 #endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 }
-
-/**
- * Compute the receiver-side ECDH secret:
- *
- *     receiver private key x sender public key
- *
- * The result is normalized to exactly 32 bytes and stored in:
- *
- *     ctx->tmp.computed_secret_receiver[32]
- *     ctx->tmp.computed_secret_receiver_len = 32
- */
 
 /* Computes the receiver's ECDH shared secret. */
 ecdh_status_t compute_ecdh_shared_as_receiver(
@@ -1284,13 +1244,6 @@ ecdh_status_t compute_ecdh_shared_as_receiver(
 #endif /* ECDH_PROVISIONED_KEYS_PRESENT */
 }
 
-/**
- * Derive sender or receiver AES/MAC keys from exactly 32 canonical
- * ECDH-secret bytes.
- *
- * AES key = SHA256(shared[32] || 0x01)
- * MAC key = SHA256(shared[32] || 0x02)
- */
 /* Derives separate AES and MAC keys from an ECDH secret. */
 kdf_status_t derive_keys_from_shared_secret(crypto_ctx_t *ctx,
                                             bool receiver)
@@ -1388,24 +1341,6 @@ kdf_status_t derive_keys_from_shared_secret_receiver(crypto_ctx_t *ctx)
     return derive_keys_from_shared_secret(ctx, true);
 }
 
-/* robust AES-CTR encryption wrapper
- *
- * Behavior:
- *  - Validates inputs and buffer sizes
- *  - Detects obviously-bad key/IV (all-zero) and rejects
- *  - Uses a local output-length variable and only commits the global
- *    \`computed_size\` on success (avoids partial state)
- *  - Wipes output buffer on any failure
- *  - Returns clear, small-range negative error codes
- *
- * Return codes:
- *   0  => success
- *  -1  => invalid input / plaintext size out of bounds
- *  -2  => invalid key or IV (all zero)
- *  -3  => cipher primitive error
- *  -4  => ciphertext length unexpected / internal sanity
- */
-
 /* Tests a byte sequence for an all-zero value. */
 static int is_all_zero_bytes(const uint8_t *p, size_t n)
 {
@@ -1414,27 +1349,6 @@ static int is_all_zero_bytes(const uint8_t *p, size_t n)
     for (size_t i = 0; i < n; ++i) acc |= p[i];
     return (acc == 0);
 }
-
-/* Robust, security-minded AES-CTR decrypt using C-MOX
- *
- * Behavior:
- *  - Strictly uses the dedicated decrypt primitive (CMOX_AESFAST_CTR_DEC_ALGO).
- *  - Performs extensive sanity checks on sizes and buffers.
- *  - Wipes partial output on any failure.
- *  - Returns negative error codes with distinct meanings.
- *
- * Return codes:
- *  0   => success
- * -1   => invalid input / size sanity check failed
- * -2   => cipher primitive returned error
- * -3   => length mismatch (CTR should be 1:1)
- * -4   => decrypted output buffer overflow / internal sanity
- *
- * NOTE: Define ALLOW_CTR_ENCRYPT_FALLBACK to allow the encryption primitive
- *       as a fallback if the dedicated decrypt algorithm macro is not present.
- *       Fallback is NOT recommended for audited code; prefer enabling the
- *       decrypt primitive in the C-MOX config.
- */
 
 /* Encrypts the serialized payload with AES-CTR. */
 aes_ctr_enc_status_t encrypt_aes_ctr(crypto_ctx_t *ctx,
@@ -1499,13 +1413,6 @@ aes_ctr_enc_status_t encrypt_aes_ctr(crypto_ctx_t *ctx,
     return AES_CTR_ENC_SUCCESS;
 }
 
-/* Return codes:
- *  0  => success
- * -1  => invalid input / size sanity check failed
- * -2  => cipher primitive error
- * -3  => length mismatch (CTR should be 1:1)
- * -4  => decrypted output overflow (internal sanity)
- */
 /* Decrypts the AES-CTR payload into the receiver buffer. */
 aes_ctr_dec_status_t decrypt_aes_ctr(crypto_ctx_t *ctx,
                                     size_t *out_decrypted_size)
@@ -1574,10 +1481,6 @@ aes_ctr_dec_status_t decrypt_aes_ctr(crypto_ctx_t *ctx,
     return AES_CTR_DEC_SUCCESS;
 }
 
-/* Compute HMAC over IV || ciphertext (sender-side).
- * Writes tag to mac_out and sets *out_mac_len.
- * Uses ctx->derived.mac_key and ctx->buffers.cipher_text_bytes.
- */
 /* Computes the sender HMAC over IV and ciphertext. */
 hmac_ivc_status_t compute_hmac_over_iv_cipher(crypto_ctx_t *ctx,
                                               uint8_t *mac_out,
@@ -1635,10 +1538,6 @@ hmac_ivc_status_t compute_hmac_over_iv_cipher(crypto_ctx_t *ctx,
     return HMAC_IVC_SUCCESS;
 }
 
-/* Compute HMAC over IV || ciphertext (receiver-side).
- * Writes tag to mac_out and sets *out_mac_len.
- * Uses ctx->derived.mac_key_receiver and ctx->buffers.cipher_text_bytes.
- */
 /* Recomputes the received IV-and-ciphertext HMAC. */
 hmac_ivc_status_t compute_hmac_over_iv_cipher_receiver(crypto_ctx_t *ctx,
                                                        uint8_t *mac_out,
@@ -1738,17 +1637,6 @@ gcm_master_status_t derive_gcm_iv_from_drbg(crypto_ctx_t *ctx)
     return GCM_MASTER_SUCCESS;
 }
 
-/*
- * Uses globals declared in your ecdh.c:
- *   uint8_t private_key_sender[], public_key_sender[], my_secret[], aes_key[], mac_key[], size_t my_len;
- *
- * Steps:
- *  1) generate_keypairs_cmox()  -> fills priv/pub (sender & receiver pairs)
- *  2) compute_ecdh_shared_as_sender(my_secret, &my_len)
- *  3) derive_keys_from_shared_secret(aes_key, sizeof(aes_key), mac_key, sizeof(mac_key))
- *
- * On failure the function wipes sensitive outputs and returns a negative code.
- */
 /* Initializes the sender ECDH secret and derived keys. */
 sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
 {
@@ -1776,13 +1664,6 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
         return SENDER_INIT_ERR_GENKEY;
     }
 
-    /*
-     * ---------- 2) compute sender-side ECDH secret ----------
-     *
-     * sender private key x receiver public key
-     *
-     * The function stores exactly 32 canonical bytes internally.
-     */
     ret = compute_ecdh_shared_as_sender(ctx, NULL, NULL);
     if (ret != ECDH_SUCCESS) {
         ECDH_LOG_PRINTF("[ERROR] sender_init_ecdh_crypto: compute_ecdh_shared_as_sender failed (rc=%d)\r\n", ret);
@@ -1829,19 +1710,6 @@ sender_init_status_t sender_init_ecdh_crypto(crypto_ctx_t *ctx)
     return SENDER_INIT_SUCCESS;
 }
 
-/*
- * Uses globals from ecdh.c:
- *   uint8_t public_key_sender[], pub_len_sender,
- *   uint8_t computed_secret_receiver[], my_secret_receiver[], aes_key_receiver[], mac_key_receiver[], size_t my_len_receiver;
- *
- * Steps:
- *  1) validate_public_key_sender_format(public_key_sender, pub_len_sender)
- *  2) compute_ecdh_shared_as_receiver(my_secret_receiver, &my_len_receiver)
- *  3) derive_keys_from_shared_secret_receiver(aes_key_receiver, sizeof(aes_key_receiver), mac_key_receiver, sizeof(mac_key_receiver))
- *
- * On failure the function wipes sensitive outputs and returns a negative code.
- */
-
 /* Initializes the receiver ECDH secret and derived keys. */
 receiver_init_status_t receiver_init_ecdh_crypto(
     crypto_ctx_t *ctx)
@@ -1864,11 +1732,6 @@ receiver_init_status_t receiver_init_ecdh_crypto(
 
 #else
 
-    /*
-     * Validate the actual peer public key used for the reverse
-     * direction. Do not validate ctx->keys.public_key_sender here;
-     * that field is the local STM32 sender public key.
-     */
     ret =
         validate_public_key_sender_format_ctx(
             ctx,
@@ -2171,7 +2034,6 @@ secure_clear_status_t secure_clear_decrypted_adc_values(crypto_ctx_t *ctx)
     return SECURE_CLEAR_SUCCESS;
 }
 
-/* --- Streaming-style GCM encrypt (no mac[]) --- */
 /* Encrypts the payload through the streaming AES-GCM API. */
 gcm_enc_status_t encrypt_aes_gcm_aead(crypto_ctx_t *ctx)
 {
@@ -2290,7 +2152,6 @@ gcm_enc_status_t encrypt_aes_gcm_aead(crypto_ctx_t *ctx)
     return GCM_ENC_SUCCESS;
 }
 
-/* --- Single-call AEAD encrypt (no mac[]) --- */
 /* Encrypts and tags a payload through the single-call GCM API. */
 gcm_aead_single_status_t encrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
 {
@@ -2357,27 +2218,6 @@ gcm_aead_single_status_t encrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
     return GCM_AEAD_SINGLE_SUCCESS;
 }
 
-/* Wrapper / "mother" encrypt function that exposes both implementations
- * (streaming-style and single-call AEAD) and lets caller choose behavior.
- *
- * Behavior modes:
- *   ENCRYPT_GCM_MODE_STREAM_ONLY    -> call streaming implementation only
- *   ENCRYPT_GCM_MODE_SINGLE_ONLY    -> call single-call implementation only
- *   ENCRYPT_GCM_MODE_TRY_STREAM_THEN_SINGLE
- *                                   -> try streaming, if it fails try single-call
- *
- * It returns 0 on success, negative on error. If successful, *out_computed_size
- * holds the ciphertext length (without tag).
- *
- * This wrapper assumes the lower-level functions already exist in the TU:
- *   int encrypt_aes_gcm_aead(size_t *out_computed_size);       // streaming
- *   int encrypt_aead_gcm_singlecall(size_t *out_computed_size);// single-call
- *
- * It also preserves the robust wiping behavior: when an attempt fails, it
- * relies on the called function to have wiped sensitive buffers; if both fail
- * the wrapper also clears the combined buffer.
- */
-
 /* Prepares a GCM nonce and the authenticated sender payload. */
 gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
     crypto_ctx_t *ctx)
@@ -2406,16 +2246,6 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
         return GCM_SENDER_ERR_GEN_IV;
     }
 
-    /*
-     * 2) Perform AES-GCM encryption once using the streaming API.
-     *
-     * Output layout produced by encrypt_aes_gcm_aead():
-     *
-     * cipher_text_gcm_aead =
-     * [ciphertext][GCM authentication tag]
-     *
-     * ctx->tmp.computed_size contains ciphertext length only.
-     */
     gcm_rc = encrypt_aes_gcm_aead(ctx);
     if (gcm_rc != GCM_ENC_SUCCESS) {
         ECDH_LOG_PRINTF(
@@ -2483,20 +2313,6 @@ gcm_sender_status_t generate_nonce_iv_encrypt_gcm_sender(
 
     return GCM_SENDER_SUCCESS;
 }
-
-/* Receiver: streaming-style GCM decrypt + verify (expects separated ciphertext_sender & tag_sender)
- *
- * Globals assumed present in compilation unit:
- *  - uint8_t  ciphertext_sender[]        (ciphertext only)
- *  - uint8_t  tag_sender[AES_GCM_TAG_SIZE]  (tag from sender)
- *  - uint8_t  IV[]                       (received IV/nonce)
- *  - uint8_t  aes_key_receiver[]         (shared AEAD key for receiver)
- *  - uint8_t  decrypted_bytes[]          (output plaintext buffer)
- *  - size_t   computed_size              (will be set to ciphertext length on success)
- *
- * Uses the streaming API: cmox_gcm_construct -> cmox_cipher_init -> setKey -> setIV ->
- * setTagLen -> cmox_cipher_append (ciphertext -> plaintext) -> cmox_cipher_verifyTag -> cleanup.
- */
 
 /* Decrypts a GCM payload and verifies its authentication tag. */
 gcm_dec_status_t decrypt_verify_aes_gcm_receiver(
@@ -2644,20 +2460,6 @@ gcm_dec_status_t decrypt_verify_aes_gcm_receiver(
     return GCM_DEC_SUCCESS;
 }
 
-/* Single-call AEAD decrypt (AES-GCM) - receiver side
- *
- * Globals assumed:
- *  - uint8_t  ciphertext_sender[]      (ciphertext only)
- *  - uint8_t  tag_sender[AES_GCM_TAG_SIZE]
- *  - uint8_t  IV[]                     (received IV/nonce)
- *  - uint8_t  aes_key_receiver[]       (shared AEAD key for receiver)
- *  - uint8_t  decrypted_bytes[]        (output plaintext buffer)
- *  - uint8_t  cipher_text_gcm_aead[]   (scratch/combined buffer; must be >= ciphertext_len + tag)
- *  - size_t   computed_size            (will be set to ciphertext length on success)
- *
- * Returns 0 on success, negative error on failure.
- */
-
 /* Authenticates and decrypts through the single-call GCM API. */
 gcm_aead_dec_status_t decrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
 {
@@ -2746,22 +2548,6 @@ gcm_aead_dec_status_t decrypt_aead_gcm_singlecall(crypto_ctx_t *ctx)
     return GCM_AEAD_DEC_SUCCESS;
 }
 
-/*
- * Encrypt one complete UART plaintext frame for the STM32 -> ESP32
- * startup test.
- *
- * Input:
- *     uart_payload[0..uart_payload_len-1]
- *
- * Output:
- *     nonce_out[12]
- *     ciphertext_and_tag_out =
- *         ciphertext[uart_payload_len] || tag[16]
- *
- * The payload is copied into the existing crypto context so the
- * established C-MOX streaming AES-GCM implementation remains the
- * single encryption implementation.
- */
 /* Encrypts one UART payload and exports its GCM nonce and tag. */
 gcm_sender_status_t ecdh_encrypt_uart_payload_once(
     crypto_ctx_t *ctx,
@@ -3053,13 +2839,6 @@ gcm_receiver_status_t decrypt_verify_recombine_gcm_receiver(
         load_be64(
             &ctx->IV_GCM_receiver[4]);
 
-    /*
-     * Authentication and protocol validation have succeeded.
-     *
-     * In the boot-write-only Flash configuration this updates the
-     * ESP32->STM32 replay high-water mark in RAM only. It does not append a
-     * Flash record for every ACK/NACK.
-     */
     replay_result =
         stm32_gcm_nvm_check_and_commit_rx(
             session_id,
@@ -3420,12 +3199,7 @@ gcm_nonce_status_t gcm_nonce_allocate(
     ctx->gcm_nonce.next_counter++;
     ctx->gcm_nonce.current_counter = counter;
 
-    /*
-     * Construct the exact 96-bit GCM nonce:
-     *
-     * bytes 0..3  = session ID
-     * bytes 4..11 = monotonically increasing message counter
-     */
+    /* Nonce = session ID || packet counter. */
     store_be32(&ctx->IV_GCM[0],
                ctx->gcm_nonce.session_id);
 

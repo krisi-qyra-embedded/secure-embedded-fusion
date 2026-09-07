@@ -5,7 +5,7 @@
 #include "i2c_dma.h"
 #include "tim.h"
 #include "uart.h"
-#include "pwr.h" /* not used directly here; low-power is correctly applied in the caller wait loops */
+#include "pwr.h" /* low-power helpers used by caller paths */
 /*#include "sig_sensors.h"*/
 #include "iwdg.h"
 #include "FreeRTOS.h"
@@ -36,62 +36,12 @@
 #define SYSTEM_FAULT_MASK_ESP32_UART_AES_GCM   (1UL << 5)
 #endif
 
-/*
- * Multi-sensor I2C DMA driver:
- *
- * BME680 uses I2C1 with DMA:
- *   I2C1_RX -> DMA1 Stream5, Channel 1
- *   I2C1_TX -> DMA1 Stream6, Channel 1
- *
- * MPU9250 uses I2C3 with DMA:
- *   I2C3_RX -> DMA1 Stream1, Channel 1
- *   I2C3_TX -> DMA1 Stream4, Channel 3
- *
- * Pin mapping in this project:
- *   BME680:
- *     I2C1_SCL -> PB8  (AF4)
- *     I2C1_SDA -> PB9  (AF4)
- *
- *   MPU9250:
- *     I2C3_SCL -> PA8  (AF4)
- *     I2C3_SDA -> PB4  (AF9)
- *
- * IMPORTANT:
- * - bme680g_rx_cmplt and bme680g_tx_cmplt are ONLY modified in:
- *      DMA1_Stream5_IRQHandler (RX complete/error)
- *      DMA1_Stream6_IRQHandler (TX complete/error)
- *
- * - mpu9250g_rx_cmplt and mpu9250g_tx_cmplt are ONLY modified in:
- *      DMA1_Stream1_IRQHandler (RX complete/error)
- *      DMA1_Stream4_IRQHandler (TX complete/error)
- *
- * - All other DMA stream IRQ handlers in this file are intentionally empty.
- *
- * - Centralized I2C timing + CR2(DMAEN/LAST) restore
- * - Recovery restores CR2/CCR/TRISE/PE after SWRST/APB reset
- * - Separate DMA quiesce paths for BME680 and MPU9250
- * - Sensor-specific lightweight reinit + self-test hooks
- * - Strong DMA stream/dir validation per I2C instance
- * - Bounded BTF wait before STOP in TX DMA IRQ
- * - Defensive STOP/SR clear/bus-release helpers
- * - No WFI inside SR polling loops
- */
 
 #define I2C_AF_DEFAULT              (4U)
 
 /*
- * IMPORTANT:
- * I2C timing on STM32F411 is derived from the APB1 peripheral clock (PCLK1),
- * not directly from SYSCLK/HCLK.
- *
- * For a 96 MHz system clock, APB1 must still remain within STM32F411 limits.
- * A practical configuration is:
- *   SYSCLK = 96 MHz
- *   APB1   = 48 MHz  (prescaler /2)
- *
- * Standard-mode I2C timing (~100 kHz):
- *   CCR   = PCLK1 / (2 * FSCL) = 48 MHz / (2 * 100 kHz) = 240
- *   TRISE = FREQ + 1 = 48 + 1 = 49
+ * I2C timing uses APB1 = 48 MHz.
+ * Standard mode target is about 100 kHz.
  */
 #define SYSCLK_HZ                   (96000000UL)
 #define I2C_PCLK1_HZ                (48000000UL)
@@ -281,18 +231,6 @@ static void i2c_dma_mark_fault_owner(I2C_TypeDef *I2Cx)
     i2c_dma_mark_fault_owner_task(I2Cx);
 }
 
-/*
- * FreeRTOS binary semaphores used by DMA IRQ handlers.
- *
- * Ownership/mapping:
- *   BME680  I2C1_RX -> DMA1_Stream5 -> bme680_rx_sem
- *   BME680  I2C1_TX -> DMA1_Stream6 -> bme680_tx_sem
- *   MPU9250 I2C3_RX -> DMA1_Stream1 -> mpu9250_rx_sem
- *   MPU9250 I2C3_TX -> DMA1_Stream4 -> mpu9250_tx_sem
- *
- * These semaphores are given only from the DMA IRQ path. The old completion
- * flags are kept for diagnostics and compatibility.
- */
 SemaphoreHandle_t bme680_rx_sem  = NULL;
 SemaphoreHandle_t bme680_tx_sem  = NULL;
 SemaphoreHandle_t mpu9250_rx_sem = NULL;
@@ -308,8 +246,6 @@ typedef struct {
     uint32_t            clear_te_mask;
     IRQn_Type           irq;
 } dma_stream_hw_t;
-
-/* ----------------------------- Private prototypes ----------------------------- */
 
 static inline void reg_barrier(void);
 static inline void short_delay(volatile uint32_t d);
@@ -358,8 +294,6 @@ __attribute__((weak)) int i2c1_bme680_device_reinit(void);
 __attribute__((weak)) int i2c1_bme680_selftest(void);
 __attribute__((weak)) int i2c3_mpu9250_device_reinit(void);
 __attribute__((weak)) int i2c3_mpu9250_selftest(void);
-
-/* ----------------------------- Small helpers ----------------------------- */
 
 /* Orders I2C and DMA register updates. */
 static inline void reg_barrier(void)
@@ -521,8 +455,6 @@ static I2C_TypeDef *i2c_instance_from_num(uint8_t i2c_num)
     }
 }
 
-/* ----------------------------- DMA stream mapping ----------------------------- */
-
 /* Resolves DMA1 stream registers, flags and interrupt routing. */
 static int dma1_get_stream_hw(uint8_t dma_stream_num, dma_stream_hw_t *out)
 {
@@ -621,8 +553,6 @@ static int dma1_get_stream_hw(uint8_t dma_stream_num, dma_stream_hw_t *out)
     }
 }
 
-/* ----------------------------- Timer fallback helpers ----------------------------- */
-
 /* Consumes the TIM2 one-second completion flag. */
 static uint8_t tim2__1s_check_flag(void)
 {
@@ -645,8 +575,6 @@ void TIM2_IRQHandler(void)
         tim2_1s_flag = 1U;
     }
 }
-
-/* ----------------------------- Generic wait helpers ----------------------------- */
 
 /* Polls register bits within a fixed iteration budget. */
 static int wait_reg_mask_state(volatile uint32_t *reg, uint32_t mask, uint8_t want_set, uint32_t max_count)
@@ -690,7 +618,6 @@ static int wait_reg_mask_state_long(volatile uint32_t *reg, uint32_t mask, uint8
 
     tim2_1s_stop();
 
-    /* timer expired -> decide by current state */
     {
         uint8_t is_set = (((*reg) & mask) != 0U) ? 1U : 0U;
         return (is_set == want_set) ? 1 : 0;
@@ -957,8 +884,6 @@ i2c_dma_init_status_t i2c_dma_mpu9250_peripherals_init(void)
 
     return I2C_DMA_INIT_OK;
 }
-
-/* ----------------------------- I2C recovery/waits ----------------------------- */
 
 /* Attempts staged recovery of a stalled I2C transaction. */
 i2c_recover_status_t i2c_recover(I2C_TypeDef *I2Cx,
@@ -1331,8 +1256,6 @@ static int wait_dma_stream_disabled(DMA_Stream_TypeDef *stream,
     return ((stream->CR & en_mask) == 0U) ? 1 : 0;
 }
 
-/* ----------------------------- Public init API ----------------------------- */
-
 /* Configures the selected I2C bus and GPIO routing. */
 i2c_select_status_t i2c_init_select(uint8_t i2c_num, uint8_t scl_pin, uint8_t sda_pin)
 {
@@ -1428,8 +1351,6 @@ i2c_select_status_t i2c_init_select(uint8_t i2c_num, uint8_t scl_pin, uint8_t sd
     return I2C_SELECT_OK;
 }
 
-/* ----------------------------- DMA init API ----------------------------- */
-
 /* Initializes a DMA1 stream for an I2C transfer direction. */
 dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
                              uint32_t channel,
@@ -1502,8 +1423,6 @@ dma_status_t dma_stream_init(DMA_Stream_TypeDef *stream,
     return DMA_OK;
 }
 
-/* ----------------------------- Internal DMA start helper ----------------------------- */
-
 /* Arms the requested DMA1 stream for I2C data movement. */
 static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
                                      I2C_TypeDef *I2Cx,
@@ -1528,10 +1447,6 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
     }
 
     if (I2Cx == I2C1) {
-        /* BME680 on I2C1:
-         *   RX -> DMA1 Stream5
-         *   TX -> DMA1 Stream6
-         */
         if ((dir == DMA_DIR_P2M) && (dma_stream_num != 5U)) {
             i2c_dma_mark_fault_owner(I2Cx);
 
@@ -1552,10 +1467,6 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
 
         I2C1->CR2 |= (I2C_CR2_DMAEN | I2C_CR2_LAST);
     } else if (I2Cx == I2C3) {
-        /* MPU9250 on I2C3:
-         *   RX -> DMA1 Stream1
-         *   TX -> DMA1 Stream4
-         */
         if ((dir == DMA_DIR_P2M) && (dma_stream_num != 1U)) {
             i2c_dma_mark_fault_owner(I2Cx);
 
@@ -1638,8 +1549,6 @@ static int dma1_i2c_transfer_receive(uint8_t dma_stream_num,
 
     return 1;
 }
-
-/* ----------------------------- I2C DMA write ----------------------------- */
 
 /* Starts a DMA-backed I2C register write. */
 i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
@@ -1795,8 +1704,6 @@ i2c_dma_status_t i2c_dma_write_reg(I2C_TypeDef *I2Cx,
 
     return I2C_DMA_OK;
 }
-
-/* ----------------------------- I2C DMA read ----------------------------- */
 
 /* Starts a DMA-backed I2C register read. */
 i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
@@ -2037,8 +1944,6 @@ i2c_dma_status_t i2c_dma_read(I2C_TypeDef *I2Cx,
     return I2C_DMA_OK;
 }
 
-/* ----------------------------- DMA IRQ handlers ----------------------------- */
-
 /* Checks I2C byte-transfer completion inside the interrupt. */
 static inline void i2c_irq_wait_btf_short(I2C_TypeDef *I2Cx)
 {
@@ -2053,7 +1958,7 @@ static inline void i2c_irq_wait_btf_short(I2C_TypeDef *I2Cx)
 }
 
 /* Services the BME680 I2C1 transmit DMA interrupt. */
-void DMA1_Stream6_IRQHandler(void) /* I2C1_TX complete/error -> bme680g_tx_cmplt */
+void DMA1_Stream6_IRQHandler(void)
 {
     /* Acknowledge Stream6 flags before publishing the transfer result. */
     uint32_t hisr = DMA1->HISR;
@@ -2093,7 +1998,7 @@ void DMA1_Stream6_IRQHandler(void) /* I2C1_TX complete/error -> bme680g_tx_cmplt
 }
 
 /* Services the BME680 I2C1 receive DMA interrupt. */
-void DMA1_Stream5_IRQHandler(void) /* I2C1_RX complete/error -> bme680g_rx_cmplt */
+void DMA1_Stream5_IRQHandler(void)
 {
     /* Clear Stream5 completion or error flags before returning. */
     uint32_t hisr = DMA1->HISR;
@@ -2132,7 +2037,7 @@ void DMA1_Stream5_IRQHandler(void) /* I2C1_RX complete/error -> bme680g_rx_cmplt
 }
 
 /* Services the MPU9250 I2C3 receive DMA interrupt. */
-void DMA1_Stream1_IRQHandler(void) /* I2C3_RX complete/error -> mpu9250g_rx_cmplt */
+void DMA1_Stream1_IRQHandler(void)
 {
     /* Publish the RX result from the Stream1 interrupt flags. */
     uint32_t lisr = DMA1->LISR;
@@ -2171,7 +2076,7 @@ void DMA1_Stream1_IRQHandler(void) /* I2C3_RX complete/error -> mpu9250g_rx_cmpl
 }
 
 /* Services the MPU9250 I2C3 transmit DMA interrupt. */
-void DMA1_Stream4_IRQHandler(void) /* I2C3_TX complete/error -> mpu9250g_tx_cmplt */
+void DMA1_Stream4_IRQHandler(void)
 {
     /* Handle Stream4 completion and transfer errors separately. */
     uint32_t hisr = DMA1->HISR;
@@ -2214,4 +2119,3 @@ void DMA1_Stream4_IRQHandler(void) /* I2C3_TX complete/error -> mpu9250g_tx_cmpl
 void DMA1_Stream7_IRQHandler(void) { /* Clear the pending stream flags reported by DMA1. */  }
 /* Acknowledges the retained DMA1 Stream2 interrupt path. */
 void DMA1_Stream2_IRQHandler(void) { /* Use the low DMA1 flag register for Stream2 events. */  }
-

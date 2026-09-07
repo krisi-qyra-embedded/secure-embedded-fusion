@@ -22,31 +22,10 @@
 #define AES_256_KEY_SIZE            32  // 32 bytes = 256 bits
 #define AES_256_IV_SIZE             16  // 16 bytes (CTR counter block)
 #define AES_GCM_AEAD_IV_SIZE        12  // 12-byte AES-GCM nonce/IV
-#define GCM_GCM_TAG_SIZE            16  /* pro recommended tag size (128-bit) */
+#define GCM_GCM_TAG_SIZE            16
 #define ADC_SAMPLE_COUNT            8
 #define BYTES_PER_SAMPLE            sizeof(uint32_t)
 #define AES_GCM_TAG_SIZE       	    16
-/*
- * STM32 -> ESP32 telemetry AES-GCM capacity.
- *
- * Plaintext frame:
- *     header    =   9 bytes
- *     telemetry = 159 bytes
- *     checksum  =   1 byte
- *                ---------
- *                 169 bytes
- *
- * AES-GCM output:
- *     ciphertext = 169 bytes
- *     tag        =  16 bytes
- *                  ---------
- *                  185 bytes
- *
- * UART wire packet adds the existing 12-byte nonce:
- *     12 + 185 = 197 bytes.
- *
- * These sizes are intentionally independent of the legacy ADC payload size.
- */
 #define UART_GCM_PLAINTEXT_SIZE          169U
 #define UART_GCM_CIPHERTEXT_TAG_SIZE     \
     (UART_GCM_PLAINTEXT_SIZE + AES_GCM_TAG_SIZE)
@@ -67,16 +46,6 @@ extern SemaphoreHandle_t xSerialSemaphore;
             log_printf(__VA_ARGS__);                                         \
         }                                                                    \
     } while (0)
-/*
- * ESP32 -> STM32 encrypted ACK/NACK response format.
- *
- * Plaintext:
- *   magic[2] || version[1] || type[1] || payload_len[1] ||
- *   sequence_le[4] || reason[1] || checksum8[1]
- *
- * Encrypted UART wire packet:
- *   nonce[12] || ciphertext[11] || tag[16]
- */
 #define GCM_UART_RESPONSE_PLAINTEXT_SIZE      11U
 #define GCM_UART_RESPONSE_CIPHERTEXT_SIZE     11U
 #define GCM_UART_RESPONSE_WIRE_SIZE           \
@@ -165,7 +134,7 @@ static const uint8_t esp32_provisioned_sender_public_key[
     0x9E, 0x24, 0xF6, 0xA2, 0x50, 0x3C, 0x93, 0xCA,
     0xB6, 0x12, 0x83, 0xA6, 0xFA, 0x83, 0xF6, 0xD5
 };
-#endif /* ECDH_PROVISIONED_KEYS_PRESENT */
+#endif
 #if ECDH_CANONICAL_SECRET_LEN != AES_256_KEY_SIZE
 #error "Canonical secp256r1 ECDH secret must be 32 bytes"
 #endif
@@ -313,26 +282,8 @@ typedef enum {
     //GEN_IV_ERR_BAD_PARAM         = -201
 } gcm_master_status_t;
 #ifndef AES_GCM_TAG_SIZE
-#define AES_GCM_TAG_SIZE 16 /* recommended 128-bit tag */
+#define AES_GCM_TAG_SIZE 16
 #endif
-/* Public-key format validator for your codebase.
- *
- * Accepts:
- *   - raw X||Y (64 bytes)
- *   - uncompressed form 0x04 || X || Y (65 bytes)
- *
- * Rejects:
- *   - NULL pointer
- *   - lengths other than 64 or 65
- *   - 65-byte value whose first byte != 0x04
- *   - keys that are all-zero (obvious invalid)
- *
- * Return codes:
- *   0  => valid
- *  -1  => NULL input
- *  -2  => invalid length/format
- *  -3  => key is all-zero (invalid)
- */
 typedef enum {
     PUBKEY_OK           =  0,
     PUBKEY_ERR_NULL     = -1,
@@ -409,10 +360,6 @@ typedef struct {
         uint8_t  plain_text_bytes[UART_GCM_PLAINTEXT_SIZE];
         uint8_t  decrypted_bytes[UART_GCM_PLAINTEXT_SIZE];
         uint8_t  cipher_text_bytes[ADC_SAMPLE_COUNT * BYTES_PER_SAMPLE + AES_256_IV_SIZE];
-        /*
-         * AES-GCM combined ciphertext || tag buffers.
-         * 169-byte ciphertext + 16-byte tag = 185 bytes.
-         */
         uint8_t  cipher_text_gcm_aead[UART_GCM_CIPHERTEXT_TAG_SIZE];
         uint8_t  cipher_text_gcm_aead_receiver[UART_GCM_CIPHERTEXT_TAG_SIZE];
     } buffers;
@@ -458,11 +405,6 @@ typedef struct {
     uint8_t IV_GCM_receiver[AES_GCM_AEAD_IV_SIZE];
     gcm_nonce_state_t gcm_nonce;
 } crypto_ctx_t;
-/*
- * Compile-time guards for the STM32 -> ESP32 telemetry transaction.
- * These catch any future accidental regression to the old 32-byte ADC-sized
- * AES-GCM buffers.
- */
 _Static_assert(
     sizeof(((crypto_ctx_t *)0)->buffers.plain_text_bytes) >=
         UART_GCM_PLAINTEXT_SIZE,
@@ -534,4 +476,4 @@ gcm_master_status_t derive_gcm_iv_from_drbg(crypto_ctx_t *ctx);
 gcm_nonce_status_t gcm_nonce_allocate(
     crypto_ctx_t *ctx);
 gcm_nonce_status_t gcm_nonce_session_init(crypto_ctx_t *ctx);
-#endif /* ECDH_H_ */
+#endif

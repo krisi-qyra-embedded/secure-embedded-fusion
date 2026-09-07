@@ -1,6 +1,6 @@
-../Core/Src/pwr.c:11:6:PWR_ClearAllPendingIRQs	2
-../Core/Src/pwr.c:21:6:PWR_ClearAllEXTIPending	1
+../Core/Src/pwr.c:9:6:PWR_ClearAllPendingIRQs	2
+../Core/Src/pwr.c:20:6:PWR_ClearAllEXTIPending	1
 ../Core/Src/pwr.c:29:6:PWR_PrepareForSleep	1
-../Core/Src/pwr.c:49:6:sleep_mode_configure_once	1
-../Core/Src/pwr.c:60:6:PWR_EnterSleep_WFI	1
-../Core/Src/pwr.c:74:6:PWR_EnterSleep_WFE	1
+../Core/Src/pwr.c:45:6:sleep_mode_configure_once	1
+../Core/Src/pwr.c:55:6:PWR_EnterSleep_WFI	1
+../Core/Src/pwr.c:66:6:PWR_EnterSleep_WFE	1

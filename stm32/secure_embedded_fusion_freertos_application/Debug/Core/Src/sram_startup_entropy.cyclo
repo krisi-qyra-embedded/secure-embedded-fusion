@@ -1,8 +1,8 @@
-../Core/Src/sram_startup_entropy.c:58:5:sram_sample_startup_state	4
-../Core/Src/sram_startup_entropy.c:102:5:sram_sample_runtime	4
-../Core/Src/sram_startup_entropy.c:142:16:sram_get_entropy_buffer	1
-../Core/Src/sram_startup_entropy.c:151:10:sram_get_entropy_size	1
-../Core/Src/sram_startup_entropy.c:160:9:sram_is_sampled	1
-../Core/Src/sram_startup_entropy.c:175:10:sram_get_bytes	5
-../Core/Src/sram_startup_entropy.c:212:6:sram_get_statistics	12
-../Core/Src/sram_startup_entropy.c:243:6:sram_print_buffer	6
+../Core/Src/sram_startup_entropy.c:15:5:sram_sample_startup_state	4
+../Core/Src/sram_startup_entropy.c:46:5:sram_sample_runtime	4
+../Core/Src/sram_startup_entropy.c:75:16:sram_get_entropy_buffer	1
+../Core/Src/sram_startup_entropy.c:83:10:sram_get_entropy_size	1
+../Core/Src/sram_startup_entropy.c:91:9:sram_is_sampled	1
+../Core/Src/sram_startup_entropy.c:102:10:sram_get_bytes	5
+../Core/Src/sram_startup_entropy.c:125:6:sram_get_statistics	12
+../Core/Src/sram_startup_entropy.c:150:6:sram_print_buffer	6

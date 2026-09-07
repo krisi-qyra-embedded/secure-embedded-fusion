@@ -4,7 +4,6 @@
 
 #include "stm32f4xx.h"
 
-
 /* Enables access to the Cortex-M4 floating-point coprocessors. */
 void fpu_enable(void)
 {
@@ -13,5 +12,4 @@ void fpu_enable(void)
 	SCB->CPACR |=(1<<21);
 	SCB->CPACR |=(1<<22);
 	SCB->CPACR |=(1<<23);
-
 }

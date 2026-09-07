@@ -2,25 +2,26 @@
  * Documentation date: 2026-09-05
  */
 
-/*
- * clock.c
+/**
+ * @file clock.c
+ * @brief STM32F411 96 MHz system clock configuration.
  *
- * 96 MHz system clock from 8 MHz HSE for STM32F411 / STM32F4xx.
+ * Uses the 8 MHz HSE as PLL source.
  *
  * Clock tree:
- *   HSE   = 8 MHz
- *   PLL_M = 8
- *   PLL_N = 192
- *   PLL_P = 2
- *   PLL_Q = 4
+ * - HSE   = 8 MHz
+ * - PLL_M = 8
+ * - PLL_N = 192
+ * - PLL_P = 2
+ * - PLL_Q = 4
  *
  * Result:
- *   VCO_IN  = 8 / 8   = 1 MHz
- *   VCO_OUT = 1 * 192 = 192 MHz
- *   SYSCLK  = 192 / 2 = 96 MHz
- *   HCLK    = 96 MHz
- *   APB1    = 48 MHz   (HCLK / 2)
- *   APB2    = 96 MHz   (HCLK / 1)
+ * - VCO_IN  = 1 MHz
+ * - VCO_OUT = 192 MHz
+ * - SYSCLK  = 96 MHz
+ * - HCLK    = 96 MHz
+ * - APB1    = 48 MHz
+ * - APB2    = 96 MHz
  */
 
 #include "clock.h"
@@ -61,18 +62,20 @@ void clock_96_mhz_init(void)
 
     clock_set_flash_latency_96mhz();
 
-    /* 4) Configure bus prescalers
+    /*
+     * 4) Configure bus prescalers
      *    AHB  = SYSCLK / 1  = 96 MHz
      *    APB1 = HCLK   / 2  = 48 MHz
      *    APB2 = HCLK   / 1  = 96 MHz
      */
     RCC->CFGR &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2);
     RCC->CFGR |=  RCC_CFGR_HPRE_DIV1
-               |  RCC_CFGR_PPRE1_DIV2
-               |  RCC_CFGR_PPRE2_DIV1;
+               | RCC_CFGR_PPRE1_DIV2
+               | RCC_CFGR_PPRE2_DIV1;
 
     if ((RCC->CR & RCC_CR_PLLON) != 0U) {
         RCC->CR &= ~RCC_CR_PLLON;
+
         while ((RCC->CR & RCC_CR_PLLRDY) != 0U) {
         }
     }
@@ -85,11 +88,13 @@ void clock_96_mhz_init(void)
         | ((uint32_t)PLL_Q << RCC_PLLCFGR_PLLQ_Pos);
 
     RCC->CR |= RCC_CR_PLLON;
+
     while ((RCC->CR & RCC_CR_PLLRDY) == 0U) {
     }
 
     RCC->CFGR &= ~RCC_CFGR_SW;
     RCC->CFGR |= RCC_CFGR_SW_PLL;
+
     while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL) {
     }
 

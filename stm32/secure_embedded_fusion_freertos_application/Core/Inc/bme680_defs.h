@@ -1,3 +1,8 @@
+/**
+ * @file bme680_defs.h
+ * @brief BME680 register definitions, configuration values and data types.
+ */
+
 #ifndef __BME680_DEFS_H__
 #define __BME680_DEFS_H__
 
@@ -23,7 +28,6 @@
 
 #define BME680_W_NO_NEW_DATA    1   /* OK but no new measurement available */
 
-/* or if you want your original name */
 #define BME680_OK_BUT_NO_NEW    1
 
 

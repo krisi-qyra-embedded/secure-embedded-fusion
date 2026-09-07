@@ -1,3 +1,7 @@
+/**
+ * @file bme680.c
+ * @brief BME680 sensor driver and measurement handling.
+ */
 #include <bme680.h>
 #include "tim.h"
 #include "i2c_dma.h"
@@ -21,7 +25,7 @@
  *	CS  :  3.3v
 */
 
-#define MPU_READ_TIMEOUT_ITER  100000U   /* adjust for your CPU clock if needed */
+#define MPU_READ_TIMEOUT_ITER  100000U   /* adjust  CPU clock if needed */
 #define MPU_READ_RETRIES        3U
 
 #ifndef BME680_USER_I2C_RTOS_TIMEOUT_MS
@@ -317,10 +321,11 @@ static void bme680_clear_dma_semaphore_if_rtos(SemaphoreHandle_t sem)
     if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) && (sem != NULL)) {
         while (xSemaphoreTake(sem, 0U) == pdTRUE) {
             /* Drain stale completion events before starting a new transfer. */
+        	/*wait till semaphore finishes the completion state before starting a new transfer*/
         }
     }
 }
-
+/* Waits for the I2C_DMA transfer to complete*/
 static int bme680_wait_dma_complete_or_timeout(volatile i2c_dma_transfer_state_t *state,
                                                SemaphoreHandle_t sem)
 {
@@ -339,7 +344,7 @@ static int bme680_wait_dma_complete_or_timeout(volatile i2c_dma_transfer_state_t
         return 0;
     }
 
-    /* FreeRTOS path: block the current task until DMA IRQ gives the semaphore. */
+    /* FreeRTOS path: blocks the current task until DMA IRQ gives the semaphore. */
     if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) && (sem != NULL)) {
         if (xSemaphoreTake(sem, pdMS_TO_TICKS(BME680_USER_I2C_RTOS_TIMEOUT_MS)) == pdTRUE) {
             return (*state == I2C_DMA_TRANSFER_COMPLETE) ? 1 : 0;
@@ -1212,10 +1217,8 @@ static int8_t get_calib_data(struct bme680_dev *dev)
     }
 
     /*
-     * IMPORTANT:
-     * Calibration read is done byte-by-byte on purpose.
-     *
-     * Your newer DMA block-read path is producing zero for the early
+     *      *
+     *  DMA block-read path is producing zero for the early
      * temperature calibration bytes. Byte reads force the safe blocking
      * path inside i2c_dma_read(), avoiding the >2-byte DMA RX path during
      * BME680 init.
@@ -2323,13 +2326,8 @@ static app_bme680_runtime_status_t app_bme680_recover_and_reinit(int attempt,
     i2c_dma_init_status_t init_status;
 
     /*
-     * Runtime recovery must be bounded.
      *
-     * Do NOT call init_bme680() from here during fault-injection/runtime retry.
-     * If the BME680 is physically disconnected or being fault-injected,
-     * init_bme680() enters soft-reset / chip-id / calibration reads and can
-     * consume the retry window before the outer loop reaches attempt 2/3 and 3/3.
-     *
+     * init_bme680() should not be called from here during fault-injection/runtime retry.
      * The outer app_bme680_sensor_runtime_process() loop owns the 3-attempt budget.
      * This function only restores I2C/DMA state between attempts.
      */
