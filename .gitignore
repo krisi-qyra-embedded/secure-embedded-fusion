@@ -1,2 +1,3 @@
 build/
 cmake-build-*/
+/esp32/ESP32_AES_GCM_UART_STM32_HTTPS_MQTT/main/certs/private_pem_key
