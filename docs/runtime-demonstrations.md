@@ -58,11 +58,11 @@ The runtime demonstrations are supported by three main firmware components:
 
 |---|---|---|
 
-| STM32 Application | FreeRTOS sensor acquisition, DMA, fault diagnostics, watchdog recovery, and authenticated AES-GCM communication | \[View STM32 source](https://github.com/krisiqyra/secure-embedded-fusion/tree/main/stm32/secure\_embedded\_fusion\_freertos\_application) |
+| STM32 Application | FreeRTOS sensor acquisition, DMA, fault diagnostics, watchdog recovery, and authenticated AES-GCM communication | \[View STM32 source](https://github.com/krisiqyra/secure-embedded-fusion/tree/main/stm32/secure_embedded_fusion_freertos_application) |
 
-| ESP32 Application | AES-GCM communication, replay protection, HTTPS dashboard, AWS IoT MQTT, and OTA firmware updates | \[View ESP32 source](https://github.com/krisiqyra/secure-embedded-fusion/tree/main/esp32/ESP32\_AES\_GCM\_UART\_STM32\_HTTPS\_MQTT) |
+| ESP32 Application | AES-GCM communication, replay protection, HTTPS dashboard, AWS IoT MQTT, and OTA firmware updates | \[View ESP32 source](https://github.com/krisiqyra/secure-embedded-fusion/tree/main/esp32/ESP32_AES_GCM_UART_STM32_HTTPS_MQTT) |
 
-| STM32 Secure Bootloader | Ed25519 manifest verification, firmware integrity and authenticity validation, and application handoff | \[View Secure Bootloader](https://github.com/krisiqyra/secure-embedded-fusion/tree/main/stm32/secure\_bootloader) |
+| STM32 Secure Bootloader | Ed25519 manifest verification, firmware integrity and authenticity validation, and application handoff | \[View Secure Bootloader](https://github.com/krisiqyra/secure-embedded-fusion/tree/main/stm32/secure_bootloader) |
 
 
 
