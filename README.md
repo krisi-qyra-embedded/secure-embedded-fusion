@@ -36,5 +36,5 @@ and secure bootloader source code.
 
 
 
-\[View Runtime Demonstrations](docs/runtime-demonstrations.md)
+\[View Runtime Demonstrations](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/runtime-demonstrations.md)
 
