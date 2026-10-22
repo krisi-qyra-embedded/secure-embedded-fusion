@@ -1,0 +1,13 @@
+<map id="telemetry_publish_mpu9250" name="telemetry_publish_mpu9250">
+<area shape="rect" id="Node000001" title="Publish the latest MPU9250 sample." alt="" coords="427,79,610,105"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="556,63,544,60,519,57,495,59,482,64,479,69,485,79,480,77,474,70,478,60,494,54,519,52,545,55,561,64"/>
+<area shape="rect" id="Node000002" href="$a00188.html#a1c5f336c4c3d69521a581a8448776245" title="Read and update processed accelerometer and gyroscope data." alt="" coords="206,79,379,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="409,92,380,95,379,89,414,92"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="327,63,316,60,292,57,270,59,258,64,256,69,261,79,256,77,250,70,255,60,269,54,292,52,317,55,332,64"/>
+<area shape="rect" id="Node000003" href="$a00188.html#a514a5807d084eb48770e3fef77e381e9" title="Run one MPU9250 runtime cycle and recovery step." alt="" coords="5,29,158,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="203,76,158,68,158,63,208,74"/>
+<area shape="rect" id="Node000007" href="$a00188.html#a79563dad6b98e621d46015c9ba5f1957" title="Update the calculated MPU9250 attitude." alt="" coords="18,120,145,147"/>
+<area shape="poly" id="edge4_Node000002_Node000007" title=" " alt="" coords="209,108,146,123,145,118,203,109"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="114,15,103,10,81,8,62,10,50,15,45,21,47,29,41,29,40,19,46,10,60,5,82,3,104,5,119,13"/>
+<area shape="poly" id="edge5_Node000007_Node000007" title=" " alt="" coords="116,105,105,101,81,99,59,101,47,105,45,111,51,120,45,120,39,111,44,102,58,95,82,93,107,96,121,105"/>
+</map>

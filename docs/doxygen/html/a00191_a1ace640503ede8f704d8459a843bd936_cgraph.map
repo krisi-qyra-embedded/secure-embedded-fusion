@@ -1,0 +1,27 @@
+<map id="ESP32_UART_BuildTelemetryFrame" name="ESP32_UART_BuildTelemetryFrame">
+<area shape="rect" id="Node000001" title="Build the plaintext telemetry frame sent to ESP32." alt="" coords="5,237,204,280"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="57,237,55,227,63,218,80,213,105,211,131,213,149,221,144,223,130,218,104,216,81,218,66,223,60,229,62,237"/>
+<area shape="rect" id="Node000002" href="$a00191.html#a57d1019680c3a409a8fb2d137a0d32fb" title=" " alt="" coords="252,29,459,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="114,236,134,199,164,152,203,105,250,66,262,61,259,65,253,70,207,109,168,156,139,201,118,238"/>
+<area shape="rect" id="Node000003" href="$a00191.html#a6e179d3796d7bb54d00ed2f78001f6cc" title=" " alt="" coords="288,104,423,147"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="130,235,184,196,250,156,275,148,271,151,253,161,187,200,134,239"/>
+<area shape="rect" id="Node000004" href="$a00191.html#af3acc8522a772627b0a6a342d062e462" title=" " alt="" coords="281,195,430,221"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="203,236,273,223,269,226,205,241"/>
+<area shape="rect" id="Node000005" href="$a00191.html#a6bbb318266b94dda7ed937d6dd78a1d0" title=" " alt="" coords="507,220,652,247"/>
+<area shape="poly" id="edge17_Node000001_Node000005" title=" " alt="" coords="204,251,493,236,490,240,205,256"/>
+<area shape="rect" id="Node000006" href="$a00191.html#ac80d3be01682a851032effaefee5dd59" title=" " alt="" coords="285,320,426,347"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="179,278,295,314,291,316,179,283"/>
+<area shape="rect" id="Node000007" href="$a00191.html#ab37c08ecd92b7be27be9a0b18fac45b6" title=" " alt="" coords="507,345,652,372"/>
+<area shape="poly" id="edge16_Node000001_Node000007" title=" " alt="" coords="129,278,183,321,217,341,252,356,313,369,376,375,436,374,494,372,489,373,437,379,376,380,312,375,251,361,214,346,180,325,128,283"/>
+<area shape="rect" id="Node000008" href="$a00191.html#af4dc3a57c3637a6e0a18b3d13794704c" title=" " alt="" coords="288,445,422,472"/>
+<area shape="poly" id="edge14_Node000001_Node000008" title=" " alt="" coords="125,278,181,337,253,401,313,438,307,438,250,405,177,341,124,283"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="317,29,311,21,315,11,331,5,355,3,382,5,398,13,392,15,381,10,355,8,332,10,319,15,316,20,322,29"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="313,103,311,94,318,85,333,79,355,77,379,80,395,88,390,89,378,85,355,83,334,85,321,89,316,95,318,104"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="317,194,311,186,315,176,331,170,355,168,382,171,398,179,392,180,381,176,355,173,332,175,319,180,316,185,322,194"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="430,214,494,223,489,224,431,219"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="541,219,535,211,540,201,555,195,580,193,606,196,622,205,617,205,605,201,580,199,556,201,543,205,540,211,547,220"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="317,319,311,311,315,301,331,295,355,293,382,296,398,305,392,305,381,301,355,299,332,301,319,305,316,311,322,320"/>
+<area shape="poly" id="edge12_Node000006_Node000007" title=" " alt="" coords="426,339,494,348,489,349,426,344"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="542,344,535,337,540,327,555,321,580,319,606,321,622,330,617,330,605,326,580,324,556,326,543,331,540,336,547,346"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="317,444,311,437,315,427,331,421,355,419,382,421,398,430,392,430,381,426,355,424,332,426,319,431,316,436,322,446"/>
+</map>

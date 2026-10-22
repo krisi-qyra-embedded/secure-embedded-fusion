@@ -1,0 +1,61 @@
+<map id="MPU_CS" name="MPU_CS">
+<area shape="rect" id="Node000001" title="Drive the MAX31865 chip&#45;select state." alt="" coords="1049,335,1126,361"/>
+<area shape="poly" id="edge44_Node000001_Node000001" title=" " alt="" coords="1116,319,1107,316,1088,313,1070,315,1060,320,1058,325,1063,335,1058,333,1053,326,1056,316,1068,310,1088,308,1108,311,1121,320"/>
+<area shape="rect" id="Node000002" href="$a00185.html#a7e7b491768e66febcb909fa6a47e7146" title="Initialize the MAX31865 device." alt="" coords="226,260,332,287"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1057,369,1007,403,940,441,861,479,771,514,676,539,628,546,579,548,531,546,484,538,439,523,396,501,368,479,344,453,325,423,310,391,290,332,281,290,283,285,295,330,315,389,330,420,349,449,371,475,398,496,441,518,486,532,532,541,579,543,627,540,675,533,770,509,858,475,938,436,1004,399,1051,371"/>
+<area shape="rect" id="Node000011" href="$a00185.html#aba481ea1ed28d6c8ba8c4637f101e22c" title="Read multiple bytes from a MAX31865 register." alt="" coords="829,185,1001,212"/>
+<area shape="poly" id="edge7_Node000001_Node000011" title=" " alt="" coords="1057,324,931,215,933,210,1062,325"/>
+<area shape="rect" id="Node000022" href="$a00185.html#a9c518b06dd3224d083447b9d12f137ba" title="Write one 8&#45;bit MAX31865 register." alt="" coords="606,335,779,361"/>
+<area shape="poly" id="edge36_Node000001_Node000022" title=" " alt="" coords="1031,348,779,351,779,345,1036,348"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="311,245,301,241,279,239,258,241,247,245,245,251,250,260,245,259,240,251,244,242,257,235,279,233,302,236,316,244"/>
+<area shape="rect" id="Node000003" href="$a00894.html#a15926d65960f96fbad6db12379118d8f" title=" " alt="" coords="5,252,161,295"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="209,275,162,276,160,271,213,272"/>
+<area shape="rect" id="Node000006" href="$a00185.html#a303f7d8c7c302acc18009865c936d8ba" title="Read the RTD temperature in Celsius." alt="" coords="5,144,161,171"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="239,253,107,174,107,168,244,250"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="113,237,103,233,83,231,65,233,54,237,49,243,51,251,45,251,44,242,50,233,63,227,83,225,104,228,118,235"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="115,130,105,125,83,123,63,125,52,129,49,135,54,143,49,144,44,135,48,126,61,119,83,117,106,120,120,128"/>
+<area shape="poly" id="edge35_Node000011_Node000011" title=" " alt="" coords="943,170,934,166,915,164,897,166,887,171,885,176,890,186,885,184,880,177,883,167,895,161,915,159,936,161,948,170"/>
+<area shape="rect" id="Node000012" href="$a00185.html#a318721659c90d330b0b7306dd5621ca0" title="Run one MAX31865 debug transaction." alt="" coords="613,148,772,175"/>
+<area shape="poly" id="edge8_Node000011_Node000012" title=" " alt="" coords="814,183,772,177,772,172,820,182"/>
+<area shape="rect" id="Node000013" href="$a00185.html#a5676b3d7478444b7aa34af8439c7fc69" title="Read one 16&#45;bit MAX31865 register value." alt="" coords="604,29,781,56"/>
+<area shape="poly" id="edge10_Node000011_Node000013" title=" " alt="" coords="879,177,712,59,713,54,885,176"/>
+<area shape="rect" id="Node000015" href="$a00185.html#ada3cec4fc079860e4bd3bc7033924220" title="Read one 8&#45;bit MAX31865 register." alt="" coords="608,223,777,249"/>
+<area shape="poly" id="edge15_Node000011_Node000015" title=" " alt="" coords="814,216,777,225,775,219,819,214"/>
+<area shape="poly" id="edge9_Node000012_Node000012" title=" " alt="" coords="728,133,717,129,692,127,670,129,658,133,655,139,661,148,656,147,649,139,654,130,669,123,693,121,718,124,733,133"/>
+<area shape="poly" id="edge11_Node000013_Node000013" title=" " alt="" coords="728,14,717,10,692,8,670,10,658,15,655,20,661,29,656,29,649,21,654,11,669,5,693,3,718,5,733,14"/>
+<area shape="rect" id="Node000014" href="$a00185.html#a1fc4b0b4a7dd3393229614da71aae892" title="Read the raw RTD conversion value." alt="" coords="209,128,349,155"/>
+<area shape="poly" id="edge12_Node000013_Node000014" title=" " alt="" coords="587,29,543,29,494,30,445,36,398,49,365,65,336,87,293,129,289,126,332,83,363,61,396,44,444,31,494,25,543,23,591,27"/>
+<area shape="poly" id="edge14_Node000014_Node000006" title=" " alt="" coords="191,150,162,153,159,149,195,147"/>
+<area shape="poly" id="edge13_Node000014_Node000014" title=" " alt="" coords="311,113,301,109,279,107,258,109,247,113,245,119,250,127,245,128,240,119,244,110,257,103,279,101,302,104,316,112"/>
+<area shape="poly" id="edge28_Node000015_Node000014" title=" " alt="" coords="639,215,620,205,602,188,591,173,585,157,581,127,575,100,568,88,555,77,522,62,487,58,451,61,415,70,349,100,301,129,298,125,346,95,413,65,450,56,487,52,524,57,558,72,572,85,580,98,586,126,591,156,596,170,606,185,624,200,645,215"/>
+<area shape="poly" id="edge27_Node000015_Node000015" title=" " alt="" coords="728,207,717,204,692,201,670,203,658,208,655,213,661,223,656,222,649,214,654,204,669,198,693,196,718,199,733,207"/>
+<area shape="rect" id="Node000016" href="$a00185.html#ac6ea9adbdb4babf722ce7f91ff6d5c3e" title="Enable or disable automatic conversion." alt="" coords="397,335,556,361"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="653,256,506,336,503,332,649,258"/>
+<area shape="rect" id="Node000017" href="$a00185.html#a47fe66cc8c41859511d4f9d607db2816" title="Clear the current MAX31865 fault state." alt="" coords="404,111,549,137"/>
+<area shape="poly" id="edge19_Node000015_Node000017" title=" " alt="" coords="649,215,603,189,579,169,555,152,530,141,529,135,558,147,582,165,606,184,654,215"/>
+<area shape="rect" id="Node000018" href="$a00185.html#a854dfdf167b7b34020353b12314b4791" title="Enable or disable the MAX31865 bias." alt="" coords="400,185,553,212"/>
+<area shape="poly" id="edge23_Node000015_Node000018" title=" " alt="" coords="594,220,554,214,553,209,599,219"/>
+<area shape="rect" id="Node000020" href="$a00185.html#a69185b67ae3a9ac375d48d6f73b2e030" title="Configure the 50/60 Hz rejection filter." alt="" coords="409,460,544,487"/>
+<area shape="poly" id="edge29_Node000015_Node000020" title=" " alt="" coords="657,257,630,279,606,301,591,319,581,336,559,375,491,462,488,457,554,372,576,333,586,316,602,297,627,274,652,259"/>
+<area shape="rect" id="Node000021" href="$a00185.html#aea838a55d8e8cc0b2dfd0ed66fb03d5f" title="Configure the RTD wiring mode." alt="" coords="406,260,547,287"/>
+<area shape="poly" id="edge32_Node000015_Node000021" title=" " alt="" coords="594,253,548,264,546,259,599,252"/>
+<area shape="poly" id="edge18_Node000016_Node000002" title=" " alt="" coords="423,330,316,290,316,284,428,328"/>
+<area shape="poly" id="edge17_Node000016_Node000016" title=" " alt="" coords="509,319,499,316,477,313,456,315,445,320,442,325,448,335,443,334,437,326,441,316,455,310,477,308,500,311,514,319"/>
+<area shape="poly" id="edge21_Node000017_Node000002" title=" " alt="" coords="404,146,398,152,364,178,334,208,291,261,287,258,330,205,361,174,396,147,409,142"/>
+<area shape="poly" id="edge22_Node000017_Node000014" title=" " alt="" coords="387,133,350,138,348,133,391,130"/>
+<area shape="poly" id="edge20_Node000017_Node000017" title=" " alt="" coords="509,96,499,92,477,89,456,91,445,96,442,101,448,110,443,110,437,102,441,92,455,86,477,84,500,87,514,95"/>
+<area shape="poly" id="edge25_Node000018_Node000002" title=" " alt="" coords="413,219,398,226,312,262,310,257,396,222,418,216"/>
+<area shape="poly" id="edge26_Node000018_Node000014" title=" " alt="" coords="411,182,328,158,327,153,416,180"/>
+<area shape="poly" id="edge24_Node000018_Node000018" title=" " alt="" coords="509,170,499,166,477,164,456,166,445,171,442,176,448,185,443,185,437,177,441,167,455,161,477,159,500,161,514,170"/>
+<area shape="poly" id="edge30_Node000020_Node000002" title=" " alt="" coords="437,451,395,419,331,348,289,290,290,284,335,345,399,415,442,451"/>
+<area shape="poly" id="edge31_Node000020_Node000020" title=" " alt="" coords="509,444,499,441,477,439,456,441,445,445,442,451,448,461,443,459,437,451,441,442,455,435,477,433,500,436,514,445"/>
+<area shape="poly" id="edge33_Node000021_Node000002" title=" " alt="" coords="388,274,333,276,331,271,393,272"/>
+<area shape="poly" id="edge34_Node000021_Node000021" title=" " alt="" coords="509,245,499,241,477,239,456,241,445,245,442,251,448,260,443,259,437,251,441,242,455,235,477,233,500,236,514,245"/>
+<area shape="poly" id="edge40_Node000022_Node000014" title=" " alt="" coords="651,367,594,390,528,403,493,405,459,402,426,392,395,375,378,359,368,342,362,306,360,268,356,247,347,225,320,187,295,158,295,153,324,184,351,223,361,245,365,267,367,306,373,340,382,356,399,371,428,387,460,396,493,399,527,398,593,384,646,368"/>
+<area shape="poly" id="edge37_Node000022_Node000016" title=" " alt="" coords="588,348,557,351,557,345,593,348"/>
+<area shape="poly" id="edge38_Node000022_Node000017" title=" " alt="" coords="660,324,631,298,602,263,587,231,581,203,574,177,555,151,539,141,539,135,558,147,579,175,587,202,592,229,607,260,635,294,665,325"/>
+<area shape="poly" id="edge39_Node000022_Node000018" title=" " alt="" coords="665,323,607,269,555,226,532,215,532,210,558,222,611,265,670,324"/>
+<area shape="poly" id="edge41_Node000022_Node000020" title=" " alt="" coords="657,369,503,462,501,457,652,370"/>
+<area shape="poly" id="edge42_Node000022_Node000021" title=" " alt="" coords="637,329,555,301,522,290,522,285,557,296,643,329"/>
+<area shape="poly" id="edge43_Node000022_Node000022" title=" " alt="" coords="728,319,717,316,692,313,670,315,658,320,655,325,661,335,656,333,649,326,654,316,669,310,693,308,718,311,733,320"/>
+</map>

@@ -1,0 +1,24 @@
+<map id="generate_keypairs_cmox" name="generate_keypairs_cmox">
+<area shape="rect" id="Node000001" title="Load or generate the STM32 ECDH keypairs." alt="" coords="5,192,172,219"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="51,192,45,183,50,173,64,167,89,165,114,168,130,176,125,178,113,173,88,171,66,173,53,177,50,183,56,191"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="238,29,376,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,190,146,134,180,101,218,72,245,60,241,64,221,77,184,105,150,138,102,193"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="442,80,551,107"/>
+<area shape="poly" id="edge15_Node000001_Node000003" title=" " alt="" coords="103,190,152,152,184,132,219,116,272,102,327,93,429,89,424,92,327,98,273,107,221,121,187,137,155,156,107,193"/>
+<area shape="rect" id="Node000004" href="$a00757.html#a07d477162ee57bff940a7a9951cf3a77" title=" " alt="" coords="254,155,360,181"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="169,189,241,178,237,181,171,194"/>
+<area shape="rect" id="Node000005" href="$a00757.html#a59f18c3818b5d6fd5d528d214ed1c6bc" title=" " alt="" coords="253,229,361,256"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="170,217,240,230,235,232,171,222"/>
+<area shape="rect" id="Node000006" href="$a00760.html#a2f167ce6818bfd3d8d986daae7480431" title=" " alt="" coords="220,304,394,331"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="117,217,268,295,263,298,116,222"/>
+<area shape="rect" id="Node000007" href="$a00775.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="261,379,353,405"/>
+<area shape="poly" id="edge13_Node000001_Node000007" title=" " alt="" coords="101,216,151,274,185,309,221,341,266,371,261,371,218,345,181,312,147,278,100,222"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="274,29,269,21,273,11,286,5,307,3,330,5,343,14,338,15,328,10,307,8,287,10,276,15,274,20,279,29"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="359,54,432,75,427,76,360,59"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="464,79,458,71,462,62,476,55,497,53,519,56,533,65,528,65,518,61,497,59,477,61,466,65,464,71,469,80"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="274,154,269,146,273,136,286,130,307,128,330,131,343,139,338,140,328,136,307,133,287,135,276,140,274,145,279,154"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="274,228,269,221,273,211,286,205,307,203,330,205,343,214,338,214,328,210,307,208,287,210,276,215,274,220,279,229"/>
+<area shape="poly" id="edge12_Node000006_Node000003" title=" " alt="" coords="340,301,367,286,392,266,422,230,448,191,483,123,487,119,452,194,427,234,396,270,370,290,342,306"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="274,303,269,295,273,286,286,279,307,277,330,280,343,289,338,289,328,285,307,283,287,285,276,289,274,295,279,304"/>
+<area shape="poly" id="edge14_Node000007_Node000007" title=" " alt="" coords="274,377,269,370,273,360,286,354,307,352,330,355,343,364,338,363,328,360,307,357,287,359,276,364,274,369,279,379"/>
+</map>

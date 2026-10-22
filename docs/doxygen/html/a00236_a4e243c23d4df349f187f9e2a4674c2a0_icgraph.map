@@ -1,0 +1,10 @@
+<map id="stm32_gcm_append_record" name="stm32_gcm_append_record">
+<area shape="rect" id="Node000001" title=" " alt="" coords="437,37,618,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="565,22,553,18,528,16,504,18,491,23,488,28,494,38,490,36,483,29,488,19,503,13,528,11,554,13,570,22"/>
+<area shape="rect" id="Node000002" href="$a00236.html#a9b5566d836896405016c098ccac6fc44" title="Reserve the next persistent TX session ID for this boot." alt="" coords="218,29,389,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="419,51,390,53,389,48,424,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="337,13,325,10,303,8,283,10,271,15,266,21,267,30,263,27,261,19,267,10,282,5,303,3,327,5,342,14"/>
+<area shape="rect" id="Node000003" href="$a01011.html#ab99c2eddebbedc99ce71a7ac63f22d1e" title="Initialize the persistent GCM nonce session." alt="" coords="5,37,170,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="199,51,170,53,170,48,205,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="123,22,112,18,87,16,65,18,53,23,50,28,56,37,51,37,44,29,49,19,64,13,88,11,113,13,128,22"/>
+</map>

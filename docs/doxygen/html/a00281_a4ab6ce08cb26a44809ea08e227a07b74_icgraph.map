@@ -1,0 +1,26 @@
+<map id="esp32_gcm_crc32" name="esp32_gcm_crc32">
+<area shape="rect" id="Node000001" title="Compute CRC&#45;32 for a persistent state record." alt="" coords="1131,85,1258,112"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="1228,70,1217,66,1195,64,1173,66,1162,71,1159,76,1165,86,1160,84,1154,77,1158,67,1172,61,1195,59,1219,61,1233,71"/>
+<area shape="rect" id="Node000002" href="$a00281.html#af94ebd8e75a1c89104d23d043bbff957" title="Store a CRC&#45;protected TX state record and commit it to NVS." alt="" coords="220,29,386,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="1140,80,1082,65,987,48,889,36,791,30,695,27,521,29,387,37,386,32,520,24,695,21,791,24,889,31,988,43,1084,60,1145,80"/>
+<area shape="rect" id="Node000007" href="$a00281.html#a1e6699b961688ecff5b636a19d0e6ce3" title="Load the zero RX baseline, creating it only when its NVS key is absent." alt="" coords="664,72,851,115"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1113,86,1083,85,962,83,851,88,851,83,962,77,1083,80,1118,86"/>
+<area shape="rect" id="Node000013" href="$a00281.html#ad0920166757a054bca8d211682090748" title="Check the TX state record magic, version and CRC." alt="" coords="678,172,837,215"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="1170,121,1131,152,1084,176,1021,192,956,201,893,203,838,203,838,197,893,198,955,195,1020,187,1082,171,1128,148,1165,123"/>
+<area shape="rect" id="Node000014" href="$a00281.html#af892d3398d14c6b7bfa8bef36a6b1695" title="Check the RX seed record magic, version and CRC." alt="" coords="899,119,1083,161"/>
+<area shape="poly" id="edge15_Node000001_Node000014" title=" " alt="" coords="1119,114,1084,124,1083,119,1113,115"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="338,14,327,10,303,8,280,10,268,15,265,20,271,29,266,29,260,21,265,11,279,5,303,3,328,5,343,14"/>
+<area shape="rect" id="Node000003" href="$a00281.html#a3166bf369c5790fee3ad059754cba4d5" title="Increment and commit the next persistent TX session." alt="" coords="5,47,172,89"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="202,56,173,61,171,56,206,53"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="122,32,110,28,88,25,68,27,56,32,51,38,53,46,48,46,46,37,53,28,67,22,89,20,112,22,127,30"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="794,56,781,53,757,51,736,53,722,57,717,63,718,73,714,70,712,62,719,53,734,47,758,45,782,48,799,57"/>
+<area shape="rect" id="Node000008" href="$a00281.html#a246cb46dce40ce36ee9b258cea96269f" title="Load the persistent TX state and initialize the RX seed baseline." alt="" coords="434,80,616,107"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="646,94,617,96,617,91,652,93"/>
+<area shape="poly" id="edge8_Node000008_Node000002" title=" " alt="" coords="446,76,365,59,365,54,451,75"/>
+<area shape="poly" id="edge10_Node000008_Node000003" title=" " alt="" coords="417,89,172,75,172,70,420,85"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="562,65,550,61,525,59,502,61,489,65,486,71,492,80,487,79,481,71,486,61,501,55,525,53,552,56,567,65"/>
+<area shape="poly" id="edge13_Node000013_Node000008" title=" " alt="" coords="689,165,558,110,559,105,695,165"/>
+<area shape="poly" id="edge14_Node000013_Node000013" title=" " alt="" coords="794,156,781,153,757,151,736,153,722,157,717,163,718,173,714,170,712,162,719,153,734,147,758,145,782,148,799,157"/>
+<area shape="poly" id="edge16_Node000014_Node000007" title=" " alt="" coords="881,118,851,115,851,109,886,119"/>
+<area shape="poly" id="edge17_Node000014_Node000014" title=" " alt="" coords="1022,103,1011,100,991,97,972,99,960,104,955,110,957,120,952,116,950,109,957,100,970,94,991,92,1013,94,1027,103"/>
+</map>

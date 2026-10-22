@@ -1,0 +1,42 @@
+<map id="JITTER_CAPTURE_INIT" name="JITTER_CAPTURE_INIT">
+<area shape="rect" id="Node000001" title="Initialize jitter capture with the project retry policy." alt="" coords="5,281,178,308"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="56,281,50,273,54,263,68,257,92,255,116,257,131,265,126,267,115,262,91,260,70,262,58,267,55,272,61,280"/>
+<area shape="rect" id="Node000002" href="$a00781.html#a065424f1fa20ad18eec9b3b216a19cc1" title="Collect the complete jitter sample set." alt="" coords="226,244,373,271"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="168,278,213,272,208,275,170,283"/>
+<area shape="rect" id="Node000012" href="$a00781.html#aac0f5707bbf1aec838b7e3aa59e8dc02" title="Initialize GPIO, TIM1, DMA2 Stream6 and NVIC for jitter capture." alt="" coords="472,360,543,387"/>
+<area shape="poly" id="edge24_Node000001_Node000012" title=" " alt="" coords="167,306,459,362,456,366,166,311"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="264,243,258,235,262,226,276,219,299,217,324,220,339,229,333,229,323,225,299,223,278,225,266,229,263,235,269,244"/>
+<area shape="rect" id="Node000003" href="$a00230.html#ab08497f80e933a6a6171b89f1e524d37" title="Block for the requested number of system ticks." alt="" coords="482,29,534,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="303,242,318,207,342,159,376,109,396,86,419,66,442,53,469,47,464,50,444,58,423,70,400,90,380,112,347,162,322,209,308,245"/>
+<area shape="rect" id="Node000005" href="$a00781.html#ad8c1b2e4a886e28dfb68eed2ee666166" title="Convert raw timer captures into successive differences." alt="" coords="421,285,594,312"/>
+<area shape="poly" id="edge8_Node000002_Node000005" title=" " alt="" coords="370,269,425,281,419,282,370,274"/>
+<area shape="rect" id="Node000006" href="$a00781.html#a05ee64087bf80d4f2b3b52bc322994b3" title="Arm DMA for one capture sample." alt="" coords="444,195,572,237"/>
+<area shape="poly" id="edge10_Node000002_Node000006" title=" " alt="" coords="370,241,431,231,426,233,371,246"/>
+<area shape="rect" id="Node000009" href="$a00781.html#abb39952b631e6f25ed7b69905cc63e59" title=" " alt="" coords="642,360,800,387"/>
+<area shape="poly" id="edge23_Node000002_Node000009" title=" " alt="" coords="308,269,325,299,350,334,383,370,422,396,453,407,486,414,553,414,616,404,667,392,673,392,617,409,553,420,485,419,452,413,420,401,379,374,346,338,321,301,306,274"/>
+<area shape="rect" id="Node000011" href="$a00781.html#abbe27430e128986ba835ec4cf1640af5" title="Trigger the TIM1 Channel 3 capture event in software." alt="" coords="438,104,577,147"/>
+<area shape="poly" id="edge20_Node000002_Node000011" title=" " alt="" coords="313,241,358,201,420,156,432,152,428,155,422,161,361,205,316,246"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="478,33,467,24,468,13,482,5,508,3,541,8,549,16,548,25,543,22,544,18,539,13,508,8,484,10,473,16,472,22,484,33"/>
+<area shape="rect" id="Node000004" href="$a00230.html#a1ecf3b22458f872484b8267be7b86e7f" title="Read the current SysTick timebase value atomically." alt="" coords="687,29,755,56"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="534,40,675,42,670,44,535,45"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="684,28,678,21,683,11,697,5,721,3,746,5,761,14,756,14,745,10,721,8,699,10,687,15,684,20,690,29"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="472,284,466,277,470,267,485,261,508,259,532,261,547,270,542,270,531,266,508,264,486,266,474,271,471,276,477,286"/>
+<area shape="poly" id="edge15_Node000006_Node000006" title=" " alt="" coords="468,193,466,185,473,176,487,170,508,168,530,170,545,179,540,179,529,176,508,173,488,175,476,180,471,186,473,195"/>
+<area shape="rect" id="Node000007" href="$a00781.html#a5bc37cdbd4a7e4f355e7e321c6df109d" title=" " alt="" coords="676,132,766,159"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="571,192,641,168,665,163,660,165,643,173,573,197"/>
+<area shape="rect" id="Node000008" href="$a00781.html#ae14d8c179e3602d167cb0741686ca81a" title=" " alt="" coords="647,283,795,309"/>
+<area shape="poly" id="edge13_Node000006_Node000008" title=" " alt="" coords="567,235,672,277,667,277,566,241"/>
+<area shape="poly" id="edge16_Node000006_Node000009" title=" " alt="" coords="573,233,596,247,613,265,622,283,630,301,644,319,683,352,678,351,640,323,625,303,617,285,608,268,593,251,572,238"/>
+<area shape="rect" id="Node000010" href="$a00781.html#a466ff66a460b352ff5e755fa8bec96d0" title=" " alt="" coords="644,207,798,233"/>
+<area shape="poly" id="edge18_Node000006_Node000010" title=" " alt="" coords="572,215,631,218,626,219,573,220"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="685,131,678,123,683,114,697,107,721,105,746,108,761,117,756,117,745,113,721,111,699,113,687,117,684,123,690,132"/>
+<area shape="poly" id="edge14_Node000008_Node000008" title=" " alt="" coords="685,281,678,274,683,264,697,258,721,256,746,259,761,268,756,267,745,264,721,261,699,263,687,268,684,273,690,283"/>
+<area shape="poly" id="edge17_Node000009_Node000009" title=" " alt="" coords="685,358,678,351,683,342,697,335,721,333,746,336,761,345,756,344,745,341,721,339,699,341,687,345,684,351,690,361"/>
+<area shape="poly" id="edge19_Node000010_Node000010" title=" " alt="" coords="685,205,678,198,683,188,697,182,721,180,746,183,761,192,756,191,745,188,721,185,699,187,687,192,684,197,690,207"/>
+<area shape="poly" id="edge21_Node000011_Node000007" title=" " alt="" coords="578,129,663,139,658,140,578,135"/>
+<area shape="poly" id="edge22_Node000011_Node000011" title=" " alt="" coords="468,102,466,94,473,85,487,79,508,77,530,80,545,88,540,89,529,85,508,83,488,85,476,89,471,95,473,104"/>
+<area shape="poly" id="edge25_Node000012_Node000007" title=" " alt="" coords="542,358,569,343,592,322,605,302,611,283,614,245,617,208,625,188,641,169,659,159,664,156,644,173,630,191,623,209,619,246,616,284,610,305,596,326,572,348,544,363"/>
+<area shape="poly" id="edge26_Node000012_Node000008" title=" " alt="" coords="542,358,641,321,664,316,669,314,643,327,544,363"/>
+<area shape="poly" id="edge28_Node000012_Node000009" title=" " alt="" coords="543,371,629,373,624,373,543,376"/>
+<area shape="poly" id="edge27_Node000012_Node000012" title=" " alt="" coords="472,359,466,351,470,342,485,335,508,333,532,336,547,345,542,344,531,341,508,339,486,341,474,345,471,351,477,361"/>
+</map>

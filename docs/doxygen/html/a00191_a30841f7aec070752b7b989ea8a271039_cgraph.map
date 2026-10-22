@@ -1,0 +1,26 @@
+<map id="DMA1_Stream4_IRQHandler" name="DMA1_Stream4_IRQHandler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,140,196,166"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="61,140,55,131,60,121,75,115,101,113,128,116,144,124,139,126,127,121,100,118,76,120,63,125,60,131,67,139"/>
+<area shape="rect" id="Node000002" href="$a00191.html#a522a40840e220033e26e7b2a60d7ae18" title=" " alt="" coords="682,40,870,66"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="111,138,163,84,200,56,243,35,304,17,368,7,433,3,496,4,614,16,710,35,705,36,613,21,496,9,433,8,369,13,305,23,245,40,203,60,166,88,115,141"/>
+<area shape="rect" id="Node000003" href="$a00191.html#ab5240f995d13b0c8efe9fb97b65fd923" title=" " alt="" coords="264,73,398,116"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="155,137,251,114,247,117,157,142"/>
+<area shape="rect" id="Node000004" href="$a00191.html#a99dd604d30f687344c56866416357c49" title=" " alt="" coords="509,81,591,108"/>
+<area shape="poly" id="edge13_Node000001_Node000004" title=" " alt="" coords="195,147,303,140,418,125,496,110,491,112,418,130,303,145,197,152"/>
+<area shape="rect" id="Node000027" href="$a00191.html#ae8f069dfc7230a8bd72e1fa99460a057" title=" " alt="" coords="702,132,850,158"/>
+<area shape="poly" id="edge12_Node000001_Node000027" title=" " alt="" coords="196,150,418,149,688,146,683,148,418,154,197,156"/>
+<area shape="rect" id="Node000036" href="$a00191.html#a41b0b8abbc5ea0d93b77a9751fe4a36c" title="Mark one subsystem fault as active from an ISR." alt="" coords="244,265,418,308"/>
+<area shape="poly" id="edge14_Node000001_Node000036" title=" " alt="" coords="126,164,282,256,277,259,125,169"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="738,39,731,31,736,21,751,15,776,13,803,16,819,25,813,24,801,21,776,18,752,20,739,25,736,31,743,40"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="289,72,287,63,294,54,309,48,331,46,354,49,370,57,365,58,353,54,331,52,310,54,298,58,293,64,294,73"/>
+<area shape="poly" id="edge6_Node000003_Node000004" title=" " alt="" coords="398,100,496,102,491,103,399,105"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="591,84,687,69,682,71,593,90"/>
+<area shape="poly" id="edge8_Node000004_Node000003" title=" " alt="" coords="506,88,414,88,413,83,511,87"/>
+<area shape="poly" id="edge11_Node000004_Node000004" title=" " alt="" coords="513,80,506,72,511,63,526,57,550,54,576,57,592,66,586,66,575,62,550,60,527,62,515,67,512,72,518,81"/>
+<area shape="poly" id="edge9_Node000004_Node000027" title=" " alt="" coords="592,101,701,127,696,128,592,106"/>
+<area shape="poly" id="edge10_Node000027_Node000027" title=" " alt="" coords="738,130,731,123,736,113,751,107,776,105,803,108,819,117,813,116,801,113,776,110,752,112,739,117,736,123,743,132"/>
+<area shape="poly" id="edge15_Node000036_Node000036" title=" " alt="" coords="289,263,287,255,294,246,309,240,331,238,354,241,370,250,365,249,353,246,331,244,310,246,298,250,293,256,294,266"/>
+<area shape="rect" id="Node000012" href="$a00191.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="466,265,634,308"/>
+<area shape="poly" id="edge16_Node000036_Node000012" title=" " alt="" coords="418,284,453,286,447,287,418,289"/>
+<area shape="poly" id="edge17_Node000012_Node000012" title=" " alt="" coords="509,263,507,255,514,246,528,240,550,238,574,241,589,250,584,249,572,246,550,244,530,246,517,250,512,256,513,266"/>
+</map>

@@ -1,0 +1,21 @@
+<map id="jitter_wait_dma_disable" name="jitter_wait_dma_disable">
+<area shape="rect" id="Node000001" title=" " alt="" coords="597,87,755,114"/>
+<area shape="poly" id="edge13_Node000001_Node000001" title=" " alt="" coords="707,72,697,68,676,66,656,68,645,73,643,78,648,88,643,86,638,79,642,69,655,63,676,61,699,63,712,72"/>
+<area shape="rect" id="Node000002" href="$a01038.html#a065424f1fa20ad18eec9b3b216a19cc1" title="Collect the configured number of TIM1 capture samples through DMA." alt="" coords="226,42,373,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="647,76,604,44,577,28,549,17,520,10,490,8,430,14,375,28,332,44,330,39,374,23,429,9,490,3,520,5,550,11,579,24,607,40,652,77"/>
+<area shape="rect" id="Node000008" href="$a01038.html#aac0f5707bbf1aec838b7e3aa59e8dc02" title="Configure TIM1 channel 3 and DMA2 Stream6 for jitter capture." alt="" coords="264,117,334,143"/>
+<area shape="poly" id="edge5_Node000001_Node000008" title=" " alt="" coords="579,109,335,130,334,125,584,107"/>
+<area shape="rect" id="Node000009" href="$a01038.html#a05ee64087bf80d4f2b3b52bc322994b3" title="Arm DMA2 Stream6 for one TIM1 capture sample." alt="" coords="421,50,549,93"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="579,86,550,84,550,79,585,86"/>
+<area shape="rect" id="Node000010" href="$a01038.html#a6ee898e56fde827711f0d4c0e5cfb80e" title="Return DMA2 Stream6 to an idle capture&#45;ready state." alt="" coords="426,191,544,218"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="639,121,513,193,511,188,634,122"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="330,27,320,23,299,21,280,23,270,27,267,33,272,42,267,41,262,33,266,24,279,18,299,15,322,18,335,27"/>
+<area shape="rect" id="Node000003" href="$a01038.html#a90aecad7973b81903ab0ebfa862f6980" title="Initialize the jitter hardware and collect one complete sample set." alt="" coords="5,79,178,106"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="208,73,171,81,169,76,212,70"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="126,65,115,60,91,58,70,60,58,65,55,70,61,78,56,79,50,71,54,61,68,55,92,53,116,55,131,63"/>
+<area shape="poly" id="edge6_Node000008_Node000003" title=" " alt="" coords="246,122,170,109,169,104,251,120"/>
+<area shape="poly" id="edge7_Node000008_Node000008" title=" " alt="" coords="330,101,320,98,299,95,280,97,270,102,267,107,272,117,267,115,262,108,266,98,279,92,299,90,322,93,335,102"/>
+<area shape="poly" id="edge9_Node000009_Node000002" title=" " alt="" coords="403,65,374,64,373,59,408,64"/>
+<area shape="poly" id="edge10_Node000009_Node000009" title=" " alt="" coords="513,34,504,31,485,29,468,31,457,35,453,41,454,51,450,48,448,40,454,31,466,25,485,23,505,26,519,35"/>
+<area shape="poly" id="edge12_Node000010_Node000010" title=" " alt="" coords="515,176,506,172,485,170,466,172,455,177,453,182,458,192,453,190,448,183,452,173,464,167,485,165,507,167,521,177"/>
+</map>

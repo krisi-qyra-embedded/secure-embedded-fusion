@@ -1,0 +1,30 @@
+<map id="esp32_gcm_nvs_close" name="esp32_gcm_nvs_close">
+<area shape="rect" id="Node000001" title="Close the NVS handle and clear cached TX and RX state." alt="" coords="671,157,826,184"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="784,142,773,138,748,136,726,138,714,143,711,148,717,158,712,156,705,149,710,139,725,133,749,131,774,133,789,142"/>
+<area shape="rect" id="Node000002" href="$a00281.html#a07a4c42200bc70631549aa04cf928186" title="Free both GCM objects, close NVS state and wipe the context." alt="" coords="460,71,605,97"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="696,152,568,101,568,95,702,151"/>
+<area shape="rect" id="Node000005" href="$a00281.html#a246cb46dce40ce36ee9b258cea96269f" title="Load the persistent TX state and initialize the RX seed baseline." alt="" coords="441,244,623,271"/>
+<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="701,189,569,246,567,241,696,191"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="568,56,556,52,532,49,509,51,497,56,494,61,500,71,495,70,489,62,494,52,508,46,532,44,558,47,573,55"/>
+<area shape="rect" id="Node000003" href="$a00860.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="50,29,127,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="490,64,445,45,392,29,320,21,247,22,181,29,129,37,126,33,180,24,247,17,320,16,394,24,447,40,495,63"/>
+<area shape="rect" id="Node000004" href="$a00860.html#a60c9a25e76daf5ea2be5f5fcfcb28652" title="Prepare both ECDH directions, AES&#45;GCM contexts and the TX nonce session." alt="" coords="234,63,378,105"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="441,85,380,87,378,81,446,83"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="125,15,113,10,88,8,66,10,53,15,50,20,56,28,51,30,45,21,50,11,64,5,89,3,114,5,129,13"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="217,69,128,52,127,47,221,66"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="340,48,328,44,306,41,286,43,273,48,268,54,270,63,265,62,263,53,270,44,285,38,306,36,330,38,345,46"/>
+<area shape="poly" id="edge16_Node000005_Node000005" title=" " alt="" coords="568,229,556,225,532,223,509,225,497,229,494,235,500,244,495,243,489,235,494,226,508,219,532,217,558,220,573,229"/>
+<area shape="rect" id="Node000006" href="$a00281.html#a438c53f1c2f8dc69864aae91f15ea017" title="Copy the RAM receive replay watermark." alt="" coords="220,153,393,196"/>
+<area shape="poly" id="edge10_Node000005_Node000006" title=" " alt="" coords="477,239,367,199,367,194,482,238"/>
+<area shape="rect" id="Node000009" href="$a00281.html#af94ebd8e75a1c89104d23d043bbff957" title="Store a CRC&#45;protected TX state record and commit it to NVS." alt="" coords="223,244,390,271"/>
+<area shape="poly" id="edge12_Node000005_Node000009" title=" " alt="" coords="423,258,390,260,389,255,428,257"/>
+<area shape="rect" id="Node000010" href="$a00281.html#a3166bf369c5790fee3ad059754cba4d5" title="Increment and commit the next persistent TX session." alt="" coords="5,261,172,304"/>
+<area shape="poly" id="edge17_Node000005_Node000010" title=" " alt="" coords="451,275,393,285,277,291,172,289,171,284,277,285,393,280,456,273"/>
+<area shape="rect" id="Node000012" href="$a00281.html#af09895996e311fae6f599d443101d129" title="Classify the nonce and advance the RAM watermark for a new packet." alt="" coords="220,369,392,412"/>
+<area shape="poly" id="edge18_Node000005_Node000012" title=" " alt="" coords="497,278,345,371,343,366,492,279"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="340,138,328,134,306,132,286,134,273,139,268,145,270,153,265,152,263,143,270,134,285,129,306,127,330,129,345,137"/>
+<area shape="poly" id="edge13_Node000009_Node000009" title=" " alt="" coords="342,229,331,225,306,223,283,225,271,229,268,235,274,244,269,243,263,235,267,225,282,219,306,217,332,220,347,229"/>
+<area shape="poly" id="edge14_Node000009_Node000010" title=" " alt="" coords="206,270,173,275,171,270,210,268"/>
+<area shape="poly" id="edge15_Node000010_Node000010" title=" " alt="" coords="122,247,110,242,88,240,68,242,55,247,51,253,52,261,47,261,45,251,52,242,67,237,89,235,112,237,127,245"/>
+<area shape="poly" id="edge19_Node000012_Node000012" title=" " alt="" coords="340,353,328,350,306,348,286,350,273,355,268,361,270,370,265,367,263,359,270,350,285,345,306,343,330,345,345,354"/>
+</map>

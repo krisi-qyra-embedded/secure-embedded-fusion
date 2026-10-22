@@ -1,0 +1,10 @@
+<map id="collect_adc_samples_until_full" name="collect_adc_samples_until_full">
+<area shape="rect" id="Node000001" title="Collect ADC samples until all byte buffers are full." alt="" coords="5,59,149,101"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="39,58,38,49,44,40,57,34,77,32,98,34,112,42,107,44,97,40,77,37,59,39,47,44,43,50,44,58"/>
+<area shape="rect" id="Node000002" href="$a00990.html#ac6835e1da70e1c9fd891c4df2aebffa2" title="Get the latest ADC sample triplet." alt="" coords="202,29,347,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,64,189,58,184,60,150,69"/>
+<area shape="rect" id="Node000003" href="$a00990.html#adc2dd216f72fe9136ffb9c9d09a597e7" title="Store the latest ADC channel values." alt="" coords="197,104,352,131"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="149,91,188,100,183,101,149,96"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="240,28,235,21,239,11,252,5,274,3,298,5,312,14,307,14,296,10,274,8,254,10,243,15,240,20,246,30"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="241,103,235,95,239,86,252,79,274,77,298,80,312,89,307,88,296,85,274,83,254,85,243,89,240,95,245,105"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="nonce_simple_generate_to_buffer" name="nonce_simple_generate_to_buffer">
+<area shape="rect" id="Node000001" title="Generate a nonce and copy it to an external buffer." alt="" coords="5,104,164,147"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="45,103,44,94,50,85,64,79,85,77,107,80,121,88,116,89,105,85,84,83,65,85,53,89,49,95,50,104"/>
+<area shape="rect" id="Node000002" href="$a01032.html#ac3f2ada5efd0c8e753063263d53a66d3" title="Generate the next nonce into the shared nonce buffer." alt="" coords="212,112,370,139"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,123,199,124,194,126,165,128"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="255,111,250,103,254,94,268,87,291,85,315,88,330,97,325,97,314,93,291,91,269,93,258,97,255,103,261,112"/>
+<area shape="rect" id="Node000003" href="$a01035.html#a73b97cfc31bcd06f6b636a6e7ac06af3" title=" " alt="" coords="418,29,581,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="319,109,417,66,439,60,434,62,419,70,321,114"/>
+<area shape="rect" id="Node000004" href="$a01032.html#a5b74437bb341db1f2cd53ca496e500ed" title="Build the static entropy value from the hashed hardware sources." alt="" coords="424,104,576,147"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="370,123,410,125,405,126,370,128"/>
+<area shape="rect" id="Node000005" href="$a01035.html#a8af10b21d3f570b16bad20a866618454" title=" " alt="" coords="420,195,579,221"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="327,137,453,188,447,189,326,142"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="464,28,458,21,462,11,477,5,500,3,525,5,539,14,534,14,523,10,500,8,478,10,466,15,463,20,469,30"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="460,102,458,94,465,85,479,79,500,77,522,80,537,89,532,88,521,85,500,83,480,85,468,89,463,95,465,105"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="464,193,458,186,462,176,477,170,500,168,525,171,539,180,534,179,523,176,500,173,478,175,466,180,463,185,469,195"/>
+</map>

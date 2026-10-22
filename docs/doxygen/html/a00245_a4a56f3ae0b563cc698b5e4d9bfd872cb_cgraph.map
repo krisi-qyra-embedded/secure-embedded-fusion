@@ -1,0 +1,7 @@
+<map id="app_nvs_save_sta_creds" name="app_nvs_save_sta_creds">
+<area shape="rect" id="Node000001" title="Save the current station credentials to NVS." alt="" coords="5,29,175,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="53,29,47,21,52,11,66,5,90,3,115,5,131,14,125,14,114,10,90,8,68,10,55,15,53,20,59,29"/>
+<area shape="rect" id="Node000002" href="$a00311.html#acd6606606de84f405065531c1889432a" title="Get the shared station configuration." alt="" coords="223,29,386,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="175,40,210,43,204,43,175,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="268,28,262,21,266,11,281,5,304,3,330,5,345,14,340,14,328,10,304,8,282,10,270,15,267,20,273,30"/>
+</map>

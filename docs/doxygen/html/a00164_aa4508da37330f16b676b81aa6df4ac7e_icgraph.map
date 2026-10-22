@@ -1,0 +1,14 @@
+<map id="calc_heater_dur" name="calc_heater_dur">
+<area shape="rect" id="Node000001" title="This internal API is used to calculate the Heat duration value." alt="" coords="402,75,515,101"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="484,59,476,56,459,53,442,55,434,60,432,65,436,75,431,73,426,66,430,56,441,50,459,48,478,51,489,60"/>
+<area shape="rect" id="Node000002" href="$a00164.html#a14d2f98e4efd330b03fad0d24f2c3eda" title=" " alt="" coords="22,29,180,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="384,80,354,79,180,61,180,56,354,73,389,79"/>
+<area shape="rect" id="Node000003" href="$a00164.html#aadb617afe7c21b652a32c316fba66b5a" title="This internal API is used to set the gas configuration of the sensor." alt="" coords="245,112,354,139"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="390,104,355,115,354,110,384,105"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="131,14,121,10,101,8,82,10,71,15,67,21,68,29,63,28,61,19,68,10,81,5,101,3,122,5,137,13"/>
+<area shape="poly" id="edge7_Node000003_Node000002" title=" " alt="" coords="248,106,196,86,165,75,166,70,198,82,254,105"/>
+<area shape="poly" id="edge8_Node000003_Node000003" title=" " alt="" coords="325,96,317,93,299,91,283,93,274,97,272,103,276,113,272,110,267,103,270,94,281,88,299,85,319,88,330,97"/>
+<area shape="rect" id="Node000004" href="$a00164.html#a2fea1365b4fa1d33eef434769b16e811" title="This API is used to set the oversampling, filter and T,P,H, gas selection settings in the sensor." alt="" coords="5,120,197,147"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="226,128,197,132,197,127,231,128"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="133,105,123,101,101,99,80,101,69,105,67,111,72,120,67,119,61,111,65,102,79,95,101,93,125,96,139,105"/>
+</map>

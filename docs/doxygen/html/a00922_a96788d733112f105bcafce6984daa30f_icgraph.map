@@ -1,0 +1,6 @@
+<map id="sram_get_statistics" name="sram_get_statistics">
+<area shape="rect" id="Node000001" title="Calculate basic statistics for the SRAM entropy buffer." alt="" coords="150,29,285,56"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="244,14,235,10,217,8,200,10,191,15,189,20,194,30,189,28,184,21,187,11,199,5,217,3,237,5,249,14"/>
+<area shape="rect" id="Node000002" href="$a00919.html#a64bd0cfe695219e3c736b3f97f0ab37e" title=" " alt="" coords="5,29,102,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,43,102,45,102,40,136,42"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="stm32_telemetry_get_latest" name="stm32_telemetry_get_latest">
+<area shape="rect" id="Node000001" title="Copy the latest validated STM32 snapshot under the telemetry lock." alt="" coords="425,63,568,105"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="529,47,518,44,497,41,477,43,465,48,460,54,462,64,457,61,455,53,462,44,476,38,497,36,519,38,534,47"/>
+<area shape="rect" id="Node000002" href="$a00299.html#a683e5fc91a37d6cb743c569698becf04" title="Build JSON from local sensors and the latest STM32 snapshot." alt="" coords="200,29,377,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="407,67,359,59,359,54,413,67"/>
+<area shape="rect" id="Node000010" href="$a00317.html#af30286882ef78925a3cf3f67373d49bc" title="Serve the latest authenticated STM32 snapshot as JSON." alt="" coords="207,104,370,147"/>
+<area shape="poly" id="edge5_Node000001_Node000010" title=" " alt="" coords="413,101,371,112,370,107,407,102"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="322,14,312,10,288,8,267,10,255,15,252,20,258,29,253,28,247,21,251,11,265,5,288,3,313,5,328,14"/>
+<area shape="rect" id="Node000003" href="$a00299.html#a500d275476b6ba32815804434f32885b" title="Connect to AWS, publish sensor telemetry and process MQTT traffic." alt="" coords="29,29,128,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="182,44,129,45,128,40,187,41"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="113,15,102,10,78,8,57,10,45,15,42,20,48,28,43,29,37,21,41,11,55,5,79,3,103,5,118,13"/>
+<area shape="poly" id="edge8_Node000010_Node000010" title=" " alt="" coords="320,88,309,85,288,83,269,85,257,89,252,95,253,105,249,102,247,94,254,85,268,79,288,77,311,80,326,89"/>
+<area shape="rect" id="Node000011" href="$a00317.html#a144f3a03b04b7f1669cd84e63a4d03cc" title="Create the monitor resources, start HTTPS and register the dashboard routes." alt="" coords="5,112,152,139"/>
+<area shape="poly" id="edge6_Node000010_Node000011" title=" " alt="" coords="189,126,152,128,152,123,195,125"/>
+<area shape="poly" id="edge7_Node000011_Node000011" title=" " alt="" coords="113,97,102,93,78,91,57,93,45,97,42,103,48,111,42,112,37,103,41,94,55,87,79,85,103,88,118,97"/>
+</map>

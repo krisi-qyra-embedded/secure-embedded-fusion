@@ -1,0 +1,7 @@
+<map id="heartbeat_signal_mpu9250" name="heartbeat_signal_mpu9250">
+<area shape="rect" id="Node000001" title="Signal MPU9250 driver activity." alt="" coords="244,29,420,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="371,14,358,10,332,8,307,10,294,15,291,20,298,30,293,28,286,21,291,11,306,5,332,3,360,5,376,15"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a31783ba032a9c7268a10ba2b4c59a9fd" title=" " alt="" coords="5,29,196,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,43,196,45,196,40,231,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="139,15,127,10,100,8,76,10,63,15,60,20,66,29,61,29,55,21,59,11,75,5,101,3,128,5,144,14"/>
+</map>

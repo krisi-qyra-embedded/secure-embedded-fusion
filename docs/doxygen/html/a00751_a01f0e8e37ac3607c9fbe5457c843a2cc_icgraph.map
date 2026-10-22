@@ -1,0 +1,17 @@
+<map id="dma2_ADC_pc45" name="dma2_ADC_pc45">
+<area shape="rect" id="Node000001" title="Configure ADC1 and DMA2 Stream4 for continuous sampling of PC4, PC5 and PB0." alt="" coords="778,37,902,64"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="868,21,859,18,840,16,823,18,813,23,811,28,815,38,811,36,806,29,809,19,821,13,840,11,861,13,873,23"/>
+<area shape="rect" id="Node000002" href="$a00751.html#acd304899aa990448e87dd7796692ed1d" title="Start ADC DMA sampling and collect entropy&#45;source bytes with bounded retries." alt="" coords="610,37,730,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="760,51,730,53,730,48,765,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="697,21,689,18,670,16,652,18,643,23,641,28,645,38,640,36,635,29,639,19,651,13,670,11,690,13,703,23"/>
+<area shape="rect" id="Node000003" href="$a00763.html#a47c3e08ac074e7ffcd9a480692aaa91f" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="403,29,562,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="591,51,562,53,562,48,597,51"/>
+<area shape="poly" id="edge8_Node000003_Node000003" title=" " alt="" coords="511,13,501,10,482,8,465,10,454,15,450,21,451,30,447,27,445,19,451,10,464,5,483,3,503,5,516,14"/>
+<area shape="rect" id="Node000004" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,29,355,72"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="385,51,356,53,356,48,391,51"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="300,13,292,10,278,8,264,10,256,14,252,20,253,30,249,27,247,19,252,11,262,5,278,3,294,5,305,14"/>
+<area shape="rect" id="Node000005" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,37,152,64"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="182,51,153,53,152,48,187,50"/>
+<area shape="rect" id="Node000006" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="84,52,55,53,55,48,89,50"/>
+</map>

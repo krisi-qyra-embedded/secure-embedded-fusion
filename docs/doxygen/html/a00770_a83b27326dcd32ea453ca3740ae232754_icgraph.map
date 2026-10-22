@@ -1,0 +1,18 @@
+<map id="hash_device_uid_into_hashed_buf" name="hash_device_uid_into_hashed_buf">
+<area shape="rect" id="Node000001" title="Hash the STM32 UID with SHA&#45;256." alt="" coords="839,63,985,105"/>
+<area shape="rect" id="Node000002" href="$a00767.html#a1cc0fe71c0c3024bf2b1efc76abd3f06" title="Hash the device UID into the global personalization buffer." alt="" coords="648,29,788,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="821,69,788,65,789,60,826,69"/>
+<area shape="rect" id="Node000007" href="$a00767.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 device UID into a fixed&#45;size SHA&#45;256 buffer." alt="" coords="645,96,791,139"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="826,99,791,107,791,102,821,100"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="748,13,737,10,718,8,700,10,689,15,684,21,685,30,681,27,679,19,685,10,698,5,718,3,739,5,753,14"/>
+<area shape="rect" id="Node000003" href="$a00767.html#af06c9c69c2d956db359ca6154c3005c4" title="Run the complete entropy&#45;conditioning and device&#45;personalization pipeline." alt="" coords="403,37,597,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="629,51,597,53,597,48,635,50"/>
+<area shape="poly" id="edge8_Node000003_Node000003" title=" " alt="" coords="536,22,524,18,500,16,477,18,465,23,462,28,468,38,463,36,457,29,461,19,476,13,500,11,526,13,541,22"/>
+<area shape="rect" id="Node000004" href="$a00662.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,29,355,72"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="385,51,356,53,356,48,390,50"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="300,14,292,10,278,8,264,10,256,14,252,20,253,30,248,28,247,19,252,11,262,5,278,3,294,5,305,14"/>
+<area shape="rect" id="Node000005" href="$a00662.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,37,152,64"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="182,52,153,53,152,48,187,50"/>
+<area shape="rect" id="Node000006" href="$a00659.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="85,52,56,53,54,48,89,49"/>
+</map>

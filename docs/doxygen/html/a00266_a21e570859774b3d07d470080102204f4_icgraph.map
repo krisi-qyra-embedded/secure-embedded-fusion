@@ -1,0 +1,8 @@
+<map id="jump_to_app" name="jump_to_app">
+<area shape="rect" id="Node000001" title="Validate the application vector table and transfer execution to it." alt="" coords="150,31,245,57"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="220,15,213,12,197,9,183,11,175,16,173,22,177,31,172,29,168,22,171,12,181,6,197,4,215,7,225,16"/>
+<area shape="rect" id="Node000002" href="$a00254.html#a1b6824bfd4ec0404a4f875ed8db0274e" title="Validate the application vector table and transfer execution to it." alt="" coords="5,5,102,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="132,34,102,30,102,24,137,32"/>
+<area shape="rect" id="Node000003" href="$a00891.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="29,56,78,83"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="132,56,79,68,78,62,137,54"/>
+</map>

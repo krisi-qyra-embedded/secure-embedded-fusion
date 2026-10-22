@@ -1,0 +1,18 @@
+<map id="decrypt_verify_recombine_gcm_receiver" name="decrypt_verify_recombine_gcm_receiver">
+<area shape="rect" id="Node000001" title="Authenticate and decode one ESP32 response." alt="" coords="559,88,729,131"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="682,72,669,69,644,67,621,69,607,73,602,79,603,89,599,86,597,78,604,69,620,63,644,61,670,64,687,73"/>
+<area shape="rect" id="Node000002" href="$a00993.html#a09f6f3d516029a09122bbc00d5ddd618" title="Authenticate/decrypt the GCM packet and rebuild the ADC samples." alt="" coords="318,5,488,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="570,82,510,63,476,51,476,46,512,57,575,82"/>
+<area shape="rect" id="Node000003" href="$a00924.html#a0b81e73c288c5256e473db2ff0eb81c2" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="295,96,510,123"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="540,110,511,112,511,107,546,109"/>
+<area shape="rect" id="Node000010" href="$a00170.html#ae470c360688f5561f2558cf3e85c3e5e" title="Wait for and process an encrypted ACK/NACK." alt="" coords="295,171,511,213"/>
+<area shape="poly" id="edge8_Node000001_Node000010" title=" " alt="" coords="568,136,468,173,467,168,563,137"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="443,81,431,77,403,75,377,77,364,81,360,87,367,96,362,95,355,87,360,77,376,71,403,69,432,72,449,81"/>
+<area shape="rect" id="Node000004" href="$a00996.html#ae0f5e3d87c01bfba1f72168c91121bdc" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="18,96,234,123"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="277,110,235,112,234,107,282,109"/>
+<area shape="rect" id="Node000005" href="$a00170.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="5,175,247,201"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="322,128,295,137,169,177,167,172,294,132,327,126"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="173,160,159,156,126,153,97,155,81,160,77,165,85,174,79,174,72,166,77,156,96,150,126,148,160,151,179,160"/>
+<area shape="poly" id="edge9_Node000010_Node000005" title=" " alt="" coords="277,190,247,192,247,187,282,190"/>
+<area shape="poly" id="edge10_Node000010_Node000010" title=" " alt="" coords="440,155,427,152,403,149,380,151,366,156,360,162,362,172,358,169,355,161,363,152,379,146,403,144,429,146,446,155"/>
+</map>

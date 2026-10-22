@@ -1,0 +1,10 @@
+<map id="ccs811_is_soft_fault" name="ccs811_is_soft_fault">
+<area shape="rect" id="Node000001" title="Check for the gas&#45;resistance range error." alt="" coords="328,29,468,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="425,14,416,10,398,8,381,10,372,15,370,20,375,30,370,28,365,21,368,11,380,5,398,3,418,5,430,15"/>
+<area shape="rect" id="Node000002" href="$a00269.html#aaf0d196a8caa797d8e7f20bcadfd7f12" title="Sample CCS811 data and handle soft faults, retries and recovery." alt="" coords="189,29,280,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="310,43,280,45,280,40,315,43"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="260,14,252,10,234,8,218,10,209,15,207,20,211,30,206,28,201,21,205,11,216,5,234,3,254,5,265,15"/>
+<area shape="rect" id="Node000003" href="$a00269.html#a9cd2f4b62bfb2be5e7e22bc42edc34e9" title="Start the CCS811 sampling and recovery task." alt="" coords="5,29,141,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="170,43,141,45,141,40,176,42"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="99,14,91,10,73,8,56,10,48,15,45,20,50,29,45,29,40,21,44,11,55,5,73,3,93,5,104,14"/>
+</map>

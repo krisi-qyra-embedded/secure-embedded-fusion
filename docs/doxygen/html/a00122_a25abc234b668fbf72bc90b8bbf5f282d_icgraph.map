@@ -1,0 +1,18 @@
+<map id="systick_delay_ms" name="systick_delay_ms">
+<area shape="rect" id="Node000001" title="Delay using the SysTick millisecond timebase." alt="" coords="593,51,720,77"/>
+<area shape="poly" id="edge11_Node000001_Node000001" title=" " alt="" coords="686,35,677,32,656,29,637,31,627,36,625,41,630,51,625,49,620,42,623,32,636,26,657,24,678,27,692,36"/>
+<area shape="rect" id="Node000002" href="$a00212.html#a4ce82d223b2c8726dbe988783551114a" title="Apply the short SPI recovery delay." alt="" coords="401,51,545,77"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="575,64,546,67,545,61,581,64"/>
+<area shape="poly" id="edge10_Node000002_Node000002" title=" " alt="" coords="503,35,494,32,473,29,454,31,444,36,442,41,447,51,442,49,436,42,440,32,453,26,473,24,495,27,508,36"/>
+<area shape="rect" id="Node000003" href="$a00185.html#a303f7d8c7c302acc18009865c936d8ba" title="Read the RTD temperature in Celsius." alt="" coords="5,51,161,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="431,44,394,30,352,17,281,8,209,17,157,33,112,52,109,48,155,28,208,12,281,3,354,12,396,25,436,44"/>
+<area shape="rect" id="Node000010" href="$a00212.html#a808c5a6e2648941c4beb599e0c5b24c9" title="Recover SPI4 after a failed transfer." alt="" coords="233,51,328,77"/>
+<area shape="poly" id="edge4_Node000002_Node000010" title=" " alt="" coords="383,64,329,67,329,61,388,64"/>
+<area shape="rect" id="Node000011" href="$a00212.html#a2bfd60146b9343ce01151f0ef9214e08" title="Restore SPI4 configuration and initialize it again." alt="" coords="209,125,353,152"/>
+<area shape="poly" id="edge7_Node000002_Node000011" title=" " alt="" coords="425,83,318,127,316,122,420,84"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="115,36,105,32,83,29,62,31,51,36,49,41,54,50,49,51,43,42,47,32,61,26,83,24,107,27,121,35"/>
+<area shape="poly" id="edge5_Node000010_Node000003" title=" " alt="" coords="215,65,162,67,161,61,220,63"/>
+<area shape="poly" id="edge6_Node000010_Node000010" title=" " alt="" coords="312,35,302,32,281,29,261,31,250,36,247,41,253,51,248,49,242,42,246,32,259,26,281,24,304,27,317,35"/>
+<area shape="poly" id="edge8_Node000011_Node000003" title=" " alt="" coords="227,121,120,80,121,75,232,118"/>
+<area shape="poly" id="edge9_Node000011_Node000011" title=" " alt="" coords="312,110,302,106,281,104,261,106,250,111,247,116,253,126,248,124,242,117,246,107,259,101,281,99,304,101,317,110"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="clock_96_mhz_init" name="clock_96_mhz_init">
+<area shape="rect" id="Node000001" title="Configure the STM32F411 system clock to 96 MHz." alt="" coords="287,29,416,56"/>
+<area shape="poly" id="edge4_Node000001_Node000001" title=" " alt="" coords="381,14,372,10,352,8,333,10,323,15,320,20,325,30,321,28,315,21,319,11,331,5,352,3,373,5,386,15"/>
+<area shape="rect" id="Node000002" href="$a00122.html#ad392c6bcb998411af9dc32719e4d0966" title="Compatibility wrapper for existing clock initialization calls." alt="" coords="103,29,239,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="269,43,239,45,239,40,274,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="193,14,186,10,171,8,157,10,149,14,147,20,151,30,146,28,142,21,145,11,155,5,171,3,188,5,198,15"/>
+<area shape="rect" id="Node000003" href="$a00866.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,29,55,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,44,55,45,55,40,90,42"/>
+</map>

@@ -1,0 +1,52 @@
+<map id="bme680_set_sensor_settings" name="bme680_set_sensor_settings">
+<area shape="rect" id="Node000001" title="This API is used to set the oversampling, filter and T,P,H, gas selection settings in the sensor." alt="" coords="5,307,197,333"/>
+<area shape="poly" id="edge25_Node000001_Node000001" title=" " alt="" coords="62,307,55,298,60,288,75,282,101,280,129,283,145,291,140,293,128,288,101,285,77,287,63,292,60,297,67,306"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="979,295,1116,321"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,305,163,232,206,182,257,131,317,82,383,41,418,25,455,13,492,5,531,3,706,3,745,4,777,10,806,19,831,32,879,68,933,118,968,158,998,202,1038,281,1033,280,993,204,964,161,929,122,875,72,828,36,804,24,776,15,744,10,706,8,531,8,493,11,456,18,420,30,385,46,320,87,261,135,209,186,167,235,114,307"/>
+<area shape="rect" id="Node000004" href="$a00116.html#af5548cbdbf327e2c77bdb0afb1dde9e4" title="This API reads the data from the given register address of the sensor." alt="" coords="470,168,594,195"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="113,305,167,257,203,231,244,211,297,194,352,184,456,178,452,181,353,189,298,199,246,216,206,236,170,261,117,308"/>
+<area shape="rect" id="Node000005" href="$a00116.html#a42e0f090abb1ef2f0cce2e572419f25e" title="Validate the BME680 device context." alt="" coords="820,269,926,296"/>
+<area shape="poly" id="edge29_Node000001_Node000005" title=" " alt="" coords="131,304,183,284,244,268,322,258,401,252,557,251,697,259,807,273,802,274,697,265,557,257,401,257,322,263,245,273,185,289,134,308"/>
+<area shape="rect" id="Node000007" href="$a00116.html#a5d1bad74f7ac28e75aca9d7de66fd2b4" title="This API writes the given data to the register address of the sensor." alt="" coords="642,395,767,421"/>
+<area shape="poly" id="edge15_Node000001_Node000007" title=" " alt="" coords="169,331,308,358,470,384,630,402,625,404,470,389,307,363,170,337"/>
+<area shape="rect" id="Node000008" href="$a00116.html#a5ca765226e758e71c862553c7cc0b371" title="This API is used to set the power mode of the sensor." alt="" coords="245,307,422,333"/>
+<area shape="poly" id="edge19_Node000001_Node000008" title=" " alt="" coords="196,318,231,319,227,321,198,322"/>
+<area shape="rect" id="Node000009" href="$a00116.html#abba830af9f63c4c251701e3001711527" title="This internal API is used to check the boundary conditions." alt="" coords="815,633,931,660"/>
+<area shape="poly" id="edge26_Node000001_Node000009" title=" " alt="" coords="110,331,162,412,201,461,246,505,346,577,389,603,430,623,522,654,643,681,704,689,766,681,825,667,830,666,767,687,704,695,642,687,521,659,428,628,386,607,343,582,243,509,197,464,157,415,109,336"/>
+<area shape="rect" id="Node000010" href="$a00116.html#aadb617afe7c21b652a32c316fba66b5a" title="This internal API is used to set the gas configuration of the sensor." alt="" coords="478,496,587,523"/>
+<area shape="poly" id="edge30_Node000001_Node000010" title=" " alt="" coords="113,331,167,391,204,424,246,451,300,473,357,489,413,498,465,506,460,507,412,504,356,494,298,478,243,456,201,428,163,395,113,337"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="1018,293,1013,286,1017,276,1028,270,1048,268,1068,271,1081,280,1075,279,1067,276,1048,273,1030,275,1020,280,1018,285,1023,295"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="1164,295,1274,321"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="1116,305,1151,308,1146,308,1117,311"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="1189,293,1184,286,1188,276,1200,270,1219,268,1240,271,1252,280,1247,279,1238,276,1219,273,1201,275,1192,280,1190,285,1194,295"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="541,166,580,120,609,97,641,79,675,68,704,65,733,69,767,79,811,95,852,118,891,144,927,173,987,232,1029,283,1024,282,983,236,924,177,888,148,850,122,809,100,766,84,732,75,704,71,677,73,643,84,612,101,584,124,545,169"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="502,167,497,159,501,150,513,144,532,141,553,144,565,152,560,153,551,149,532,147,514,149,505,153,503,159,507,168"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="594,180,678,188,724,197,768,211,810,232,846,259,841,259,807,237,766,216,722,203,677,194,595,185"/>
+<area shape="rect" id="Node000006" href="$a00116.html#a25e8a0a8d3226f33a5d8f57ffb2fb3d2" title="This internal API is used to set the memory page based on register address." alt="" coords="649,117,760,144"/>
+<area shape="poly" id="edge11_Node000004_Node000006" title=" " alt="" coords="579,165,644,148,640,150,582,170"/>
+<area shape="poly" id="edge9_Node000005_Node000002" title=" " alt="" coords="926,288,966,295,961,296,926,293"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="844,268,839,261,842,251,854,245,873,243,893,245,905,254,900,254,891,250,873,248,855,250,846,255,844,260,849,270"/>
+<area shape="poly" id="edge12_Node000006_Node000002" title=" " alt="" coords="740,142,829,180,932,231,1017,286,1012,286,930,236,827,185,741,147"/>
+<area shape="poly" id="edge13_Node000006_Node000005" title=" " alt="" coords="737,142,768,161,818,208,856,257,851,256,814,212,765,165,738,147"/>
+<area shape="poly" id="edge14_Node000006_Node000006" title=" " alt="" coords="675,116,670,109,674,99,686,93,705,91,725,93,737,102,732,102,723,98,704,96,687,98,678,103,676,108,680,117"/>
+<area shape="poly" id="edge16_Node000007_Node000002" title=" " alt="" coords="766,392,845,373,930,349,1001,327,996,329,932,355,846,379,768,397"/>
+<area shape="poly" id="edge18_Node000007_Node000005" title=" " alt="" coords="723,392,839,307,843,304,726,396"/>
+<area shape="poly" id="edge17_Node000007_Node000007" title=" " alt="" coords="675,393,670,386,674,376,686,370,705,368,725,371,737,380,732,379,723,376,704,373,687,375,678,380,676,385,680,395"/>
+<area shape="poly" id="edge20_Node000008_Node000002" title=" " alt="" coords="422,316,965,307,962,312,423,321"/>
+<area shape="poly" id="edge21_Node000008_Node000004" title=" " alt="" coords="353,304,501,202,497,206,356,308"/>
+<area shape="poly" id="edge24_Node000008_Node000005" title=" " alt="" coords="422,311,807,285,803,289,423,317"/>
+<area shape="poly" id="edge22_Node000008_Node000007" title=" " alt="" coords="393,331,633,389,628,392,393,337"/>
+<area shape="poly" id="edge23_Node000008_Node000008" title=" " alt="" coords="299,306,293,298,298,288,311,282,333,280,357,283,371,291,366,292,356,288,333,285,313,287,301,292,299,297,304,306"/>
+<area shape="poly" id="edge27_Node000009_Node000002" title=" " alt="" coords="879,631,1030,337,1035,334,883,635"/>
+<area shape="poly" id="edge28_Node000009_Node000009" title=" " alt="" coords="844,632,839,625,842,615,854,609,873,607,893,609,905,619,900,617,891,614,873,612,855,614,846,619,844,624,848,634"/>
+<area shape="poly" id="edge31_Node000010_Node000002" title=" " alt="" coords="587,509,673,506,720,500,766,488,842,455,914,412,974,367,1018,333,1023,331,977,371,917,416,845,460,768,493,721,505,673,512,588,515"/>
+<area shape="poly" id="edge37_Node000010_Node000005" title=" " alt="" coords="586,499,628,490,675,477,722,457,765,431,795,403,821,371,857,312,861,309,825,374,799,407,768,435,724,462,677,482,630,496,588,504"/>
+<area shape="poly" id="edge32_Node000010_Node000007" title=" " alt="" coords="553,493,641,438,660,430,665,428,644,442,555,498"/>
+<area shape="poly" id="edge38_Node000010_Node000010" title=" " alt="" coords="502,495,497,487,501,478,513,472,532,469,553,472,565,481,560,481,551,477,532,475,514,477,505,481,503,487,507,496"/>
+<area shape="rect" id="Node000011" href="$a00116.html#aa4508da37330f16b676b81aa6df4ac7e" title="This internal API is used to calculate the Heat duration value." alt="" coords="648,571,761,597"/>
+<area shape="poly" id="edge33_Node000010_Node000011" title=" " alt="" coords="565,521,661,564,655,564,565,526"/>
+<area shape="rect" id="Node000012" href="$a00116.html#afb0d4e9c93c9847e57c0e311a45532a9" title="This internal API is used to calculate the Heat Resistance value." alt="" coords="648,645,761,672"/>
+<area shape="poly" id="edge35_Node000010_Node000012" title=" " alt="" coords="549,521,644,607,676,636,671,635,641,611,547,526"/>
+<area shape="poly" id="edge34_Node000011_Node000011" title=" " alt="" coords="675,569,670,562,674,552,686,546,705,544,725,547,737,556,732,555,723,552,704,549,687,551,678,556,676,561,680,571"/>
+<area shape="poly" id="edge36_Node000012_Node000012" title=" " alt="" coords="675,644,670,637,674,627,686,621,705,619,725,621,737,631,732,629,723,626,704,624,687,626,678,631,676,636,680,646"/>
+</map>

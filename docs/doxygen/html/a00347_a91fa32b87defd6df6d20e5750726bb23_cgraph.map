@@ -1,0 +1,7 @@
+<map id="STM32_UART_ConsumeEncryptedBytes" name="STM32_UART_ConsumeEncryptedBytes">
+<area shape="rect" id="Node000001" title="Append received bytes and queue complete encrypted packet candidates." alt="" coords="5,29,234,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="69,28,67,19,76,10,93,5,120,3,148,5,166,14,161,14,147,10,119,8,94,10,79,15,73,21,75,29"/>
+<area shape="rect" id="Node000002" href="$a00347.html#a14e0519de47c5133ec69da2c55a1fb19" title="Clear the partial&#45;packet buffer, byte count and timestamp." alt="" coords="282,29,489,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="234,48,269,51,264,51,234,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="336,27,333,19,342,10,359,5,385,3,414,5,432,14,427,13,412,10,385,8,360,10,344,15,338,21,340,30"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="hash_device_uid_into_hashed_buf" name="hash_device_uid_into_hashed_buf">
+<area shape="rect" id="Node000001" title="Hash the STM32 UID with SHA&#45;256." alt="" coords="441,63,587,105"/>
+<area shape="rect" id="Node000002" href="$a01014.html#a1cc0fe71c0c3024bf2b1efc76abd3f06" title="Hash the device UID into the global personalization buffer." alt="" coords="250,29,390,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="423,69,391,65,391,60,428,69"/>
+<area shape="rect" id="Node000007" href="$a01014.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 device UID into a fixed&#45;size SHA&#45;256 buffer." alt="" coords="247,96,393,139"/>
+<area shape="poly" id="edge5_Node000001_Node000007" title=" " alt="" coords="428,99,393,107,393,102,423,100"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="350,14,339,10,320,8,302,10,291,15,286,21,287,30,283,27,281,19,287,10,300,5,320,3,341,5,355,14"/>
+<area shape="rect" id="Node000003" href="$a01014.html#af06c9c69c2d956db359ca6154c3005c4" title="Run the complete entropy&#45;conditioning and device&#45;personalization pipeline." alt="" coords="5,37,199,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="231,51,200,53,199,48,237,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="138,23,126,18,102,16,79,18,67,23,64,28,70,37,65,37,59,29,63,19,78,13,102,11,128,13,143,22"/>
+</map>

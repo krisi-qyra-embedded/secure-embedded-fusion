@@ -1,0 +1,35 @@
+<map id="MPU_readProcessedData" name="MPU_readProcessedData">
+<area shape="rect" id="Node000001" title="Read and update processed accelerometer and gyroscope data." alt="" coords="5,172,179,198"/>
+<area shape="poly" id="edge17_Node000001_Node000001" title=" " alt="" coords="53,172,47,163,52,153,67,147,92,145,119,148,134,156,130,158,117,153,92,150,68,152,55,157,52,163,59,171"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="680,113,818,140"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,170,149,114,185,83,225,59,284,35,335,18,382,8,427,3,472,5,520,12,633,43,660,54,685,69,726,103,721,102,682,73,657,59,631,48,519,17,472,10,427,8,383,13,336,23,285,40,228,64,188,87,153,117,105,173"/>
+<area shape="rect" id="Node000004" href="$a00209.html#ab5bb4fe0355e5bf9f16727035901af59" title="Convert the latest accelerometer sample to physical units." alt="" coords="249,97,388,124"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="127,169,226,133,253,127,248,130,228,138,130,174"/>
+<area shape="rect" id="Node000044" href="$a00209.html#ac6655367b65aec29fc6f401400c8b224" title="Convert the latest gyroscope sample to physical units." alt="" coords="252,172,384,198"/>
+<area shape="poly" id="edge11_Node000001_Node000044" title=" " alt="" coords="178,183,239,184,234,186,180,188"/>
+<area shape="rect" id="Node000012" href="$a00197.html#aef0fe391151f498b87061f7abc9a9b19" title="Mark fault recovery as in progress." alt="" coords="244,246,393,289"/>
+<area shape="poly" id="edge18_Node000001_Node000012" title=" " alt="" coords="131,196,246,239,241,242,131,202"/>
+<area shape="rect" id="Node000046" href="$a00209.html#afcda4241c37bfc2c519078503f9b47ac" title="Publish the latest MPU9250 sample." alt="" coords="227,337,410,364"/>
+<area shape="poly" id="edge20_Node000001_Node000046" title=" " alt="" coords="108,197,160,245,228,299,277,330,272,330,225,303,156,249,107,202"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="719,112,714,104,718,95,730,89,749,86,770,89,782,98,777,98,768,94,749,92,731,94,722,98,720,104,724,114"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="866,113,975,140"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="818,124,853,126,847,127,818,129"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="891,112,886,104,889,95,901,89,920,86,941,89,953,98,948,98,939,94,920,92,903,94,893,98,891,104,896,114"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="354,94,403,79,458,67,546,56,584,57,633,67,677,82,717,105,712,105,675,87,632,72,584,63,546,61,458,72,404,84,357,99"/>
+<area shape="poly" id="edge10_Node000004_Node000004" title=" " alt="" coords="280,97,273,88,278,79,293,73,318,70,345,73,361,81,356,82,344,78,318,76,295,78,282,83,279,88,285,97"/>
+<area shape="rect" id="Node000005" href="$a00209.html#a86eeeaea07da09a4f35eb0b0cb4ec8c9" title="Perform one blocking accelerometer update." alt="" coords="466,105,624,148"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="388,113,453,119,448,121,389,118"/>
+<area shape="poly" id="edge8_Node000005_Node000002" title=" " alt="" coords="624,124,668,126,662,127,625,129"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="506,103,505,95,511,86,525,81,545,78,567,81,582,90,576,90,566,86,545,84,526,86,514,90,510,96,511,106"/>
+<area shape="poly" id="edge12_Node000044_Node000002" title=" " alt="" coords="384,181,500,174,632,157,695,144,690,146,633,162,501,179,385,186"/>
+<area shape="poly" id="edge16_Node000044_Node000044" title=" " alt="" coords="280,171,273,163,278,153,293,147,318,145,345,148,361,156,356,157,344,153,318,150,295,152,282,157,279,163,285,172"/>
+<area shape="rect" id="Node000045" href="$a00209.html#ac2c44562cb7644baf76ed9637dea5867" title="Perform one blocking gyroscope update." alt="" coords="469,246,621,289"/>
+<area shape="poly" id="edge13_Node000044_Node000045" title=" " alt="" coords="374,196,411,208,486,240,480,240,409,213,374,202"/>
+<area shape="poly" id="edge14_Node000045_Node000002" title=" " alt="" coords="576,244,713,150,718,148,579,248"/>
+<area shape="poly" id="edge15_Node000045_Node000045" title=" " alt="" coords="507,244,505,236,511,228,525,222,545,220,567,222,582,231,576,231,566,227,545,225,526,227,514,232,510,238,511,247"/>
+<area shape="poly" id="edge19_Node000012_Node000012" title=" " alt="" coords="276,245,274,236,281,227,296,222,318,220,343,222,359,231,353,231,341,227,318,225,297,227,284,232,279,238,280,247"/>
+<area shape="poly" id="edge23_Node000046_Node000046" title=" " alt="" coords="280,336,273,328,278,319,293,313,318,310,345,313,361,322,356,322,344,318,318,316,295,318,282,323,279,328,285,338"/>
+<area shape="rect" id="Node000047" href="$a00257.html#aa891c98d9faefbdb171bf6d9ea70ec17" title="Advance a telemetry generation counter." alt="" coords="458,337,632,364"/>
+<area shape="poly" id="edge21_Node000046_Node000047" title=" " alt="" coords="410,348,445,350,440,351,410,353"/>
+<area shape="poly" id="edge22_Node000047_Node000047" title=" " alt="" coords="510,336,504,328,509,319,523,313,545,310,569,313,584,322,579,321,568,318,545,316,524,318,512,323,510,328,515,338"/>
+</map>

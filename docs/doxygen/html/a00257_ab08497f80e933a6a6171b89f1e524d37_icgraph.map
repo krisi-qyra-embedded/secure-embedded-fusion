@@ -1,0 +1,10 @@
+<map id="delay" name="delay">
+<area shape="rect" id="Node000001" title="Block for the requested number of system ticks." alt="" coords="421,29,473,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="471,13,463,10,447,8,432,10,424,14,422,20,426,30,421,28,417,21,420,11,430,5,447,3,465,5,476,15"/>
+<area shape="rect" id="Node000002" href="$a01017.html#a065424f1fa20ad18eec9b3b216a19cc1" title="Collect the configured number of TIM1 capture samples through DMA." alt="" coords="226,29,373,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="403,43,373,45,373,40,408,43"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="323,14,315,10,299,8,284,10,276,14,274,20,278,30,273,28,269,21,272,11,283,5,299,3,317,5,328,15"/>
+<area shape="rect" id="Node000003" href="$a01017.html#a90aecad7973b81903ab0ebfa862f6980" title="Initialize the jitter hardware and collect one complete sample set." alt="" coords="5,29,178,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="207,43,178,45,178,40,213,43"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="126,14,115,10,91,8,70,10,58,15,55,20,61,29,56,29,50,21,54,11,68,5,92,3,116,5,131,14"/>
+</map>

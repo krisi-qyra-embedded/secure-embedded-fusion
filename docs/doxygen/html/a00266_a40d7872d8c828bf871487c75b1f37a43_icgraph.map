@@ -1,0 +1,14 @@
+<map id="load_signed_manifest" name="load_signed_manifest">
+<area shape="rect" id="Node000001" title="Load and validate the signed manifest from protected Flash." alt="" coords="326,43,473,69"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="427,27,419,24,400,21,382,23,373,28,370,33,375,43,370,41,365,34,369,24,381,18,400,16,420,19,433,28"/>
+<area shape="rect" id="Node000002" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="204,5,254,32"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="318,39,254,27,254,21,323,38"/>
+<area shape="rect" id="Node000003" href="$a00278.html#a143124af5faa46c359a927e339deab51" title="Write one 32&#45;bit value in big&#45;endian form into a bounded buffer." alt="" coords="180,80,278,107"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="324,73,279,85,278,80,318,74"/>
+<area shape="poly" id="edge6_Node000003_Node000003" title=" " alt="" coords="255,64,246,61,229,59,212,61,204,65,201,71,206,81,201,79,196,71,200,62,211,56,229,53,248,56,260,65"/>
+<area shape="rect" id="Node000004" href="$a00266.html#a89ee2c9aaeeea6a80c5ce21db4555fca" title="Serialize manifest fields into the canonical big&#45;endian buffer." alt="" coords="5,55,132,81"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="162,84,132,81,132,75,167,83"/>
+<area shape="rect" id="Node000012" href="$a00266.html#a143124af5faa46c359a927e339deab51" title=" " alt="" coords="19,105,118,132"/>
+<area shape="poly" id="edge7_Node000003_Node000012" title=" " alt="" coords="162,104,119,114,118,108,167,103"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="94,40,86,36,68,33,52,35,43,40,41,45,46,54,40,54,36,46,39,36,50,30,69,28,88,31,99,39"/>
+</map>

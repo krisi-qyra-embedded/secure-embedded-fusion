@@ -1,0 +1,25 @@
+<map id="app_mpu9250_recover_and_reinit" name="app_mpu9250_recover_and_reinit">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,68,158,111"/>
+<area shape="poly" id="edge13_Node000001_Node000001" title=" " alt="" coords="39,68,38,58,45,49,59,44,82,42,105,44,121,52,116,54,104,49,81,47,61,49,48,54,43,59,44,68"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="615,39,753,66"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="126,65,164,50,205,38,305,15,385,4,466,5,568,16,633,34,628,34,567,22,465,10,386,10,306,21,206,43,166,55,129,70"/>
+<area shape="rect" id="Node000004" href="$a00161.html#a0de5b9e88e18ac776a7f4ae28d3d3c00" title="Initialize the MPU9250 I2C/DMA peripherals." alt="" coords="206,76,402,103"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="157,87,193,89,188,91,158,92"/>
+<area shape="rect" id="Node000032" href="$a00149.html#a0ba429bdcf4478be7b3e2e48f8c99f1f" title="Recover an I2C peripheral after a stalled transfer." alt="" coords="260,176,348,203"/>
+<area shape="poly" id="edge14_Node000001_Node000032" title=" " alt="" coords="132,109,260,168,256,171,130,114"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="654,37,649,30,653,21,665,14,684,12,705,15,717,24,712,23,703,20,684,18,666,20,657,24,655,30,659,39"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="801,39,910,66"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="753,50,788,52,782,53,753,55"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="826,37,821,30,824,21,836,14,855,12,876,15,888,24,883,23,874,20,855,18,838,20,828,24,826,30,831,40"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="335,73,388,53,450,38,508,33,568,38,602,42,597,43,567,43,508,39,450,43,389,59,337,78"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="269,75,263,67,267,58,281,52,304,50,328,52,343,61,337,61,327,57,304,55,282,57,271,62,268,67,274,76"/>
+<area shape="rect" id="Node000005" href="$a00149.html#ace510a522a33ae1e6436a0be60a6c2c2" title="Configure one DMA stream." alt="" coords="450,76,567,103"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="402,87,437,89,432,90,402,92"/>
+<area shape="rect" id="Node000038" href="$a00149.html#a279a4fa56a32e127af6d09f5d96d6a3d" title="Select and initialize the requested I2C peripheral." alt="" coords="456,151,561,178"/>
+<area shape="poly" id="edge11_Node000004_Node000038" title=" " alt="" coords="343,101,458,145,453,145,342,106"/>
+<area shape="poly" id="edge9_Node000005_Node000002" title=" " alt="" coords="567,74,606,69,601,70,569,80"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="478,75,473,67,477,58,489,52,509,50,530,52,542,61,537,61,528,57,509,55,491,57,481,61,479,67,483,77"/>
+<area shape="poly" id="edge12_Node000038_Node000038" title=" " alt="" coords="478,149,473,142,477,133,489,126,509,124,530,127,542,136,537,135,528,132,509,130,491,132,481,136,479,142,483,152"/>
+<area shape="poly" id="edge15_Node000032_Node000002" title=" " alt="" coords="349,198,396,205,451,209,510,204,539,197,566,187,599,165,628,137,650,106,667,81,671,78,655,109,632,140,603,170,569,192,541,203,511,209,452,214,395,211,348,203"/>
+<area shape="poly" id="edge16_Node000032_Node000032" title=" " alt="" coords="269,175,263,167,267,158,281,152,304,150,328,152,343,161,337,161,327,157,304,155,282,157,271,162,268,167,274,177"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/pm25_uart.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/pm25_uart.h">
+<area shape="rect" id="Node000001" title="USART1 DMA receive path for the PMS5003 sensor." alt="" coords="331,5,662,128"/>
+<area shape="rect" id="Node000002" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="5,176,306,299"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="362,134,280,178,277,173,358,136"/>
+<area shape="rect" id="Node000003" href="$a00170.html" title="USART1 DMA receive path for the PM2.5 sensor." alt="" coords="330,176,664,299"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="499,142,499,177,495,174,495,146"/>
+<area shape="rect" id="Node000004" href="$a00173.html" title="PMS5003 frame parsing, telemetry and runtime recovery." alt="" coords="688,176,999,299"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="636,133,721,176,716,175,635,138"/>
+</map>

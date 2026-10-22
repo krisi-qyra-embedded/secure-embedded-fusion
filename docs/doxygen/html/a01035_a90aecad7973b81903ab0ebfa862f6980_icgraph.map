@@ -1,0 +1,10 @@
+<map id="JITTER_CAPTURE_INIT" name="JITTER_CAPTURE_INIT">
+<area shape="rect" id="Node000001" title="Initialize the jitter hardware and collect one complete sample set." alt="" coords="415,37,587,64"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="536,22,525,18,501,16,479,18,467,23,464,28,470,38,465,36,459,29,463,19,478,13,501,11,527,13,542,23"/>
+<area shape="rect" id="Node000002" href="$a01017.html#a47c3e08ac074e7ffcd9a480692aaa91f" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="209,29,367,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="397,51,367,53,367,48,402,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="319,13,308,10,288,8,269,10,257,15,252,21,254,30,249,27,247,19,254,10,267,5,288,3,310,5,325,14"/>
+<area shape="rect" id="Node000003" href="$a00912.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="5,29,161,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="191,51,161,53,161,48,196,50"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="114,14,104,10,83,8,64,10,52,15,47,21,49,29,44,28,42,19,49,10,63,5,83,3,105,5,120,13"/>
+</map>

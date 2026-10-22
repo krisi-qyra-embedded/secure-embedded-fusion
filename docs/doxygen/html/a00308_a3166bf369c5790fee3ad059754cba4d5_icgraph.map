@@ -1,0 +1,10 @@
+<map id="esp32_gcm_nvs_reserve_tx_session" name="esp32_gcm_nvs_reserve_tx_session">
+<area shape="rect" id="Node000001" title="Increment and commit the next persistent TX session." alt="" coords="452,29,618,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="572,13,559,10,535,8,513,10,499,15,494,21,495,30,491,27,489,19,496,10,512,5,535,3,560,5,577,14"/>
+<area shape="rect" id="Node000002" href="$a00308.html#ad9177418083c6b4146c2efe2636b1639" title="Reserve a persistent TX session ID and initialize its RAM counter." alt="" coords="198,37,404,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="434,51,405,53,404,48,439,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="338,22,326,18,301,16,277,18,265,23,262,28,268,38,263,36,256,29,261,19,276,13,301,11,327,13,343,22"/>
+<area shape="rect" id="Node000003" href="$a00888.html#a60c9a25e76daf5ea2be5f5fcfcb28652" title="Prepare both ECDH directions, AES&#45;GCM contexts and the TX nonce session." alt="" coords="5,29,150,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="180,51,150,53,150,48,185,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="112,14,100,10,77,8,56,10,44,15,39,21,40,29,35,28,33,19,40,10,55,5,78,3,101,5,117,13"/>
+</map>

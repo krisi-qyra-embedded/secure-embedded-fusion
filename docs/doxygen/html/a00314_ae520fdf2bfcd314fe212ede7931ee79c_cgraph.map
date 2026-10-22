@@ -1,0 +1,7 @@
+<map id="esp32_ecdh_print_keypairs" name="esp32_ecdh_print_keypairs">
+<area shape="rect" id="Node000001" title="Log keypair diagnostics, suppressing raw output for provisioned keys." alt="" coords="5,29,185,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="62,29,57,21,61,11,74,5,95,3,118,5,131,14,126,14,116,10,95,8,75,10,65,15,62,20,67,29"/>
+<area shape="rect" id="Node000002" href="$a00314.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="233,29,338,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="185,40,220,43,214,43,185,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="253,28,247,21,251,11,264,5,285,3,308,5,322,14,316,14,307,10,285,8,266,10,255,15,252,20,258,30"/>
+</map>

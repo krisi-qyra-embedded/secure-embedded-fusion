@@ -1,0 +1,7 @@
+<map id="STM32_UART_FlushRx" name="STM32_UART_FlushRx">
+<area shape="rect" id="Node000001" title="Flush RX data, clear both queues and reset partial packet assembly." alt="" coords="5,37,168,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="47,37,40,29,45,19,61,13,87,11,115,13,131,22,125,23,113,18,86,16,62,18,49,23,46,28,52,37"/>
+<area shape="rect" id="Node000002" href="$a00302.html#a14e0519de47c5133ec69da2c55a1fb19" title="Clear the partial&#45;packet buffer, byte count and timestamp." alt="" coords="216,29,423,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="168,48,203,50,198,51,168,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="276,27,273,19,281,10,296,5,319,3,344,5,361,14,355,13,343,10,319,8,297,10,284,15,279,21,280,30"/>
+</map>

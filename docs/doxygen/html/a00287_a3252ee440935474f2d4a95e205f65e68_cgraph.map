@@ -1,0 +1,7 @@
+<map id="ecdh_party_free" name="ecdh_party_free">
+<area shape="rect" id="Node000001" title="Free one directional key container and wipe its exported bytes." alt="" coords="5,29,120,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="29,29,24,21,28,11,41,5,63,3,86,5,99,14,94,14,84,10,62,8,42,10,32,15,29,20,34,29"/>
+<area shape="rect" id="Node000002" href="$a00287.html#a2c40b9aa9e4ee1aaa04983ac69b48f6e" title="Wipe the exported key bytes and clear the public&#45;key length." alt="" coords="168,29,344,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="120,40,155,42,150,43,120,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="223,28,217,21,221,11,234,5,256,3,279,5,293,14,287,14,277,10,256,8,236,10,225,15,222,20,228,30"/>
+</map>

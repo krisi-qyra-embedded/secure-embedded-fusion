@@ -1,0 +1,22 @@
+<map id="USART2_IRQHandler" name="USART2_IRQHandler">
+<area shape="rect" id="Node000001" title="USART2 interrupt vector." alt="" coords="5,29,155,56"/>
+<area shape="rect" id="Node000002" href="$a00805.html#a6dc3431121f47344b931359334d1c560" title="Handle USART2 logging interrupts." alt="" coords="400,29,537,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="155,32,203,28,277,25,352,28,387,33,382,33,352,33,277,31,203,33,155,37"/>
+<area shape="rect" id="Node000007" href="$a00808.html#a0ca6fd0e6f77921dd1123539857ba0a8" title=" " alt="" coords="203,67,352,93"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="154,54,191,63,186,63,154,59"/>
+<area shape="poly" id="edge10_Node000002_Node000002" title=" " alt="" coords="442,28,438,21,441,11,451,5,469,3,487,5,498,15,493,14,485,10,469,8,453,10,445,14,443,20,447,30"/>
+<area shape="rect" id="Node000003" href="$a00805.html#ae88ac59641da4cf447e854d92c65b7a3" title="Queue one character for logging." alt="" coords="585,29,656,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="537,40,572,43,567,43,538,45"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="596,28,592,21,595,11,605,5,621,3,638,5,648,15,643,13,636,10,620,8,606,10,599,14,597,20,601,30"/>
+<area shape="rect" id="Node000004" href="$a00805.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="704,29,816,56"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="656,40,691,43,686,43,656,45"/>
+<area shape="poly" id="edge9_Node000004_Node000004" title=" " alt="" coords="736,28,731,21,734,11,744,5,760,3,777,5,787,15,782,13,775,10,760,8,746,10,739,14,737,20,740,30"/>
+<area shape="rect" id="Node000005" href="$a00721.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="864,29,931,56"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="816,40,851,43,845,43,817,45"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="877,27,873,20,875,11,884,5,898,3,912,5,921,15,916,13,910,10,898,8,886,10,880,14,878,20,881,30"/>
+<area shape="rect" id="Node000006" href="$a00721.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="979,29,1053,56"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="932,40,967,43,961,43,932,45"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="995,27,991,20,994,11,1002,5,1016,3,1031,5,1039,15,1034,13,1029,10,1016,8,1004,10,998,14,997,20,999,30"/>
+<area shape="poly" id="edge12_Node000007_Node000002" title=" " alt="" coords="349,63,382,59,387,59,349,69"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="244,65,239,58,243,48,256,42,277,40,300,43,314,52,309,51,299,48,277,45,257,47,247,52,244,57,249,67"/>
+</map>

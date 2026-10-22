@@ -1,0 +1,13 @@
+<map id="boundary_check" name="boundary_check">
+<area shape="rect" id="Node000001" title="This internal API is used to check the boundary conditions." alt="" coords="384,71,500,97"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="475,55,465,52,442,49,421,51,410,56,407,61,413,71,408,69,402,62,406,52,420,46,442,44,466,47,480,56"/>
+<area shape="rect" id="Node000002" href="$a00161.html#a2fea1365b4fa1d33eef434769b16e811" title="This API is used to set the oversampling, filter and T,P,H, gas selection settings in the sensor." alt="" coords="145,29,336,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="366,69,309,59,309,54,372,69"/>
+<area shape="rect" id="Node000008" href="$a00161.html#a14d2f98e4efd330b03fad0d24f2c3eda" title=" " alt="" coords="162,104,319,147"/>
+<area shape="poly" id="edge6_Node000001_Node000008" title=" " alt="" coords="371,99,320,112,319,107,366,99"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="271,14,261,10,240,8,221,10,210,15,208,20,213,29,208,28,202,21,206,11,219,5,240,3,263,5,276,14"/>
+<area shape="rect" id="Node000003" href="$a00227.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="5,29,97,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="126,44,98,45,96,40,131,41"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="82,15,72,10,51,8,31,10,21,15,18,20,23,28,18,30,13,21,17,11,30,5,51,3,74,5,87,13"/>
+<area shape="poly" id="edge7_Node000008_Node000008" title=" " alt="" coords="269,88,259,85,240,83,223,85,212,89,208,95,209,105,204,102,202,94,209,85,221,79,240,77,261,80,275,89"/>
+</map>

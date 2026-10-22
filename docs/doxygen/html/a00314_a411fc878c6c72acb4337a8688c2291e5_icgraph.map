@@ -1,0 +1,10 @@
+<map id="ccs811_fatal_stop_kicking_watchdog" name="ccs811_fatal_stop_kicking_watchdog">
+<area shape="rect" id="Node000001" title="Invalidate the reading and wait without refreshing the heartbeat." alt="" coords="328,29,502,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="443,13,433,10,415,8,398,10,388,14,384,21,385,30,381,27,379,19,385,10,397,5,415,3,435,5,448,14"/>
+<area shape="rect" id="Node000002" href="$a00314.html#aaf0d196a8caa797d8e7f20bcadfd7f12" title="Sample CCS811 data and handle soft faults, retries and recovery." alt="" coords="189,37,280,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="309,51,280,53,280,48,315,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="260,22,252,18,234,16,218,18,209,23,207,28,211,38,206,36,201,29,205,19,216,13,234,11,254,13,265,22"/>
+<area shape="rect" id="Node000003" href="$a00314.html#a9cd2f4b62bfb2be5e7e22bc42edc34e9" title="Start the CCS811 sampling and recovery task." alt="" coords="5,37,141,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="170,51,141,53,141,48,176,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="99,22,91,18,73,16,56,18,48,23,45,28,50,37,45,37,40,29,44,19,55,13,73,11,93,13,104,22"/>
+</map>

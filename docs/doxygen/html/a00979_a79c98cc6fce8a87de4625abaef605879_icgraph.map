@@ -1,0 +1,11 @@
+<map id="nonce_simple_init" name="nonce_simple_init">
+<area shape="rect" id="Node000001" title="Reset nonce state and initialize static entropy when a platform RNG is available." alt="" coords="306,71,431,97"/>
+<area shape="poly" id="edge4_Node000001_Node000001" title=" " alt="" coords="399,55,390,52,369,49,349,51,339,56,336,61,341,71,336,69,331,62,335,52,348,46,369,44,391,47,405,56"/>
+<area shape="rect" id="Node000002" href="$a00862.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="103,29,258,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="288,70,258,67,258,62,293,70"/>
+<area shape="rect" id="Node000005" href="$a00907.html#a7d93edcb89071bebc220d556a863db5f" title="Fill a buffer from an optional platform entropy source." alt="" coords="109,96,252,139"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="293,97,253,107,252,102,288,98"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="203,14,195,10,180,8,167,10,158,14,155,20,156,30,151,28,150,19,155,11,165,5,180,3,197,5,208,14"/>
+<area shape="rect" id="Node000003" href="$a00862.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,52,56,53,54,48,89,49"/>
+</map>

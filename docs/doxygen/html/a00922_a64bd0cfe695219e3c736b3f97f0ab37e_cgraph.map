@@ -1,0 +1,17 @@
+<map id="__attribute__" name="__attribute__">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,102,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="24,104,19,95,22,86,34,80,54,77,74,80,86,88,81,90,72,85,53,83,36,85,26,89,24,95,29,103"/>
+<area shape="rect" id="Node000002" href="$a00991.html#a96788d733112f105bcafce6984daa30f" title="Calculate basic statistics for the SRAM entropy buffer." alt="" coords="157,29,292,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="77,101,149,66,167,60,163,63,151,70,80,106"/>
+<area shape="rect" id="Node000003" href="$a00991.html#a72417f62b45bd754bb65ef7398b22aba" title="Capture a runtime SRAM sample." alt="" coords="150,104,299,131"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="101,115,136,116,132,119,103,120"/>
+<area shape="rect" id="Node000008" href="$a00991.html#a81431e84fb77086a6b1ddb31dad847a8" title="Capture the configured SRAM startup sample." alt="" coords="151,179,298,221"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="84,129,167,170,162,173,82,134"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="196,29,192,21,195,11,206,5,224,3,244,5,255,14,250,14,242,10,224,8,208,10,199,15,197,20,202,29"/>
+<area shape="poly" id="edge7_Node000003_Node000003" title=" " alt="" coords="196,103,192,95,195,86,206,80,224,77,244,80,255,89,250,89,242,85,224,83,208,85,199,89,197,95,202,104"/>
+<area shape="rect" id="Node000004" href="$a01009.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="347,145,421,172"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="279,129,335,145,330,146,279,134"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="356,144,352,137,355,127,366,121,384,119,404,121,415,130,410,130,402,126,384,124,368,126,359,131,357,136,361,146"/>
+<area shape="poly" id="edge9_Node000008_Node000004" title=" " alt="" coords="297,178,329,173,335,172,298,184"/>
+<area shape="poly" id="edge10_Node000008_Node000008" title=" " alt="" coords="194,177,192,169,197,160,208,154,224,152,242,154,254,163,248,163,240,159,224,157,210,159,201,164,197,170,198,179"/>
+</map>

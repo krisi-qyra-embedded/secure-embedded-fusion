@@ -1,0 +1,32 @@
+<map id="DS18B20_AlarmSearch" name="DS18B20_AlarmSearch">
+<area shape="rect" id="Node000001" title="Search for sensors with active alarms." alt="" coords="5,104,165,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="49,104,43,95,47,86,62,79,85,77,110,80,125,88,120,90,109,85,85,83,63,85,51,89,48,95,54,103"/>
+<area shape="rect" id="Node000002" href="$a00161.html#aeae4d8f4bdda655f95242c2bea3d0c9e" title=" " alt="" coords="213,29,380,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="118,101,212,65,236,60,231,63,214,71,121,106"/>
+<area shape="rect" id="Node000003" href="$a00194.html#a2346b9e5bfa60fac11b1ef081f3e55ef" title="Copy the current discovered ROM address." alt="" coords="220,104,372,131"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="164,115,207,116,202,119,166,120"/>
+<area shape="rect" id="Node000004" href="$a00194.html#a530b83f7aee36893b693db97eb2d97e3" title="Run a 1&#45;Wire ROM search." alt="" coords="236,179,356,205"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="125,129,244,171,240,174,125,134"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="262,29,256,21,260,11,274,5,296,3,320,5,334,14,329,15,319,10,296,8,275,10,264,15,262,20,267,29"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="262,103,256,95,260,86,274,79,296,77,320,80,334,88,329,89,319,85,296,83,275,85,264,89,262,95,267,104"/>
+<area shape="poly" id="edge15_Node000004_Node000004" title=" " alt="" coords="262,178,256,170,260,160,274,154,296,152,320,155,334,163,329,163,319,160,296,157,275,159,264,164,262,169,267,179"/>
+<area shape="rect" id="Node000005" href="$a00194.html#acc6e9ea7c6dc7212a487982a942d86c4" title=" " alt="" coords="622,141,778,168"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="327,176,353,160,378,141,392,121,399,101,408,82,427,66,463,51,494,48,527,54,565,65,596,78,626,94,675,131,669,131,623,98,594,82,563,71,525,59,494,53,464,56,429,70,412,85,404,103,397,123,382,145,356,165,329,180"/>
+<area shape="rect" id="Node000006" href="$a00194.html#adc37cc284201f9294f12ae0cc70a5b66" title="Read one bit from the 1&#45;Wire bus." alt="" coords="433,104,559,131"/>
+<area shape="poly" id="edge9_Node000004_Node000006" title=" " alt="" coords="333,176,447,136,442,138,335,181"/>
+<area shape="rect" id="Node000013" href="$a00194.html#a11aaac150b45e827e235d3caa0e2c971" title="Reset the 1&#45;Wire bus and detect presence." alt="" coords="439,179,553,205"/>
+<area shape="poly" id="edge12_Node000004_Node000013" title=" " alt="" coords="357,189,426,191,421,193,357,195"/>
+<area shape="rect" id="Node000014" href="$a00194.html#a5508ed83415366ef360b607f0e27dd4a" title=" " alt="" coords="612,279,788,305"/>
+<area shape="poly" id="edge16_Node000004_Node000014" title=" " alt="" coords="311,203,359,249,392,272,429,289,470,300,513,305,595,307,600,307,513,311,469,305,427,295,390,277,356,253,309,208"/>
+<area shape="rect" id="Node000015" href="$a00194.html#adc1b20ba0318926a0d72120fbd7f23da" title="Write one byte to the 1&#45;Wire bus." alt="" coords="428,253,564,280"/>
+<area shape="poly" id="edge18_Node000004_Node000015" title=" " alt="" coords="335,203,447,247,441,248,334,209"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="665,140,659,133,663,123,677,117,700,115,724,117,739,126,733,126,723,122,700,120,679,122,667,127,665,132,670,142"/>
+<area shape="poly" id="edge10_Node000006_Node000005" title=" " alt="" coords="559,126,611,138,606,138,560,132"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="462,103,456,95,460,86,474,79,496,77,520,80,534,89,529,89,518,85,496,83,475,85,464,89,461,95,467,104"/>
+<area shape="poly" id="edge13_Node000013_Node000005" title=" " alt="" coords="553,179,611,171,606,172,554,184"/>
+<area shape="poly" id="edge14_Node000013_Node000013" title=" " alt="" coords="462,177,456,170,460,160,474,154,496,152,520,155,534,164,529,163,518,160,496,157,475,159,464,164,461,169,467,179"/>
+<area shape="poly" id="edge17_Node000014_Node000014" title=" " alt="" coords="665,277,659,270,663,260,677,254,700,252,724,255,739,264,733,263,723,260,700,257,679,259,667,264,665,269,670,279"/>
+<area shape="poly" id="edge19_Node000015_Node000005" title=" " alt="" coords="522,250,658,176,663,175,524,255"/>
+<area shape="poly" id="edge20_Node000015_Node000014" title=" " alt="" coords="565,272,600,279,594,279,564,278"/>
+<area shape="poly" id="edge21_Node000015_Node000015" title=" " alt="" coords="462,252,456,245,460,235,474,229,496,227,520,229,534,238,529,238,518,234,496,232,475,234,464,239,461,244,467,254"/>
+</map>

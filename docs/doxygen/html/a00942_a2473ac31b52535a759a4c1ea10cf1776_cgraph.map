@@ -1,0 +1,38 @@
+<map id="decrypt_verify_recombine_gcm_receiver" name="decrypt_verify_recombine_gcm_receiver">
+<area shape="rect" id="Node000001" title="Authenticate and decode one ESP32 response." alt="" coords="5,280,176,323"/>
+<area shape="poly" id="edge11_Node000001_Node000001" title=" " alt="" coords="49,279,48,270,55,261,69,255,91,253,114,256,129,263,124,266,112,261,90,259,70,261,58,265,53,271,55,279"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="237,31,374,57"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,279,113,235,139,180,175,122,197,95,222,71,238,63,234,67,225,75,201,99,179,125,143,182,117,237,101,280"/>
+<area shape="rect" id="Node000004" href="$a01011.html#a746265301fc8d32fe59a31901a46d9c6" title="Decrypt and authenticate with streaming AES&#45;GCM." alt="" coords="240,109,371,152"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="108,278,157,225,222,169,242,158,239,162,225,173,160,229,112,281"/>
+<area shape="rect" id="Node000006" href="$a01029.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="462,179,554,205"/>
+<area shape="poly" id="edge20_Node000001_Node000006" title=" " alt="" coords="115,278,163,242,192,225,223,212,281,197,340,189,448,187,443,190,340,194,282,202,225,217,194,230,166,247,119,281"/>
+<area shape="rect" id="Node000007" href="$a01014.html#a2e073445f2d978f532e3c07791f199a9" title=" " alt="" coords="231,251,380,277"/>
+<area shape="poly" id="edge12_Node000001_Node000007" title=" " alt="" coords="175,284,217,278,213,281,178,289"/>
+<area shape="rect" id="Node000008" href="$a01014.html#a374d8cb7314a67adbdf98a13cfc380f6" title=" " alt="" coords="265,325,346,352"/>
+<area shape="poly" id="edge14_Node000001_Node000008" title=" " alt="" coords="176,314,252,328,248,331,177,319"/>
+<area shape="rect" id="Node000009" href="$a01014.html#ac8ed6d020e45d9c052371615bb985caf" title=" " alt="" coords="265,400,346,427"/>
+<area shape="poly" id="edge16_Node000001_Node000009" title=" " alt="" coords="133,321,267,391,262,394,133,326"/>
+<area shape="rect" id="Node000010" href="$a00332.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="253,475,358,501"/>
+<area shape="poly" id="edge18_Node000001_Node000010" title=" " alt="" coords="110,320,161,376,225,437,267,466,262,467,222,441,157,380,109,326"/>
+<area shape="rect" id="Node000011" href="$a00239.html#ad3befa25fcb365baff8024e4afa912df" title="Check and commit the RX replay high&#45;water state in RAM." alt="" coords="224,549,387,592"/>
+<area shape="poly" id="edge21_Node000001_Node000011" title=" " alt="" coords="103,321,151,409,185,462,226,511,258,541,252,540,222,515,181,465,146,412,101,326"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="271,30,265,22,269,12,283,6,305,4,329,7,344,15,339,16,328,12,305,9,284,11,273,16,270,21,276,30"/>
+<area shape="rect" id="Node000003" href="$a00257.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="453,29,562,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="373,41,440,42,435,44,375,46"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="473,29,467,21,471,11,485,5,508,3,532,5,546,14,541,15,530,10,508,8,487,10,475,15,472,20,478,29"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="267,108,265,99,272,90,285,85,305,83,327,85,342,93,336,94,326,90,305,88,286,90,275,95,270,101,272,109"/>
+<area shape="rect" id="Node000005" href="$a01011.html#a10da30768f6fc93bb304e0c662b2c8a9" title=" " alt="" coords="446,104,569,131"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="370,124,433,121,428,124,373,129"/>
+<area shape="poly" id="edge9_Node000004_Node000006" title=" " alt="" coords="371,148,449,173,444,175,372,153"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="473,103,467,95,471,86,485,79,508,77,532,80,546,88,541,89,530,85,508,83,487,85,475,89,472,95,478,104"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="473,178,467,170,471,160,485,154,508,152,532,155,546,163,541,164,530,160,508,157,487,159,475,164,472,169,478,179"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="271,250,265,242,269,232,283,226,305,224,329,227,344,235,338,236,328,232,305,229,284,231,273,236,270,241,276,250"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="271,325,265,317,269,307,283,301,305,299,329,301,344,310,338,310,328,306,305,304,284,306,273,311,270,316,276,325"/>
+<area shape="poly" id="edge17_Node000009_Node000009" title=" " alt="" coords="271,399,265,391,269,382,283,375,305,373,329,376,344,385,338,385,328,381,305,379,284,381,273,385,270,391,276,400"/>
+<area shape="poly" id="edge19_Node000010_Node000010" title=" " alt="" coords="271,474,265,466,269,456,283,450,305,448,329,451,344,459,338,459,328,456,305,453,284,455,273,460,270,465,276,475"/>
+<area shape="poly" id="edge22_Node000011_Node000011" title=" " alt="" coords="267,547,265,539,272,530,285,525,305,523,327,525,342,534,336,533,326,530,305,528,286,530,275,535,270,541,271,550"/>
+<area shape="rect" id="Node000012" href="$a00239.html#a44cfbbcdf47faf166f09abfed3f9f53a" title="Scan and initialize the TX session journal." alt="" coords="435,557,580,584"/>
+<area shape="poly" id="edge23_Node000011_Node000012" title=" " alt="" coords="387,568,422,571,416,571,387,573"/>
+<area shape="poly" id="edge24_Node000012_Node000012" title=" " alt="" coords="473,556,467,549,471,539,485,533,508,531,532,533,546,543,541,542,530,538,508,536,487,538,475,543,472,548,478,558"/>
+</map>

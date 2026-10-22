@@ -1,0 +1,20 @@
+<map id="user_delay_ms" name="user_delay_ms">
+<area shape="rect" id="Node000001" title="Delay callback used by the BME680 driver." alt="" coords="451,96,560,123"/>
+<area shape="poly" id="edge12_Node000001_Node000001" title=" " alt="" coords="534,81,525,77,506,75,488,77,478,81,476,87,480,96,475,95,470,87,474,78,486,71,506,69,527,72,539,81"/>
+<area shape="rect" id="Node000002" href="$a00116.html#a6db3a89239bbcca3b89aabb566edb56b" title=" " alt="" coords="258,29,403,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="447,91,396,75,396,70,452,90"/>
+<area shape="rect" id="Node000003" href="$a00116.html#af1c810695225472f06b8591fa57c6cca" title="Run one BME680 runtime sample/recovery cycle." alt="" coords="12,55,203,97"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="434,105,204,87,203,81,437,102"/>
+<area shape="rect" id="Node000007" href="$a00182.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="285,171,376,197"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="461,128,365,173,363,168,456,130"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="357,14,348,10,330,8,314,10,304,14,300,20,302,30,297,28,295,19,301,10,313,5,330,3,349,5,362,13"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="240,62,205,68,203,63,245,59"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="142,40,130,36,107,33,87,35,74,40,69,46,70,54,65,54,63,45,71,36,85,30,108,28,131,30,147,38"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="359,155,350,152,330,149,312,151,302,156,300,161,305,171,300,169,295,162,299,152,311,146,330,144,351,147,364,156"/>
+<area shape="rect" id="Node000008" href="$a00116.html#a012a7bd1283123423c8cc10d467dddb5" title="Initialize the BME680 sensor stack." alt="" coords="5,157,210,184"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="267,181,210,179,210,174,272,180"/>
+<area shape="rect" id="Node000009" href="$a00866.html#aa1692c14bff7462b7d3bd0a574ba39df" title=" " alt="" coords="17,232,198,275"/>
+<area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="273,202,179,234,178,229,268,203"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="144,143,133,138,107,136,84,138,71,143,68,148,75,157,69,157,63,149,68,139,83,133,108,131,134,133,149,141"/>
+<area shape="poly" id="edge10_Node000009_Node000009" title=" " alt="" coords="142,217,130,213,107,211,87,213,74,217,69,223,70,232,65,231,63,222,71,213,85,207,108,205,131,208,147,216"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="adc_get_latest_triplet" name="adc_get_latest_triplet">
+<area shape="rect" id="Node000001" title="Get the latest ADC sample triplet." alt="" coords="199,35,344,61"/>
+<area shape="rect" id="Node000002" href="$a00987.html#ac6835e1da70e1c9fd891c4df2aebffa2" title="Read the latest PC4, PC5 and PB0 triplet from the DMA buffer." alt="" coords="5,5,151,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,35,151,32,151,27,186,34"/>
+<area shape="rect" id="Node000003" href="$a00987.html#a60a282738b0c3016969afdbe1e3e6924" title="Consume DMA&#45;complete events until all three ADC byte buffers are full." alt="" coords="6,56,150,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="181,62,150,69,150,64,186,61"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="bme_GetGasReference" name="bme_GetGasReference">
+<area shape="rect" id="Node000001" title="Build the initial gas&#45;resistance reference." alt="" coords="397,71,555,97"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="504,55,495,52,476,49,458,51,449,56,446,61,451,71,446,69,441,62,445,52,457,46,476,44,497,47,509,56"/>
+<area shape="rect" id="Node000002" href="$a00224.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="258,71,349,97"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="379,84,350,87,349,81,384,84"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="331,55,322,52,303,49,285,51,276,56,274,61,278,71,273,69,268,62,272,52,284,46,303,44,324,47,337,56"/>
+<area shape="rect" id="Node000003" href="$a00158.html#a012a7bd1283123423c8cc10d467dddb5" title="Initialize the BME680 sensor stack." alt="" coords="5,29,210,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="240,72,174,59,174,54,245,71"/>
+<area shape="rect" id="Node000004" href="$a00909.html#aa1692c14bff7462b7d3bd0a574ba39df" title=" " alt="" coords="17,104,198,147"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="245,96,199,109,198,104,240,97"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="140,15,129,10,107,8,87,10,76,15,74,20,79,29,74,29,68,21,72,11,86,5,108,3,131,5,145,14"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="137,89,127,85,107,83,89,85,78,89,74,95,75,104,70,103,68,94,75,85,88,79,108,77,129,80,143,88"/>
+</map>

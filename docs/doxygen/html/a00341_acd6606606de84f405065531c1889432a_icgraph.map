@@ -1,0 +1,24 @@
+<map id="wifi_app_get_wifi_config" name="wifi_app_get_wifi_config">
+<area shape="rect" id="Node000001" title="Get the shared station configuration." alt="" coords="417,141,580,168"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="534,126,523,122,499,120,476,122,464,127,461,132,467,142,462,140,456,133,460,123,475,117,499,115,524,117,539,126"/>
+<area shape="rect" id="Node000002" href="$a00272.html#a210ef41b9b793d984ede5202eed9728d" title="Load saved station credentials into the Wi&#45;Fi config." alt="" coords="202,29,367,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="466,132,422,101,368,70,340,59,340,54,370,66,425,97,471,132"/>
+<area shape="rect" id="Node000006" href="$a00272.html#a4a56f3ae0b563cc698b5e4d9bfd872cb" title="Save the current station credentials to NVS." alt="" coords="200,104,369,131"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="401,139,365,134,365,129,406,138"/>
+<area shape="rect" id="Node000007" href="$a00302.html#a3b8145dd054fd41a8498320e7a85a4cb" title="Read station credentials from request headers and request a connection." alt="" coords="201,253,368,296"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="463,175,325,255,323,250,457,176"/>
+<area shape="rect" id="Node000016" href="$a00338.html#a68f13dd71722bd75ad3dfbe7a709fa99" title="Submit a station connection using the current configuration." alt="" coords="211,179,358,205"/>
+<area shape="poly" id="edge12_Node000001_Node000016" title=" " alt="" coords="401,172,359,182,358,177,406,171"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="318,15,307,10,284,8,263,10,251,15,248,20,254,29,249,29,243,21,247,11,262,5,284,3,309,5,323,14"/>
+<area shape="rect" id="Node000003" href="$a00338.html#a767d80a57af268276da3f7c9daa9f52d" title="Initialize APSTA mode and process Wi&#45;Fi control messages." alt="" coords="28,104,129,131"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="218,63,201,71,112,106,110,101,199,65,222,60"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="112,90,102,85,78,83,57,85,45,89,43,95,48,103,43,104,37,95,42,86,56,79,79,77,103,80,117,88"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="182,119,131,120,129,115,186,116"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="318,89,307,85,284,83,263,85,251,89,248,95,254,104,249,103,243,95,247,86,262,79,284,77,309,80,323,88"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="316,237,305,234,284,232,265,234,253,239,249,245,250,254,245,251,243,243,250,234,264,229,284,227,306,229,321,238"/>
+<area shape="rect" id="Node000008" href="$a00302.html#a144f3a03b04b7f1669cd84e63a4d03cc" title="Create the monitor resources, start HTTPS and register the dashboard routes." alt="" coords="5,261,152,288"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="183,275,152,277,152,272,189,274"/>
+<area shape="poly" id="edge10_Node000008_Node000008" title=" " alt="" coords="112,246,102,242,78,240,57,242,45,247,43,252,48,261,43,261,37,253,42,243,56,237,79,235,103,237,118,246"/>
+<area shape="poly" id="edge14_Node000016_Node000003" title=" " alt="" coords="229,175,118,134,118,129,233,171"/>
+<area shape="poly" id="edge13_Node000016_Node000016" title=" " alt="" coords="318,163,307,160,284,157,263,159,251,164,248,169,254,179,249,178,243,170,247,160,262,154,284,152,309,155,323,163"/>
+</map>

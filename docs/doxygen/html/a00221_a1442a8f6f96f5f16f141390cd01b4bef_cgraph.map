@@ -1,0 +1,10 @@
+<map id="print_hex_array" name="print_hex_array">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,116,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="36,29,32,21,35,11,44,5,61,3,78,5,88,14,83,14,76,10,60,8,46,10,39,14,37,20,41,29"/>
+<area shape="rect" id="Node000002" href="$a01013.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="164,29,238,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,40,151,42,145,43,116,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="176,28,172,21,175,11,185,5,201,3,218,5,228,15,223,14,216,10,201,8,187,10,179,14,177,20,181,30"/>
+<area shape="rect" id="Node000003" href="$a01013.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="286,29,398,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="239,40,273,43,268,43,239,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="317,28,313,21,316,11,326,5,342,3,359,5,370,15,365,13,357,10,342,8,328,10,320,14,318,20,322,30"/>
+</map>

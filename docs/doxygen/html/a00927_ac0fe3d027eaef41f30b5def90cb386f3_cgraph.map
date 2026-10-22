@@ -1,0 +1,10 @@
+<map id="device_uid_is_valid" name="device_uid_is_valid">
+<area shape="rect" id="Node000001" title="Check whether the cached UID is valid." alt="" coords="5,29,140,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,29,37,21,41,11,53,5,73,3,93,5,106,14,100,14,92,10,72,8,55,10,45,15,43,20,48,29"/>
+<area shape="rect" id="Node000002" href="$a00996.html#a6733451d1d006e2b019f6301ebedd5e6" title="Read the STM32 device UID into the local buffer." alt="" coords="188,29,303,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="140,40,175,42,169,43,140,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="220,28,216,21,219,11,229,5,245,3,263,5,273,15,268,14,261,10,245,8,231,10,223,14,221,20,225,30"/>
+<area shape="rect" id="Node000003" href="$a01056.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="351,29,425,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="303,40,338,43,333,43,303,45"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="363,28,359,21,362,11,372,5,388,3,406,5,416,15,411,13,404,10,388,8,374,10,366,14,364,20,368,30"/>
+</map>

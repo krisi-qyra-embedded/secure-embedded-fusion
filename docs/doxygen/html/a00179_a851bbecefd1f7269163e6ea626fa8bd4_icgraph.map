@@ -1,0 +1,25 @@
+<map id="system_fault_capture_or_critical_fault_active" name="system_fault_capture_or_critical_fault_active">
+<area shape="rect" id="Node000001" title="Check if critical fault capture is active." alt="" coords="637,159,796,201"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="753,143,740,140,716,137,694,139,681,144,675,150,677,160,672,157,670,149,678,140,693,134,717,132,742,134,758,143"/>
+<area shape="rect" id="Node000002" href="$a00161.html#a0f4e460009545962c7c6546153ebf02f" title=" " alt="" coords="372,92,589,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="648,153,589,133,548,122,548,117,590,128,653,153"/>
+<area shape="rect" id="Node000009" href="$a00894.html#a4754db43d332d65b964e88dedb2182c9" title=" " alt="" coords="392,167,569,193"/>
+<area shape="poly" id="edge7_Node000001_Node000009" title=" " alt="" coords="619,180,570,183,570,177,625,180"/>
+<area shape="rect" id="Node000010" href="$a00200.html#ac7aa1e8bf433e78a277d9f4572c51c2d" title="Run one PM2.5 application cycle." alt="" coords="422,241,540,268"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="635,206,526,243,525,238,629,207"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="520,77,508,73,481,71,456,73,442,77,439,83,446,92,441,91,434,83,439,73,455,67,481,65,509,68,525,77"/>
+<area shape="rect" id="Node000003" href="$a00161.html#a84d45b2389c15f798800d5b21fd0deac" title=" " alt="" coords="115,29,312,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="404,88,323,71,276,59,275,54,325,65,409,87"/>
+<area shape="rect" id="Node000008" href="$a00161.html#a655703da462115ea351eb776438f716d" title=" " alt="" coords="103,104,324,131"/>
+<area shape="poly" id="edge4_Node000002_Node000008" title=" " alt="" coords="354,112,325,115,324,110,359,110"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="243,15,234,10,213,8,194,10,184,15,182,20,187,29,182,29,176,21,180,11,193,5,213,3,235,5,248,14"/>
+<area shape="poly" id="edge5_Node000008_Node000008" title=" " alt="" coords="243,89,234,85,213,83,194,85,184,89,182,95,187,104,182,103,176,95,180,86,193,79,213,77,235,80,248,88"/>
+<area shape="poly" id="edge8_Node000009_Node000009" title=" " alt="" coords="520,152,508,148,481,145,456,147,442,152,439,157,446,167,441,165,434,158,439,148,455,142,481,140,509,143,525,152"/>
+<area shape="rect" id="Node000006" href="$a00894.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,204,55,231"/>
+<area shape="poly" id="edge9_Node000009_Node000006" title=" " alt="" coords="374,185,246,195,103,208,56,215,54,210,102,203,245,189,379,183"/>
+<area shape="poly" id="edge14_Node000010_Node000010" title=" " alt="" coords="520,226,508,222,481,220,456,222,442,227,439,232,446,242,441,240,434,233,439,223,455,217,481,215,509,217,525,227"/>
+<area shape="rect" id="Node000011" href="$a00894.html#a36383d53e7192d0e10d51c11f1220bd9" title=" " alt="" coords="171,241,256,268"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="403,255,257,257,257,252,409,254"/>
+<area shape="poly" id="edge12_Node000011_Node000006" title=" " alt="" coords="154,245,55,225,56,220,157,241"/>
+<area shape="poly" id="edge13_Node000011_Node000011" title=" " alt="" coords="243,226,234,222,213,220,194,222,184,227,182,232,187,242,182,240,176,233,180,223,193,217,213,215,235,217,248,226"/>
+</map>

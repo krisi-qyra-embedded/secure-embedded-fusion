@@ -1,0 +1,10 @@
+<map id="esp32_ecdh_derive_receiver_keys" name="esp32_ecdh_derive_receiver_keys">
+<area shape="rect" id="Node000001" title="Derive the RX AES and MAC keys from the receiver shared secret." alt="" coords="5,29,227,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="77,28,71,21,75,11,91,5,116,3,144,5,160,15,154,14,142,10,116,8,92,10,79,15,76,20,82,29"/>
+<area shape="rect" id="Node000002" href="$a00332.html#a6e0238991c142c06ba54d201afd17848" title="Derive AES/MAC keys with the STM32&#45;compatible SHA&#45;256 suffix KDF." alt="" coords="275,29,415,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,40,261,43,256,43,227,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="314,28,308,21,312,11,325,5,345,3,366,5,379,15,374,14,365,10,345,8,326,10,316,15,314,20,319,30"/>
+<area shape="rect" id="Node000003" href="$a00326.html#a1e41732547343f08def211e6b0cdac74" title="Log an Mbed TLS operation and its error code." alt="" coords="463,29,587,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="415,40,450,43,445,43,415,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="494,28,489,21,493,11,505,5,525,3,547,5,560,15,554,14,545,10,525,8,506,10,496,15,494,20,499,30"/>
+</map>

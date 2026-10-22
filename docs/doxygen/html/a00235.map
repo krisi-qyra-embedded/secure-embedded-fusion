@@ -1,0 +1,11 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Inc/digital_signature.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Inc/digital_signature.h">
+<area shape="rect" id="Node000001" title="Secure&#45;boot manifest, hashing, Ed25519 and protected&#45;storage declarations." alt="" coords="386,5,606,112"/>
+<area shape="rect" id="Node000002" href="$a00685.html" title="ECDH, key derivation and AES&#45;CTR/AES&#45;GCM crypto declarations." alt="" coords="5,168,238,259"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="370,111,251,162,232,170,230,165,248,158,375,109"/>
+<area shape="rect" id="Node000003" href="$a00221.html" title="Secure&#45;boot manifest hashing, Ed25519 verification and protected storage." alt="" coords="261,160,480,267"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="446,123,416,162,412,157,441,125"/>
+<area shape="rect" id="Node000004" href="$a00757.html" title=" " alt="" coords="504,168,739,259"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="550,121,588,168,582,167,548,126"/>
+<area shape="rect" id="Node000005" href="$a00655.html" title="Secure&#45;boot provisioning, manifest verification and application handoff." alt="" coords="763,168,997,259"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="620,106,752,158,772,168,767,167,750,162,619,111"/>
+</map>

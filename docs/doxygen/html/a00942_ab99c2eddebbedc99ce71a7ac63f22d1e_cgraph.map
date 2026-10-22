@@ -1,0 +1,29 @@
+<map id="gcm_nonce_session_init" name="gcm_nonce_session_init">
+<area shape="rect" id="Node000001" title="Initialize the persistent GCM nonce session." alt="" coords="5,179,170,205"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="50,179,43,170,48,160,63,154,88,152,114,155,129,162,124,164,112,160,87,157,64,159,51,164,49,169,55,178"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="241,29,378,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,177,145,123,178,92,216,66,231,60,227,64,219,70,182,96,148,126,101,180"/>
+<area shape="rect" id="Node000004" href="$a01011.html#a59f18c3818b5d6fd5d528d214ed1c6bc" title=" " alt="" coords="256,104,364,131"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="121,176,217,140,243,134,239,137,219,145,124,180"/>
+<area shape="rect" id="Node000005" href="$a01029.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="264,179,356,205"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="169,189,250,191,246,193,171,195"/>
+<area shape="rect" id="Node000006" href="$a00239.html#a8c037f36ce4d1208d8d3eaac3ead5674" title="Get the remaining Flash journal capacity." alt="" coords="218,253,402,296"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="126,203,238,246,234,249,125,209"/>
+<area shape="rect" id="Node000011" href="$a00239.html#a9b5566d836896405016c098ccac6fc44" title="Reserve the next persistent TX session ID for this boot." alt="" coords="224,344,396,387"/>
+<area shape="poly" id="edge14_Node000001_Node000011" title=" " alt="" coords="103,203,154,251,219,306,261,336,255,335,216,310,150,255,102,208"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="272,29,266,21,270,11,285,5,310,3,336,5,352,13,347,15,335,10,310,8,286,10,274,15,271,20,277,29"/>
+<area shape="rect" id="Node000003" href="$a00257.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="486,29,595,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="378,40,473,42,468,44,380,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="501,29,495,21,500,11,515,5,541,3,569,5,585,14,579,15,567,10,541,8,516,10,503,15,500,20,507,29"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="272,103,266,95,270,85,285,79,310,77,336,80,352,88,347,89,335,85,310,83,286,85,274,89,271,95,277,104"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="272,178,266,170,270,160,285,154,310,152,336,155,352,163,346,164,335,160,310,157,286,159,274,164,271,169,277,179"/>
+<area shape="poly" id="edge13_Node000006_Node000006" title=" " alt="" coords="268,252,266,243,273,234,288,229,310,227,334,229,350,238,344,238,332,234,310,232,289,234,276,239,271,245,273,254"/>
+<area shape="rect" id="Node000007" href="$a00239.html#a44cfbbcdf47faf166f09abfed3f9f53a" title="Scan and initialize the TX session journal." alt="" coords="468,269,613,296"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="402,275,455,279,450,280,403,281"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="501,268,495,261,500,251,515,245,541,243,569,245,585,255,579,254,567,250,541,248,516,250,503,255,500,260,507,270"/>
+<area shape="poly" id="edge17_Node000011_Node000007" title=" " alt="" coords="371,341,484,302,489,301,372,346"/>
+<area shape="poly" id="edge18_Node000011_Node000011" title=" " alt="" coords="268,342,266,334,273,325,288,319,310,317,334,320,350,329,344,328,332,325,310,323,289,325,276,329,271,335,272,345"/>
+<area shape="rect" id="Node000012" href="$a00239.html#a4e243c23d4df349f187f9e2a4674c2a0" title=" " alt="" coords="450,352,631,379"/>
+<area shape="poly" id="edge15_Node000011_Node000012" title=" " alt="" coords="396,363,437,365,432,365,396,368"/>
+<area shape="poly" id="edge16_Node000012_Node000012" title=" " alt="" coords="502,350,495,343,500,333,515,327,541,325,569,328,585,338,579,337,567,333,541,331,516,333,503,337,500,343,506,353"/>
+</map>

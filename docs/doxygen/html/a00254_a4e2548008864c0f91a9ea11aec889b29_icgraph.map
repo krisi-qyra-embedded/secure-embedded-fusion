@@ -1,0 +1,9 @@
+<map id="compute_reload" name="compute_reload">
+<area shape="rect" id="Node000001" title=" " alt="" coords="238,29,351,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="318,14,311,10,295,8,280,10,272,14,270,20,273,30,269,28,264,21,267,11,278,5,295,3,313,5,323,15"/>
+<area shape="rect" id="Node000002" href="$a00254.html#ad2bfd2ee2eb0ad5a432b164a64acd8c7" title="Initialize SysTick for a 1 ms system tick." alt="" coords="103,29,190,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="220,43,191,45,190,40,225,43"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="164,14,159,10,146,8,135,10,129,14,127,20,130,30,125,28,122,20,124,11,133,5,146,3,161,5,170,15"/>
+<area shape="rect" id="Node000003" href="$a00915.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,29,55,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,43,55,45,55,40,89,42"/>
+</map>

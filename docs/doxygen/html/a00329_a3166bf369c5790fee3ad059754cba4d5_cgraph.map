@@ -1,0 +1,14 @@
+<map id="esp32_gcm_nvs_reserve_tx_session" name="esp32_gcm_nvs_reserve_tx_session">
+<area shape="rect" id="Node000001" title="Increment and commit the next persistent TX session." alt="" coords="5,71,172,113"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="48,70,46,61,53,52,67,46,89,44,112,46,127,55,122,56,110,52,88,49,68,51,56,56,51,62,53,70"/>
+<area shape="rect" id="Node000002" href="$a00329.html#af94ebd8e75a1c89104d23d043bbff957" title="Store a CRC&#45;protected TX state record and commit it to NVS." alt="" coords="220,53,386,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,80,207,78,202,79,173,85"/>
+<area shape="rect" id="Node000004" href="$a00329.html#a246cb46dce40ce36ee9b258cea96269f" title="Load the persistent TX state and initialize the RX seed baseline." alt="" coords="434,104,616,131"/>
+<area shape="poly" id="edge7_Node000001_Node000004" title=" " alt="" coords="172,94,419,109,417,114,172,99"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="266,52,260,45,265,35,279,29,303,27,328,29,343,38,338,38,327,34,303,32,280,34,268,39,265,44,271,54"/>
+<area shape="rect" id="Node000003" href="$a00329.html#a4ab6ce08cb26a44809ea08e227a07b74" title="Compute CRC&#45;32 for a persistent state record." alt="" coords="462,29,589,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="386,55,448,51,443,52,387,60"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="365,78,451,100,446,100,364,83"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="487,28,481,21,486,11,501,5,525,3,552,5,567,14,562,14,550,10,525,8,502,10,489,15,486,20,492,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="487,102,481,95,486,85,501,79,525,77,552,80,567,89,562,88,550,85,525,83,502,85,489,89,486,95,492,105"/>
+</map>

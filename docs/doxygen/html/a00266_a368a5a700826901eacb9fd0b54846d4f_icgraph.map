@@ -1,0 +1,7 @@
+<map id="wait_for_image_ready_flag" name="wait_for_image_ready_flag">
+<area shape="rect" id="Node000001" title="Poll until the expected application&#45;ready flag becomes valid." alt="" coords="227,29,403,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="352,14,340,10,315,8,291,10,279,15,276,20,282,30,277,28,270,21,275,11,290,5,315,3,341,5,357,14"/>
+<area shape="rect" id="Node000002" href="$a00278.html#ad5e4fe2730dc40ac89094f6cb0ba6d47" title="Store the public verification key in the configured protected region." alt="" coords="5,29,179,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,43,179,45,179,40,214,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="129,14,117,10,92,8,69,10,56,15,53,20,59,29,54,29,48,21,52,11,67,5,92,3,118,5,134,14"/>
+</map>

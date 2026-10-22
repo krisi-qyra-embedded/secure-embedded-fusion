@@ -1,0 +1,14 @@
+<map id="wifi_reset_button_task" name="wifi_reset_button_task">
+<area shape="rect" id="Node000001" title="Send a station disconnect request on a BOOT button event." alt="" coords="5,55,158,81"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="46,54,40,46,45,36,59,30,82,28,106,31,121,39,115,40,105,36,81,33,60,35,48,40,46,45,51,54"/>
+<area shape="rect" id="Node000002" href="$a00353.html#aec924a59c0eede746e90c5c04e682fc3" title="Queue a Wi&#45;Fi application message." alt="" coords="206,55,370,81"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="158,65,193,68,187,68,158,71"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="253,53,247,46,251,36,265,30,288,28,312,31,327,40,322,39,311,36,288,33,266,35,255,40,252,45,258,55"/>
+<area shape="rect" id="Node000003" href="$a00353.html#aaace492a4160a1e1e16dcee857392dd2" title="Count a Wi&#45;Fi API failure and stop when the limit is reached." alt="" coords="418,29,585,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="370,56,400,55,405,54,370,61"/>
+<area shape="rect" id="Node000005" href="$a00353.html#ae31ded8e5f4d73165c5c5d5aaa8eb76a" title="Refresh the Wi&#45;Fi watchdog heartbeat." alt="" coords="633,55,797,81"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="370,65,621,68,615,68,371,71"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="465,28,459,21,464,11,478,5,502,3,527,5,542,14,537,14,526,10,502,8,479,10,467,15,464,20,470,30"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="586,50,621,57,615,56,586,55"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="679,53,672,46,677,36,691,30,715,28,740,31,755,40,750,39,739,36,715,33,693,35,681,40,678,45,684,55"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="wifi_app_event_handler" name="wifi_app_event_handler">
+<area shape="rect" id="Node000001" title="Handle Wi&#45;Fi/IP events, reconnect attempts and SoftAP clients." alt="" coords="384,29,541,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="498,14,487,10,463,8,440,10,428,15,425,20,431,30,426,28,419,21,424,11,439,5,463,3,488,5,504,15"/>
+<area shape="rect" id="Node000002" href="$a00311.html#af53bbe1387beb5bf6a70512334c312cd" title="Register Wi&#45;Fi and IP handlers on the default event loop." alt="" coords="155,29,336,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="366,43,337,45,336,40,372,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="276,14,266,10,245,8,226,10,215,15,213,20,218,30,213,28,207,21,211,11,224,5,245,3,268,5,281,14"/>
+<area shape="rect" id="Node000003" href="$a00311.html#a767d80a57af268276da3f7c9daa9f52d" title="Initialize APSTA mode and process Wi&#45;Fi control messages." alt="" coords="5,29,107,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="137,43,107,45,107,40,142,42"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="87,14,77,10,56,8,36,10,26,15,23,20,29,28,23,29,18,21,22,11,35,5,56,3,79,5,92,14"/>
+</map>

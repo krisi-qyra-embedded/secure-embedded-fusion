@@ -1,0 +1,13 @@
+<map id="i2c_dma_bme680_peripherals_init" name="i2c_dma_bme680_peripherals_init">
+<area shape="rect" id="Node000001" title="Initialize the BME680 I2C/DMA peripherals." alt="" coords="497,79,714,105"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="649,64,636,60,606,57,578,59,563,64,560,69,567,79,562,77,555,70,560,60,577,54,606,52,637,55,655,64"/>
+<area shape="rect" id="Node000002" href="$a00158.html#a6db3a89239bbcca3b89aabb566edb56b" title=" " alt="" coords="274,29,420,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="500,76,420,65,420,60,505,75"/>
+<area shape="rect" id="Node000007" href="$a00158.html#a012a7bd1283123423c8cc10d467dddb5" title="Initialize the BME680 sensor stack." alt="" coords="245,120,449,147"/>
+<area shape="poly" id="edge5_Node000001_Node000007" title=" " alt="" coords="506,108,435,122,434,117,500,109"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="385,14,372,10,347,8,324,10,309,15,304,21,305,30,301,28,299,19,306,10,322,5,347,3,373,5,390,14"/>
+<area shape="rect" id="Node000003" href="$a00158.html#af1c810695225472f06b8591fa57c6cca" title="Run one BME680 runtime sample/recovery cycle." alt="" coords="5,29,197,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="256,52,197,53,197,48,261,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="139,14,126,10,101,8,78,10,63,15,58,21,60,29,54,29,53,19,60,10,77,5,101,3,127,5,145,13"/>
+<area shape="poly" id="edge6_Node000007_Node000007" title=" " alt="" coords="388,105,375,101,347,99,321,101,307,105,303,111,310,121,305,119,298,111,303,101,320,95,347,93,377,96,393,106"/>
+</map>

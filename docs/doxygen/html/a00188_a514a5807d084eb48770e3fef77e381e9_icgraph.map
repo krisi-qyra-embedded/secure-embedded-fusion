@@ -1,0 +1,9 @@
+<map id="app_mpu9250_runtime_process" name="app_mpu9250_runtime_process">
+<area shape="rect" id="Node000001" title="Run one MPU9250 runtime cycle with recovery." alt="" coords="257,29,409,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="360,13,351,10,333,8,317,10,307,14,303,21,304,30,299,27,298,19,303,10,315,5,333,3,352,5,365,14"/>
+<area shape="rect" id="Node000002" href="$a00894.html#a18d0aebcaffa45c52fd2e6dcd5b45afb" title=" " alt="" coords="103,37,209,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="239,51,210,53,209,48,244,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="175,22,169,18,156,16,143,18,137,22,135,28,138,38,133,36,130,29,132,19,141,13,156,11,171,13,181,22"/>
+<area shape="rect" id="Node000003" href="$a00894.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,52,55,53,55,48,89,50"/>
+</map>

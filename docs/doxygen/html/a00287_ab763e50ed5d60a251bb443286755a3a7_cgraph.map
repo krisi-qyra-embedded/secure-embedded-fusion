@@ -1,0 +1,7 @@
+<map id="ecdh_party_reset" name="ecdh_party_reset">
+<area shape="rect" id="Node000001" title="Free and reinitialize one directional key container." alt="" coords="5,29,127,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="32,29,27,21,31,11,44,5,66,3,90,5,103,14,98,14,88,10,66,8,45,10,34,15,32,20,37,29"/>
+<area shape="rect" id="Node000002" href="$a00287.html#a2c40b9aa9e4ee1aaa04983ac69b48f6e" title="Wipe the exported key bytes and clear the public&#45;key length." alt="" coords="175,29,351,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="127,40,161,42,156,43,127,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="229,28,223,21,227,11,241,5,263,3,286,5,300,14,295,14,285,10,263,8,242,10,231,15,229,20,234,30"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="get_calib_data" name="get_calib_data">
+<area shape="rect" id="Node000001" title="This internal API is used to read the calibrated data from the sensor." alt="" coords="350,71,455,97"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="432,55,423,52,403,49,384,51,374,56,372,61,377,71,372,69,366,62,370,52,383,46,403,44,424,47,437,56"/>
+<area shape="rect" id="Node000002" href="$a00158.html#aee75ae524b7ca8f4a9b6dbb7f640c2e4" title="Initialize BME680: soft&#45;reset, read chip&#45;id, and calibration data." alt="" coords="178,29,269,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="332,69,269,56,270,50,338,68"/>
+<area shape="rect" id="Node000008" href="$a00158.html#a14d2f98e4efd330b03fad0d24f2c3eda" title=" " alt="" coords="145,104,302,147"/>
+<area shape="poly" id="edge6_Node000001_Node000008" title=" " alt="" coords="338,99,303,110,302,105,332,100"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="251,14,242,10,223,8,206,10,196,15,194,20,199,29,193,28,188,21,192,11,204,5,223,3,244,5,256,14"/>
+<area shape="rect" id="Node000003" href="$a00224.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="5,29,97,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="160,44,98,45,97,40,164,41"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="79,15,70,10,51,8,33,10,24,15,21,20,26,28,21,29,16,21,20,11,32,5,51,3,72,5,84,13"/>
+<area shape="poly" id="edge7_Node000008_Node000008" title=" " alt="" coords="249,88,240,85,223,83,207,85,198,89,194,95,195,105,190,102,189,94,194,85,206,79,223,77,242,80,255,89"/>
+</map>

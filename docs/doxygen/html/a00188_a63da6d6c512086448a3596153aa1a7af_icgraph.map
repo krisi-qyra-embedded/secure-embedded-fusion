@@ -1,0 +1,16 @@
+<map id="mpu9250_read_blocking" name="mpu9250_read_blocking">
+<area shape="rect" id="Node000001" title=" " alt="" coords="398,83,559,109"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="513,67,502,64,479,61,457,63,445,68,442,73,448,83,443,81,437,74,441,64,456,58,479,56,503,59,518,68"/>
+<area shape="rect" id="Node000002" href="$a00188.html#a86eeeaea07da09a4f35eb0b0cb4ec8c9" title="Perform one blocking accelerometer update." alt="" coords="192,29,350,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="397,79,350,71,350,65,402,79"/>
+<area shape="rect" id="Node000010" href="$a00188.html#ac2c44562cb7644baf76ed9637dea5867" title="Perform one blocking gyroscope update." alt="" coords="195,120,347,163"/>
+<area shape="poly" id="edge5_Node000001_Node000010" title=" " alt="" coords="402,113,348,127,347,122,397,114"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="301,14,291,10,271,8,252,10,241,15,237,21,238,30,233,28,232,19,238,10,251,5,271,3,292,5,306,14"/>
+<area shape="rect" id="Node000003" href="$a00188.html#ab5bb4fe0355e5bf9f16727035901af59" title="Convert the latest accelerometer sample to physical units." alt="" coords="5,37,144,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="174,52,144,53,143,48,178,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="107,23,96,18,74,16,54,18,43,23,40,28,46,36,41,37,35,29,39,19,53,13,75,11,98,13,112,21"/>
+<area shape="poly" id="edge6_Node000010_Node000010" title=" " alt="" coords="301,104,291,101,271,99,252,101,241,105,237,111,238,121,234,118,232,110,238,101,251,95,271,93,292,96,306,105"/>
+<area shape="rect" id="Node000011" href="$a00188.html#ac6655367b65aec29fc6f401400c8b224" title="Convert the latest gyroscope sample to physical units." alt="" coords="8,128,141,155"/>
+<area shape="poly" id="edge7_Node000010_Node000011" title=" " alt="" coords="176,142,141,144,141,139,181,141"/>
+<area shape="poly" id="edge8_Node000011_Node000011" title=" " alt="" coords="107,113,96,109,74,107,54,109,43,113,40,119,46,127,41,128,35,119,39,110,53,103,75,101,98,104,112,113"/>
+</map>

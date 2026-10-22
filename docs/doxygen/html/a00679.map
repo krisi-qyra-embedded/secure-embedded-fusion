@@ -1,0 +1,23 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Inc/device_uid_entropy.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Inc/device_uid_entropy.h">
+<area shape="rect" id="Node000001" title="STM32F411 device UID access and fingerprint helper declarations." alt="" coords="93,5,312,112"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="326,37,336,47,339,59,332,76,314,86,311,82,328,73,333,58,331,49,326,43"/>
+<area shape="rect" id="Node000002" href="$a00695.html" title=" " alt="" coords="161,160,404,267"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="237,123,257,159,252,160,237,129"/>
+<area shape="rect" id="Node000003" href="$a00233.html" title="Secure&#45;boot manifest, hashing, Ed25519 and protected&#45;storage declarations." alt="" coords="319,453,539,560"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="317,278,405,453,400,453,315,283"/>
+<area shape="rect" id="Node000004" href="$a00689.html" title="ECDH, key derivation and AES&#45;CTR/AES&#45;GCM crypto declarations." alt="" coords="50,616,282,707"/>
+<area shape="poly" id="edge8_Node000002_Node000004" title=" " alt="" coords="278,280,272,343,260,406,225,521,188,617,183,614,220,519,254,405,267,342,276,285"/>
+<area shape="rect" id="Node000008" href="$a00707.html" title="Nonce generation, entropy mixing and secure&#45;clear declarations." alt="" coords="5,315,245,405"/>
+<area shape="poly" id="edge9_Node000002_Node000008" title=" " alt="" coords="204,279,167,316,163,313,207,275"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="327,567,244,618,242,613,323,569"/>
+<area shape="rect" id="Node000005" href="$a00221.html" title="Secure&#45;boot manifest hashing, Ed25519 verification and protected storage." alt="" coords="306,608,525,715"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="425,573,422,609,418,606,421,577"/>
+<area shape="rect" id="Node000006" href="$a00761.html" title=" " alt="" coords="549,616,784,707"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="524,566,599,616,594,615,523,571"/>
+<area shape="rect" id="Node000007" href="$a00659.html" title="Secure&#45;boot provisioning, manifest verification and application handoff." alt="" coords="808,616,1042,707"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="554,535,672,567,797,605,819,616,814,615,795,611,671,572,553,541"/>
+<area shape="poly" id="edge10_Node000008_Node000001" title=" " alt="" coords="124,299,131,231,146,159,171,110,169,115,152,161,136,232,129,300"/>
+<area shape="poly" id="edge13_Node000008_Node000002" title=" " alt="" coords="191,302,235,265,232,269,195,306"/>
+<area shape="poly" id="edge11_Node000008_Node000003" title=" " alt="" coords="233,410,321,452,316,454,233,415"/>
+<area shape="poly" id="edge12_Node000008_Node000004" title=" " alt="" coords="135,419,163,616,158,616,131,422"/>
+</map>

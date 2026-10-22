@@ -1,0 +1,10 @@
+<map id="ESP32_UART_BuildTelemetryFrame" name="ESP32_UART_BuildTelemetryFrame">
+<area shape="rect" id="Node000001" title="Build the plaintext telemetry frame sent to ESP32." alt="" coords="504,29,702,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="646,14,631,10,603,8,578,10,562,15,556,21,558,30,553,27,551,19,559,10,577,5,603,3,632,5,651,14"/>
+<area shape="rect" id="Node000002" href="$a00185.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="215,37,456,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="486,51,456,53,456,48,491,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="377,22,364,18,335,16,309,18,295,23,291,28,298,38,293,36,286,29,291,19,308,13,335,11,365,13,383,23"/>
+<area shape="rect" id="Node000003" href="$a00185.html#a268b20b4b63514a09028648067fa60f6" title="Run one authenticated telemetry transaction with the ESP32." alt="" coords="5,29,167,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="196,51,167,53,167,48,202,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="125,14,111,10,86,8,62,10,48,15,42,21,44,29,39,28,37,19,45,10,61,5,86,3,113,5,130,13"/>
+</map>

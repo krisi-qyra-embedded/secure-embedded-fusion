@@ -1,0 +1,10 @@
+<map id="Max31865_readRegister16" name="Max31865_readRegister16">
+<area shape="rect" id="Node000001" title="Read one 16&#45;bit MAX31865 register value." alt="" coords="397,29,573,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="519,14,508,10,485,8,464,10,452,15,449,20,455,30,450,28,444,21,448,11,462,5,485,3,510,5,524,15"/>
+<area shape="rect" id="Node000002" href="$a00185.html#a1fc4b0b4a7dd3393229614da71aae892" title="Read the raw RTD conversion value." alt="" coords="209,29,349,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="379,43,350,45,350,40,384,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="311,14,301,10,279,8,258,10,247,15,245,20,250,30,245,28,240,21,244,11,257,5,279,3,302,5,316,14"/>
+<area shape="rect" id="Node000003" href="$a00185.html#a303f7d8c7c302acc18009865c936d8ba" title="Read the RTD temperature in Celsius." alt="" coords="5,29,161,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="191,43,161,45,161,40,196,43"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="115,14,105,10,83,8,63,10,52,15,49,20,55,29,49,29,44,21,48,11,61,5,83,3,106,5,120,14"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="wait_for_aws_to_stop" name="wait_for_aws_to_stop">
+<area shape="rect" id="Node000001" title="Wait up to five seconds for the AWS task to clear its handle." alt="" coords="5,29,154,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="47,29,42,21,46,11,59,5,80,3,102,5,115,14,110,14,100,10,79,8,60,10,49,15,47,20,52,29"/>
+<area shape="rect" id="Node000002" href="$a00284.html#ab9c48a318f3cc9b228b764459f5b41ad" title="Check whether the AWS task handle is set." alt="" coords="202,29,334,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,40,189,43,183,43,154,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="235,28,230,21,234,11,247,5,268,3,290,5,304,14,298,14,289,10,268,8,248,10,238,15,235,20,240,30"/>
+</map>

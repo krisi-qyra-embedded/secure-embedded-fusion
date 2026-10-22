@@ -1,0 +1,10 @@
+<map id="log_adc_values" name="log_adc_values">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,117,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="30,29,25,21,29,11,41,5,61,3,82,5,95,14,90,14,81,10,61,8,43,10,33,15,30,20,35,29"/>
+<area shape="rect" id="Node000002" href="$a01011.html#aacad061b679ff0b905f71a7d02e8aad8" title=" " alt="" coords="165,29,313,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,40,152,42,146,43,117,45"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="208,28,203,21,207,11,219,5,239,3,260,5,273,14,268,14,259,10,239,8,220,10,211,15,208,20,213,30"/>
+<area shape="rect" id="Node000003" href="$a00191.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="361,29,498,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="313,40,348,43,343,43,314,45"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="397,28,391,21,395,11,408,5,430,3,452,5,466,15,461,14,451,10,430,8,410,10,399,15,397,20,402,30"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="nonce_simple_generate" name="nonce_simple_generate">
+<area shape="rect" id="Node000001" title="Generate the next nonce into the shared nonce buffer." alt="" coords="5,112,164,139"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="49,112,43,103,47,94,61,87,85,85,109,88,124,96,119,97,108,93,84,91,63,93,51,97,48,103,54,111"/>
+<area shape="rect" id="Node000002" href="$a00982.html#a73b97cfc31bcd06f6b636a6e7ac06af3" title=" " alt="" coords="212,29,375,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,109,211,66,232,60,228,63,213,70,115,114"/>
+<area shape="rect" id="Node000003" href="$a00979.html#a5b74437bb341db1f2cd53ca496e500ed" title="Build the static entropy value from the hashed hardware sources." alt="" coords="217,104,370,147"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="163,123,204,124,199,126,164,128"/>
+<area shape="rect" id="Node000004" href="$a00982.html#a8af10b21d3f570b16bad20a866618454" title=" " alt="" coords="214,195,372,221"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="121,137,246,187,241,190,120,142"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="260,28,254,21,258,11,272,5,293,3,317,5,330,14,325,14,315,10,293,8,273,10,262,15,260,20,265,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="256,102,255,94,261,85,274,79,293,77,314,80,328,88,323,88,313,85,293,83,275,85,264,89,260,95,261,105"/>
+<area shape="poly" id="edge9_Node000004_Node000004" title=" " alt="" coords="260,193,254,186,258,176,272,170,293,168,317,171,330,180,325,179,315,176,293,173,273,175,262,180,260,185,265,195"/>
+<area shape="rect" id="Node000005" href="$a00979.html#a050a1266b3e065a9850a897b2a3398ce" title=" " alt="" coords="423,195,551,221"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="373,205,410,208,405,208,373,211"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="454,193,448,186,452,176,466,170,487,168,510,171,524,180,519,179,509,176,487,173,467,175,456,180,454,185,459,195"/>
+</map>

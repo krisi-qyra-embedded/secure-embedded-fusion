@@ -1,0 +1,48 @@
+<map id="i2c_dma_mark_fault_owner_task" name="i2c_dma_mark_fault_owner_task">
+<area shape="rect" id="Node000001" title=" " alt="" coords="868,285,1006,328"/>
+<area shape="poly" id="edge34_Node000001_Node000001" title=" " alt="" coords="965,269,955,266,937,264,919,266,909,270,905,276,906,286,901,283,900,275,906,266,918,260,937,258,957,261,971,270"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a3e1b0b7179af5de82026e46b30abcc52" title=" " alt="" coords="681,285,820,328"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="849,307,821,309,820,304,854,306"/>
+<area shape="poly" id="edge10_Node000002_Node000002" title=" " alt="" coords="779,269,769,266,750,264,733,266,723,270,718,276,720,286,715,283,713,275,719,266,732,260,751,258,771,261,784,269"/>
+<area shape="rect" id="Node000003" href="$a00197.html#a2e37a8bdb3601b5b8dcf969b4de77465" title=" " alt="" coords="184,318,361,345"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="664,313,362,330,361,324,668,309"/>
+<area shape="rect" id="Node000004" href="$a00197.html#aee4087265e821d1fbb4998ce9e1f1aaa" title="Read a register block using I2C DMA." alt="" coords="19,169,122,196"/>
+<area shape="poly" id="edge15_Node000002_Node000004" title=" " alt="" coords="736,269,722,231,700,186,670,142,632,106,573,68,518,39,466,20,415,10,363,9,309,17,250,35,185,61,149,84,120,114,97,145,82,169,77,168,92,142,116,110,146,79,182,56,248,30,308,12,363,4,416,5,468,15,520,34,576,63,635,102,674,138,705,183,727,229,742,271"/>
+<area shape="rect" id="Node000022" href="$a00197.html#a742f58daeb77d164c70055a6b1ead326" title="Write register data using I2C DMA." alt="" coords="5,244,136,270"/>
+<area shape="poly" id="edge16_Node000002_Node000022" title=" " alt="" coords="673,334,576,363,516,376,451,385,384,390,315,388,248,378,183,360,149,342,120,318,82,273,81,268,124,314,152,337,185,355,249,373,316,383,383,384,450,380,515,371,575,358,678,332"/>
+<area shape="rect" id="Node000038" href="$a00197.html#a08fba5a7692afd8a1619ebfc4d8e34a1" title="Initialize the BME680 I2C/DMA peripherals." alt="" coords="412,444,630,470"/>
+<area shape="poly" id="edge8_Node000002_Node000038" title=" " alt="" coords="717,337,678,372,635,403,556,446,553,441,632,399,675,368,712,339"/>
+<area shape="rect" id="Node000080" href="$a00197.html#acfdd49f400d02972e386db43bcebee6c" title=" " alt="" coords="450,518,593,561"/>
+<area shape="poly" id="edge11_Node000002_Node000080" title=" " alt="" coords="735,340,695,413,667,450,635,484,608,504,579,520,577,515,605,500,632,480,663,447,691,410,731,343"/>
+<area shape="rect" id="Node000042" href="$a00197.html#a2d54c59cdf39bbbdd9c236effc9782d0" title="Initialize MPU9250 I2C3 and DMA streams." alt="" coords="409,609,633,636"/>
+<area shape="poly" id="edge13_Node000002_Node000042" title=" " alt="" coords="744,341,732,394,710,455,678,519,658,548,635,575,607,596,575,611,573,606,604,592,632,571,654,545,674,516,705,453,727,392,740,345"/>
+<area shape="rect" id="Node000044" href="$a00197.html#a0ba429bdcf4478be7b3e2e48f8c99f1f" title="Recover an I2C peripheral after a stalled transfer." alt="" coords="477,217,565,244"/>
+<area shape="poly" id="edge17_Node000002_Node000044" title=" " alt="" coords="677,279,632,265,566,245,566,239,634,260,682,279"/>
+<area shape="rect" id="Node000045" href="$a00197.html#ac105d8bcb2245439732f2022e8d09ac3" title=" " alt="" coords="200,244,344,270"/>
+<area shape="poly" id="edge31_Node000002_Node000045" title=" " alt="" coords="664,299,345,267,345,262,668,296"/>
+<area shape="rect" id="Node000046" href="$a00197.html#a7c7f7b7d4c14bc0a31dffdb3e997f40d" title=" " alt="" coords="201,94,344,121"/>
+<area shape="poly" id="edge32_Node000002_Node000046" title=" " alt="" coords="731,270,715,241,693,207,665,175,632,150,597,133,561,120,484,105,409,100,346,102,343,97,409,95,484,100,562,115,599,128,635,145,669,172,697,204,720,238,736,271"/>
+<area shape="rect" id="Node000047" href="$a00197.html#afedfe27848fd9bd2a347523097e02fe3" title=" " alt="" coords="203,169,342,196"/>
+<area shape="poly" id="edge33_Node000002_Node000047" title=" " alt="" coords="726,272,688,224,662,201,632,183,594,170,554,161,473,156,396,161,333,171,330,166,395,155,473,150,555,156,596,165,634,179,665,197,691,220,732,272"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="305,304,295,299,272,297,251,299,240,304,237,309,243,318,238,318,232,310,236,300,250,294,272,292,296,294,311,303"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="222,312,182,284,166,264,158,245,150,228,134,210,118,199,116,194,137,206,154,225,163,243,171,261,186,280,227,310"/>
+<area shape="poly" id="edge6_Node000003_Node000022" title=" " alt="" coords="218,314,109,274,108,268,222,311"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="104,155,93,150,70,148,49,150,38,154,35,160,41,168,36,169,30,160,34,151,48,145,71,142,95,145,109,153"/>
+<area shape="poly" id="edge7_Node000022_Node000022" title=" " alt="" coords="104,230,93,225,70,222,49,224,38,229,35,235,41,243,36,244,30,235,34,225,48,219,71,217,95,220,109,227"/>
+<area shape="poly" id="edge9_Node000038_Node000038" title=" " alt="" coords="559,429,548,425,521,422,497,424,484,429,481,434,487,444,482,443,476,435,480,425,496,419,521,417,549,420,565,429"/>
+<area shape="poly" id="edge12_Node000080_Node000080" title=" " alt="" coords="557,503,544,499,521,497,500,499,486,504,481,510,483,519,478,516,476,508,483,499,498,494,521,492,546,494,562,503"/>
+<area shape="poly" id="edge14_Node000042_Node000042" title=" " alt="" coords="559,594,548,590,521,588,497,590,484,594,481,600,487,610,482,608,476,600,480,591,496,585,521,582,549,585,565,595"/>
+<area shape="poly" id="edge18_Node000044_Node000044" title=" " alt="" coords="559,203,548,198,521,196,497,198,484,202,481,208,487,217,482,216,476,208,480,199,496,193,521,190,549,193,565,202"/>
+<area shape="poly" id="edge19_Node000044_Node000045" title=" " alt="" coords="459,238,346,252,344,247,463,235"/>
+<area shape="poly" id="edge23_Node000044_Node000046" title=" " alt="" coords="486,208,429,172,360,135,331,124,329,119,362,131,432,168,491,207"/>
+<area shape="poly" id="edge27_Node000044_Node000047" title=" " alt="" coords="459,220,342,198,341,193,464,218"/>
+<area shape="poly" id="edge20_Node000045_Node000004" title=" " alt="" coords="218,239,110,199,108,194,222,236"/>
+<area shape="poly" id="edge21_Node000045_Node000022" title=" " alt="" coords="182,259,137,259,135,255,186,255"/>
+<area shape="poly" id="edge22_Node000045_Node000045" title=" " alt="" coords="305,229,295,225,272,222,251,224,240,229,237,235,243,243,238,243,232,235,236,225,250,219,272,217,296,220,311,228"/>
+<area shape="poly" id="edge24_Node000046_Node000004" title=" " alt="" coords="203,128,185,136,102,170,99,167,183,131,206,124"/>
+<area shape="poly" id="edge25_Node000046_Node000022" title=" " alt="" coords="189,130,185,135,169,152,160,169,152,188,138,210,96,245,91,242,134,206,148,186,155,167,164,149,182,131,193,126"/>
+<area shape="poly" id="edge26_Node000046_Node000046" title=" " alt="" coords="305,80,295,75,272,73,251,75,240,80,237,85,243,94,238,94,232,86,236,76,250,70,272,68,296,70,311,78"/>
+<area shape="poly" id="edge28_Node000047_Node000004" title=" " alt="" coords="186,184,123,185,121,180,190,181"/>
+<area shape="poly" id="edge29_Node000047_Node000022" title=" " alt="" coords="203,203,185,210,102,245,99,241,183,205,206,199"/>
+<area shape="poly" id="edge30_Node000047_Node000047" title=" " alt="" coords="305,155,295,150,272,148,251,150,240,154,237,160,243,168,238,169,232,160,236,151,250,145,272,142,296,145,311,153"/>
+</map>

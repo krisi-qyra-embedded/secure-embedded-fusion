@@ -1,0 +1,11 @@
+<map id="receiver_init_ecdh_crypto" name="receiver_init_ecdh_crypto">
+<area shape="rect" id="Node000001" title="Initialize receiver ECDH and derived keys." alt="" coords="403,29,530,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="495,13,485,10,466,8,449,10,438,15,434,21,435,30,431,27,429,19,435,10,448,5,467,3,487,5,501,14"/>
+<area shape="rect" id="Node000002" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,29,355,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="385,51,356,53,356,48,391,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="300,13,292,10,278,8,264,10,256,14,252,20,253,30,249,27,247,19,252,11,262,5,278,3,294,5,305,14"/>
+<area shape="rect" id="Node000003" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,37,152,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="182,51,153,53,152,48,187,50"/>
+<area shape="rect" id="Node000004" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="84,52,55,53,55,48,89,50"/>
+</map>

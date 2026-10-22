@@ -1,0 +1,10 @@
+<map id="uart_log_irq_handler" name="uart_log_irq_handler">
+<area shape="rect" id="Node000001" title="Handle USART2 logging interrupts." alt="" coords="5,29,143,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="47,29,43,21,46,11,57,5,74,3,92,5,104,14,98,14,91,10,74,8,58,10,50,14,48,20,53,29"/>
+<area shape="rect" id="Node000002" href="$a01009.html#ae88ac59641da4cf447e854d92c65b7a3" title="Queue one character for logging." alt="" coords="191,29,261,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,40,177,42,172,43,143,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="201,28,197,21,200,11,210,5,226,3,243,5,253,15,248,14,241,10,226,8,212,10,204,14,202,20,206,30"/>
+<area shape="rect" id="Node000003" href="$a01009.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="309,29,421,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="262,40,296,43,291,43,262,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="341,28,336,21,339,11,349,5,365,3,382,5,392,15,387,13,380,10,365,8,351,10,344,14,342,20,345,30"/>
+</map>

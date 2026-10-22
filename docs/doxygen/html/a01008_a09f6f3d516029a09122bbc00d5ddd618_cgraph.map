@@ -1,0 +1,50 @@
+<map id="decrypt_verify_recombine_gcm_receiver" name="decrypt_verify_recombine_gcm_receiver">
+<area shape="rect" id="Node000001" title="Authenticate/decrypt the GCM packet and rebuild the ADC samples." alt="" coords="5,237,176,280"/>
+<area shape="rect" id="Node000002" href="$a01008.html#a05e5e9a15ad0775139a56fd4e875375e" title="Decrypt and authenticate with single&#45;call AES&#45;GCM." alt="" coords="442,29,634,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,235,154,180,186,151,222,126,272,101,324,82,429,56,425,60,326,87,274,106,225,130,190,155,158,184,110,238"/>
+<area shape="rect" id="Node000004" href="$a01026.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="697,141,790,168"/>
+<area shape="poly" id="edge33_Node000001_Node000004" title=" " alt="" coords="175,243,683,162,681,167,177,248"/>
+<area shape="rect" id="Node000005" href="$a01008.html#a746265301fc8d32fe59a31901a46d9c6" title="Decrypt and authenticate with streaming AES&#45;GCM." alt="" coords="472,104,604,147"/>
+<area shape="poly" id="edge7_Node000001_Node000005" title=" " alt="" coords="113,235,161,197,191,178,223,163,282,144,344,132,459,123,455,127,345,138,284,149,225,168,194,183,164,201,117,238"/>
+<area shape="rect" id="Node000006" href="$a01011.html#a2473ac31b52535a759a4c1ea10cf1776" title="Authenticate and decode one ESP32 response." alt="" coords="224,349,394,392"/>
+<area shape="poly" id="edge11_Node000001_Node000006" title=" " alt="" coords="133,278,254,340,249,343,134,283"/>
+<area shape="rect" id="Node000018" href="$a01056.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="272,440,346,467"/>
+<area shape="poly" id="edge27_Node000001_Node000018" title=" " alt="" coords="108,278,159,337,191,371,225,402,268,431,263,433,222,406,187,375,155,341,108,283"/>
+<area shape="rect" id="Node000022" href="$a01008.html#a9d18f04aea9ccb2338ed93224948eff0" title="Rebuild ADC words from the legacy byte layout." alt="" coords="232,515,386,541"/>
+<area shape="poly" id="edge31_Node000001_Node000022" title=" " alt="" coords="101,278,148,371,183,426,225,477,265,507,260,508,222,481,179,430,143,374,100,283"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="503,29,497,21,501,11,515,5,538,3,563,5,577,13,572,15,561,10,538,8,517,10,505,15,502,20,508,29"/>
+<area shape="rect" id="Node000003" href="$a01008.html#a10da30768f6fc93bb304e0c662b2c8a9" title=" " alt="" coords="682,48,805,75"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="634,49,669,53,665,55,636,54"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="605,54,636,66,682,96,721,130,715,130,679,100,633,70,606,59"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="708,47,702,39,707,30,721,23,744,21,768,24,782,32,777,33,766,29,743,27,722,29,710,33,708,39,714,48"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="708,141,702,133,707,123,721,117,744,115,768,117,782,126,777,126,766,122,743,120,722,122,710,127,708,132,714,141"/>
+<area shape="poly" id="edge9_Node000005_Node000003" title=" " alt="" coords="603,103,686,78,681,81,606,107"/>
+<area shape="poly" id="edge10_Node000005_Node000004" title=" " alt="" coords="603,132,684,145,679,147,605,137"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="499,103,497,94,504,85,518,79,538,77,560,80,575,88,570,89,559,85,538,83,519,85,507,89,503,95,504,104"/>
+<area shape="poly" id="edge24_Node000006_Node000004" title=" " alt="" coords="381,390,396,402,412,428,419,455,416,506,414,531,416,554,424,576,444,597,492,626,515,633,538,636,561,633,584,626,633,597,655,568,675,523,692,467,706,405,726,278,738,186,741,181,732,279,711,406,697,469,680,525,660,571,636,601,586,631,562,638,538,641,514,638,490,631,440,601,420,579,411,555,409,531,411,506,414,455,408,430,392,406,381,395"/>
+<area shape="poly" id="edge14_Node000006_Node000005" title=" " alt="" coords="324,347,374,283,440,207,500,155,497,159,444,211,378,286,328,350"/>
+<area shape="poly" id="edge15_Node000006_Node000006" title=" " alt="" coords="267,348,266,339,273,330,287,325,309,323,332,325,348,333,343,334,331,330,309,328,288,330,276,335,271,341,272,349"/>
+<area shape="rect" id="Node000007" href="$a00191.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="470,685,607,712"/>
+<area shape="poly" id="edge12_Node000006_Node000007" title=" " alt="" coords="381,390,396,402,416,433,425,464,426,493,423,522,420,550,420,580,427,610,444,641,463,661,488,679,482,678,460,665,440,644,422,611,415,580,415,550,418,521,420,493,419,464,411,436,392,406,381,395"/>
+<area shape="rect" id="Node000009" href="$a01011.html#a2e073445f2d978f532e3c07791f199a9" title=" " alt="" coords="464,245,613,272"/>
+<area shape="poly" id="edge16_Node000006_Node000009" title=" " alt="" coords="336,347,383,313,441,282,461,276,457,279,443,286,386,318,339,351"/>
+<area shape="rect" id="Node000010" href="$a01011.html#a374d8cb7314a67adbdf98a13cfc380f6" title=" " alt="" coords="498,320,578,347"/>
+<area shape="poly" id="edge18_Node000006_Node000010" title=" " alt="" coords="393,354,485,341,480,344,396,359"/>
+<area shape="rect" id="Node000011" href="$a01011.html#ac8ed6d020e45d9c052371615bb985caf" title=" " alt="" coords="498,395,578,421"/>
+<area shape="poly" id="edge20_Node000006_Node000011" title=" " alt="" coords="394,382,485,398,480,400,395,387"/>
+<area shape="rect" id="Node000012" href="$a00329.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="486,469,591,496"/>
+<area shape="poly" id="edge22_Node000006_Node000012" title=" " alt="" coords="369,390,395,402,443,431,498,462,493,462,441,436,393,406,369,395"/>
+<area shape="rect" id="Node000013" href="$a00236.html#ad3befa25fcb365baff8024e4afa912df" title="Check and commit the RX replay high&#45;water state in RAM." alt="" coords="456,544,620,587"/>
+<area shape="poly" id="edge25_Node000006_Node000013" title=" " alt="" coords="379,390,396,402,415,429,422,454,428,480,444,506,478,536,473,535,440,510,423,482,417,456,410,431,392,406,379,395"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="503,684,497,677,501,667,515,661,538,659,563,661,577,670,572,670,561,666,538,664,517,666,505,671,502,676,508,686"/>
+<area shape="poly" id="edge17_Node000009_Node000009" title=" " alt="" coords="503,245,497,237,501,227,515,221,538,219,563,221,577,230,572,231,561,226,538,224,517,226,505,231,502,236,508,245"/>
+<area shape="poly" id="edge19_Node000010_Node000010" title=" " alt="" coords="503,319,497,311,501,302,515,295,538,293,563,296,577,304,572,305,561,301,538,299,517,301,505,305,502,311,508,320"/>
+<area shape="poly" id="edge21_Node000011_Node000011" title=" " alt="" coords="503,394,497,386,501,376,515,370,538,368,563,371,577,379,572,380,561,376,538,373,517,375,505,380,502,385,508,395"/>
+<area shape="poly" id="edge23_Node000012_Node000012" title=" " alt="" coords="503,468,497,461,501,451,515,445,538,443,563,445,577,454,572,454,561,450,538,448,517,450,505,455,502,460,508,469"/>
+<area shape="poly" id="edge26_Node000013_Node000013" title=" " alt="" coords="499,542,497,534,504,525,518,519,538,517,560,520,575,528,570,528,559,525,538,523,519,525,507,529,503,535,504,545"/>
+<area shape="poly" id="edge28_Node000018_Node000018" title=" " alt="" coords="271,440,265,431,270,421,285,415,309,413,335,416,350,424,345,425,333,421,309,419,286,421,274,425,271,431,277,440"/>
+<area shape="rect" id="Node000019" href="$a01056.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="482,760,594,787"/>
+<area shape="poly" id="edge29_Node000018_Node000019" title=" " alt="" coords="346,453,373,461,396,477,417,508,426,539,427,569,424,599,420,629,420,659,426,690,444,722,460,738,480,754,475,752,457,742,440,726,421,692,414,660,415,629,418,599,422,569,421,540,412,510,392,481,371,466,347,458"/>
+<area shape="poly" id="edge30_Node000019_Node000019" title=" " alt="" coords="503,758,497,751,501,742,515,735,538,733,563,736,577,745,572,744,561,741,538,739,517,741,505,745,502,751,508,761"/>
+<area shape="poly" id="edge32_Node000022_Node000022" title=" " alt="" coords="271,514,265,506,270,496,285,490,309,488,335,491,350,499,345,500,333,496,309,493,286,495,274,500,271,505,277,514"/>
+</map>

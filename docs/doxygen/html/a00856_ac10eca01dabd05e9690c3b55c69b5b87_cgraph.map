@@ -1,0 +1,23 @@
+<map id="cloud_mode_debounce_task" name="cloud_mode_debounce_task">
+<area shape="rect" id="Node000001" title="Wait five seconds before switching an idle SoftAP to cloud mode." alt="" coords="5,265,192,292"/>
+<area shape="poly" id="edge13_Node000001_Node000001" title=" " alt="" coords="61,265,55,257,59,247,74,241,99,239,124,241,140,249,135,251,123,246,98,244,76,246,63,251,60,256,66,264"/>
+<area shape="rect" id="Node000002" href="$a00856.html#ace1df51f7924ed07625502194d1bfaec" title="Start AWS after the SoftAP is idle and station connectivity is recorded." alt="" coords="240,220,395,247"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,262,237,249,233,252,167,267"/>
+<area shape="rect" id="Node000060" href="$a00311.html#a89d892bcd5260d5f5925d6fe44e39237" title="Get the tracked SoftAP client count." alt="" coords="484,344,621,387"/>
+<area shape="poly" id="edge14_Node000001_Node000060" title=" " alt="" coords="173,290,470,347,467,352,172,295"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="280,219,274,211,278,201,293,195,317,193,343,196,359,205,353,205,342,201,317,199,294,201,282,205,279,211,285,220"/>
+<area shape="rect" id="Node000003" href="$a00856.html#a1535a2ab20693c8e0566c4201d6f48b0" title="Request AWS shutdown and start the local HTTPS dashboard." alt="" coords="443,29,661,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="323,218,339,187,365,145,399,102,441,66,455,61,450,64,445,70,403,106,369,148,343,189,327,221"/>
+<area shape="rect" id="Node000044" href="$a00257.html#aafc76bd7e6c7a18de1fc9a45147da11c" title="Start the AWS IoT task if it is not already running." alt="" coords="502,104,602,131"/>
+<area shape="poly" id="edge5_Node000002_Node000044" title=" " alt="" coords="332,217,379,179,409,158,442,140,490,127,485,129,444,145,412,163,382,183,335,222"/>
+<area shape="rect" id="Node000055" href="$a00275.html#afffb5f05a179c9702078a824048dab36" title="Stop HTTPS, disable its watchdog and release the monitor resources." alt="" coords="493,179,611,205"/>
+<area shape="poly" id="edge7_Node000002_Node000055" title=" " alt="" coords="395,217,480,204,475,206,396,222"/>
+<area shape="rect" id="Node000056" href="$a00293.html#aed5950cdae0b210440880aec1071cb5b" title="Start the periodic SNTP clock&#45;check task." alt="" coords="480,253,625,296"/>
+<area shape="poly" id="edge9_Node000002_Node000056" title=" " alt="" coords="395,244,467,259,462,260,395,250"/>
+<area shape="poly" id="edge11_Node000002_Node000060" title=" " alt="" coords="342,245,444,306,498,337,493,336,442,310,340,250"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="512,29,506,21,510,11,526,5,552,3,581,5,597,14,591,15,579,10,552,8,527,10,514,15,511,20,517,29"/>
+<area shape="poly" id="edge6_Node000044_Node000044" title=" " alt="" coords="512,103,506,95,510,85,526,79,552,77,581,80,597,89,591,89,579,85,552,83,527,85,514,89,511,95,517,104"/>
+<area shape="poly" id="edge8_Node000055_Node000055" title=" " alt="" coords="512,178,506,170,510,160,526,154,552,152,581,155,597,164,591,164,579,160,552,157,527,159,514,164,511,169,517,179"/>
+<area shape="poly" id="edge10_Node000056_Node000056" title=" " alt="" coords="508,251,506,243,513,234,529,229,552,227,577,229,594,238,589,238,576,234,552,232,530,234,516,239,511,245,513,254"/>
+<area shape="poly" id="edge12_Node000060_Node000060" title=" " alt="" coords="508,342,506,334,513,325,529,319,552,317,577,320,594,329,589,328,576,325,552,323,530,325,516,329,511,335,512,345"/>
+</map>

@@ -1,0 +1,26 @@
+var a00317 =
+[
+    [ "APP_CPU_NUM", "a00317.html#a30aef632f36ba5b74aef01f6feba732d", null ],
+    [ "CCS811_ERR_SENSOR_RESISTANCE_MAX", "a00317.html#a920b6af26b9d4bcc84dd1db6556e912f", null ],
+    [ "CCS811_I2C_ADDR", "a00317.html#aa113e005615672f264a04bd7e15db23b", null ],
+    [ "CCS811_I2C_PORT", "a00317.html#a1fc1f1d3b440b75b2482a5084d218c39", null ],
+    [ "CCS811_I2C_SCL", "a00317.html#a02b1c2a677ad25afd23d6e08e6485eaa", null ],
+    [ "CCS811_I2C_SDA", "a00317.html#a58e790afe55e6ae27da78c6f616bb8af", null ],
+    [ "CCS811_MAX_INIT_RETRIES", "a00317.html#a29f7bf461be44846c15a6c2c9c3a7269", null ],
+    [ "CCS811_SAMPLE_DELAY_MS", "a00317.html#a311db4382634f81d6634b4584159c6ce", null ],
+    [ "ccs811_fatal_stop_kicking_watchdog", "a00317.html#a411fc878c6c72acb4337a8688c2291e5", null ],
+    [ "CCS811_get_latest_reading", "a00317.html#a9352e88305c925734b83f756ec11a7cf", null ],
+    [ "ccs811_init_desc_with_retries", "a00317.html#a87fefb0e84b5c738d1f455d867979307", null ],
+    [ "ccs811_is_soft_fault", "a00317.html#a1fa9d99e5b3f8940fc9a30650321c1cd", null ],
+    [ "ccs811_mark_latest_invalid", "a00317.html#a4ca67e2473b96e8772eaf06dedf3bb9a", null ],
+    [ "ccs811_sensor_init_and_mode_with_retries", "a00317.html#a43eef45732a15fbd6965ab7f894b10ce", null ],
+    [ "CCS811_task_start", "a00317.html#a9cd2f4b62bfb2be5e7e22bc42edc34e9", null ],
+    [ "ccs811_test", "a00317.html#aaf0d196a8caa797d8e7f20bcadfd7f12", null ],
+    [ "ccs811_try_recover", "a00317.html#a9b4d3cf0a43f3d4346119989cd057fa1", null ],
+    [ "g_ccs811_latest", "a00317.html#ac09181e700719b957ea107ed79c18971", null ],
+    [ "g_ccs811_mux", "a00317.html#a946c9635b67bb991624ab355791c46a5", null ],
+    [ "s_consecutive_severe_failures", "a00317.html#a5d4d2bb508fe97f25ddb824a3c47035a", null ],
+    [ "s_no_new_data_count", "a00317.html#ae67e969d6a77c07536dcad47d09e0781", null ],
+    [ "s_soft_fault_count", "a00317.html#ab5ffb7ba48b5f10ce870e68f4829f3f9", null ],
+    [ "TAG", "a00317.html#a5a85b9c772bbeb480b209a3e6ea92b4c", null ]
+];

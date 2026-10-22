@@ -1,0 +1,37 @@
+<map id="nonce_generation" name="nonce_generation">
+<area shape="rect" id="Node000001" title="Generate a nonce, condition it with SHA&#45;256 and update nonce_hashed." alt="" coords="5,153,129,180"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="33,154,27,145,31,135,45,129,67,127,91,129,105,137,100,139,89,134,67,132,46,134,35,139,32,144,38,152"/>
+<area shape="rect" id="Node000002" href="$a00805.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="230,29,304,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,151,118,109,145,86,175,66,216,51,212,55,178,70,149,90,122,113,82,154"/>
+<area shape="rect" id="Node000006" href="$a00775.html#a7404c52d7aa3a6ba766121c9a8e7d803" title="Increment the message counter after a transmission." alt="" coords="177,104,357,147"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="128,152,163,146,159,149,130,156"/>
+<area shape="rect" id="Node000007" href="$a00775.html#ac3f2ada5efd0c8e753063263d53a66d3" title="Generate the next nonce into the shared nonce buffer." alt="" coords="188,195,346,221"/>
+<area shape="poly" id="edge12_Node000001_Node000007" title=" " alt="" coords="129,177,187,190,182,192,129,182"/>
+<area shape="rect" id="Node000012" href="$a00775.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="221,269,313,296"/>
+<area shape="poly" id="edge22_Node000001_Node000012" title=" " alt="" coords="91,178,178,231,229,261,224,262,175,236,90,183"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="232,29,227,21,231,11,245,5,267,3,291,5,305,14,300,15,289,10,267,8,246,10,235,15,232,20,238,29"/>
+<area shape="rect" id="Node000003" href="$a00805.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="430,29,543,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="304,40,417,41,412,44,305,45"/>
+<area shape="poly" id="edge8_Node000003_Node000003" title=" " alt="" coords="453,28,448,21,452,11,465,5,487,3,510,5,524,14,518,14,508,10,487,8,466,10,456,15,453,20,458,29"/>
+<area shape="rect" id="Node000004" href="$a00721.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="647,29,714,56"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="543,40,634,42,629,43,544,45"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="654,28,650,21,653,11,664,5,681,3,699,5,709,14,704,14,697,10,680,8,665,10,657,14,655,20,659,30"/>
+<area shape="rect" id="Node000005" href="$a00721.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="793,29,866,56"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="714,40,780,42,774,43,715,45"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="803,28,799,21,802,11,812,5,829,3,847,5,858,14,853,14,846,10,829,8,814,10,806,14,804,20,808,30"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="229,103,227,94,233,85,247,79,267,77,288,80,303,88,297,89,287,85,267,83,248,85,237,89,232,95,234,104"/>
+<area shape="poly" id="edge17_Node000007_Node000007" title=" " alt="" coords="232,194,227,186,231,176,245,170,267,168,291,171,305,179,299,179,289,176,267,173,246,175,235,180,232,185,238,195"/>
+<area shape="rect" id="Node000008" href="$a00778.html#a73b97cfc31bcd06f6b636a6e7ac06af3" title=" " alt="" coords="405,112,568,139"/>
+<area shape="poly" id="edge13_Node000007_Node000008" title=" " alt="" coords="298,192,404,148,427,143,422,145,406,153,300,197"/>
+<area shape="rect" id="Node000009" href="$a00775.html#a5b74437bb341db1f2cd53ca496e500ed" title="Build the static entropy value from the hashed hardware sources." alt="" coords="410,187,563,229"/>
+<area shape="poly" id="edge15_Node000007_Node000009" title=" " alt="" coords="346,205,397,208,392,208,347,211"/>
+<area shape="rect" id="Node000010" href="$a00778.html#a8af10b21d3f570b16bad20a866618454" title=" " alt="" coords="408,277,566,304"/>
+<area shape="poly" id="edge18_Node000007_Node000010" title=" " alt="" coords="322,219,358,231,446,270,441,270,356,236,321,225"/>
+<area shape="poly" id="edge14_Node000008_Node000008" title=" " alt="" coords="453,111,448,103,452,94,465,87,487,85,510,88,524,97,518,97,508,93,487,91,466,93,456,97,453,103,458,112"/>
+<area shape="poly" id="edge16_Node000009_Node000009" title=" " alt="" coords="450,185,448,177,454,168,467,162,487,160,508,162,522,171,516,171,506,168,487,165,469,167,458,172,453,178,454,187"/>
+<area shape="poly" id="edge21_Node000010_Node000010" title=" " alt="" coords="453,276,448,269,452,259,465,253,487,251,510,253,524,263,518,262,508,258,487,256,466,258,456,263,453,268,458,278"/>
+<area shape="rect" id="Node000011" href="$a00775.html#a050a1266b3e065a9850a897b2a3398ce" title=" " alt="" coords="616,277,745,304"/>
+<area shape="poly" id="edge19_Node000010_Node000011" title=" " alt="" coords="566,288,603,291,598,291,566,293"/>
+<area shape="poly" id="edge20_Node000011_Node000011" title=" " alt="" coords="655,276,650,269,653,259,664,253,681,251,699,253,709,263,704,261,697,258,680,256,665,258,657,262,655,268,659,278"/>
+<area shape="poly" id="edge23_Node000012_Node000012" title=" " alt="" coords="233,268,227,261,231,251,245,245,267,243,291,245,305,254,300,254,289,250,267,248,246,250,235,255,232,260,238,270"/>
+</map>

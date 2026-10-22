@@ -1,0 +1,4 @@
+<map id="device_uid_is_valid" name="device_uid_is_valid">
+<area shape="rect" id="Node000001" title="Check that the cached UID is not all&#45;zero or all&#45;0xFF." alt="" coords="5,29,140,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="94,14,87,10,72,8,59,10,52,14,50,20,54,29,49,28,45,21,48,11,57,5,73,3,89,5,99,14"/>
+</map>

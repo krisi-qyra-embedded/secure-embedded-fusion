@@ -1,0 +1,7 @@
+<map id="generate_ed25519_signing_keypair" name="generate_ed25519_signing_keypair">
+<area shape="rect" id="Node000001" title="Generate one Ed25519 signing keypair with the project CTR&#45;DRBG." alt="" coords="5,29,181,72"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="57,28,55,19,61,10,74,5,93,3,113,5,127,14,122,14,112,10,93,8,75,10,65,15,61,21,62,29"/>
+<area shape="rect" id="Node000002" href="$a00761.html#a07d477162ee57bff940a7a9951cf3a77" title=" " alt="" coords="229,37,334,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,48,216,50,210,51,181,53"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="249,36,243,29,247,19,260,13,281,11,304,13,317,22,312,22,302,18,281,16,262,18,251,23,249,28,254,38"/>
+</map>

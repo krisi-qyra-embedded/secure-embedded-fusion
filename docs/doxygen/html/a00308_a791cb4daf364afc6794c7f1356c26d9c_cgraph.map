@@ -1,0 +1,76 @@
+<map id="esp32_aes_gcm_runtime_task" name="esp32_aes_gcm_runtime_task">
+<area shape="rect" id="Node000001" title="Authenticate requests, apply replay checks, commit telemetry and send responses." alt="" coords="5,517,204,544"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="61,518,54,509,59,499,76,493,105,491,136,493,153,501,148,504,134,498,104,496,77,498,62,503,59,508,66,516"/>
+<area shape="rect" id="Node000002" href="$a00308.html#a1b65bb8fe89536eef91f764ba07e6079" title="Authenticate and decrypt with the derived RX key." alt="" coords="289,96,434,139"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="104,516,113,451,136,352,155,298,179,244,211,193,250,149,277,133,273,137,253,153,215,196,184,246,160,300,141,354,118,452,110,517"/>
+<area shape="rect" id="Node000006" href="$a00308.html#a438c53f1c2f8dc69864aae91f15ea017" title="Copy the RAM receive replay watermark." alt="" coords="275,187,448,229"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="106,516,120,464,147,390,166,349,190,309,217,272,250,239,263,232,260,236,253,243,221,275,194,312,171,352,152,392,125,466,111,517"/>
+<area shape="rect" id="Node000014" href="$a00308.html#af09895996e311fae6f599d443101d129" title="Classify the nonce and advance the RAM watermark for a new packet." alt="" coords="276,277,448,320"/>
+<area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="110,516,129,478,159,428,200,376,224,351,250,330,264,323,260,328,253,334,228,355,204,379,164,431,133,481,115,518"/>
+<area shape="rect" id="Node000015" href="$a00308.html#a0fd12320a3e91200b47172ed2a3f5129" title="Read a 32&#45;bit big&#45;endian value." alt="" coords="297,368,427,395"/>
+<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="116,515,170,461,208,430,250,404,284,393,280,397,253,409,212,435,174,465,120,518"/>
+<area shape="rect" id="Node000016" href="$a00308.html#ac19fc45f136161d8c7c9a7cf12c9f59c" title="Read a 64&#45;bit big&#45;endian value." alt="" coords="297,443,427,469"/>
+<area shape="poly" id="edge19_Node000001_Node000016" title=" " alt="" coords="142,515,251,479,284,472,280,475,252,484,145,519"/>
+<area shape="rect" id="Node000017" href="$a00308.html#ad3312196fadaae3b7344ab4b98f8e226" title="Log the parsed STM32 sensor values." alt="" coords="287,517,436,544"/>
+<area shape="poly" id="edge21_Node000001_Node000017" title=" " alt="" coords="203,528,274,529,270,532,206,533"/>
+<area shape="rect" id="Node000018" href="$a00308.html#a698e15f23f74d91016cbdfbaf9e22805" title="Check sensor identifiers and parse a complete STM32 telemetry frame." alt="" coords="280,592,444,635"/>
+<area shape="poly" id="edge23_Node000001_Node000018" title=" " alt="" coords="148,542,281,585,276,588,149,547"/>
+<area shape="rect" id="Node000023" href="$a00308.html#a30ff8984c3968cd656ba75f7da031a14" title="Encrypt the ACK/NACK and transmit the 39&#45;byte UART response." alt="" coords="280,683,444,725"/>
+<area shape="poly" id="edge32_Node000001_Node000023" title=" " alt="" coords="121,542,179,590,253,644,304,674,298,676,250,649,176,594,122,547"/>
+<area shape="rect" id="Node000033" href="$a00308.html#a8d006e8ecc7b41283855e7a06ccf8cf3" title="Commit a valid parsed snapshot under the telemetry lock." alt="" coords="292,773,432,816"/>
+<area shape="poly" id="edge42_Node000001_Node000033" title=" " alt="" coords="113,542,166,630,206,685,253,735,296,765,291,766,250,739,202,689,161,633,112,547"/>
+<area shape="rect" id="Node000034" href="$a00308.html#a9ee449b5ba875c031b733d54a8886a0b" title="Validate the authenticated request length, header and checksum." alt="" coords="276,881,448,924"/>
+<area shape="poly" id="edge44_Node000001_Node000034" title=" " alt="" coords="110,542,129,594,158,667,200,749,225,789,254,826,279,850,308,873,303,873,276,854,250,830,221,792,195,752,153,669,124,596,110,547"/>
+<area shape="rect" id="Node000036" href="$a00329.html#a8a6cd67d7b5ee46b66f1782fadf66898" title="Receive one complete encrypted packet candidate from the queue." alt="" coords="252,972,472,1015"/>
+<area shape="poly" id="edge49_Node000001_Node000036" title=" " alt="" coords="107,542,120,611,144,713,162,771,187,829,217,884,254,934,270,949,290,965,284,964,266,954,250,938,212,887,182,831,157,773,138,715,114,612,107,547"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="315,95,313,86,321,77,337,71,362,69,388,72,406,79,401,81,387,77,362,75,338,77,324,81,318,87,320,96"/>
+<area shape="rect" id="Node000003" href="$a00308.html#a57189677bd815eabcb179cc0e9eba241" title="Check the AAD pointer and length combination." alt="" coords="564,29,658,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="430,93,519,65,551,58,547,61,521,71,433,98"/>
+<area shape="rect" id="Node000004" href="$a00308.html#a2c4066cbfac0bc2e51cb08ea9a94ec63" title="Check whether every byte is zero." alt="" coords="550,104,672,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="433,115,537,116,532,119,436,120"/>
+<area shape="rect" id="Node000005" href="$a00308.html#a1e41732547343f08def211e6b0cdac74" title="Log an Mbed TLS operation and its error code." alt="" coords="549,179,673,205"/>
+<area shape="poly" id="edge8_Node000002_Node000005" title=" " alt="" coords="434,136,552,173,547,175,435,141"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="575,29,569,21,574,11,588,5,611,3,636,5,651,13,646,15,635,10,611,8,589,10,577,15,575,20,581,29"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="575,104,569,95,574,86,588,79,611,77,636,80,651,88,646,89,635,85,611,83,589,85,577,89,575,95,581,103"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="575,178,569,170,574,160,588,154,611,152,636,155,651,163,646,164,635,160,611,157,589,159,577,164,575,169,581,178"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="315,186,313,177,321,168,337,162,362,160,388,162,406,170,401,172,387,168,362,165,338,167,324,172,318,178,320,186"/>
+<area shape="rect" id="Node000007" href="$a00308.html#a246cb46dce40ce36ee9b258cea96269f" title="Load the persistent TX state and initialize the RX seed baseline." alt="" coords="520,269,702,296"/>
+<area shape="poly" id="edge12_Node000006_Node000007" title=" " alt="" coords="435,227,552,263,547,265,437,233"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="575,269,569,261,574,251,588,245,611,243,636,245,651,253,646,255,635,250,611,248,589,250,577,255,575,260,581,269"/>
+<area shape="poly" id="edge15_Node000014_Node000007" title=" " alt="" coords="447,291,507,288,502,291,450,295"/>
+<area shape="poly" id="edge16_Node000014_Node000014" title=" " alt="" coords="315,277,313,267,321,258,337,253,362,251,388,253,406,261,401,263,387,258,362,256,338,258,324,263,318,269,320,277"/>
+<area shape="poly" id="edge18_Node000015_Node000015" title=" " alt="" coords="320,368,313,359,318,349,334,343,362,341,392,344,409,352,404,354,391,349,362,347,336,349,321,354,318,359,325,367"/>
+<area shape="poly" id="edge20_Node000016_Node000016" title=" " alt="" coords="320,443,313,434,318,424,334,418,362,416,392,419,409,427,404,429,391,424,362,421,336,423,321,428,318,433,325,442"/>
+<area shape="poly" id="edge22_Node000017_Node000017" title=" " alt="" coords="320,517,313,509,318,499,334,493,362,491,392,493,409,502,404,503,391,498,362,496,336,498,321,503,318,508,325,517"/>
+<area shape="poly" id="edge31_Node000018_Node000018" title=" " alt="" coords="315,591,313,582,321,573,337,567,362,565,388,568,406,576,401,577,387,573,362,571,338,573,324,577,318,583,320,592"/>
+<area shape="rect" id="Node000019" href="$a00308.html#aaee85d1882fdb0ff849fe2eeb57f127a" title="Decode a float from four little&#45;endian bytes." alt="" coords="539,465,683,492"/>
+<area shape="poly" id="edge24_Node000018_Node000019" title=" " alt="" coords="411,589,470,554,484,540,493,527,503,515,519,502,532,497,528,500,521,506,507,518,497,531,488,544,474,558,415,594"/>
+<area shape="rect" id="Node000021" href="$a00308.html#a43eddad61971d7367db04045898e47a4" title="Read a signed 16&#45;bit little&#45;endian value." alt="" coords="543,540,679,567"/>
+<area shape="poly" id="edge26_Node000018_Node000021" title=" " alt="" coords="443,591,540,569,536,572,446,596"/>
+<area shape="rect" id="Node000022" href="$a00308.html#aa85aedd26d76435e264409bcd90279b0" title="Read an unsigned 16&#45;bit little&#45;endian value." alt="" coords="750,565,891,592"/>
+<area shape="poly" id="edge30_Node000018_Node000022" title=" " alt="" coords="444,605,737,583,733,587,445,610"/>
+<area shape="poly" id="edge25_Node000019_Node000019" title=" " alt="" coords="575,465,569,457,574,447,588,441,611,439,636,441,651,450,646,450,635,446,611,444,589,446,577,451,575,456,581,465"/>
+<area shape="poly" id="edge27_Node000021_Node000021" title=" " alt="" coords="575,539,569,531,574,522,588,515,611,513,636,516,651,524,646,525,635,521,611,519,589,521,577,525,575,531,581,540"/>
+<area shape="poly" id="edge28_Node000021_Node000022" title=" " alt="" coords="679,559,737,568,732,569,680,564"/>
+<area shape="poly" id="edge29_Node000022_Node000022" title=" " alt="" coords="785,564,779,557,783,547,797,541,821,539,845,541,860,550,855,550,844,546,820,544,799,546,787,551,784,556,790,565"/>
+<area shape="poly" id="edge39_Node000023_Node000023" title=" " alt="" coords="315,681,313,673,321,664,337,658,362,656,388,658,406,667,401,668,387,664,362,661,338,663,324,668,318,674,320,683"/>
+<area shape="rect" id="Node000024" href="$a00308.html#afa0c7878372dfed5b806b769bc8335c2" title="Allocate a fresh nonce and encrypt with the derived TX key." alt="" coords="528,665,694,708"/>
+<area shape="poly" id="edge33_Node000023_Node000024" title=" " alt="" coords="443,696,515,692,510,694,445,701"/>
+<area shape="rect" id="Node000030" href="$a00308.html#ab958ba5fa37c53443066e0e570406230" title="Build the ACK/NACK header, sequence, reason and checksum." alt="" coords="532,756,690,799"/>
+<area shape="poly" id="edge35_Node000023_Node000030" title=" " alt="" coords="437,723,524,750,519,752,437,729"/>
+<area shape="rect" id="Node000032" href="$a00329.html#acf37f1ab27d98079afaf3ba32d6b9a23" title="Write the complete buffer and wait for UART transmission." alt="" coords="540,847,683,873"/>
+<area shape="poly" id="edge40_Node000023_Node000032" title=" " alt="" coords="444,719,474,735,491,753,499,772,507,790,522,809,565,840,560,839,518,813,503,793,495,774,486,756,470,739,444,724"/>
+<area shape="poly" id="edge34_Node000024_Node000024" title=" " alt="" coords="571,664,570,655,576,646,590,641,611,639,634,641,649,650,643,650,632,646,611,644,592,646,580,651,575,657,576,666"/>
+<area shape="poly" id="edge36_Node000030_Node000030" title=" " alt="" coords="571,754,570,746,576,737,590,731,611,729,634,732,649,740,643,740,632,737,611,735,592,737,580,741,575,747,576,757"/>
+<area shape="rect" id="Node000031" href="$a00308.html#a19358204429fb0052356f57c157765b5" title="Sum frame bytes modulo 256." alt="" coords="751,831,890,857"/>
+<area shape="poly" id="edge37_Node000030_Node000031" title=" " alt="" coords="680,797,764,825,759,826,680,802"/>
+<area shape="poly" id="edge38_Node000031_Node000031" title=" " alt="" coords="785,829,779,822,783,812,797,806,821,804,845,807,860,816,855,815,844,812,820,809,799,811,787,816,784,821,790,831"/>
+<area shape="poly" id="edge41_Node000032_Node000032" title=" " alt="" coords="575,845,569,838,574,828,588,822,611,820,636,823,651,832,646,831,635,828,611,825,589,827,577,832,575,837,580,847"/>
+<area shape="poly" id="edge43_Node000033_Node000033" title=" " alt="" coords="315,772,313,763,321,754,337,749,362,747,388,749,406,757,401,758,387,754,362,752,338,754,324,759,318,765,320,774"/>
+<area shape="poly" id="edge45_Node000034_Node000031" title=" " alt="" coords="448,902,569,899,636,893,702,883,771,864,776,863,703,888,637,898,569,904,449,908"/>
+<area shape="poly" id="edge48_Node000034_Node000034" title=" " alt="" coords="315,880,313,871,321,862,337,857,362,855,388,857,406,866,401,866,387,862,362,860,338,862,324,867,318,873,320,882"/>
+<area shape="rect" id="Node000035" href="$a00308.html#a7ca6f1796286087a35d9cd46e85086bc" title="Read the little&#45;endian STM32 application sequence." alt="" coords="524,972,699,999"/>
+<area shape="poly" id="edge46_Node000034_Node000035" title=" " alt="" coords="437,922,473,933,561,966,556,966,471,939,436,927"/>
+<area shape="poly" id="edge47_Node000035_Node000035" title=" " alt="" coords="575,970,569,963,574,954,588,947,611,945,636,948,651,957,646,956,635,953,611,951,589,953,577,957,575,963,580,973"/>
+<area shape="poly" id="edge50_Node000036_Node000036" title=" " alt="" coords="315,970,313,962,321,953,337,947,362,945,388,948,406,957,401,956,387,953,362,951,338,953,324,957,318,963,320,973"/>
+</map>

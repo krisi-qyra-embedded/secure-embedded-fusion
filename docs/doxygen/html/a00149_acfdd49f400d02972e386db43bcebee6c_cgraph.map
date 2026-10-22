@@ -1,0 +1,10 @@
+<map id="i2c_dma_mark_fault_owner_from_stream" name="i2c_dma_mark_fault_owner_from_stream">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,149,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="41,28,39,19,45,10,58,5,77,3,97,5,111,13,106,14,96,10,77,8,59,10,49,15,44,21,46,29"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a3e1b0b7179af5de82026e46b30abcc52" title=" " alt="" coords="197,29,335,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,48,184,50,178,51,149,53"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="230,27,229,19,235,10,247,5,266,3,286,5,300,14,294,13,284,10,266,8,248,10,238,15,234,21,235,30"/>
+<area shape="rect" id="Node000003" href="$a00149.html#af63c37e5dfe5be234687708bd6060bf0" title=" " alt="" coords="383,29,521,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="335,48,370,51,364,51,336,53"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="417,27,415,19,421,10,433,5,452,3,472,5,486,14,481,13,471,10,452,8,435,10,424,15,420,21,421,30"/>
+</map>

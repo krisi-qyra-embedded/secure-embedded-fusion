@@ -1,0 +1,13 @@
+<map id="jitter_init" name="jitter_init">
+<area shape="rect" id="Node000001" title="Initialize GPIO, TIM1, DMA2 Stream6 and NVIC for jitter capture." alt="" coords="5,104,76,131"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="12,104,8,95,11,86,22,80,41,77,60,80,72,88,67,90,58,85,40,83,24,85,15,89,13,95,17,103"/>
+<area shape="rect" id="Node000002" href="$a00985.html#a5bc37cdbd4a7e4f355e7e321c6df109d" title=" " alt="" coords="158,29,247,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="60,101,122,66,145,58,141,62,125,70,64,106"/>
+<area shape="rect" id="Node000003" href="$a00985.html#ae14d8c179e3602d167cb0741686ca81a" title=" " alt="" coords="128,104,276,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="75,115,115,116,110,119,77,120"/>
+<area shape="rect" id="Node000004" href="$a00985.html#abb39952b631e6f25ed7b69905cc63e59" title=" " alt="" coords="124,179,281,205"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="72,129,160,170,156,173,71,134"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="174,29,169,21,173,11,184,5,202,3,222,5,234,14,228,14,220,10,202,8,186,10,177,15,175,20,179,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="174,103,169,95,173,86,184,80,202,77,222,80,234,89,228,89,220,85,202,83,186,85,177,89,175,95,179,104"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="174,177,169,170,173,160,184,154,202,152,222,155,234,164,228,163,220,160,202,157,186,159,177,164,175,169,179,179"/>
+</map>

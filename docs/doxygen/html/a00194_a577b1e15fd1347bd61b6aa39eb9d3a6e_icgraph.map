@@ -1,0 +1,10 @@
+<map id="stm32_gcm_clear_flash_flags" name="stm32_gcm_clear_flash_flags">
+<area shape="rect" id="Node000001" title=" " alt="" coords="454,29,613,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="567,13,556,10,534,8,513,10,501,15,496,21,497,30,493,27,490,19,497,10,512,5,534,3,557,5,573,14"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a4e243c23d4df349f187f9e2a4674c2a0" title=" " alt="" coords="225,37,406,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="436,51,406,53,406,48,441,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="351,22,340,18,315,16,292,18,280,23,277,28,283,38,278,36,272,29,276,19,291,13,315,11,341,13,357,22"/>
+<area shape="rect" id="Node000003" href="$a00194.html#a9b5566d836896405016c098ccac6fc44" title="Reserve the next persistent TX session ID for this boot." alt="" coords="5,29,177,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="207,51,177,53,177,48,212,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="126,14,114,10,91,8,70,10,57,15,52,21,54,29,48,28,47,19,54,10,69,5,91,3,115,5,131,13"/>
+</map>

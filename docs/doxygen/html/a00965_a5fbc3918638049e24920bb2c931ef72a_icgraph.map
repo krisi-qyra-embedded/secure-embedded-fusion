@@ -1,0 +1,7 @@
+<map id="compute_hmac_over_iv_cipher_receiver" name="compute_hmac_over_iv_cipher_receiver">
+<area shape="rect" id="Node000001" title="Compute the receiver HMAC over the received IV and ciphertext." alt="" coords="195,29,354,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="305,13,294,10,274,8,256,10,244,15,240,21,241,30,237,27,235,19,241,10,254,5,274,3,296,5,310,14"/>
+<area shape="rect" id="Node000002" href="$a00965.html#a4de9d94651e8c708174d377a63da2f1e" title="Verify HMAC, decrypt AES&#45;CTR data and rebuild the ADC samples." alt="" coords="5,29,147,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="177,51,147,53,147,48,182,50"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="106,14,96,10,76,8,57,10,46,15,42,21,43,29,38,28,36,19,43,10,56,5,76,3,97,5,112,13"/>
+</map>

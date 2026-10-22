@@ -1,0 +1,12 @@
+<map id="otp_find_existing_ed25519_record" name="otp_find_existing_ed25519_record">
+<area shape="rect" id="Node000001" title=" " alt="" coords="498,29,674,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="618,13,607,10,586,8,566,10,554,15,550,21,551,30,546,27,544,19,551,10,565,5,586,3,609,5,624,14"/>
+<area shape="rect" id="Node000002" href="$a00757.html#a0e093b16432a234a2684d2dcdc5135ba" title=" " alt="" coords="302,29,450,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="480,51,451,53,451,48,485,51"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="406,13,396,10,376,8,358,10,346,15,342,21,343,30,339,27,337,19,343,10,356,5,376,3,398,5,412,14"/>
+<area shape="rect" id="Node000003" href="$a00757.html#a73702acacbe45e9c0c5fb7223867e497" title="Provision Ed25519 OTP when enabled and load the OTP keypair into RAM." alt="" coords="103,29,254,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="284,51,255,53,255,48,289,51"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="200,13,193,10,178,8,165,10,157,14,153,20,154,30,150,27,148,19,153,11,163,5,178,3,195,5,206,14"/>
+<area shape="rect" id="Node000004" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="85,52,55,53,55,48,89,50"/>
+</map>

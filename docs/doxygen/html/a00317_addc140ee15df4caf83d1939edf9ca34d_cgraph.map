@@ -1,0 +1,17 @@
+<map id="http_server_get_local_time_json_handler" name="http_server_get_local_time_json_handler">
+<area shape="rect" id="Node000001" title="Return local time once time synchronization is ready." alt="" coords="5,112,151,155"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="38,111,36,102,43,93,57,87,78,85,101,88,116,96,111,97,99,93,78,91,58,93,46,97,41,103,43,111"/>
+<area shape="rect" id="Node000002" href="$a00317.html#a6df01acd9aa466a2c5ca1c0efecf2a78" title="Send a response and track consecutive send failures." alt="" coords="199,53,380,96"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="150,111,198,99,193,102,152,116"/>
+<area shape="rect" id="Node000004" href="$a00317.html#af151f962c0b044e789f2b308a04a4d39" title="Refresh the HTTPS heartbeat while the server is active and healthy." alt="" coords="428,120,608,147"/>
+<area shape="poly" id="edge8_Node000001_Node000004" title=" " alt="" coords="151,131,413,131,412,136,151,136"/>
+<area shape="rect" id="Node000006" href="$a00335.html#a4a048552418122df43aee76219cc4e29" title="Format the current local time." alt="" coords="204,195,374,221"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="141,153,237,188,233,190,140,158"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="249,52,247,43,254,34,268,29,289,27,312,29,327,38,322,38,311,34,289,32,269,34,257,39,253,45,254,54"/>
+<area shape="rect" id="Node000003" href="$a00317.html#a4e8e7643b761c21fd2e5eec51fcf7a61" title="Latch an HTTPS fault and wait without refreshing its heartbeat." alt="" coords="443,29,593,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="379,63,430,59,425,61,381,68"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="375,94,451,115,446,116,375,99"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="475,28,473,19,480,10,495,5,518,3,543,5,559,14,554,14,541,10,518,8,497,10,483,15,478,21,480,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="479,119,473,111,477,101,493,95,518,93,546,96,562,105,556,105,544,101,518,99,494,101,481,105,478,111,484,120"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="253,193,247,186,252,176,266,170,289,168,314,171,329,180,324,179,313,176,289,173,267,175,255,180,252,185,258,195"/>
+</map>

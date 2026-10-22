@@ -1,0 +1,17 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/app_watchdog.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/app_watchdog.h">
+<area shape="rect" id="Node000001" title="Task heartbeat and watchdog supervisor interface." alt="" coords="821,5,1079,112"/>
+<area shape="rect" id="Node000002" href="$a00251.html" title="Task heartbeat checks and TWDT supervision." alt="" coords="5,160,263,267"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="803,73,557,107,415,132,276,163,264,166,262,161,275,157,414,126,556,102,808,72"/>
+<area shape="rect" id="Node000003" href="$a00257.html" title="AWS MQTT connection and combined sensor telemetry." alt="" coords="287,160,506,267"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="808,86,666,121,519,163,507,166,506,161,517,157,665,116,803,87"/>
+<area shape="rect" id="Node000004" href="$a00263.html" title="BMP280/BME280 sampling, cached readings and recovery." alt="" coords="531,160,796,267"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="840,119,763,162,761,157,835,120"/>
+<area shape="rect" id="Node000005" href="$a00269.html" title="CCS811 sampling, fault handling and watchdog recovery." alt="" coords="820,160,1080,267"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="952,125,952,161,948,158,948,129"/>
+<area shape="rect" id="Node000006" href="$a00275.html" title="HTTPS dashboard, Wi&#45;Fi control and ESP32 firmware updates." alt="" coords="1104,160,1342,267"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1058,117,1132,160,1126,159,1057,122"/>
+<area shape="rect" id="Node000007" href="$a00652.html" title="ESP32 startup, service modes and STM32 crypto bring&#45;up." alt="" coords="1367,160,1586,267"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1094,87,1222,118,1355,157,1369,165,1364,164,1353,163,1221,123,1094,92"/>
+<area shape="rect" id="Node000008" href="$a00311.html" title="Wi&#45;Fi control, SoftAP callbacks and watchdog supervision." alt="" coords="1610,160,1831,267"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1094,69,1206,82,1333,100,1467,125,1599,157,1612,164,1607,163,1597,163,1466,130,1332,106,1205,87,1094,75"/>
+</map>

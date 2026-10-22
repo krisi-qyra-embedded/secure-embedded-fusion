@@ -1,0 +1,16 @@
+<map id="app_max31865_log_runtime_error" name="app_max31865_log_runtime_error">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,63,189,105"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="56,62,55,53,61,44,76,38,97,36,120,38,135,47,130,48,119,44,97,41,77,43,65,48,60,54,61,62"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="243,29,380,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,64,230,58,225,60,190,69"/>
+<area shape="rect" id="Node000004" href="$a00197.html#aef0fe391151f498b87061f7abc9a9b19" title="Mark fault recovery as in progress." alt="" coords="237,104,386,147"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="189,99,224,108,219,108,189,104"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="276,28,270,21,274,11,288,5,311,3,336,5,351,14,345,14,334,10,311,8,290,10,278,15,275,20,281,30"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="464,29,573,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="380,40,451,42,445,43,381,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="483,28,477,21,481,11,495,5,518,3,543,5,557,14,552,14,541,10,518,8,497,10,485,15,482,20,488,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="272,102,270,94,277,85,291,79,311,77,334,80,348,89,343,88,332,85,311,83,292,85,280,89,275,95,277,105"/>
+<area shape="rect" id="Node000005" href="$a00197.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="434,104,602,147"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="386,123,421,125,416,125,386,128"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="479,102,477,94,484,85,497,79,518,77,540,80,555,89,550,88,539,85,518,83,499,85,487,89,482,95,483,105"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="hash_buffer_is_all_value" name="hash_buffer_is_all_value">
+<area shape="rect" id="Node000001" title=" " alt="" coords="307,29,432,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="398,13,389,10,370,8,352,10,341,15,337,21,338,30,334,27,332,19,338,10,351,5,370,3,390,5,404,14"/>
+<area shape="rect" id="Node000002" href="$a00248.html#aed9eb25443911b7040d8b8e576e5afeb" title="Compare the runtime Sector 5 hash with the authenticated manifest digest." alt="" coords="103,29,259,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="289,51,260,53,259,48,294,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="203,13,196,10,181,8,167,10,159,14,155,20,156,30,152,27,150,19,155,11,165,5,181,3,197,5,209,14"/>
+<area shape="rect" id="Node000003" href="$a00891.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,52,55,53,55,48,90,50"/>
+</map>

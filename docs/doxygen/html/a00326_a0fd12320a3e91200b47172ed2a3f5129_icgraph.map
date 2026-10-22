@@ -1,0 +1,10 @@
+<map id="runtime_load_be32" name="runtime_load_be32">
+<area shape="rect" id="Node000001" title="Read a 32&#45;bit big&#45;endian value." alt="" coords="466,37,596,64"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="566,22,555,18,531,16,509,18,497,23,494,28,500,38,495,36,489,29,493,19,508,13,531,11,556,13,571,23"/>
+<area shape="rect" id="Node000002" href="$a00326.html#a791cb4daf364afc6794c7f1356c26d9c" title="Authenticate requests, apply replay checks, commit telemetry and send responses." alt="" coords="220,37,418,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="448,51,419,53,419,48,453,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="354,22,343,18,319,16,297,18,285,23,282,28,288,38,283,36,276,29,281,19,295,13,319,11,344,13,359,22"/>
+<area shape="rect" id="Node000003" href="$a00326.html#aa0bd09f3520c2fdecb5a95f30fecbcc5" title="Start the UART crypto task after directional keys and the TX session are ready." alt="" coords="5,29,172,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="202,51,172,53,172,48,207,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="124,14,112,10,88,8,67,10,53,15,48,21,50,29,45,28,43,19,50,10,66,5,89,3,113,5,130,13"/>
+</map>

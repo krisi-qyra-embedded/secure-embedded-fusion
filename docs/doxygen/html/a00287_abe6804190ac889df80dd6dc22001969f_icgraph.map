@@ -1,0 +1,10 @@
+<map id="import_peer_public_point" name="import_peer_public_point">
+<area shape="rect" id="Node000001" title="Install a validated STM32 public point in a directional container." alt="" coords="391,29,521,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="484,13,475,10,456,8,439,10,429,15,425,21,425,30,421,27,419,19,425,10,438,5,456,3,476,5,489,14"/>
+<area shape="rect" id="Node000002" href="$a00287.html#ad7547809695d9ed02dd151958fa33239" title="Import local ESP32 material and both pinned STM32 public points." alt="" coords="202,29,343,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="372,51,343,53,343,48,378,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="300,13,291,10,272,8,255,10,245,15,241,21,242,30,237,27,236,19,241,10,254,5,272,3,292,5,306,14"/>
+<area shape="rect" id="Node000003" href="$a00287.html#a3c4f68560b4b505e98bec2c6fc3c5e75" title="Import the provisioned ESP32 keys and both STM32 peer public points." alt="" coords="5,29,154,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="184,51,154,53,154,48,189,50"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="109,14,99,10,79,8,62,10,51,15,46,21,48,29,42,28,41,19,47,10,60,5,80,3,100,5,114,13"/>
+</map>

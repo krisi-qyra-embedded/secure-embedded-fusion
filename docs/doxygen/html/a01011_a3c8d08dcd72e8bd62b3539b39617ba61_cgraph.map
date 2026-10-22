@@ -1,0 +1,13 @@
+<map id="nonce_simple_print_detailed" name="nonce_simple_print_detailed">
+<area shape="rect" id="Node000001" title="Print the counter, timer, ADC and jitter components of the last nonce." alt="" coords="5,59,139,101"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="34,58,32,49,39,40,52,34,72,32,94,34,108,42,103,44,92,40,72,37,53,39,42,44,37,50,39,58"/>
+<area shape="rect" id="Node000002" href="$a01041.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="235,29,309,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,65,222,51,217,54,140,70"/>
+<area shape="rect" id="Node000006" href="$a01011.html#a3962c0bff64b3d8b1e4dbc292f8d4014" title="Get the current counter string." alt="" coords="187,104,357,131"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="139,90,184,100,179,101,139,95"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="239,28,234,21,238,11,251,5,272,3,294,5,308,14,303,14,293,10,272,8,252,10,242,15,239,20,244,30"/>
+<area shape="rect" id="Node000003" href="$a01041.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="405,29,517,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="309,40,392,42,387,43,310,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="429,28,423,21,427,11,440,5,461,3,484,5,497,14,492,14,482,10,461,8,441,10,431,15,428,20,434,30"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="239,102,234,95,238,86,251,79,272,77,294,80,308,89,303,88,293,85,272,83,252,85,242,89,239,95,244,105"/>
+</map>

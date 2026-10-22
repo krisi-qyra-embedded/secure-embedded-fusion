@@ -1,0 +1,11 @@
+<map id="collect_adc_samples_until_full" name="collect_adc_samples_until_full">
+<area shape="rect" id="Node000001" title="Collect ADC samples until all byte buffers are full." alt="" coords="403,59,546,101"/>
+<area shape="rect" id="Node000002" href="$a00987.html#acd304899aa990448e87dd7796692ed1d" title="Start ADC DMA sampling and collect entropy&#45;source bytes with bounded retries." alt="" coords="223,37,344,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="385,67,344,63,344,57,390,67"/>
+<area shape="rect" id="Node000007" href="$a00987.html#a60a282738b0c3016969afdbe1e3e6924" title="Consume DMA&#45;complete events until all three ADC byte buffers are full." alt="" coords="212,88,355,131"/>
+<area shape="poly" id="edge5_Node000001_Node000007" title=" " alt="" coords="390,93,356,101,355,96,385,94"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="314,22,305,18,283,16,263,18,253,23,250,28,255,38,250,36,245,29,249,19,262,13,283,11,306,13,320,22"/>
+<area shape="rect" id="Node000003" href="$a00999.html#a47c3e08ac074e7ffcd9a480692aaa91f" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="5,29,164,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="205,51,165,53,164,48,210,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="115,14,104,10,84,8,66,10,55,15,50,21,52,29,46,29,45,19,51,10,65,5,85,3,106,5,120,13"/>
+</map>

@@ -1,0 +1,33 @@
+<map id="verify_mac_decrypt_recombine_receiver" name="verify_mac_decrypt_recombine_receiver">
+<area shape="rect" id="Node000001" title="Run the legacy receiver verify/decrypt path." alt="" coords="5,237,147,280"/>
+<area shape="poly" id="edge21_Node000001_Node000001" title=" " alt="" coords="38,237,36,227,43,218,56,213,76,211,97,213,111,221,107,223,96,218,76,216,57,218,46,223,42,229,43,237"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="206,29,343,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,236,98,199,121,153,153,106,193,66,203,61,199,66,196,70,157,110,126,156,103,201,87,238"/>
+<area shape="rect" id="Node000004" href="$a00961.html#a5fbc3918638049e24920bb2c931ef72a" title="Compute receiver HMAC over IV and ciphertext." alt="" coords="195,104,354,147"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="100,235,143,200,193,163,214,153,211,157,196,168,146,204,104,238"/>
+<area shape="rect" id="Node000005" href="$a00979.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="412,171,504,197"/>
+<area shape="poly" id="edge20_Node000001_Node000005" title=" " alt="" coords="119,235,155,219,194,207,247,196,301,189,399,183,394,186,301,194,248,201,195,212,157,224,123,239"/>
+<area shape="rect" id="Node000006" href="$a00961.html#aaab94a76650c48ae4019f29775f48442" title=" " alt="" coords="228,245,321,272"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="146,256,214,257,210,260,148,261"/>
+<area shape="rect" id="Node000007" href="$a00961.html#a5384cb3741c280fd298f5614fc54b7c0" title="Decrypt the legacy AES&#45;CTR payload." alt="" coords="217,320,332,347"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="135,278,225,313,220,315,135,283"/>
+<area shape="rect" id="Node000008" href="$a01009.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="237,395,312,421"/>
+<area shape="poly" id="edge14_Node000001_Node000008" title=" " alt="" coords="101,278,196,357,239,386,234,387,193,361,100,283"/>
+<area shape="rect" id="Node000012" href="$a00961.html#a9d18f04aea9ccb2338ed93224948eff0" title="Rebuild ADC words from the legacy byte layout." alt="" coords="197,469,352,496"/>
+<area shape="poly" id="edge18_Node000001_Node000012" title=" " alt="" coords="89,278,132,351,162,393,196,431,235,461,229,461,193,435,158,396,128,354,87,283"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="242,29,237,21,241,11,254,5,274,3,296,5,309,13,304,15,295,10,274,8,255,10,245,15,243,20,248,29"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="404,29,513,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="343,40,390,41,386,44,345,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="426,29,421,21,425,11,438,5,458,3,480,5,493,14,488,14,479,10,458,8,439,10,429,15,426,20,432,29"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="239,103,238,94,243,85,256,79,274,77,294,80,308,88,302,89,293,85,274,83,257,85,247,89,243,95,244,104"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="343,145,402,165,397,166,344,150"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="426,170,421,162,425,152,438,146,458,144,480,147,493,155,488,156,479,152,458,149,439,151,429,156,426,161,432,171"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="242,245,237,237,241,227,254,221,274,219,296,221,309,230,304,230,295,226,274,224,255,226,245,231,243,236,248,245"/>
+<area shape="poly" id="edge13_Node000007_Node000005" title=" " alt="" coords="299,317,352,282,396,244,432,210,436,207,400,247,356,286,302,322"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="242,319,237,311,241,302,254,295,274,293,296,296,309,305,304,305,295,301,274,299,255,301,245,305,243,311,248,320"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="243,393,237,386,241,376,254,370,274,368,296,371,309,380,304,379,295,376,274,373,255,375,245,380,243,385,248,395"/>
+<area shape="rect" id="Node000009" href="$a01009.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="402,395,514,421"/>
+<area shape="poly" id="edge16_Node000008_Node000009" title=" " alt="" coords="312,405,389,408,384,408,312,411"/>
+<area shape="poly" id="edge17_Node000009_Node000009" title=" " alt="" coords="426,393,421,386,425,376,438,370,458,368,480,371,493,380,488,379,479,376,458,373,439,375,429,380,426,385,431,395"/>
+<area shape="poly" id="edge19_Node000012_Node000012" title=" " alt="" coords="243,468,237,461,241,451,254,445,274,443,296,445,309,454,304,454,295,450,274,448,255,450,245,455,243,460,248,470"/>
+</map>

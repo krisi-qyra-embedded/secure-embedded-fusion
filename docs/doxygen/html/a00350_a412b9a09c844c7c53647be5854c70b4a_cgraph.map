@@ -1,0 +1,10 @@
+<map id="STM32_UART_ResyncRx" name="STM32_UART_ResyncRx">
+<area shape="rect" id="Node000001" title="Flush RX state and discard late bytes during a short quiet window." alt="" coords="5,37,181,64"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="49,37,41,29,47,19,64,13,93,11,125,13,142,22,137,23,123,19,93,16,65,18,50,23,47,28,54,37"/>
+<area shape="rect" id="Node000002" href="$a00350.html#a3abaf096cf4efcd37a8c8ee6bd379dd8" title="Start the quiet window and clear RX buffers, queues and assembly." alt="" coords="229,37,481,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,48,215,50,210,51,181,53"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="311,36,303,29,309,19,326,13,355,11,386,13,404,23,399,22,385,19,355,16,327,18,312,23,308,28,316,38"/>
+<area shape="rect" id="Node000003" href="$a00350.html#a14e0519de47c5133ec69da2c55a1fb19" title="Clear the partial&#45;packet buffer, byte count and timestamp." alt="" coords="529,29,736,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="481,48,516,51,510,51,481,53"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="581,27,578,19,587,10,605,5,633,3,662,5,682,14,677,14,661,10,633,8,606,10,590,15,584,21,585,30"/>
+</map>

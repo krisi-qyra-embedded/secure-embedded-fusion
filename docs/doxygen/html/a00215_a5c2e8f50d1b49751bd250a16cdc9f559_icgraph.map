@@ -1,0 +1,17 @@
+<map id="uart1_pm25_drain_rx_sem" name="uart1_pm25_drain_rx_sem">
+<area shape="rect" id="Node000001" title=" " alt="" coords="611,67,786,93"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="736,51,724,48,698,45,675,47,662,52,659,57,665,67,660,65,653,58,658,48,674,42,699,40,725,43,741,52"/>
+<area shape="rect" id="Node000002" href="$a00215.html#a3f6f5e245a673e9289bdc5d9ea5e0a70" title="Recover the PM2.5 UART/DMA receive path." alt="" coords="172,29,333,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="593,71,563,71,333,52,333,46,564,65,598,71"/>
+<area shape="rect" id="Node000007" href="$a00215.html#a797e971c65b919c7a1a49efd38904ec1" title="Receive one PM2.5 frame block using DMA." alt="" coords="381,104,563,131"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="602,96,558,106,557,101,596,97"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="283,14,273,10,252,8,233,10,222,15,220,20,225,30,220,28,215,21,218,11,231,5,252,3,275,5,288,14"/>
+<area shape="rect" id="Node000003" href="$a00218.html#ac7aa1e8bf433e78a277d9f4572c51c2d" title="Run one PM2.5 application cycle." alt="" coords="5,67,124,93"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="165,61,125,71,123,66,169,59"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="95,52,85,48,64,45,45,47,34,52,32,57,37,66,32,67,27,58,31,48,44,42,65,40,87,43,100,51"/>
+<area shape="poly" id="edge10_Node000007_Node000007" title=" " alt="" coords="508,88,497,85,472,83,449,85,437,89,434,95,440,105,435,102,428,95,433,85,448,79,472,77,498,80,514,89"/>
+<area shape="rect" id="Node000008" href="$a00218.html#a2552b3f4e8743127ade8774219be72ec" title=" " alt="" coords="180,104,325,131"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="363,117,325,120,325,115,368,117"/>
+<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="164,101,124,94,124,89,170,100"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="283,88,273,85,252,83,233,85,222,89,220,95,225,105,220,103,215,95,218,86,231,79,252,77,275,80,288,89"/>
+</map>

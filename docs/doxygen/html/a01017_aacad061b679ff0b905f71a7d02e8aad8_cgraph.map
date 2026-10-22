@@ -1,0 +1,10 @@
+<map id="crypto_uart_log_delay" name="crypto_uart_log_delay">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,154,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="47,29,41,21,45,11,58,5,80,3,102,5,116,14,111,14,101,10,79,8,60,10,49,15,46,20,52,29"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="202,29,339,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,40,189,43,183,43,154,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="241,28,236,21,239,11,251,5,270,3,291,5,303,15,298,14,289,10,270,8,253,10,243,15,241,20,246,30"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="387,29,496,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="339,40,374,43,369,43,339,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="412,28,407,21,411,11,422,5,442,3,462,5,475,15,469,14,461,10,442,8,424,10,414,15,412,20,417,30"/>
+</map>

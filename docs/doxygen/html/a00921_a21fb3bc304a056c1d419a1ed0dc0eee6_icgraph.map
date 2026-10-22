@@ -1,0 +1,12 @@
+<map id="generate_ed25519_signing_keypair" name="generate_ed25519_signing_keypair">
+<area shape="rect" id="Node000001" title="Generate an Ed25519 signing key pair." alt="" coords="326,75,501,117"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="448,59,436,56,414,53,393,55,380,60,375,66,376,75,372,73,370,65,377,56,391,50,414,48,438,50,454,59"/>
+<area shape="rect" id="Node000002" href="$a00993.html#a1bac942b8898d2a776b5f2e081b53ef1" title="Reuse an existing Ed25519 keypair or generate one before signing." alt="" coords="103,29,278,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="308,75,278,71,278,66,314,75"/>
+<area shape="rect" id="Node000004" href="$a00993.html#ab12d1d695a2dc43c93397fae6ce3594c" title="Generate and initialize the Ed25519 signing&#45;key context." alt="" coords="118,120,263,163"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="314,116,264,129,263,124,308,117"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="214,14,206,10,190,8,176,10,167,14,163,20,164,30,159,28,158,19,163,11,174,5,190,3,208,5,220,14"/>
+<area shape="rect" id="Node000003" href="$a00891.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="85,52,56,53,54,48,89,49"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="214,104,206,101,190,99,176,100,167,105,163,111,164,121,159,118,158,110,163,101,174,95,190,93,208,96,220,105"/>
+</map>

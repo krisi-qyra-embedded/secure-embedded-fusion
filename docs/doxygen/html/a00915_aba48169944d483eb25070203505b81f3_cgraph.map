@@ -1,0 +1,16 @@
+<map id="debug_log_bme680_task_state" name="debug_log_bme680_task_state">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,96,171,139"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="50,95,48,86,55,77,68,71,88,69,110,72,124,80,119,81,108,77,88,75,69,77,58,81,53,87,55,96"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="219,29,356,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="145,93,218,66,237,61,232,63,220,70,148,98"/>
+<area shape="rect" id="Node000004" href="$a00254.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="255,104,320,131"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="171,115,242,116,238,118,171,120"/>
+<area shape="rect" id="Node000005" href="$a00915.html#a74f37aceb1553fde97883904e0e7fe0e" title=" " alt="" coords="226,179,348,205"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="148,137,238,172,233,174,147,142"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="257,28,253,21,256,11,268,5,287,3,308,5,320,14,315,14,306,10,287,8,270,10,260,15,258,20,263,29"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="404,29,513,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="356,40,391,42,386,43,357,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="429,28,424,21,428,11,439,5,459,3,479,5,492,14,486,14,478,10,459,8,441,10,431,15,429,20,434,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="258,103,253,95,256,86,268,80,287,77,308,80,320,89,315,89,306,85,287,83,270,85,260,89,258,95,263,104"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="258,177,253,170,256,160,268,154,287,152,308,155,320,164,315,163,306,160,287,157,270,159,260,164,258,169,263,179"/>
+</map>

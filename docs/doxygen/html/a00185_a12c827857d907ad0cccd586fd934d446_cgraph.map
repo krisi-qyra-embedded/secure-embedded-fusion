@@ -1,0 +1,25 @@
+<map id="USART6_IRQHandler" name="USART6_IRQHandler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,248,155,275"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="44,248,37,239,42,230,56,223,80,221,105,224,120,232,115,234,104,229,80,227,58,229,46,233,43,239,49,247"/>
+<area shape="rect" id="Node000002" href="$a00185.html#a57d4d1e767fd0d2f175b9088c0949811" title="Handle USART6 RX/TX and error interrupts." alt="" coords="203,248,384,275"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,259,189,260,185,263,156,264"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="257,247,251,239,255,230,270,223,293,221,319,224,334,232,328,233,317,229,293,227,271,229,259,233,256,239,262,248"/>
+<area shape="rect" id="Node000003" href="$a00077.html#a047518a9c060fbea691f0497a74afd5f" title="Optional callback for USART6 hardware errors." alt="" coords="452,29,644,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="298,246,315,210,343,160,382,109,405,86,430,66,443,61,439,64,434,70,408,90,386,112,348,163,320,212,302,249"/>
+<area shape="rect" id="Node000004" href="$a00185.html#a5d2071ed280980f9ae4888777edba3bc" title=" " alt="" coords="474,104,622,147"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="308,245,360,202,394,178,431,156,462,146,457,148,433,161,397,182,363,206,311,249"/>
+<area shape="rect" id="Node000005" href="$a00185.html#a8d5db31fd7270ccdbd2793753b876954" title=" " alt="" coords="472,195,625,237"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="372,245,459,231,454,233,373,250"/>
+<area shape="rect" id="Node000009" href="$a00185.html#a4494953bcf3a2ecec4704cee28b5cd45" title=" " alt="" coords="468,285,629,328"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="372,273,455,289,450,290,373,278"/>
+<area shape="rect" id="Node000010" href="$a00077.html#af6999ec3ed2b8037a56e29c0a1e63b8b" title="Optional callback for RX buffer overflow." alt="" coords="432,376,664,403"/>
+<area shape="poly" id="edge11_Node000002_Node000010" title=" " alt="" coords="318,273,433,338,501,370,495,370,431,342,317,278"/>
+<area shape="rect" id="Node000011" href="$a00185.html#a6cabe6c1d574128a88443f342658f020" title=" " alt="" coords="516,451,580,477"/>
+<area shape="poly" id="edge13_Node000002_Node000011" title=" " alt="" coords="305,273,356,339,392,378,434,412,468,432,504,450,499,449,465,437,430,417,389,381,352,342,303,278"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="505,29,498,21,503,11,520,5,548,3,579,5,596,14,591,15,578,10,548,8,521,10,507,15,503,20,510,29"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="500,103,498,94,506,85,523,79,548,77,575,80,593,88,588,89,574,85,548,83,524,85,509,89,503,95,505,104"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="500,193,498,185,506,176,523,170,548,168,575,170,593,179,588,179,574,176,548,173,524,175,509,180,503,186,505,195"/>
+<area shape="poly" id="edge10_Node000009_Node000009" title=" " alt="" coords="500,284,498,275,506,266,523,261,548,259,575,261,593,270,588,270,574,266,548,264,524,266,509,271,503,277,505,286"/>
+<area shape="poly" id="edge12_Node000010_Node000010" title=" " alt="" coords="505,375,498,367,503,357,520,351,548,349,579,352,596,361,591,361,578,357,548,355,521,357,507,362,503,367,510,376"/>
+<area shape="poly" id="edge14_Node000011_Node000011" title=" " alt="" coords="513,454,499,446,501,434,517,427,548,424,573,426,590,430,598,438,595,448,592,444,593,439,587,435,572,431,548,429,519,432,505,437,504,444,518,455"/>
+</map>

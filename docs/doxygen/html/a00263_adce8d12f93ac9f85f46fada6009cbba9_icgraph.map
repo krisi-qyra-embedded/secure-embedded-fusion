@@ -1,0 +1,13 @@
+<map id="load_auth_inputs_from_flash" name="load_auth_inputs_from_flash">
+<area shape="rect" id="Node000001" title=" " alt="" coords="184,120,336,163"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="289,104,279,101,260,99,242,101,231,105,227,111,228,120,224,118,222,110,228,101,241,95,260,93,280,96,294,104"/>
+<area shape="rect" id="Node000002" href="$a00263.html#a2ee6fc2863e2beeead988b6612512a2b" title="Run the Ed25519 negative test with a locally corrupted manifest message." alt="" coords="5,29,136,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="197,114,116,75,117,70,202,112"/>
+<area shape="rect" id="Node000003" href="$a00263.html#a58c9618c1fb30e86826af0e8c8b80b55" title="Run the Ed25519 negative test with a locally corrupted public key." alt="" coords="5,120,136,163"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="166,142,137,144,135,139,170,140"/>
+<area shape="rect" id="Node000004" href="$a00263.html#aa3dba117e428e465ee2ba68c6db9de98" title="Run the Ed25519 negative test with a locally corrupted signature." alt="" coords="5,211,136,253"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="202,169,118,213,115,208,197,171"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="100,15,89,10,70,8,53,10,42,15,38,21,39,29,34,29,33,19,39,10,51,5,71,3,91,5,105,13"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="100,105,89,101,70,99,53,101,42,105,38,111,39,119,34,119,33,110,39,101,51,95,71,93,91,96,105,104"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="99,195,89,192,70,189,53,191,42,196,38,202,39,210,34,210,33,201,39,192,51,186,71,184,91,186,105,195"/>
+</map>

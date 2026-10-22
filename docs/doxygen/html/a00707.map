@@ -1,0 +1,64 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/nonce.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/nonce.h">
+<area shape="rect" id="Node000001" title="Nonce generation, counter tracking and entropy&#45;mixing declarations." alt="" coords="369,5,674,128"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="237,416,331,443"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="422,130,399,153,375,178,344,219,324,254,310,292,296,342,287,402,282,399,291,341,305,290,319,251,339,216,371,174,396,149,426,127"/>
+<area shape="rect" id="Node000003" href="$a00712.html" title="TIM1 input&#45;capture jitter collection using DMA2 Stream6." alt="" coords="98,341,190,368"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="366,94,327,109,285,127,246,150,211,178,185,213,167,253,155,293,149,327,144,325,150,292,162,251,180,210,207,174,243,145,283,122,325,104,370,91"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="326,491,391,517"/>
+<area shape="poly" id="edge46_Node000001_Node000004" title=" " alt="" coords="366,101,248,134,131,175,81,199,42,224,17,251,10,265,8,279,8,356,10,379,17,399,27,417,41,432,78,458,123,476,172,489,223,496,314,504,308,504,222,501,171,494,121,481,75,462,38,436,23,420,12,401,5,380,3,356,3,278,5,263,12,248,39,220,79,194,129,170,247,129,370,98"/>
+<area shape="rect" id="Node000006" href="$a00682.html" title="ADC DMA buffer, status and initialization declarations." alt="" coords="436,341,498,368"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="453,127,399,193,375,229,357,268,354,280,357,292,370,308,385,321,423,341,418,341,383,325,366,312,352,295,348,280,352,266,370,226,394,189,449,130"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="664,491,725,517"/>
+<area shape="poly" id="edge44_Node000001_Node000007" title=" " alt="" coords="674,86,826,114,905,133,979,155,1045,180,1098,209,1118,225,1134,242,1143,260,1147,278,1146,357,1098,379,985,416,740,492,739,487,984,411,1096,374,1142,355,1141,279,1138,261,1129,245,1115,229,1095,214,1043,185,978,160,903,138,825,120,675,91"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="973,491,1038,517"/>
+<area shape="poly" id="edge45_Node000001_Node000009" title=" " alt="" coords="674,71,772,81,878,100,987,130,1040,150,1090,174,1131,193,1165,212,1179,224,1189,238,1195,256,1197,279,1197,356,1193,382,1183,406,1166,426,1146,444,1099,473,1053,492,1052,487,1097,468,1143,440,1162,423,1178,403,1188,381,1192,356,1192,279,1190,257,1184,241,1175,227,1162,216,1129,198,1088,178,1038,155,986,135,877,105,771,86,675,76"/>
+<area shape="rect" id="Node000010" href="$a00694.html" title=" " alt="" coords="442,176,600,219"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="514,126,516,162,511,160,511,131"/>
+<area shape="rect" id="Node000012" href="$a00724.html" title="USART2 logging, ring&#45;buffer TX and RX/TX helper declarations." alt="" coords="808,416,862,443"/>
+<area shape="poly" id="edge43_Node000001_Node000012" title=" " alt="" coords="640,126,744,189,796,225,846,265,876,288,901,311,910,323,915,336,915,352,909,369,893,391,873,409,871,404,890,388,904,367,909,351,909,337,905,325,897,314,872,292,842,269,793,230,741,193,639,131"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="169,366,248,407,243,409,168,371"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="153,365,185,402,227,441,270,466,315,487,309,487,267,470,224,445,181,406,152,371"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="94,416,162,443"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="143,366,136,402,132,400,140,371"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="437,368,331,412,329,407,432,369"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="477,366,508,402,551,440,601,468,652,490,647,489,599,473,548,445,504,406,475,371"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="355,416,429,443"/>
+<area shape="poly" id="edge9_Node000006_Node000008" title=" " alt="" coords="456,367,417,408,414,403,451,370"/>
+<area shape="poly" id="edge10_Node000006_Node000009" title=" " alt="" coords="499,362,960,488,956,491,498,367"/>
+<area shape="poly" id="edge37_Node000010_Node000001" title=" " alt="" coords="526,175,529,146,532,142,530,177"/>
+<area shape="poly" id="edge12_Node000010_Node000002" title=" " alt="" coords="439,219,397,240,357,269,332,300,313,336,291,403,287,400,308,334,327,297,353,265,394,235,444,216"/>
+<area shape="poly" id="edge13_Node000010_Node000003" title=" " alt="" coords="440,212,353,235,306,250,261,269,211,300,170,333,166,329,208,295,259,264,304,245,352,230,444,210"/>
+<area shape="poly" id="edge41_Node000010_Node000004" title=" " alt="" coords="440,210,331,233,271,249,212,269,139,295,112,312,88,343,73,369,67,394,69,417,83,441,98,453,120,463,180,479,249,490,314,499,308,499,249,496,179,485,118,468,95,457,79,444,64,418,61,393,68,368,83,340,109,308,137,290,210,264,269,244,330,228,444,207"/>
+<area shape="poly" id="edge14_Node000010_Node000006" title=" " alt="" coords="516,217,478,328,474,325,512,221"/>
+<area shape="poly" id="edge39_Node000010_Node000007" title=" " alt="" coords="535,217,683,477,677,477,531,221"/>
+<area shape="poly" id="edge40_Node000010_Node000009" title=" " alt="" coords="601,200,658,206,720,218,785,237,845,264,895,295,929,326,957,364,986,415,998,445,1004,477,1000,474,993,447,982,417,953,367,925,330,892,300,843,269,783,242,719,223,657,211,601,205"/>
+<area shape="rect" id="Node000011" href="$a00718.html" title="SRAM startup sampling and entropy buffer declarations." alt="" coords="696,341,853,368"/>
+<area shape="poly" id="edge15_Node000010_Node000011" title=" " alt="" coords="601,206,708,229,752,245,781,265,788,280,791,296,786,328,782,325,785,296,783,281,777,268,750,250,706,234,601,212"/>
+<area shape="poly" id="edge38_Node000010_Node000012" title=" " alt="" coords="601,205,700,226,753,242,803,264,855,293,873,312,889,340,892,359,887,377,864,408,861,403,882,374,887,358,884,342,869,315,851,298,800,269,751,247,699,231,601,210"/>
+<area shape="rect" id="Node000015" href="$a00676.html" title="STM32F411 device UID access and fingerprint helper declarations." alt="" coords="599,267,742,293"/>
+<area shape="poly" id="edge26_Node000010_Node000015" title=" " alt="" coords="560,217,637,259,631,259,560,222"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="366,267,474,293"/>
+<area shape="poly" id="edge42_Node000010_Node000016" title=" " alt="" coords="497,218,449,259,446,254,493,221"/>
+<area shape="poly" id="edge16_Node000011_Node000002" title=" " alt="" coords="693,366,539,389,346,418,345,413,538,383,698,365"/>
+<area shape="poly" id="edge25_Node000011_Node000004" title=" " alt="" coords="743,368,537,445,406,490,405,484,535,440,738,369"/>
+<area shape="poly" id="edge23_Node000011_Node000007" title=" " alt="" coords="773,367,760,403,741,444,716,481,713,476,736,441,755,401,769,370"/>
+<area shape="poly" id="edge24_Node000011_Node000009" title=" " alt="" coords="797,366,875,414,977,482,971,481,872,418,795,371"/>
+<area shape="poly" id="edge17_Node000011_Node000012" title=" " alt="" coords="786,366,817,405,812,403,784,371"/>
+<area shape="poly" id="edge19_Node000012_Node000004" title=" " alt="" coords="809,437,406,498,406,493,805,433"/>
+<area shape="poly" id="edge18_Node000012_Node000007" title=" " alt="" coords="813,443,734,486,732,480,808,444"/>
+<area shape="poly" id="edge20_Node000012_Node000009" title=" " alt="" coords="863,440,964,485,959,484,862,445"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="880,491,949,517"/>
+<area shape="poly" id="edge21_Node000012_Node000013" title=" " alt="" coords="850,441,892,481,887,480,848,446"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="750,491,856,517"/>
+<area shape="poly" id="edge22_Node000012_Node000014" title=" " alt="" coords="831,442,816,479,813,474,827,445"/>
+<area shape="poly" id="edge32_Node000015_Node000001" title=" " alt="" coords="662,265,640,227,610,178,584,142,585,137,614,174,645,224,667,267"/>
+<area shape="poly" id="edge27_Node000015_Node000002" title=" " alt="" coords="596,293,514,314,425,344,364,375,314,409,311,404,362,371,423,339,513,309,601,292"/>
+<area shape="poly" id="edge30_Node000015_Node000003" title=" " alt="" coords="598,294,206,348,205,342,599,289"/>
+<area shape="poly" id="edge36_Node000015_Node000004" title=" " alt="" coords="656,294,390,484,387,479,650,293"/>
+<area shape="poly" id="edge29_Node000015_Node000006" title=" " alt="" coords="633,295,514,340,512,335,638,293"/>
+<area shape="poly" id="edge34_Node000015_Node000007" title=" " alt="" coords="674,292,691,416,695,477,691,474,685,416,671,296"/>
+<area shape="poly" id="edge35_Node000015_Node000009" title=" " alt="" coords="743,287,816,305,854,319,888,339,924,370,955,407,996,478,991,476,950,410,920,374,885,344,851,324,815,310,743,292"/>
+<area shape="poly" id="edge31_Node000015_Node000011" title=" " alt="" coords="689,291,747,333,742,332,688,296"/>
+<area shape="poly" id="edge33_Node000015_Node000012" title=" " alt="" coords="743,281,777,287,811,298,842,315,868,340,874,356,873,373,856,406,853,402,867,372,869,357,863,343,839,319,809,303,776,292,743,286"/>
+<area shape="poly" id="edge28_Node000015_Node000015" title=" " alt="" coords="743,264,761,269,769,280,766,287,759,292,757,287,762,284,764,280,758,273,743,269"/>
+</map>

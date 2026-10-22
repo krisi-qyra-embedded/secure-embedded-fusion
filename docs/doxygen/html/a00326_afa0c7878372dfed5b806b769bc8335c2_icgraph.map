@@ -1,0 +1,10 @@
+<map id="esp32_generate_nonce_iv_encrypt_gcm_sender" name="esp32_generate_nonce_iv_encrypt_gcm_sender">
+<area shape="rect" id="Node000001" title="Allocate a fresh nonce and encrypt with the derived TX key." alt="" coords="463,29,629,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="579,13,568,10,546,8,526,10,514,15,509,21,510,30,506,27,504,19,511,10,525,5,546,3,569,5,584,14"/>
+<area shape="rect" id="Node000002" href="$a00326.html#a30ff8984c3968cd656ba75f7da031a14" title="Encrypt the ACK/NACK and transmit the 39&#45;byte UART response." alt="" coords="252,29,415,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="444,51,416,53,415,48,450,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="366,13,355,10,333,8,313,10,301,15,296,21,298,30,293,27,291,19,298,10,312,5,333,3,356,5,371,14"/>
+<area shape="rect" id="Node000003" href="$a00326.html#a791cb4daf364afc6794c7f1356c26d9c" title="Authenticate requests, apply replay checks, commit telemetry and send responses." alt="" coords="5,37,204,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="234,51,204,53,204,48,239,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="143,23,131,18,104,16,80,18,67,23,64,28,71,37,65,37,59,29,64,19,79,13,105,11,132,13,148,22"/>
+</map>

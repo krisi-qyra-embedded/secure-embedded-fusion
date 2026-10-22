@@ -1,0 +1,24 @@
+<map id="ESP32_UART_WaitTxComplete" name="ESP32_UART_WaitTxComplete">
+<area shape="rect" id="Node000001" title="Wait for the current USART6 transfer to finish." alt="" coords="5,155,215,181"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="70,155,64,146,68,136,84,130,110,128,138,131,154,139,149,141,137,136,110,133,85,135,72,140,69,145,75,154"/>
+<area shape="rect" id="Node000002" href="$a00143.html#a504ce28b38982c4f81959213ab20d8d0" title=" " alt="" coords="266,29,422,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="127,152,185,110,261,66,279,60,275,63,264,70,188,115,130,156"/>
+<area shape="rect" id="Node000003" href="$a00143.html#a4b6b3fa592e23b4fb17883ebaed6a5b8" title=" " alt="" coords="263,104,425,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="174,152,266,133,262,136,176,156"/>
+<area shape="rect" id="Node000004" href="$a00143.html#a2d74d31337958e735e079ce88c974e9d" title=" " alt="" coords="477,113,618,140"/>
+<area shape="poly" id="edge13_Node000001_Node000004" title=" " alt="" coords="215,158,425,140,464,138,459,139,425,145,216,164"/>
+<area shape="rect" id="Node000005" href="$a00143.html#a6f4f9070127802d702ec14386a379bff" title=" " alt="" coords="267,280,420,323"/>
+<area shape="poly" id="edge7_Node000001_Node000005" title=" " alt="" coords="136,179,294,271,289,273,134,184"/>
+<area shape="rect" id="Node000006" href="$a00143.html#a126596cfae6029485f18ba3a5695e0f3" title=" " alt="" coords="474,197,622,240"/>
+<area shape="poly" id="edge14_Node000001_Node000006" title=" " alt="" coords="215,177,460,206,456,210,215,183"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="309,29,303,21,307,11,321,5,344,3,368,5,382,14,377,14,367,10,344,8,323,10,311,15,308,20,314,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="309,103,303,95,307,86,321,79,344,77,368,80,383,89,377,89,367,85,344,83,323,85,311,89,308,95,314,104"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="425,118,464,122,459,123,426,124"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="513,112,507,105,511,95,525,89,548,87,572,89,586,98,581,98,570,94,548,92,526,94,515,99,512,104,518,114"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="305,278,303,270,310,261,323,255,344,253,366,256,380,265,375,264,364,261,344,259,325,261,313,265,308,271,310,281"/>
+<area shape="poly" id="edge9_Node000005_Node000006" title=" " alt="" coords="398,277,476,247,482,246,399,282"/>
+<area shape="rect" id="Node000007" href="$a00149.html#aef0fe391151f498b87061f7abc9a9b19" title="Mark fault recovery as in progress." alt="" coords="473,288,622,331"/>
+<area shape="poly" id="edge11_Node000005_Node000007" title=" " alt="" coords="421,302,460,306,455,306,421,307"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="509,195,507,187,514,178,527,173,548,171,570,173,584,182,579,182,568,178,548,176,529,178,517,183,512,189,514,198"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="509,286,507,278,514,269,527,263,548,261,570,264,584,273,579,272,568,269,548,267,529,269,517,273,512,279,513,289"/>
+</map>

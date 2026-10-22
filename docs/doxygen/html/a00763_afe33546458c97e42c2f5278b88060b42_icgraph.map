@@ -1,0 +1,33 @@
+<map id="nonce_generation" name="nonce_generation">
+<area shape="rect" id="Node000001" title="Generate a nonce, condition it with SHA&#45;256 and update nonce_hashed." alt="" coords="1605,79,1728,105"/>
+<area shape="poly" id="edge20_Node000001_Node000001" title=" " alt="" coords="1696,63,1687,60,1667,57,1648,59,1638,64,1636,69,1640,79,1636,77,1630,70,1634,60,1647,54,1667,52,1688,55,1701,64"/>
+<area shape="rect" id="Node000002" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="954,29,1109,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1587,80,1557,79,1312,62,1110,55,1110,49,1313,56,1557,73,1592,80"/>
+<area shape="rect" id="Node000005" href="$a00757.html#a05a3ccd10cfd2becb08787191cb62f0b" title="Generate the per&#45;transfer nonce state and DRBG&#45;backed IV." alt="" coords="1416,112,1557,155"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="1593,109,1558,120,1557,114,1588,110"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="1070,14,1057,10,1032,8,1008,10,994,15,988,21,990,30,986,27,983,19,991,10,1007,5,1032,3,1058,5,1075,14"/>
+<area shape="rect" id="Node000003" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,79,152,105"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="936,51,612,57,407,67,200,83,153,90,151,85,200,77,406,61,612,52,941,49"/>
+<area shape="rect" id="Node000004" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,79,55,105"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="85,94,56,94,54,90,89,90"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="1514,96,1504,93,1486,91,1470,93,1459,97,1455,103,1456,113,1452,110,1450,102,1456,93,1468,87,1486,85,1506,88,1519,97"/>
+<area shape="rect" id="Node000006" href="$a00757.html#a488a72dc38b4dec4dd02c663ea057b6c" title="Generate the transfer IV and encrypt through the AES&#45;GCM sender path." alt="" coords="1187,112,1368,155"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="1397,133,1368,136,1368,131,1403,133"/>
+<area shape="rect" id="Node000011" href="$a00757.html#a956e503503fd19545be52e101e30ef31" title="Generate transfer IV, encrypt with AES&#45;CTR and authenticate with HMAC." alt="" coords="1187,203,1368,245"/>
+<area shape="poly" id="edge18_Node000005_Node000011" title=" " alt="" coords="1424,161,1329,205,1328,200,1419,162"/>
+<area shape="poly" id="edge17_Node000006_Node000006" title=" " alt="" coords="1310,96,1299,93,1277,91,1258,93,1246,97,1241,103,1242,113,1238,110,1236,102,1243,93,1257,87,1278,85,1300,88,1315,97"/>
+<area shape="rect" id="Node000007" href="$a00760.html#ae0f5e3d87c01bfba1f72168c91121bdc" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="924,120,1139,147"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="1169,133,1140,136,1140,131,1174,133"/>
+<area shape="poly" id="edge9_Node000007_Node000007" title=" " alt="" coords="1073,105,1060,101,1032,99,1006,101,992,105,988,111,995,121,990,119,983,111,988,101,1005,95,1032,93,1061,96,1078,106"/>
+<area shape="rect" id="Node000008" href="$a00143.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="635,120,876,147"/>
+<area shape="poly" id="edge10_Node000007_Node000008" title=" " alt="" coords="905,134,876,136,876,131,911,133"/>
+<area shape="poly" id="edge16_Node000008_Node000008" title=" " alt="" coords="797,105,784,101,755,99,729,101,715,106,711,111,718,120,713,119,706,111,711,101,728,95,755,93,785,96,803,105"/>
+<area shape="rect" id="Node000009" href="$a00143.html#a268b20b4b63514a09028648067fa60f6" title="Run one authenticated telemetry transaction with the ESP32." alt="" coords="425,112,587,155"/>
+<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="616,134,587,136,587,131,622,133"/>
+<area shape="poly" id="edge15_Node000009_Node000009" title=" " alt="" coords="540,96,528,93,506,91,486,93,473,97,468,103,469,113,465,110,463,102,470,93,484,87,506,85,529,88,545,97"/>
+<area shape="rect" id="Node000010" href="$a00658.html#a4754db43d332d65b964e88dedb2182c9" title=" " alt="" coords="200,116,377,143"/>
+<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="407,132,378,134,378,128,412,131"/>
+<area shape="poly" id="edge14_Node000010_Node000003" title=" " alt="" coords="211,113,153,100,152,95,216,111"/>
+<area shape="poly" id="edge13_Node000010_Node000010" title=" " alt="" coords="315,101,306,97,289,95,272,97,263,101,261,107,266,116,260,115,256,107,259,98,270,92,289,89,308,92,320,101"/>
+<area shape="poly" id="edge19_Node000011_Node000011" title=" " alt="" coords="1310,187,1299,184,1277,181,1258,183,1246,188,1241,194,1242,204,1238,200,1236,193,1243,184,1257,178,1278,176,1300,178,1315,188"/>
+</map>

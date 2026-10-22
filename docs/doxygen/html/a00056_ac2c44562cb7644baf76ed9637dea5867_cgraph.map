@@ -1,0 +1,28 @@
+<map id="mpu9250_gyro_update_blocking" name="mpu9250_gyro_update_blocking">
+<area shape="rect" id="Node000001" title="Perform one blocking gyroscope update." alt="" coords="5,75,158,118"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="42,75,41,65,47,56,61,50,82,48,104,51,118,58,113,61,102,56,81,54,62,56,51,60,46,66,48,74"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="675,46,813,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="127,72,205,45,322,17,415,5,509,6,628,20,697,40,691,41,627,26,509,11,415,10,323,23,206,50,130,77"/>
+<area shape="rect" id="Node000004" href="$a00161.html#a63da6d6c512086448a3596153aa1a7af" title=" " alt="" coords="206,83,367,110"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="157,94,192,95,188,98,159,99"/>
+<area shape="rect" id="Node000041" href="$a00161.html#ab52edcb23916d4bea6551cd18bb4dbb9" title=" " alt="" coords="208,158,364,184"/>
+<area shape="poly" id="edge17_Node000001_Node000041" title=" " alt="" coords="142,116,236,151,231,153,142,121"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="714,44,709,37,713,27,725,21,744,19,765,22,777,31,772,30,763,27,744,24,726,26,717,31,715,37,719,46"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="861,46,970,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="813,56,848,59,842,59,813,62"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="886,44,881,37,884,27,896,21,915,19,936,22,948,31,943,30,934,27,915,24,898,26,888,31,886,37,891,46"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="313,80,360,60,414,44,478,37,543,35,662,45,657,47,543,40,479,42,416,50,362,65,316,85"/>
+<area shape="poly" id="edge13_Node000004_Node000004" title=" " alt="" coords="251,82,245,74,250,65,264,59,286,56,311,59,325,68,320,68,309,64,286,62,265,64,253,68,251,74,256,83"/>
+<area shape="rect" id="Node000005" href="$a00149.html#aee4087265e821d1fbb4998ce9e1f1aaa" title="Read a register block using I2C DMA." alt="" coords="470,83,572,110"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="367,94,457,96,452,97,368,99"/>
+<area shape="rect" id="Node000038" href="$a00161.html#a813c1d0823117e2fd36cff53f4ede9cf" title=" " alt="" coords="415,158,627,200"/>
+<area shape="poly" id="edge11_Node000004_Node000038" title=" " alt="" coords="333,108,368,119,452,151,447,152,366,124,333,113"/>
+<area shape="rect" id="Node000039" href="$a00161.html#a00df5962c45a7548e8d6d8cc47350fcc" title=" " alt="" coords="442,248,601,291"/>
+<area shape="poly" id="edge14_Node000004_Node000039" title=" " alt="" coords="349,108,369,120,387,142,395,165,401,188,417,211,455,241,450,240,413,214,397,190,390,167,382,145,365,124,349,113"/>
+<area shape="poly" id="edge9_Node000005_Node000002" title=" " alt="" coords="572,85,662,72,657,74,573,91"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="483,82,477,74,481,65,497,59,521,56,548,59,563,68,558,68,546,64,521,62,498,64,485,69,482,74,488,83"/>
+<area shape="poly" id="edge12_Node000038_Node000038" title=" " alt="" coords="479,156,477,148,484,139,499,133,521,131,545,134,561,142,556,142,544,139,521,136,500,138,487,143,482,149,484,159"/>
+<area shape="poly" id="edge15_Node000039_Node000002" title=" " alt="" coords="572,245,599,230,626,210,656,180,684,146,725,87,730,85,688,149,660,183,629,214,602,234,574,250"/>
+<area shape="poly" id="edge16_Node000039_Node000039" title=" " alt="" coords="479,246,477,238,484,229,499,224,521,222,545,224,561,233,556,232,544,229,521,227,500,229,487,234,482,240,484,249"/>
+<area shape="poly" id="edge18_Node000041_Node000041" title=" " alt="" coords="251,157,245,149,250,139,264,133,286,131,311,134,325,142,320,143,309,139,286,136,265,138,253,143,251,149,256,158"/>
+</map>

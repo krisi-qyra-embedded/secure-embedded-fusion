@@ -1,0 +1,14 @@
+<map id="spi_dma_mark_fault_owner_task" name="spi_dma_mark_fault_owner_task">
+<area shape="rect" id="Node000001" title=" " alt="" coords="401,59,539,101"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="499,43,489,40,470,37,453,39,442,44,438,50,439,60,434,57,432,49,438,40,451,34,470,32,491,34,504,43"/>
+<area shape="rect" id="Node000002" href="$a00233.html#a808c5a6e2648941c4beb599e0c5b24c9" title="Recover SPI4 after a failed transfer." alt="" coords="233,29,328,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="383,64,329,55,329,49,388,63"/>
+<area shape="rect" id="Node000010" href="$a00233.html#a2bfd60146b9343ce01151f0ef9214e08" title="Restore SPI4 configuration and initialize it again." alt="" coords="209,104,353,131"/>
+<area shape="poly" id="edge5_Node000001_Node000010" title=" " alt="" coords="388,96,352,106,351,101,383,97"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="312,14,302,10,281,8,261,10,251,15,248,20,253,30,248,28,243,21,247,11,260,5,281,3,303,5,317,14"/>
+<area shape="rect" id="Node000003" href="$a00206.html#a303f7d8c7c302acc18009865c936d8ba" title="Read the RTD temperature in Celsius." alt="" coords="5,67,161,93"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="215,55,158,69,157,63,220,54"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="115,52,105,48,83,45,62,47,51,52,49,57,54,66,49,66,43,58,47,48,61,42,83,40,107,43,121,51"/>
+<area shape="poly" id="edge6_Node000010_Node000003" title=" " alt="" coords="191,101,157,97,157,91,196,101"/>
+<area shape="poly" id="edge7_Node000010_Node000010" title=" " alt="" coords="312,88,302,85,281,83,261,85,251,89,248,95,253,105,248,102,243,95,247,86,260,79,281,77,303,80,317,89"/>
+</map>

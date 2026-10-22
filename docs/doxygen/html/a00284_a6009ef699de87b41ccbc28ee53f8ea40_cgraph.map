@@ -1,0 +1,10 @@
+<map id="iot_subscribe_callback_handler" name="iot_subscribe_callback_handler">
+<area shape="rect" id="Node000001" title="Log a received MQTT message and refresh the AWS heartbeat." alt="" coords="5,29,159,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="43,28,41,19,48,10,62,5,82,3,104,5,119,13,113,14,103,10,82,8,63,10,51,15,46,21,48,29"/>
+<area shape="rect" id="Node000002" href="$a00284.html#ac4bed1c8db233bc6334ffcb956f28675" title="Refresh the AWS heartbeat unless a fatal error is latched." alt="" coords="207,37,367,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="159,48,194,50,188,51,159,53"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="253,36,247,29,252,19,265,13,287,11,310,13,324,22,319,22,309,18,287,16,266,18,255,23,253,28,258,38"/>
+<area shape="rect" id="Node000003" href="$a00278.html#af92177eb6358035c5fef8d881cec1546" title="Update the heartbeat timestamp for a monitored task." alt="" coords="415,37,551,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="367,48,402,51,397,51,368,53"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="450,36,444,29,448,19,461,13,483,11,507,13,520,23,515,22,505,18,483,16,463,18,452,23,449,28,454,38"/>
+</map>

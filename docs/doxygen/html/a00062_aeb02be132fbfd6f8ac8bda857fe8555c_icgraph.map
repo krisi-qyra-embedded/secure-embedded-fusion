@@ -1,0 +1,14 @@
+<map id="ESP32_UART_FlushTx" name="ESP32_UART_FlushTx">
+<area shape="rect" id="Node000001" title="Clear the USART6 transmit buffer." alt="" coords="729,37,889,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="851,22,838,18,809,16,783,18,768,23,765,28,772,38,767,36,760,29,765,19,782,13,809,11,839,13,856,23"/>
+<area shape="rect" id="Node000002" href="$a00170.html#a268b20b4b63514a09028648067fa60f6" title="Run one authenticated telemetry transaction with the ESP32." alt="" coords="231,29,392,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="711,41,681,41,561,38,440,41,393,45,392,39,440,36,561,32,681,36,716,41"/>
+<area shape="rect" id="Node000006" href="$a00170.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="440,75,681,101"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="717,65,654,77,654,71,711,65"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="345,14,333,10,311,8,291,10,278,15,273,21,275,30,270,27,268,19,275,10,290,5,311,3,335,5,350,14"/>
+<area shape="rect" id="Node000003" href="$a00894.html#a4754db43d332d65b964e88dedb2182c9" title=" " alt="" coords="5,37,183,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="212,51,184,53,183,48,217,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="130,22,118,18,94,16,71,18,59,23,56,28,62,37,57,37,51,29,55,19,70,13,94,11,120,13,135,22"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="449,72,392,65,393,60,455,72"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="602,59,589,56,561,53,534,55,520,60,517,65,524,75,519,73,512,66,517,56,533,50,561,48,591,51,608,60"/>
+</map>

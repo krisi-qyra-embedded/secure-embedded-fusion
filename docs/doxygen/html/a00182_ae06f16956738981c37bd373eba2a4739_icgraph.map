@@ -1,0 +1,19 @@
+<map id="DS18B20_StartAll" name="DS18B20_StartAll">
+<area shape="rect" id="Node000001" title="Start conversion on all sensors." alt="" coords="539,71,666,97"/>
+<area shape="poly" id="edge11_Node000001_Node000001" title=" " alt="" coords="638,55,627,52,603,49,580,51,568,56,565,61,571,71,566,69,560,62,565,52,579,46,603,44,628,47,643,56"/>
+<area shape="rect" id="Node000002" href="$a00182.html#ac8a6a2235f78b506554c9e56744c2480" title="Run one DS18B20 application state&#45;machine step." alt="" coords="324,29,455,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="522,69,456,58,456,53,527,69"/>
+<area shape="rect" id="Node000006" href="$a00182.html#a956871d061ccecb139d8527c34101b0b" title=" " alt="" coords="288,104,491,147"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="521,100,492,108,491,103,527,99"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="424,14,413,10,389,8,367,10,355,15,352,20,358,29,353,28,347,21,351,11,366,5,389,3,415,5,430,14"/>
+<area shape="rect" id="Node000003" href="$a00915.html#adc37d956e02510e6d3b03c4c0a267ad3" title=" " alt="" coords="71,29,174,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="306,44,175,45,174,40,310,41"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="168,15,153,11,122,8,94,10,79,15,75,20,83,28,78,29,70,21,75,11,93,5,123,3,155,5,173,14"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="422,88,411,85,389,83,369,85,357,89,352,95,354,105,349,102,347,94,354,85,368,79,389,77,412,80,428,88"/>
+<area shape="rect" id="Node000007" href="$a00182.html#ab4c44777ee22223c90cad045f4572e23" title=" " alt="" coords="24,104,221,147"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="270,126,222,128,221,123,275,125"/>
+<area shape="rect" id="Node000009" href="$a00182.html#a2386eca87edc03610e3998c4b7ed6e19" title=" " alt="" coords="5,195,240,221"/>
+<area shape="poly" id="edge8_Node000006_Node000009" title=" " alt="" coords="306,152,169,197,168,191,301,151"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="164,89,150,85,122,83,97,85,82,89,75,95,78,104,72,103,70,94,79,85,96,79,123,77,151,80,170,88"/>
+<area shape="poly" id="edge9_Node000009_Node000009" title=" " alt="" coords="167,180,153,176,122,173,94,175,79,180,75,185,83,194,77,194,70,186,75,176,93,170,123,168,155,171,173,180"/>
+</map>

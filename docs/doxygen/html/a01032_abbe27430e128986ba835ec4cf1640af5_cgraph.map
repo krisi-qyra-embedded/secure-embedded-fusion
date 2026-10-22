@@ -1,0 +1,7 @@
+<map id="jitter_trigger_capture_event" name="jitter_trigger_capture_event">
+<area shape="rect" id="Node000001" title="Trigger a TIM1 channel 3 capture event in software." alt="" coords="5,29,145,72"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="43,28,42,19,47,11,58,5,75,3,93,5,105,13,99,14,91,10,75,8,60,10,51,14,47,20,49,29"/>
+<area shape="rect" id="Node000002" href="$a01032.html#a5bc37cdbd4a7e4f355e7e321c6df109d" title=" " alt="" coords="193,37,282,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="145,48,180,50,174,51,145,53"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="209,36,204,29,208,19,219,13,237,11,257,13,269,22,263,22,255,18,237,16,221,18,212,23,210,28,214,38"/>
+</map>

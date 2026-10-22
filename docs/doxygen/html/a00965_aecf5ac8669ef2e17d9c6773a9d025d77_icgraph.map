@@ -1,0 +1,10 @@
+<map id="cmsis_flash_lock" name="cmsis_flash_lock">
+<area shape="rect" id="Node000001" title=" " alt="" coords="431,37,553,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="525,22,514,18,492,16,471,18,460,23,458,28,463,38,458,36,452,29,457,19,470,13,492,11,516,13,530,23"/>
+<area shape="rect" id="Node000002" href="$a00965.html#ae7dcff87a95731d651bb7218e46d7fbd" title=" " alt="" coords="205,29,383,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="413,51,383,53,383,48,418,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="324,13,314,10,294,8,275,10,264,15,260,21,261,30,256,27,254,19,261,10,274,5,294,3,315,5,330,14"/>
+<area shape="rect" id="Node000003" href="$a00965.html#a73702acacbe45e9c0c5fb7223867e497" title="Provision Ed25519 OTP when enabled and load the OTP keypair into RAM." alt="" coords="5,29,157,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="187,51,157,53,157,48,192,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="114,14,102,10,81,8,61,10,49,15,44,21,46,29,40,28,39,19,46,10,60,5,81,3,104,5,119,13"/>
+</map>

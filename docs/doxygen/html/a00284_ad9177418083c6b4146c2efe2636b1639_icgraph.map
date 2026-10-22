@@ -1,0 +1,10 @@
+<map id="esp32_gcm_nonce_session_init" name="esp32_gcm_nonce_session_init">
+<area shape="rect" id="Node000001" title="Reserve a persistent TX session ID and initialize its RAM counter." alt="" coords="323,37,529,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="463,22,451,18,426,16,403,18,390,23,387,28,393,38,388,36,382,29,386,19,402,13,426,11,453,13,468,22"/>
+<area shape="rect" id="Node000002" href="$a00860.html#a60c9a25e76daf5ea2be5f5fcfcb28652" title="Prepare both ECDH directions, AES&#45;GCM contexts and the TX nonce session." alt="" coords="131,29,275,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="305,51,276,53,275,48,310,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="227,13,218,10,203,8,188,10,179,14,176,20,177,30,172,27,171,19,176,11,187,5,203,3,220,5,232,14"/>
+<area shape="rect" id="Node000003" href="$a00860.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,37,83,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="112,51,83,53,83,48,118,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="69,23,61,18,44,16,28,18,19,23,17,28,21,36,16,37,12,29,15,19,26,13,44,11,63,13,75,22"/>
+</map>

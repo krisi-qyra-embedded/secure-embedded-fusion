@@ -1,0 +1,7 @@
+<map id="esp32_ecdh_print_shared_secrets" name="esp32_ecdh_print_shared_secrets">
+<area shape="rect" id="Node000001" title="Log directional shared&#45;secret diagnostics under the debug switch." alt="" coords="5,29,175,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="54,28,53,19,59,10,71,5,90,3,110,5,124,14,118,14,109,10,90,8,73,10,62,15,58,21,59,29"/>
+<area shape="rect" id="Node000002" href="$a00329.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="223,37,328,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="175,48,210,50,204,51,175,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="243,36,238,29,242,19,255,13,275,11,298,13,311,22,305,22,296,18,275,16,256,18,246,23,243,28,248,38"/>
+</map>

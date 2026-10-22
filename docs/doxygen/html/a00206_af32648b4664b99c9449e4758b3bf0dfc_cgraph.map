@@ -1,0 +1,13 @@
+<map id="PWR_EnterSleep_WFE" name="PWR_EnterSleep_WFE">
+<area shape="rect" id="Node000001" title="Enter Sleep mode using WFE." alt="" coords="5,67,167,93"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="50,66,45,58,49,48,63,42,86,40,111,43,125,51,120,52,109,48,86,45,64,47,53,52,50,57,56,66"/>
+<area shape="rect" id="Node000002" href="$a00206.html#a7386074c26bb8c4683438c7d8176e905" title="Prepare the MCU state before entering sleep." alt="" coords="215,67,372,93"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="167,77,202,80,197,80,167,83"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="258,65,252,58,256,48,270,42,293,40,318,43,333,52,327,51,317,48,293,45,272,47,260,52,257,57,263,67"/>
+<area shape="rect" id="Node000003" href="$a00206.html#a18b7d7469211a0fa401162e96f466b74" title="Clear pending EXTI lines." alt="" coords="420,29,604,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="372,64,418,59,412,60,373,69"/>
+<area shape="rect" id="Node000004" href="$a00206.html#a289ebb7d8cfb4900b163f376fc635b15" title="Clear pending NVIC interrupts." alt="" coords="420,104,604,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="372,91,418,101,412,101,372,96"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="475,28,469,21,473,11,488,5,512,3,538,5,553,14,548,14,537,10,512,8,489,10,477,15,474,20,480,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="475,102,469,95,473,85,488,79,512,77,538,80,553,89,548,88,537,85,512,83,489,85,477,89,474,95,480,105"/>
+</map>

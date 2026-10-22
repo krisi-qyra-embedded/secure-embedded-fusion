@@ -1,0 +1,17 @@
+<map id="wait_for_aws_to_stop" name="wait_for_aws_to_stop">
+<area shape="rect" id="Node000001" title="Wait up to five seconds for the AWS task to clear its handle." alt="" coords="707,80,856,107"/>
+<area shape="poly" id="edge10_Node000001_Node000001" title=" " alt="" coords="820,65,808,61,781,59,757,61,744,65,741,71,747,81,742,79,736,71,740,61,756,55,782,53,809,56,825,66"/>
+<area shape="rect" id="Node000002" href="$a00909.html#a1535a2ab20693c8e0566c4201d6f48b0" title="Request AWS shutdown and start the local HTTPS dashboard." alt="" coords="441,80,659,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="689,94,660,96,659,91,695,93"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="589,65,577,61,550,59,526,61,513,65,510,71,516,80,511,79,504,71,509,61,525,55,550,53,578,56,594,65"/>
+<area shape="rect" id="Node000003" href="$a00909.html#ace1df51f7924ed07625502194d1bfaec" title="Start AWS after the SoftAP is idle and station connectivity is recorded." alt="" coords="234,29,390,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="466,77,378,59,378,54,472,76"/>
+<area shape="rect" id="Node000007" href="$a00909.html#ae558e7f34f3db75b4e8e1fd0f16be6ce" title="Record station connectivity and select the application mode." alt="" coords="5,47,183,89"/>
+<area shape="poly" id="edge9_Node000002_Node000007" title=" " alt="" coords="424,89,183,76,183,70,427,84"/>
+<area shape="rect" id="Node000008" href="$a00909.html#aa20fe992bdfc6f337f6eedd0f79ae063" title="Cancel the cloud debounce and enter local dashboard mode." alt="" coords="231,155,393,197"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="498,112,377,157,375,151,492,113"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="348,14,336,10,312,8,289,10,277,15,274,20,280,29,275,28,268,21,273,11,288,5,312,3,338,5,353,14"/>
+<area shape="poly" id="edge4_Node000003_Node000007" title=" " alt="" coords="217,55,184,60,182,55,222,52"/>
+<area shape="poly" id="edge5_Node000007_Node000007" title=" " alt="" coords="128,32,116,28,94,25,74,27,61,32,56,38,58,46,52,46,51,37,58,28,72,22,94,20,117,22,133,30"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="345,139,334,136,312,133,291,135,279,140,274,146,275,156,271,153,269,145,276,136,290,130,312,128,335,130,351,139"/>
+</map>

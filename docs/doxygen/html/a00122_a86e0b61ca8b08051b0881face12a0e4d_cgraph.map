@@ -1,0 +1,10 @@
+<map id="spi4_wait_bsy_clear_ms" name="spi4_wait_bsy_clear_ms">
+<area shape="rect" id="Node000001" title="Wait for the SPI4 BSY flag to clear." alt="" coords="5,67,170,93"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="54,66,48,58,52,48,66,42,88,40,111,43,125,51,120,52,109,48,87,45,67,47,56,52,53,57,59,66"/>
+<area shape="rect" id="Node000002" href="$a00116.html#ae773c19af7068683ac8b4aa144aa19c2" title=" " alt="" coords="218,29,350,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,64,205,57,200,59,162,69"/>
+<area shape="rect" id="Node000003" href="$a00248.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="252,104,316,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="161,91,239,108,234,109,161,97"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="250,28,244,21,249,11,262,5,284,3,307,5,321,14,316,14,306,10,284,8,263,10,252,15,250,20,255,30"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="250,102,244,95,249,86,262,79,284,77,307,80,321,89,316,88,306,85,284,83,263,85,252,89,250,95,255,105"/>
+</map>

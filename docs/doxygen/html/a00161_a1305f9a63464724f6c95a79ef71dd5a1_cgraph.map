@@ -1,0 +1,25 @@
+<map id="get_gas_config" name="get_gas_config">
+<area shape="rect" id="Node000001" title="This internal API is used to get the gas configuration of the sensor." alt="" coords="5,34,115,61"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="31,34,26,25,30,16,41,9,60,7,80,10,92,18,87,20,78,15,60,13,43,15,34,19,32,25,36,33"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="647,73,784,99"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,31,126,20,162,11,231,4,302,3,372,8,440,16,563,40,659,67,654,68,562,45,439,21,371,13,302,9,232,9,163,17,128,25,96,36"/>
+<area shape="rect" id="Node000004" href="$a00161.html#af5548cbdbf327e2c77bdb0afb1dde9e4" title="This API reads the data from the given register address of the sensor." alt="" coords="163,71,287,98"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="115,57,151,66,146,68,116,62"/>
+<area shape="rect" id="Node000005" href="$a00161.html#a42e0f090abb1ef2f0cce2e572419f25e" title="Validate the BME680 device context." alt="" coords="493,110,599,137"/>
+<area shape="poly" id="edge16_Node000001_Node000005" title=" " alt="" coords="114,37,162,33,225,28,287,33,333,42,368,53,446,83,498,104,492,104,444,88,366,58,332,47,287,38,225,34,163,38,116,42"/>
+<area shape="rect" id="Node000006" href="$a00161.html#a25e8a0a8d3226f33a5d8f57ffb2fb3d2" title="This internal API is used to set the memory page based on register address." alt="" coords="335,161,445,187"/>
+<area shape="poly" id="edge17_Node000001_Node000006" title=" " alt="" coords="80,59,119,84,164,108,244,137,322,159,317,160,242,142,162,112,116,88,80,64"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="686,71,681,64,685,54,696,48,715,46,736,49,748,58,743,57,734,54,715,51,698,53,689,58,686,63,691,73"/>
+<area shape="rect" id="Node000003" href="$a00257.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="832,73,941,99"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="784,83,819,86,814,86,784,89"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="857,71,852,64,856,54,867,48,887,46,907,49,920,58,914,57,906,54,887,51,869,53,859,58,857,63,862,73"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="287,77,430,70,599,71,634,76,628,76,599,77,430,76,288,82"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="196,70,191,62,195,53,206,47,225,45,245,47,257,56,251,56,243,52,225,50,208,52,199,57,197,62,201,71"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="288,89,480,114,475,116,288,95"/>
+<area shape="poly" id="edge11_Node000004_Node000006" title=" " alt="" coords="252,96,353,153,348,153,251,101"/>
+<area shape="poly" id="edge9_Node000005_Node000002" title=" " alt="" coords="599,109,634,104,639,103,600,114"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="519,108,514,101,517,92,528,85,546,83,565,86,576,95,571,94,563,91,546,89,530,91,522,95,519,101,524,111"/>
+<area shape="poly" id="edge12_Node000006_Node000002" title=" " alt="" coords="446,170,519,163,598,146,642,128,679,109,684,107,644,132,599,151,520,169,446,176"/>
+<area shape="poly" id="edge13_Node000006_Node000005" title=" " alt="" coords="433,157,486,142,491,141,434,163"/>
+<area shape="poly" id="edge14_Node000006_Node000006" title=" " alt="" coords="363,159,358,152,362,142,373,136,390,134,409,137,420,146,415,145,407,142,390,139,374,141,366,146,364,151,368,161"/>
+</map>

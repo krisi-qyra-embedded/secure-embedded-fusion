@@ -1,0 +1,19 @@
+<map id="build_sensor_json_payload" name="build_sensor_json_payload">
+<area shape="rect" id="Node000001" title="Build JSON from local sensors and the latest STM32 snapshot." alt="" coords="5,179,183,205"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="55,179,49,170,53,160,69,154,94,152,122,155,137,163,132,165,120,160,94,157,70,159,57,164,54,169,60,178"/>
+<area shape="rect" id="Node000002" href="$a00299.html#a6aee4ce2fed83e17dd9757902e46b90b" title="Append formatted JSON within the payload buffer." alt="" coords="260,29,386,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="104,177,155,123,190,92,229,66,248,59,244,63,232,70,193,96,158,127,109,180"/>
+<area shape="rect" id="Node000003" href="$a00299.html#afe74079f5d4598d95a9d24c893c96f82" title="Replace quotes, backslashes and control bytes in a JSON label." alt="" coords="242,104,404,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="130,176,230,140,257,134,252,137,232,145,133,180"/>
+<area shape="rect" id="Node000004" href="$a00305.html#a585114b5f3cc1cec0fe4f5133e335791" title="Copy the latest BMP280/BME280 reading under the sensor lock." alt="" coords="231,179,415,205"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="182,189,217,191,213,193,184,195"/>
+<area shape="rect" id="Node000005" href="$a00311.html#a9352e88305c925734b83f756ec11a7cf" title="Copy the latest CCS811 reading under the sensor lock." alt="" coords="231,253,414,280"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="137,203,267,246,263,249,137,209"/>
+<area shape="rect" id="Node000006" href="$a00323.html#a2c3e0db4506312bca184bd3a40a3ed6d" title="Copy the latest validated STM32 snapshot under the telemetry lock." alt="" coords="251,328,394,371"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="114,203,232,290,276,320,270,320,229,294,112,208"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="284,29,277,21,282,11,298,5,323,3,351,5,366,14,361,15,349,10,323,8,299,10,286,15,283,20,289,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="284,103,277,95,282,85,298,79,323,77,351,80,366,89,361,90,349,85,323,83,299,85,286,89,283,95,289,104"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="284,178,277,170,282,160,298,154,323,152,351,155,366,164,361,164,349,160,323,157,299,159,286,164,283,169,289,179"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="284,252,277,245,282,235,298,229,323,227,351,229,366,239,361,238,349,234,323,232,299,234,286,239,283,244,289,253"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="280,326,278,318,285,309,300,303,323,301,347,304,364,313,358,312,346,309,323,307,301,309,288,313,283,319,284,329"/>
+</map>

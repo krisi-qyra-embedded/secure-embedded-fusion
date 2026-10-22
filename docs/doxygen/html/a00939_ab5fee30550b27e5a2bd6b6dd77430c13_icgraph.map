@@ -1,0 +1,9 @@
+<map id="init_ecc_for_signing" name="init_ecc_for_signing">
+<area shape="rect" id="Node000001" title="Initialize the ECC context used for Ed25519 signing." alt="" coords="326,37,462,64"/>
+<area shape="poly" id="edge4_Node000001_Node000001" title=" " alt="" coords="428,22,417,18,394,16,373,18,361,23,359,28,364,38,359,36,353,29,358,19,372,13,394,11,418,13,433,22"/>
+<area shape="rect" id="Node000002" href="$a01011.html#a1bac942b8898d2a776b5f2e081b53ef1" title="Reuse an existing Ed25519 keypair or generate one before signing." alt="" coords="103,29,278,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="308,51,278,53,278,48,313,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="214,13,206,10,190,8,176,10,167,14,163,20,164,30,159,27,158,19,163,11,174,5,190,3,208,5,220,14"/>
+<area shape="rect" id="Node000003" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,52,55,53,55,48,89,50"/>
+</map>

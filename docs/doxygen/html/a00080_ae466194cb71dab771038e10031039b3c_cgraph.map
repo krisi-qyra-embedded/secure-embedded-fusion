@@ -1,0 +1,16 @@
+<map id="spi_dma_stream1_wait_complete" name="spi_dma_stream1_wait_complete">
+<area shape="rect" id="Node000001" title="Wait for DMA2 Stream1 completion." alt="" coords="5,96,161,139"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="44,95,42,86,49,77,62,71,83,69,105,72,120,80,115,81,104,77,83,75,64,77,52,81,47,87,49,96"/>
+<area shape="rect" id="Node000002" href="$a00185.html#a46c6d8e9a39689843d27cfc297aa8d91" title=" " alt="" coords="209,104,370,131"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="161,115,195,117,190,118,162,120"/>
+<area shape="poly" id="edge9_Node000002_Node000002" title=" " alt="" coords="254,103,248,95,252,86,266,79,289,77,314,80,328,89,323,89,312,85,289,83,268,85,256,89,253,95,259,104"/>
+<area shape="rect" id="Node000003" href="$a00074.html#ae773c19af7068683ac8b4aa144aa19c2" title=" " alt="" coords="432,29,564,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="324,101,417,65,435,62,440,60,419,71,326,106"/>
+<area shape="rect" id="Node000004" href="$a00206.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="466,104,530,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="370,115,453,117,448,118,371,120"/>
+<area shape="rect" id="Node000005" href="$a00185.html#abc8056a597f46c74a5a60c56accef929" title=" " alt="" coords="418,179,578,205"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="329,129,447,173,442,173,328,134"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="462,28,456,21,461,11,475,5,498,3,523,5,538,14,532,14,522,10,498,8,476,10,464,15,462,20,468,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="463,103,456,96,461,86,475,80,498,77,524,80,538,90,533,89,522,85,498,83,476,85,464,90,462,95,468,105"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="463,177,456,170,461,160,475,154,498,152,523,155,538,164,532,163,522,160,498,157,476,159,464,164,462,169,467,179"/>
+</map>

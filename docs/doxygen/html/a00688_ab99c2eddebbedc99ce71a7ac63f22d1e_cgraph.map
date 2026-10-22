@@ -1,0 +1,44 @@
+<map id="gcm_nonce_session_init" name="gcm_nonce_session_init">
+<area shape="rect" id="Node000001" title="Initialize the persistent GCM nonce session." alt="" coords="5,179,170,205"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="50,179,43,170,48,160,63,154,88,152,114,155,129,162,124,165,112,160,87,157,64,159,51,164,49,169,55,178"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="241,29,378,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,177,145,123,178,92,216,66,231,60,227,64,219,70,182,96,148,126,101,180"/>
+<area shape="rect" id="Node000004" href="$a00757.html#a59f18c3818b5d6fd5d528d214ed1c6bc" title=" " alt="" coords="256,104,364,131"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="121,176,217,140,243,134,239,137,219,145,124,180"/>
+<area shape="rect" id="Node000005" href="$a00775.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="264,179,356,205"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="169,190,250,190,246,194,171,194"/>
+<area shape="rect" id="Node000006" href="$a00194.html#a8c037f36ce4d1208d8d3eaac3ead5674" title="Get the remaining Flash journal capacity." alt="" coords="218,253,402,296"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="125,203,238,246,234,249,126,208"/>
+<area shape="rect" id="Node000011" href="$a00194.html#a9b5566d836896405016c098ccac6fc44" title="Reserve the next persistent TX session ID for this boot." alt="" coords="224,344,396,387"/>
+<area shape="poly" id="edge20_Node000001_Node000011" title=" " alt="" coords="102,203,154,251,219,306,260,335,255,336,216,310,150,255,102,208"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="272,29,266,21,270,11,285,5,310,3,336,5,352,13,347,15,335,10,310,8,286,10,274,15,271,20,277,29"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="486,29,595,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="378,40,473,41,468,44,380,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="502,29,495,21,500,11,516,5,541,3,568,5,584,14,579,15,567,10,541,8,517,10,504,15,501,20,507,29"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="272,104,266,95,270,85,285,79,310,77,336,80,352,88,347,89,335,85,310,83,286,85,274,89,271,95,277,103"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="272,178,266,170,270,160,285,154,310,152,336,155,352,163,347,164,335,160,310,157,286,159,274,164,271,169,277,178"/>
+<area shape="poly" id="edge19_Node000006_Node000006" title=" " alt="" coords="268,252,266,243,273,234,288,229,310,227,334,229,350,237,344,238,332,234,310,232,289,234,276,239,271,245,273,254"/>
+<area shape="rect" id="Node000007" href="$a00194.html#a44cfbbcdf47faf166f09abfed3f9f53a" title="Scan and initialize the TX session journal." alt="" coords="468,269,613,296"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="402,275,455,279,450,280,403,280"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="502,268,495,261,500,251,516,245,541,243,568,245,584,255,579,254,567,250,541,248,517,250,504,255,501,260,507,270"/>
+<area shape="rect" id="Node000008" href="$a00194.html#a13bfe8dc97b085101532ba73ffba89bf" title=" " alt="" coords="679,244,858,271"/>
+<area shape="poly" id="edge13_Node000007_Node000008" title=" " alt="" coords="613,272,667,268,662,270,614,277"/>
+<area shape="rect" id="Node000009" href="$a00194.html#a3f29e0f6bb9fad8b1d5f9a38c6167a7d" title=" " alt="" coords="685,319,852,345"/>
+<area shape="poly" id="edge15_Node000007_Node000009" title=" " alt="" coords="605,294,691,315,686,315,605,299"/>
+<area shape="poly" id="edge14_Node000008_Node000008" title=" " alt="" coords="734,243,728,235,732,226,746,219,769,217,793,220,807,229,801,229,791,225,768,223,747,225,736,229,733,235,739,244"/>
+<area shape="poly" id="edge18_Node000009_Node000009" title=" " alt="" coords="734,317,728,310,732,300,746,294,769,292,793,295,807,304,801,303,791,300,768,297,747,299,736,304,733,309,739,319"/>
+<area shape="rect" id="Node000010" href="$a00194.html#abd0f7dc0f28799a7114e5729a6b89e6d" title=" " alt="" coords="906,344,1034,371"/>
+<area shape="poly" id="edge16_Node000009_Node000010" title=" " alt="" coords="852,340,893,347,888,347,852,345"/>
+<area shape="poly" id="edge17_Node000010_Node000010" title=" " alt="" coords="935,342,929,335,934,326,947,319,970,317,994,320,1008,329,1003,328,992,325,970,323,949,325,937,329,935,335,940,345"/>
+<area shape="poly" id="edge28_Node000011_Node000007" title=" " alt="" coords="371,341,489,301,484,303,373,346"/>
+<area shape="poly" id="edge29_Node000011_Node000011" title=" " alt="" coords="268,342,266,334,273,325,288,319,310,317,334,320,350,328,344,329,332,325,310,323,289,325,276,329,271,335,273,344"/>
+<area shape="rect" id="Node000012" href="$a00194.html#a4e243c23d4df349f187f9e2a4674c2a0" title=" " alt="" coords="450,352,631,379"/>
+<area shape="poly" id="edge21_Node000011_Node000012" title=" " alt="" coords="396,363,437,365,432,366,396,368"/>
+<area shape="poly" id="edge26_Node000012_Node000008" title=" " alt="" coords="562,349,623,311,678,280,694,277,699,275,680,285,626,315,565,354"/>
+<area shape="poly" id="edge27_Node000012_Node000009" title=" " alt="" coords="631,349,673,346,667,347,632,355"/>
+<area shape="poly" id="edge25_Node000012_Node000010" title=" " alt="" coords="632,361,893,358,888,359,632,366"/>
+<area shape="poly" id="edge22_Node000012_Node000012" title=" " alt="" coords="502,351,495,343,500,333,516,327,541,325,568,328,584,337,579,337,567,333,541,331,517,333,504,337,501,343,507,352"/>
+<area shape="rect" id="Node000013" href="$a00194.html#a577b1e15fd1347bd61b6aa39eb9d3a6e" title=" " alt="" coords="689,444,848,487"/>
+<area shape="poly" id="edge23_Node000012_Node000013" title=" " alt="" coords="574,377,707,437,701,437,573,382"/>
+<area shape="poly" id="edge24_Node000013_Node000013" title=" " alt="" coords="730,442,728,434,735,425,748,419,769,417,790,420,805,429,799,428,789,425,768,423,750,425,738,429,734,435,735,445"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="sram_sample_runtime" name="sram_sample_runtime">
+<area shape="rect" id="Node000001" title="Capture SRAM state from the runtime fallback sampling region." alt="" coords="610,47,759,73"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="717,31,707,28,684,25,663,27,652,32,649,37,655,47,650,45,644,38,648,28,662,22,684,20,708,23,723,32"/>
+<area shape="rect" id="Node000002" href="$a00715.html#a64bd0cfe695219e3c736b3f97f0ab37e" title=" " alt="" coords="434,5,531,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="598,43,531,31,531,26,603,43"/>
+<area shape="rect" id="Node000003" href="$a00763.html#a47c3e08ac074e7ffcd9a480692aaa91f" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="403,80,562,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="603,77,563,88,562,82,598,77"/>
+<area shape="poly" id="edge7_Node000003_Node000003" title=" " alt="" coords="513,64,503,61,482,59,464,61,452,65,448,71,449,81,444,78,442,70,449,61,462,55,483,53,504,56,519,65"/>
+<area shape="rect" id="Node000004" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,80,355,123"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="385,101,356,104,356,99,391,101"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="300,64,292,61,278,59,264,60,256,65,252,71,253,81,249,78,247,70,252,61,262,55,278,53,294,56,305,65"/>
+<area shape="rect" id="Node000005" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,88,152,115"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="182,102,153,104,152,99,187,101"/>
+<area shape="rect" id="Node000006" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,88,55,115"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="84,102,55,104,55,99,89,100"/>
+</map>

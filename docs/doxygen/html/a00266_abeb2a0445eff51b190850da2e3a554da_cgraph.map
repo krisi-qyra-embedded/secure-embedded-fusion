@@ -1,0 +1,44 @@
+<map id="flash_write_data" name="flash_write_data">
+<area shape="rect" id="Node000001" title="Erase the required sector range and program a sequence of 32&#45;bit words." alt="" coords="5,381,122,408"/>
+<area shape="poly" id="edge26_Node000001_Node000001" title=" " alt="" coords="35,381,31,373,34,363,45,357,64,355,83,357,94,365,89,367,81,362,63,360,47,362,38,367,36,372,41,380"/>
+<area shape="rect" id="Node000002" href="$a00266.html#a86b6e328ae62963c56145dacfd3a1de9" title="Erase one or more Flash sectors or perform a mass erase." alt="" coords="170,179,279,205"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,379,203,215,203,220,78,382"/>
+<area shape="rect" id="Node000008" href="$a00266.html#abdbf996e3f122158901a97a6a2ad1873" title="Return the stored Flash driver error code." alt="" coords="171,307,278,333"/>
+<area shape="poly" id="edge11_Node000001_Node000008" title=" " alt="" coords="93,379,181,338,178,343,96,383"/>
+<area shape="rect" id="Node000009" href="$a00266.html#a640b8cf9669cf22d0ff26e8543874b7d" title="Program one value using the requested Flash programming width." alt="" coords="173,381,276,408"/>
+<area shape="poly" id="edge13_Node000001_Node000009" title=" " alt="" coords="121,392,159,393,155,396,123,397"/>
+<area shape="rect" id="Node000014" href="$a00266.html#a2b1c7206d5e4c333db17c1b0735eff58" title="Unlock the STM32 Flash controller for erase/program operations." alt="" coords="177,456,272,483"/>
+<area shape="poly" id="edge24_Node000001_Node000014" title=" " alt="" coords="94,406,182,448,178,450,94,411"/>
+<area shape="rect" id="Node000015" href="$a00266.html#a2aed21b4545cd86db2598b6134be19bb" title=" " alt="" coords="183,531,266,557"/>
+<area shape="poly" id="edge27_Node000001_Node000015" title=" " alt="" coords="80,406,171,493,200,520,194,520,168,497,78,411"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="196,178,192,170,195,160,206,154,224,152,244,155,255,163,250,164,242,160,224,157,208,159,199,164,197,169,201,178"/>
+<area shape="rect" id="Node000003" href="$a00266.html#a0c6918852d39b0224f789c1f3c59f3c4" title="Configure and start a mass erase of internal Flash." alt="" coords="352,29,479,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="231,177,267,123,294,92,325,66,339,60,335,64,329,70,297,96,271,126,235,180"/>
+<area shape="rect" id="Node000004" href="$a00266.html#ab53a7f728632a1e53c74a50764495097" title="Configure and start an erase for one Flash sector." alt="" coords="350,104,481,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="249,176,326,140,348,134,344,137,328,145,253,180"/>
+<area shape="rect" id="Node000005" href="$a00266.html#a86bc010ac778af7eebac96da80d125f1" title="Wait for the current Flash operation to complete or time out." alt="" coords="350,253,480,296"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="257,203,352,246,347,248,257,208"/>
+<area shape="rect" id="Node000007" href="$a00266.html#ae5928817a0ecb230c5f81f7c738594b0" title=" " alt="" coords="366,179,464,205"/>
+<area shape="poly" id="edge9_Node000002_Node000007" title=" " alt="" coords="279,190,353,191,349,193,281,194"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="382,29,377,21,381,11,394,5,415,3,438,5,451,13,446,15,436,10,415,8,395,10,385,15,382,20,388,29"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="382,103,377,95,381,86,394,79,415,77,438,80,452,88,446,89,436,85,415,83,395,85,385,89,382,95,388,104"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="379,252,377,243,383,234,396,229,415,227,436,229,450,237,444,238,434,234,415,232,397,234,387,239,382,245,384,254"/>
+<area shape="poly" id="edge10_Node000007_Node000007" title=" " alt="" coords="382,178,377,170,381,160,394,154,415,152,438,155,452,163,446,164,436,160,415,157,395,159,385,164,382,169,388,178"/>
+<area shape="poly" id="edge12_Node000008_Node000008" title=" " alt="" coords="196,306,192,298,195,288,206,282,224,280,244,283,255,291,250,292,242,288,224,285,208,287,199,292,197,297,201,306"/>
+<area shape="poly" id="edge23_Node000009_Node000005" title=" " alt="" coords="239,379,284,338,326,306,338,301,334,305,328,310,287,343,242,383"/>
+<area shape="poly" id="edge14_Node000009_Node000009" title=" " alt="" coords="196,381,192,373,195,363,206,357,224,355,244,357,255,366,250,366,242,362,224,360,208,362,199,367,197,372,201,381"/>
+<area shape="rect" id="Node000010" href="$a00266.html#aecb2ef6a6334477e36fceed302b1ab6d" title="Program one byte at the requested Flash address." alt="" coords="348,344,483,371"/>
+<area shape="poly" id="edge15_Node000009_Node000010" title=" " alt="" coords="276,382,334,372,330,375,278,387"/>
+<area shape="rect" id="Node000011" href="$a00266.html#a1d18ba8a4804bd1a59765821683f0789" title="Program one 64&#45;bit value as two consecutive Flash words." alt="" coords="327,419,503,445"/>
+<area shape="poly" id="edge17_Node000009_Node000011" title=" " alt="" coords="276,402,331,414,326,416,277,407"/>
+<area shape="rect" id="Node000012" href="$a00266.html#a865d714a34fa5516badf3889a4f61b91" title="Program one 16&#45;bit halfword at the requested Flash address." alt="" coords="336,493,495,520"/>
+<area shape="poly" id="edge19_Node000009_Node000012" title=" " alt="" coords="258,406,280,418,305,436,329,455,377,486,371,486,325,460,302,440,278,422,258,411"/>
+<area shape="rect" id="Node000013" href="$a00266.html#a73937aa6df8710e95425b165730626a2" title="Program one 32&#45;bit word at the requested Flash address." alt="" coords="346,568,484,595"/>
+<area shape="poly" id="edge21_Node000009_Node000013" title=" " alt="" coords="264,406,281,418,300,447,306,475,312,502,329,530,346,546,367,561,362,560,343,550,325,534,307,504,301,476,295,449,277,422,263,411"/>
+<area shape="poly" id="edge16_Node000010_Node000010" title=" " alt="" coords="382,343,377,335,381,326,394,319,415,317,438,320,452,329,446,329,436,325,415,323,395,325,385,329,382,335,387,344"/>
+<area shape="poly" id="edge18_Node000011_Node000011" title=" " alt="" coords="382,418,377,410,381,400,394,394,415,392,438,395,452,403,446,403,436,400,415,397,395,399,385,404,382,409,387,419"/>
+<area shape="poly" id="edge20_Node000012_Node000012" title=" " alt="" coords="382,492,377,485,381,475,394,469,415,467,438,469,452,478,446,478,436,474,415,472,395,474,385,479,382,484,387,494"/>
+<area shape="poly" id="edge22_Node000013_Node000013" title=" " alt="" coords="382,566,377,559,381,550,394,543,415,541,438,544,452,553,446,552,436,549,415,547,395,549,385,553,382,559,387,569"/>
+<area shape="poly" id="edge25_Node000014_Node000014" title=" " alt="" coords="196,455,192,447,195,438,206,432,224,429,244,432,255,441,250,441,242,437,224,435,208,437,199,441,197,447,201,456"/>
+<area shape="poly" id="edge28_Node000015_Node000015" title=" " alt="" coords="196,529,192,522,195,512,206,506,224,504,244,507,255,516,250,515,242,512,224,509,208,511,199,516,197,521,201,531"/>
+</map>

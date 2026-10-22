@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['derived_0',['Derived',['../a00907.html#code_sm_secure_boot',1,'1. STM32 Secure-Boot Flow — Code Derived'],['../a00907.html#code_sm_uart',1,'2. AES-GCM UART Transaction / ACK / NACK / Retry — Code Derived'],['../a00907.html#code_sm_sensor',1,'3. Sensor Fault-Recovery States — Code Derived'],['../a00907.html#code_sm_watchdog',1,'4. Watchdog Supervisor — Code Derived'],['../a00907.html#code_sm_modes',1,'5. ESP32 AWS / HTTPS Switching — Code Derived'],['../a00907.html#code_sm_ota',1,'6. ESP32 OTA State Flow — Code Derived'],['../a00907.html#code_sm_replay',1,'7. Replay / Authentication Rejection — Code Derived'],['../a00907.html#code_sm_multi_fault',1,'8. Multiple Concurrent Fault Injection / Supervisor Coordination — Code Derived'],['../a00907.html#code_sm_uart_hw_ack_nack',1,'9. Bidirectional STM32CryptoLib ↔ mbedTLS AES-GCM + UART Recovery — Code Derived']]],
+  ['derived_20state_20machines_1',['Code-Derived State Machines',['../a00907.html',1,'']]],
+  ['detailed_2',['detailed',['../a00907.html#code_sm_bme680',1,'BME680 recovery — detailed'],['../a00907.html#code_sm_ds18b20',1,'DS18B20 group recovery — detailed'],['../a00907.html#code_sm_max31865',1,'MAX31865 recovery — detailed'],['../a00907.html#code_sm_mpu9250',1,'MPU9250 recovery — detailed'],['../a00907.html#code_sm_pm25',1,'PMS5003 / PM2.5 recovery — detailed']]],
+  ['ds18b20_20group_20recovery_20—_20detailed_3',['DS18B20 group recovery — detailed',['../a00907.html#code_sm_ds18b20',1,'']]]
+];

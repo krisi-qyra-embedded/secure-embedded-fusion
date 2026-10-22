@@ -1,0 +1,27 @@
+<map id="fnAPP_Init_Standard_Values" name="fnAPP_Init_Standard_Values">
+<area shape="rect" id="Node000001" title="Load the default BME680 IAQ reference values." alt="" coords="1104,63,1248,105"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="1211,47,1199,44,1176,41,1154,43,1141,48,1136,54,1137,64,1133,61,1131,53,1138,44,1153,38,1176,36,1200,38,1217,47"/>
+<area shape="rect" id="Node000002" href="$a00662.html#a3a067aac939665797deb0dcb9ce75745" title=" " alt="" coords="348,29,538,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1086,78,1056,79,538,50,538,45,1056,73,1091,78"/>
+<area shape="rect" id="Node000005" href="$a00149.html#a08fba5a7692afd8a1619ebfc4d8e34a1" title="Initialize the BME680 I2C/DMA peripherals." alt="" coords="839,112,1056,139"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="1092,99,1026,114,1025,109,1086,100"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="475,14,465,10,443,8,423,10,412,15,409,20,415,30,410,28,404,21,408,11,421,5,443,3,466,5,480,14"/>
+<area shape="rect" id="Node000003" href="$a00662.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,71,152,97"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="331,56,200,75,153,82,151,77,200,69,335,53"/>
+<area shape="rect" id="Node000004" href="$a00659.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,71,55,97"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="85,86,56,86,54,82,89,82"/>
+<area shape="poly" id="edge16_Node000005_Node000005" title=" " alt="" coords="986,97,974,93,948,91,924,93,911,97,908,103,914,113,909,111,902,103,907,93,922,87,948,85,975,88,991,98"/>
+<area shape="rect" id="Node000006" href="$a00116.html#a6db3a89239bbcca3b89aabb566edb56b" title=" " alt="" coords="616,104,762,147"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="821,126,762,128,762,123,826,125"/>
+<area shape="rect" id="Node000009" href="$a00116.html#a012a7bd1283123423c8cc10d467dddb5" title="Initialize the BME680 sensor stack." alt="" coords="587,195,791,221"/>
+<area shape="poly" id="edge14_Node000005_Node000009" title=" " alt="" coords="892,143,734,197,733,192,887,144"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="727,88,714,85,689,83,666,85,651,89,646,95,647,105,643,102,641,94,648,85,664,79,689,77,715,80,732,89"/>
+<area shape="rect" id="Node000007" href="$a00116.html#af1c810695225472f06b8591fa57c6cca" title="Run one BME680 runtime sample/recovery cycle." alt="" coords="347,104,539,147"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="598,126,539,128,539,123,603,125"/>
+<area shape="poly" id="edge10_Node000007_Node000007" title=" " alt="" coords="473,88,462,85,443,83,425,85,414,89,410,95,411,105,406,102,404,94,411,85,424,79,443,77,464,80,478,89"/>
+<area shape="rect" id="Node000008" href="$a00662.html#a049ced0e0b8c31b8e3546c5897b7e1ee" title=" " alt="" coords="200,108,299,135"/>
+<area shape="poly" id="edge11_Node000007_Node000008" title=" " alt="" coords="329,123,300,125,300,120,334,123"/>
+<area shape="poly" id="edge13_Node000008_Node000003" title=" " alt="" coords="187,104,153,94,152,89,192,102"/>
+<area shape="poly" id="edge12_Node000008_Node000008" title=" " alt="" coords="269,92,263,89,250,87,237,89,231,93,229,99,233,108,228,107,224,99,227,90,235,84,250,81,265,84,274,93"/>
+<area shape="poly" id="edge15_Node000009_Node000009" title=" " alt="" coords="730,179,717,176,689,173,663,175,649,180,645,185,652,195,647,193,640,186,645,176,662,170,689,168,719,171,735,180"/>
+</map>

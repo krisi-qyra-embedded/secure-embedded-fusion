@@ -1,0 +1,9 @@
+<map id="log_putc" name="log_putc">
+<area shape="rect" id="Node000001" title="Queue one character for USART2 logging." alt="" coords="388,29,458,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="447,13,440,10,423,8,408,10,399,14,397,20,401,30,397,28,392,21,395,11,406,5,423,3,442,5,453,15"/>
+<area shape="rect" id="Node000002" href="$a01056.html#a6dc3431121f47344b931359334d1c560" title="Handle USART2 RXNE and TXE events for logging and echo." alt="" coords="203,29,340,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="370,43,340,45,340,40,375,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="296,14,288,10,271,8,256,10,248,14,246,20,250,30,245,28,240,21,243,11,254,5,271,3,290,5,301,15"/>
+<area shape="rect" id="Node000003" href="$a01056.html#a0ca6fd0e6f77921dd1123539857ba0a8" title="USART2 interrupt vector." alt="" coords="5,29,155,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="185,43,155,45,155,40,190,43"/>
+</map>

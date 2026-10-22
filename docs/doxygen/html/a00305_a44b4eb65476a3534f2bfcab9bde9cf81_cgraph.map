@@ -1,0 +1,7 @@
+<map id="BME280_get_latest_reading" name="BME280_get_latest_reading">
+<area shape="rect" id="Node000001" title="Read the shared sensor cache through the BME280 alias." alt="" coords="5,29,190,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="58,29,51,21,56,11,72,5,98,3,126,5,142,14,136,15,124,10,97,8,73,10,60,15,57,20,63,29"/>
+<area shape="rect" id="Node000002" href="$a00305.html#a585114b5f3cc1cec0fe4f5133e335791" title="Copy the latest BMP280/BME280 reading under the sensor lock." alt="" coords="238,29,422,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="190,40,224,43,219,43,190,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="290,28,284,21,289,11,304,5,330,3,358,5,374,15,369,14,357,10,330,8,305,10,292,15,289,20,295,30"/>
+</map>

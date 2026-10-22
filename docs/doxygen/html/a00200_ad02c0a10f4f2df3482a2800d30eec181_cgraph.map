@@ -1,0 +1,10 @@
+<map id="PMS25_ClearFaultActive" name="PMS25_ClearFaultActive">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,37,174,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="55,37,50,29,54,19,68,13,90,11,113,13,127,22,122,22,112,18,89,16,69,18,58,23,55,28,61,37"/>
+<area shape="rect" id="Node000002" href="$a00176.html#a13cf982f485a32d152a600e3533ff04b" title="Clear one subsystem from the active fault mask." alt="" coords="222,29,353,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="174,48,209,50,203,51,174,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="250,27,248,19,254,10,268,5,287,3,309,5,323,14,318,13,307,10,287,8,269,10,258,15,253,21,254,30"/>
+<area shape="rect" id="Node000003" href="$a00176.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="401,29,569,72"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="354,48,388,51,383,51,354,53"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="448,27,446,19,452,10,465,5,485,3,507,5,521,14,516,13,505,10,485,8,467,10,455,15,451,21,452,30"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="nonce_simple_print" name="nonce_simple_print">
+<area shape="rect" id="Node000001" title="Print a nonce in hexadecimal form." alt="" coords="5,29,139,56"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="45,29,41,21,44,11,55,5,72,3,90,5,102,14,96,14,89,10,72,8,56,10,48,14,46,20,51,29"/>
+<area shape="rect" id="Node000002" href="$a00805.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="187,29,261,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,40,173,42,168,43,139,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="199,28,195,21,198,11,208,5,224,3,241,5,251,15,246,14,239,10,224,8,210,10,202,14,200,20,204,30"/>
+<area shape="rect" id="Node000003" href="$a00805.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="309,29,421,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="262,40,296,43,291,43,262,45"/>
+<area shape="poly" id="edge8_Node000003_Node000003" title=" " alt="" coords="341,28,337,21,340,11,349,5,365,3,382,5,392,15,387,13,380,10,365,8,351,10,344,14,342,20,346,30"/>
+<area shape="rect" id="Node000004" href="$a00721.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="469,29,537,56"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="422,40,456,43,451,43,422,45"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="482,27,478,20,481,11,489,5,503,3,518,5,526,15,521,13,516,10,503,8,491,10,485,14,484,20,486,30"/>
+<area shape="rect" id="Node000005" href="$a00721.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="585,29,658,56"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="537,40,572,43,567,43,537,45"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="600,27,597,20,599,11,608,5,621,3,636,5,645,15,640,13,634,10,621,8,610,10,603,14,602,20,605,30"/>
+</map>

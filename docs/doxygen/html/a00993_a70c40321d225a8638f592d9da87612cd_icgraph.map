@@ -1,0 +1,22 @@
+<map id="derive_gcm_iv_from_drbg" name="derive_gcm_iv_from_drbg">
+<area shape="rect" id="Node000001" title="Copy the generated DRBG IV material into the AES&#45;GCM IV buffer." alt="" coords="821,96,992,122"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="947,81,934,77,906,74,881,76,867,81,864,86,871,96,866,94,859,87,864,77,880,71,907,69,936,72,952,81"/>
+<area shape="rect" id="Node000002" href="$a00924.html#a0b81e73c288c5256e473db2ff0eb81c2" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="558,54,773,81"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="807,93,748,84,748,79,812,92"/>
+<area shape="rect" id="Node000009" href="$a00993.html#a05a3ccd10cfd2becb08787191cb62f0b" title="Generate the per&#45;transfer nonce state and DRBG&#45;backed IV." alt="" coords="595,129,736,172"/>
+<area shape="poly" id="edge7_Node000001_Node000009" title=" " alt="" coords="812,125,737,141,736,136,807,126"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="706,39,693,35,666,33,640,35,626,40,623,45,630,55,625,53,618,46,623,36,639,30,666,28,695,30,711,40"/>
+<area shape="rect" id="Node000003" href="$a00996.html#ae0f5e3d87c01bfba1f72168c91121bdc" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="5,58,221,85"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="614,48,565,34,510,21,442,11,389,8,336,11,269,21,202,38,146,60,143,55,201,33,268,16,336,6,389,3,443,6,510,16,567,29,620,48"/>
+<area shape="rect" id="Node000004" href="$a00170.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="269,54,510,81"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="539,68,511,70,510,65,545,67"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="436,40,422,36,389,33,360,35,344,40,340,45,348,54,343,54,335,46,341,36,359,30,389,28,423,30,442,40"/>
+<area shape="poly" id="edge8_Node000009_Node000009" title=" " alt="" coords="703,113,690,110,666,108,643,109,629,114,623,120,625,130,620,127,618,119,626,110,642,104,666,102,691,105,708,114"/>
+<area shape="rect" id="Node000010" href="$a00993.html#a488a72dc38b4dec4dd02c663ea057b6c" title="Generate the transfer IV and encrypt through the AES&#45;GCM sender path." alt="" coords="299,129,480,172"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="577,151,480,153,480,148,582,150"/>
+<area shape="rect" id="Node000011" href="$a00993.html#a956e503503fd19545be52e101e30ef31" title="Generate transfer IV, encrypt with AES&#45;CTR and authenticate with HMAC." alt="" coords="299,220,480,262"/>
+<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="586,177,457,222,456,216,581,177"/>
+<area shape="poly" id="edge10_Node000010_Node000003" title=" " alt="" coords="295,126,163,88,163,83,300,123"/>
+<area shape="poly" id="edge11_Node000010_Node000010" title=" " alt="" coords="433,114,418,110,389,108,363,110,347,114,340,120,342,130,338,127,335,119,344,110,362,104,389,102,419,105,438,113"/>
+<area shape="poly" id="edge13_Node000011_Node000011" title=" " alt="" coords="433,204,418,201,389,198,363,200,347,205,340,211,342,220,338,218,335,209,344,200,362,195,389,193,419,195,438,204"/>
+</map>

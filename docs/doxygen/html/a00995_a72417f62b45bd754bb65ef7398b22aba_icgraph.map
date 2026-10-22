@@ -1,0 +1,12 @@
+<map id="sram_sample_runtime" name="sram_sample_runtime">
+<area shape="rect" id="Node000001" title="Capture SRAM state from the runtime fallback sampling region." alt="" coords="415,47,564,73"/>
+<area shape="poly" id="edge6_Node000001_Node000001" title=" " alt="" coords="523,31,512,28,490,25,469,27,457,32,455,37,460,47,455,45,449,38,453,28,467,22,490,20,514,23,528,32"/>
+<area shape="rect" id="Node000002" href="$a00923.html#a64bd0cfe695219e3c736b3f97f0ab37e" title=" " alt="" coords="240,5,336,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="403,43,336,31,337,26,409,43"/>
+<area shape="rect" id="Node000003" href="$a00971.html#a47c3e08ac074e7ffcd9a480692aaa91f" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="209,80,367,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="409,77,368,88,367,82,404,77"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="319,64,308,61,288,59,269,61,257,65,253,71,254,81,250,78,248,70,254,61,268,55,288,53,310,56,324,65"/>
+<area shape="rect" id="Node000004" href="$a00866.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="5,80,161,123"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="191,102,161,104,161,99,196,101"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="114,65,104,61,83,59,64,61,52,65,47,71,49,80,44,79,42,70,49,61,63,55,83,53,105,56,120,64"/>
+</map>

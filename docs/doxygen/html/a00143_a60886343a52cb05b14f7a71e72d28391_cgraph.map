@@ -1,0 +1,13 @@
+<map id="ESP32_UART_TxFreeSpace" name="ESP32_UART_TxFreeSpace">
+<area shape="rect" id="Node000001" title="Get free space in the TX buffer." alt="" coords="5,104,196,131"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="62,104,55,95,60,85,76,79,101,77,127,80,143,88,138,89,126,85,100,83,77,85,64,89,61,95,67,103"/>
+<area shape="rect" id="Node000002" href="$a00143.html#a0de65ee146e0df0eee7bb43774e49d6b" title=" " alt="" coords="244,29,410,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="140,101,243,65,267,60,263,62,245,71,142,106"/>
+<area shape="rect" id="Node000003" href="$a00143.html#aaa94cc49b18baf6e03258003078fe677" title=" " alt="" coords="248,104,406,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="196,115,235,117,230,118,197,120"/>
+<area shape="rect" id="Node000004" href="$a00143.html#ad3b8d6b7e8ec725df04c05293517c00b" title=" " alt="" coords="261,179,393,221"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="140,129,254,171,250,174,139,134"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="288,29,282,21,287,11,302,5,327,3,354,5,369,14,364,14,352,10,327,8,303,10,290,15,287,20,294,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="288,103,282,95,287,85,302,79,327,77,354,80,370,89,364,89,352,85,327,83,303,85,290,89,287,95,293,104"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="284,177,282,169,289,160,304,154,327,152,351,154,367,163,362,163,350,160,327,157,305,159,292,164,287,170,289,180"/>
+</map>

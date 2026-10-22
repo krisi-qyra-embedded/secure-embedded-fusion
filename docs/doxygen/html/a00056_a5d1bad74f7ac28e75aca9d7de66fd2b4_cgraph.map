@@ -1,0 +1,14 @@
+<map id="bme680_set_regs" name="bme680_set_regs">
+<area shape="rect" id="Node000001" title="This API writes the given data to the register address of the sensor." alt="" coords="5,29,130,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="39,29,34,21,38,11,49,5,68,3,87,5,99,14,94,15,85,10,67,8,51,10,42,15,40,20,44,29"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="331,29,468,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,32,178,28,283,28,318,33,313,33,283,33,178,33,131,37"/>
+<area shape="rect" id="Node000004" href="$a00164.html#a42e0f090abb1ef2f0cce2e572419f25e" title="Validate the BME680 device context." alt="" coords="178,67,283,93"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="129,54,165,64,160,65,128,59"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="370,28,365,21,369,11,381,5,400,3,420,5,432,15,427,14,418,10,400,8,382,10,373,15,371,20,375,30"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="516,29,626,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="469,40,503,43,498,43,469,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="541,28,536,21,540,11,552,5,571,3,592,5,604,15,599,14,590,10,571,8,553,10,544,15,542,20,546,30"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="283,66,319,60,324,60,284,71"/>
+<area shape="poly" id="edge8_Node000004_Node000004" title=" " alt="" coords="202,65,197,58,201,48,212,42,230,40,250,43,262,52,256,51,248,48,230,45,214,47,205,52,203,57,207,67"/>
+</map>

@@ -1,0 +1,14 @@
+<map id="get_mem_page" name="get_mem_page">
+<area shape="rect" id="Node000001" title="This internal API is used to get the memory page based on register address." alt="" coords="5,29,116,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="33,29,29,21,32,11,43,5,61,3,79,5,91,14,85,15,78,10,60,8,45,10,36,15,34,20,38,29"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="317,29,454,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,32,163,28,216,26,269,28,304,33,299,33,269,33,216,31,164,33,117,38"/>
+<area shape="rect" id="Node000004" href="$a00164.html#a42e0f090abb1ef2f0cce2e572419f25e" title="Validate the BME680 device context." alt="" coords="164,67,269,93"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="116,53,151,63,146,64,116,59"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="356,28,351,21,355,11,367,5,386,3,406,5,418,14,413,14,404,10,386,8,368,10,359,15,357,20,361,30"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="502,29,612,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="455,40,489,43,484,43,455,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="527,28,522,21,526,11,538,5,557,3,578,5,590,15,585,14,576,10,557,8,539,10,530,15,528,20,532,30"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="269,66,305,60,310,60,270,71"/>
+<area shape="poly" id="edge8_Node000004_Node000004" title=" " alt="" coords="189,65,185,58,188,48,199,42,216,40,235,43,247,52,241,51,233,48,216,45,200,47,192,52,190,57,194,67"/>
+</map>

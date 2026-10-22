@@ -1,0 +1,7 @@
+<map id="ccs811_fatal_stop_kicking_watchdog" name="ccs811_fatal_stop_kicking_watchdog">
+<area shape="rect" id="Node000001" title="Invalidate the reading and wait without refreshing the heartbeat." alt="" coords="5,29,180,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="54,28,52,19,58,10,72,5,93,3,114,5,129,13,124,14,113,10,92,8,73,10,62,15,57,21,59,29"/>
+<area shape="rect" id="Node000002" href="$a00311.html#a4ca67e2473b96e8772eaf06dedf3bb9a" title="Mark the cached gas reading invalid." alt="" coords="228,29,365,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="180,48,215,50,210,51,180,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="258,27,256,19,262,10,276,5,296,3,318,5,333,14,328,13,317,10,296,8,277,10,266,15,261,21,262,30"/>
+</map>

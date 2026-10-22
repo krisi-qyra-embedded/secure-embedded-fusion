@@ -1,0 +1,32 @@
+<map id="log_hex_buffer" name="log_hex_buffer">
+<area shape="rect" id="Node000001" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="525,295,630,321"/>
+<area shape="poly" id="edge14_Node000001_Node000001" title=" " alt="" coords="611,279,601,276,578,273,556,275,545,280,542,285,548,295,543,293,537,286,541,276,555,270,578,268,602,271,616,280"/>
+<area shape="rect" id="Node000002" href="$a01011.html#a2473ac31b52535a759a4c1ea10cf1776" title="Authenticate and decode one ESP32 response." alt="" coords="288,88,458,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="564,279,531,213,506,176,475,145,459,134,459,128,479,141,510,173,536,210,569,280"/>
+<area shape="rect" id="Node000012" href="$a00329.html#ade5acdbe06469cbcabaefff69e9e196e" title="Log directional key diagnostics under the debug switch." alt="" coords="270,179,477,205"/>
+<area shape="poly" id="edge8_Node000001_Node000012" title=" " alt="" coords="553,283,519,251,476,220,450,209,449,203,478,215,523,247,558,283"/>
+<area shape="rect" id="Node000013" href="$a00329.html#ae520fdf2bfcd314fe212ede7931ee79c" title="Log keypair diagnostics, suppressing raw output for provisioned keys." alt="" coords="284,253,463,280"/>
+<area shape="poly" id="edge10_Node000001_Node000013" title=" " alt="" coords="507,295,443,283,443,278,513,294"/>
+<area shape="rect" id="Node000014" href="$a00329.html#a7f8d739479cfdac9fccfd717556fb38c" title="Log directional shared&#45;secret diagnostics under the debug switch." alt="" coords="289,328,458,371"/>
+<area shape="poly" id="edge12_Node000001_Node000014" title=" " alt="" coords="507,322,459,335,458,330,512,321"/>
+<area shape="rect" id="Node000015" href="$a01011.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title=" " alt="" coords="321,395,426,421"/>
+<area shape="poly" id="edge15_Node000001_Node000015" title=" " alt="" coords="553,331,519,361,478,385,427,402,426,397,476,380,516,356,548,333"/>
+<area shape="rect" id="Node000016" href="$a01008.html#a485927a3f8f78dfda692da15cb915d0b" title="Initialize receiver ECDH and derived keys." alt="" coords="310,469,436,512"/>
+<area shape="poly" id="edge16_Node000001_Node000016" title=" " alt="" coords="562,333,527,385,479,435,452,455,423,471,422,466,449,450,475,431,522,382,558,336"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="405,73,394,69,373,67,354,69,343,73,338,79,339,88,334,87,333,78,339,69,353,63,373,61,395,64,410,72"/>
+<area shape="rect" id="Node000003" href="$a01008.html#a09f6f3d516029a09122bbc00d5ddd618" title="Authenticate/decrypt the GCM packet and rebuild the ADC samples." alt="" coords="28,5,199,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="289,84,221,63,187,51,185,46,222,57,294,81"/>
+<area shape="rect" id="Node000004" href="$a00939.html#a0b81e73c288c5256e473db2ff0eb81c2" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="6,96,221,123"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="270,111,223,112,221,107,275,108"/>
+<area shape="rect" id="Node000011" href="$a00185.html#ae470c360688f5561f2558cf3e85c3e5e" title="Wait for and process an encrypted ACK/NACK." alt="" coords="5,171,222,213"/>
+<area shape="poly" id="edge6_Node000002_Node000011" title=" " alt="" coords="288,138,184,172,182,168,291,134"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="158,82,144,77,113,75,86,77,71,82,68,87,75,95,70,96,62,87,68,77,85,71,114,69,145,72,162,80"/>
+<area shape="poly" id="edge7_Node000011_Node000011" title=" " alt="" coords="154,156,140,152,113,149,89,151,74,156,68,162,70,170,64,170,63,161,71,152,88,146,114,144,141,146,159,154"/>
+<area shape="poly" id="edge9_Node000012_Node000012" title=" " alt="" coords="407,164,396,160,373,157,352,159,340,164,338,169,344,178,338,178,332,170,337,160,351,154,373,152,398,155,412,163"/>
+<area shape="poly" id="edge11_Node000013_Node000013" title=" " alt="" coords="407,238,396,234,373,232,352,234,340,239,338,244,344,253,338,253,332,245,337,235,351,229,373,227,398,229,412,238"/>
+<area shape="poly" id="edge13_Node000014_Node000014" title=" " alt="" coords="405,312,394,309,373,307,354,309,343,313,338,319,339,329,334,326,333,318,339,309,353,303,373,301,395,304,410,312"/>
+<area shape="poly" id="edge19_Node000016_Node000016" title=" " alt="" coords="405,453,394,450,373,448,354,450,343,455,338,461,339,470,335,467,333,459,339,450,353,445,373,443,395,445,410,454"/>
+<area shape="rect" id="Node000017" href="$a00909.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="36,469,191,512"/>
+<area shape="poly" id="edge17_Node000016_Node000017" title=" " alt="" coords="292,491,192,493,192,488,297,490"/>
+<area shape="poly" id="edge18_Node000017_Node000017" title=" " alt="" coords="154,454,140,450,113,448,89,450,74,455,68,461,70,469,65,468,63,459,71,450,88,445,114,443,141,445,159,453"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="flash_read_num" name="flash_read_num">
+<area shape="rect" id="Node000001" title="Read one float previously stored in Flash." alt="" coords="5,67,119,93"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="34,67,29,58,33,48,44,42,62,40,82,43,93,51,88,52,80,48,62,45,45,47,37,52,34,57,39,66"/>
+<area shape="rect" id="Node000002" href="$a00266.html#a487287f286b2641333b4f3aaa84d5a6e" title="Rebuild one float from four raw bytes." alt="" coords="172,29,275,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,64,159,57,154,59,120,69"/>
+<area shape="rect" id="Node000003" href="$a00266.html#a137b607169d599ea2d346bb4c0fb8c2f" title="Read 32&#45;bit words from memory&#45;mapped Flash with basic validation." alt="" coords="167,104,280,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="119,90,154,100,149,101,119,96"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="195,28,190,21,194,11,205,5,223,3,243,5,255,14,249,14,241,10,223,8,207,10,198,15,196,20,200,30"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="195,102,190,95,194,86,205,80,223,77,243,80,254,89,249,88,241,85,223,83,207,85,198,89,196,95,200,105"/>
+</map>

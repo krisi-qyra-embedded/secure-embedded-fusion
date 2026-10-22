@@ -1,0 +1,23 @@
+<map id="wifi_app_event_handler" name="wifi_app_event_handler">
+<area shape="rect" id="Node000001" title="Handle Wi&#45;Fi/IP events, reconnect attempts and SoftAP clients." alt="" coords="5,113,163,140"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="48,113,42,105,47,95,61,89,84,87,109,89,123,97,118,99,107,94,84,92,62,94,50,99,48,104,53,112"/>
+<area shape="rect" id="Node000002" href="$a00311.html#aaace492a4160a1e1e16dcee857392dd2" title="Count a Wi&#45;Fi API failure and stop when the limit is reached." alt="" coords="430,37,597,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="100,111,147,78,178,62,210,49,262,39,315,34,417,37,412,39,315,39,262,44,211,55,180,66,150,82,104,115"/>
+<area shape="rect" id="Node000004" href="$a00311.html#ae31ded8e5f4d73165c5c5d5aaa8eb76a" title="Refresh the Wi&#45;Fi watchdog heartbeat." alt="" coords="652,129,816,156"/>
+<area shape="poly" id="edge15_Node000001_Node000004" title=" " alt="" coords="163,126,637,138,636,143,163,131"/>
+<area shape="rect" id="Node000006" href="$a00311.html#a816117cac82f1ddddd2249574e9c04ea" title="Clear the API failure count and refresh the watchdog." alt="" coords="423,213,604,240"/>
+<area shape="poly" id="edge8_Node000001_Node000006" title=" " alt="" coords="121,138,211,168,312,191,410,211,405,211,311,196,210,173,120,143"/>
+<area shape="rect" id="Node000007" href="$a00311.html#aec924a59c0eede746e90c5c04e682fc3" title="Queue a Wi&#45;Fi application message." alt="" coords="211,88,375,115"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="162,115,197,112,193,114,164,120"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="476,36,470,29,474,19,489,13,514,11,540,13,555,22,550,22,538,18,514,16,491,18,478,23,475,28,481,38"/>
+<area shape="rect" id="Node000003" href="$a00311.html#a624451c23613f4ff721517ef754d8a37" title="Record a fatal Wi&#45;Fi fault and wait for the watchdog reset." alt="" coords="667,29,801,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="598,48,654,50,649,51,598,53"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="556,62,605,80,694,122,689,122,603,85,556,67"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="692,27,690,19,697,10,712,5,734,3,758,5,773,14,768,14,756,10,734,8,713,10,701,15,696,21,697,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="697,128,690,121,695,111,710,105,734,103,760,105,776,114,770,114,759,110,734,108,711,110,698,115,695,120,701,130"/>
+<area shape="poly" id="edge10_Node000006_Node000004" title=" " alt="" coords="550,210,680,162,685,162,552,215"/>
+<area shape="poly" id="edge9_Node000006_Node000006" title=" " alt="" coords="476,212,470,205,474,195,489,189,514,187,540,189,555,199,550,198,538,194,514,192,491,194,478,199,475,204,481,214"/>
+<area shape="poly" id="edge12_Node000007_Node000002" title=" " alt="" coords="354,85,440,67,435,69,355,90"/>
+<area shape="poly" id="edge14_Node000007_Node000004" title=" " alt="" coords="376,106,639,133,634,135,376,112"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="257,87,251,79,255,70,270,63,293,61,318,64,332,73,327,73,316,69,293,67,271,69,259,73,256,79,262,88"/>
+</map>

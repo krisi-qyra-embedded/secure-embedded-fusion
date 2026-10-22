@@ -1,0 +1,7 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/wifi_reset_button.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/wifi_reset_button.h">
+<area shape="rect" id="Node000001" title="BOOT button Wi&#45;Fi reset interface." alt="" coords="114,5,386,112"/>
+<area shape="rect" id="Node000002" href="$a00652.html" title="ESP32 startup, service modes and STM32 crypto bring&#45;up." alt="" coords="5,160,225,267"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,122,163,162,160,158,191,125"/>
+<area shape="rect" id="Node000003" href="$a00317.html" title="BOOT button interrupt and Wi&#45;Fi reset requests." alt="" coords="248,160,520,267"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="307,121,341,160,335,159,305,126"/>
+</map>

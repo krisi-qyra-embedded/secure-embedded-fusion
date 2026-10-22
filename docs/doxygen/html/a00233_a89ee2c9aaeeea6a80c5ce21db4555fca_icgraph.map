@@ -1,0 +1,32 @@
+<map id="serialize_manifest" name="serialize_manifest">
+<area shape="rect" id="Node000001" title="Serialize a manifest into the canonical signed byte layout." alt="" coords="464,285,590,312"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="561,270,550,266,527,264,506,266,494,271,491,276,497,286,492,284,486,277,490,267,504,261,527,259,552,261,566,270"/>
+<area shape="rect" id="Node000002" href="$a00221.html#adce8d12f93ac9f85f46fada6009cbba9" title=" " alt="" coords="245,151,398,193"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="488,278,357,196,358,191,494,276"/>
+<area shape="rect" id="Node000006" href="$a00221.html#a41a72ec191a649af3ebda6508ca2ece5" title="Create the firmware manifest and sign its canonical form with Ed25519." alt="" coords="227,323,416,349"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="446,313,399,325,398,319,452,312"/>
+<area shape="rect" id="Node000010" href="$a00221.html#a89ccf247a17667c73a761948c4b573b0" title="Verify the stored manifest signature using the OTP Ed25519 trust anchor." alt="" coords="229,397,414,440"/>
+<area shape="poly" id="edge16_Node000001_Node000010" title=" " alt="" coords="492,320,361,399,359,394,487,321"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="353,136,342,132,321,129,302,131,290,136,286,142,287,151,282,149,280,141,287,132,301,126,321,124,343,126,358,135"/>
+<area shape="rect" id="Node000003" href="$a00221.html#a2ee6fc2863e2beeead988b6612512a2b" title="Run the Ed25519 negative test with a locally corrupted manifest message." alt="" coords="27,29,157,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="274,143,229,115,177,86,154,75,153,70,180,82,231,110,279,141"/>
+<area shape="rect" id="Node000004" href="$a00221.html#a58c9618c1fb30e86826af0e8c8b80b55" title="Run the Ed25519 negative test with a locally corrupted public key." alt="" coords="27,120,157,163"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="227,161,158,153,157,147,232,158"/>
+<area shape="rect" id="Node000005" href="$a00221.html#aa3dba117e428e465ee2ba68c6db9de98" title="Run the Ed25519 negative test with a locally corrupted signature." alt="" coords="27,211,157,253"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="228,198,159,217,156,213,232,194"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="128,15,115,10,92,8,70,10,57,15,52,21,54,29,48,29,47,19,54,10,69,5,92,3,117,5,133,12"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="128,106,115,101,92,99,70,101,57,105,52,111,54,119,48,120,47,110,54,101,69,95,92,93,117,96,133,103"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="128,196,115,192,92,189,70,191,57,196,52,202,54,210,48,210,47,201,54,192,69,186,92,184,117,186,133,194"/>
+<area shape="poly" id="edge12_Node000006_Node000006" title=" " alt="" coords="355,307,344,304,321,301,300,303,288,308,285,313,291,323,286,322,280,314,284,304,299,298,321,296,346,299,360,307"/>
+<area shape="rect" id="Node000007" href="$a00863.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="67,352,117,379"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="209,352,118,365,116,360,213,348"/>
+<area shape="rect" id="Node000008" href="$a00233.html#a143124af5faa46c359a927e339deab51" title="Write one 32&#45;bit value in big&#45;endian form into a bounded buffer." alt="" coords="43,301,141,328"/>
+<area shape="poly" id="edge13_Node000006_Node000008" title=" " alt="" coords="209,327,142,322,141,317,214,324"/>
+<area shape="poly" id="edge14_Node000008_Node000001" title=" " alt="" coords="156,296,226,284,321,279,416,284,466,290,461,291,416,289,321,284,227,289,157,301"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="130,287,118,282,92,280,68,282,55,287,52,292,58,300,53,301,46,293,51,283,67,277,92,275,120,277,136,286"/>
+<area shape="poly" id="edge17_Node000010_Node000007" title=" " alt="" coords="212,395,117,374,117,368,216,392"/>
+<area shape="poly" id="edge20_Node000010_Node000010" title=" " alt="" coords="353,381,342,378,321,376,302,378,290,383,286,389,287,398,282,395,280,387,287,378,301,373,321,371,343,373,358,382"/>
+<area shape="rect" id="Node000011" href="$a00233.html#ad5e4fe2730dc40ac89094f6cb0ba6d47" title="Store the public verification key in the configured protected region." alt="" coords="5,427,179,453"/>
+<area shape="poly" id="edge18_Node000010_Node000011" title=" " alt="" coords="211,429,179,435,179,429,217,428"/>
+<area shape="poly" id="edge19_Node000011_Node000011" title=" " alt="" coords="130,412,118,408,92,405,68,407,55,412,52,417,58,426,53,426,46,418,51,408,67,402,92,400,120,403,136,412"/>
+</map>

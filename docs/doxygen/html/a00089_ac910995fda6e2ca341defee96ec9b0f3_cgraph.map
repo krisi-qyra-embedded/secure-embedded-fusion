@@ -1,0 +1,19 @@
+<map id="iwdg_refresh" name="iwdg_refresh">
+<area shape="rect" id="Node000001" title="Reload the independent watchdog." alt="" coords="5,141,101,168"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="24,141,19,133,23,123,34,117,53,115,73,117,85,125,80,127,71,122,53,120,36,122,27,127,25,132,29,140"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a09f53a4b50be472a29be3a14960e2f1f" title="Handle an IWDG&#45;related application error." alt="" coords="149,104,287,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,141,144,133,139,136,102,146"/>
+<area shape="rect" id="Node000009" href="$a00194.html#a0e01265d459c55b4baaa4946017931bf" title=" " alt="" coords="159,179,277,205"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="101,163,146,174,141,176,101,168"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="189,103,184,95,188,86,199,80,218,77,238,80,250,89,244,89,236,85,218,83,201,85,192,89,190,95,194,104"/>
+<area shape="rect" id="Node000003" href="$a00191.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="335,29,472,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="250,101,334,66,353,61,348,63,336,70,252,106"/>
+<area shape="rect" id="Node000005" href="$a01056.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="366,104,441,131"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="287,115,354,117,348,118,288,120"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="372,28,366,21,370,11,383,5,404,3,426,5,439,14,434,14,424,10,404,8,384,10,374,15,372,20,377,30"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="372,103,366,95,370,86,383,79,404,77,426,80,439,89,434,88,424,85,404,83,384,85,374,89,372,95,377,104"/>
+<area shape="poly" id="edge11_Node000009_Node000009" title=" " alt="" coords="189,177,184,170,188,160,199,154,218,152,238,155,250,164,244,163,236,160,218,157,201,159,192,164,190,169,194,179"/>
+<area shape="rect" id="Node000010" href="$a00248.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="372,179,436,205"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="278,189,359,192,353,192,278,195"/>
+<area shape="poly" id="edge10_Node000010_Node000010" title=" " alt="" coords="372,177,366,170,370,160,383,154,404,152,426,155,439,164,434,163,424,160,404,157,384,159,374,164,372,169,377,179"/>
+</map>

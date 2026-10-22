@@ -1,0 +1,10 @@
+<map id="disconnectCallbackHandler" name="disconnectCallbackHandler">
+<area shape="rect" id="Node000001" title="Log a disconnect and attempt reconnect if autoreconnect is disabled." alt="" coords="299,29,479,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="420,14,410,10,389,8,370,10,359,15,357,20,362,30,357,28,351,21,355,11,368,5,389,3,412,5,425,15"/>
+<area shape="rect" id="Node000002" href="$a00299.html#a500d275476b6ba32815804434f32885b" title="Connect to AWS, publish sensor telemetry and process MQTT traffic." alt="" coords="153,29,251,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="281,43,252,45,252,40,286,43"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="225,14,218,10,202,8,187,10,179,14,177,20,181,30,176,28,172,21,175,11,185,5,202,3,220,5,230,15"/>
+<area shape="rect" id="Node000003" href="$a00299.html#aafc76bd7e6c7a18de1fc9a45147da11c" title="Start the AWS IoT task if it is not already running." alt="" coords="5,29,105,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="134,43,105,45,105,40,140,42"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="78,14,71,10,55,8,40,10,32,14,30,20,34,29,29,29,25,21,28,11,38,5,55,3,73,5,84,14"/>
+</map>

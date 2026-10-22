@@ -1,0 +1,16 @@
+<map id="softap_client_connected_events" name="softap_client_connected_events">
+<area shape="rect" id="Node000001" title="Cancel the cloud debounce and enter local dashboard mode." alt="" coords="5,96,168,139"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="41,95,40,86,47,77,63,71,87,69,112,72,129,80,124,81,111,77,86,75,64,77,50,81,45,87,47,95"/>
+<area shape="rect" id="Node000002" href="$a00860.html#a1535a2ab20693c8e0566c4201d6f48b0" title="Request AWS shutdown and start the local HTTPS dashboard." alt="" coords="216,104,434,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="168,115,202,117,197,118,169,120"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="285,103,279,95,284,85,299,79,325,77,353,80,369,89,363,89,351,85,325,83,300,85,287,89,284,95,291,104"/>
+<area shape="rect" id="Node000003" href="$a00257.html#ab7c2f5a88ac328f12166a431da7bf19a" title="Request an orderly stop of the AWS IoT task." alt="" coords="507,29,605,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="368,101,495,62,501,60,369,106"/>
+<area shape="rect" id="Node000007" href="$a00275.html#ae5fb127f629ed9aecaba445bd1512221" title="Start the HTTPS server and enable its watchdog checks." alt="" coords="496,104,616,131"/>
+<area shape="poly" id="edge5_Node000002_Node000007" title=" " alt="" coords="434,115,484,117,478,118,435,120"/>
+<area shape="rect" id="Node000041" href="$a00860.html#aadeb0533eb508a79f2a8bf45e1a8af19" title="Wait up to five seconds for the AWS task to clear its handle." alt="" coords="482,179,630,205"/>
+<area shape="poly" id="edge7_Node000002_Node000041" title=" " alt="" coords="369,129,501,173,495,174,368,134"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="517,28,510,21,515,11,531,5,556,3,584,5,600,15,595,14,583,10,556,8,532,10,519,15,516,20,522,30"/>
+<area shape="poly" id="edge6_Node000007_Node000007" title=" " alt="" coords="517,103,510,95,515,85,531,79,556,77,584,80,600,89,595,89,583,85,556,83,532,85,519,89,516,95,522,104"/>
+<area shape="poly" id="edge8_Node000041_Node000041" title=" " alt="" coords="517,177,510,170,515,160,531,154,556,152,584,155,600,164,595,163,583,160,556,157,532,159,519,164,516,169,522,179"/>
+</map>

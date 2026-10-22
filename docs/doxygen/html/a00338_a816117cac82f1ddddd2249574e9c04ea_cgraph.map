@@ -1,0 +1,10 @@
+<map id="wifi_app_note_api_success" name="wifi_app_note_api_success">
+<area shape="rect" id="Node000001" title="Clear the API failure count and refresh the watchdog." alt="" coords="5,29,187,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="58,29,52,21,57,11,72,5,96,3,122,5,138,14,132,14,121,10,96,8,73,10,60,15,57,20,64,29"/>
+<area shape="rect" id="Node000002" href="$a00338.html#ae31ded8e5f4d73165c5c5d5aaa8eb76a" title="Refresh the Wi&#45;Fi watchdog heartbeat." alt="" coords="235,29,398,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="187,40,222,43,216,43,187,45"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="282,28,277,21,281,11,294,5,316,3,340,5,354,14,349,14,338,10,316,8,296,10,285,15,282,20,287,30"/>
+<area shape="rect" id="Node000003" href="$a00278.html#af92177eb6358035c5fef8d881cec1546" title="Update the heartbeat timestamp for a monitored task." alt="" coords="446,29,582,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="398,40,433,43,428,43,398,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="480,28,474,21,479,11,492,5,514,3,538,5,552,15,547,14,536,10,514,8,494,10,482,15,480,20,485,30"/>
+</map>

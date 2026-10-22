@@ -1,0 +1,7 @@
+<map id="derive_keys_internal" name="derive_keys_internal">
+<area shape="rect" id="Node000001" title="Derive AES/MAC keys with the STM32&#45;compatible SHA&#45;256 suffix KDF." alt="" coords="5,29,146,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="44,29,39,21,43,11,55,5,76,3,97,5,110,14,105,14,95,10,75,8,57,10,47,15,44,20,50,29"/>
+<area shape="rect" id="Node000002" href="$a00323.html#a1e41732547343f08def211e6b0cdac74" title="Log an Mbed TLS operation and its error code." alt="" coords="194,29,318,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="146,40,181,43,175,43,146,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="225,28,219,21,223,11,236,5,256,3,277,5,290,14,285,14,276,10,256,8,237,10,227,15,225,20,230,30"/>
+</map>

@@ -1,0 +1,15 @@
+<map id="compute_jitter_accum_hashed_global" name="compute_jitter_accum_hashed_global">
+<area shape="rect" id="Node000001" title=" " alt="" coords="645,47,794,89"/>
+<area shape="rect" id="Node000002" href="$a00763.html#a9a370a6c845138edea4bd31a95a1d072" title="Hash the global timer&#45;jitter capture into its global digest." alt="" coords="425,5,575,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="627,51,575,43,575,38,632,51"/>
+<area shape="rect" id="Node000003" href="$a00763.html#af06c9c69c2d956db359ca6154c3005c4" title="Run the complete entropy&#45;conditioning and device&#45;personalization pipeline." alt="" coords="403,96,597,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="632,85,575,98,574,93,626,85"/>
+<area shape="poly" id="edge7_Node000003_Node000003" title=" " alt="" coords="536,80,525,77,500,75,477,77,464,81,462,87,468,97,463,94,456,87,461,77,476,71,500,69,526,72,541,81"/>
+<area shape="rect" id="Node000004" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,88,355,131"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="385,109,356,112,356,107,390,109"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="300,72,292,69,278,67,264,68,256,73,252,79,253,89,249,86,247,78,252,69,262,63,278,61,294,64,305,73"/>
+<area shape="rect" id="Node000005" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,96,152,123"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="182,110,153,112,152,107,187,109"/>
+<area shape="rect" id="Node000006" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,96,55,123"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="84,110,55,112,55,107,89,108"/>
+</map>

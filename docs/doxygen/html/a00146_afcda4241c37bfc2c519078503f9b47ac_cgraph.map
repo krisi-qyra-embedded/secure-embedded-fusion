@@ -1,0 +1,7 @@
+<map id="telemetry_publish_mpu9250" name="telemetry_publish_mpu9250">
+<area shape="rect" id="Node000001" title="Publish the latest MPU9250 sample." alt="" coords="5,29,189,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="58,29,52,21,57,11,72,5,97,3,124,5,140,14,134,14,123,10,97,8,73,10,60,15,57,20,64,29"/>
+<area shape="rect" id="Node000002" href="$a00257.html#aa891c98d9faefbdb171bf6d9ea70ec17" title="Advance a telemetry generation counter." alt="" coords="237,29,411,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,40,224,43,219,43,189,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="285,28,279,21,283,11,299,5,324,3,351,5,367,14,361,14,349,10,324,8,300,10,287,15,284,20,290,30"/>
+</map>

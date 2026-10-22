@@ -1,0 +1,6 @@
+<map id="jitter_wait_dma_disable" name="jitter_wait_dma_disable">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,163,56"/>
+<area shape="rect" id="Node000002" href="$a00785.html#abb39952b631e6f25ed7b69905cc63e59" title=" " alt="" coords="211,29,368,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,40,198,43,192,43,163,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="254,28,248,21,253,11,267,5,289,3,314,5,328,14,323,14,312,10,289,8,268,10,256,15,254,20,259,30"/>
+</map>

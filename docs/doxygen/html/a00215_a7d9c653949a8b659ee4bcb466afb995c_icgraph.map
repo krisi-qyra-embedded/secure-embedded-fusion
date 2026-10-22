@@ -1,0 +1,13 @@
+<map id="UART1_PM25_ResetHandles" name="UART1_PM25_ResetHandles">
+<area shape="rect" id="Node000001" title=" " alt="" coords="393,55,588,81"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="525,39,514,36,491,33,469,35,457,40,454,45,460,55,455,53,449,46,453,36,467,30,491,28,516,31,531,40"/>
+<area shape="rect" id="Node000002" href="$a00215.html#aa28d9b166af81b94e0b76d80553b3639" title="Initialize USART1 and DMA for PM2.5 reception." alt="" coords="215,29,345,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="375,54,346,53,346,48,380,54"/>
+<area shape="rect" id="Node000005" href="$a00215.html#a3f6f5e245a673e9289bdc5d9ea5e0a70" title="Recover the PM2.5 UART/DMA receive path." alt="" coords="5,80,167,107"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="377,78,167,91,167,86,377,72"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="311,14,301,10,280,8,260,10,249,15,246,20,252,30,246,28,241,21,245,11,258,5,280,3,303,5,317,14"/>
+<area shape="rect" id="Node000003" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="61,5,111,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="197,34,111,24,111,19,202,31"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="214,60,141,82,139,77,209,61"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="118,65,108,61,86,59,66,61,55,65,52,71,58,80,53,79,47,71,51,62,64,55,86,53,109,56,123,65"/>
+</map>

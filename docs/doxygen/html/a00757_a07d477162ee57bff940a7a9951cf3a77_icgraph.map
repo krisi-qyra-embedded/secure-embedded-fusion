@@ -1,0 +1,29 @@
+<map id="drbg_fill_bytes" name="drbg_fill_bytes">
+<area shape="rect" id="Node000001" title=" " alt="" coords="857,101,962,128"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="940,86,931,82,910,80,890,82,880,87,877,92,882,102,877,100,872,93,876,83,889,77,910,75,932,77,946,87"/>
+<area shape="rect" id="Node000002" href="$a00760.html#a3355a168adba2698bc2046a776fdd17d" title=" " alt="" coords="669,19,774,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="872,93,808,60,774,48,775,42,810,55,878,93"/>
+<area shape="rect" id="Node000003" href="$a00757.html#a21fb3bc304a056c1d419a1ed0dc0eee6" title="Generate one Ed25519 signing keypair with the project CTR&#45;DRBG." alt="" coords="634,93,809,136"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="839,115,809,117,809,112,844,115"/>
+<area shape="rect" id="Node000007" href="$a00757.html#ae75951e9c5e6523d01b2fc6da2e69c93" title="Generate secp256r1 sender and receiver keypairs with CMOX." alt="" coords="638,184,804,211"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="866,134,755,186,753,181,861,135"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="750,77,740,74,721,72,704,74,693,79,689,85,690,94,686,91,684,83,690,74,702,69,721,67,742,69,755,78"/>
+<area shape="rect" id="Node000004" href="$a00757.html#a1bac942b8898d2a776b5f2e081b53ef1" title="Reuse an existing Ed25519 keypair or generate one before signing." alt="" coords="200,29,375,72"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="664,86,627,72,585,60,532,51,477,47,376,47,375,41,477,41,532,46,586,55,628,67,669,87"/>
+<area shape="rect" id="Node000006" href="$a00757.html#ab12d1d695a2dc43c93397fae6ce3594c" title="Generate and initialize the Ed25519 signing&#45;key context." alt="" coords="432,93,577,136"/>
+<area shape="poly" id="edge8_Node000003_Node000006" title=" " alt="" coords="616,115,578,117,577,112,621,114"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="312,14,303,10,288,8,273,10,264,14,260,20,262,30,257,28,255,19,260,11,271,5,288,3,305,5,317,14"/>
+<area shape="rect" id="Node000005" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,101,55,128"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="184,79,56,111,54,106,186,73"/>
+<area shape="poly" id="edge9_Node000006_Node000006" title=" " alt="" coords="538,78,526,74,504,72,484,74,472,79,467,85,468,94,464,91,462,83,468,74,483,69,505,67,528,69,543,78"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="752,168,742,165,721,163,702,165,691,169,689,175,694,185,689,182,683,175,687,166,700,159,721,157,744,160,757,169"/>
+<area shape="rect" id="Node000008" href="$a00757.html#a8f6eba2d8e6fee98435b15f1b5a71e8b" title="Initialize sender ECDH material and derive the sender session keys." alt="" coords="423,184,586,211"/>
+<area shape="poly" id="edge12_Node000007_Node000008" title=" " alt="" coords="620,197,586,200,586,195,625,197"/>
+<area shape="poly" id="edge17_Node000008_Node000008" title=" " alt="" coords="540,168,529,165,504,163,482,165,469,169,467,175,472,185,468,182,461,175,466,166,481,159,505,157,530,160,545,169"/>
+<area shape="rect" id="Node000009" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="210,139,365,181"/>
+<area shape="poly" id="edge13_Node000008_Node000009" title=" " alt="" coords="406,181,366,176,366,171,411,181"/>
+<area shape="poly" id="edge14_Node000009_Node000009" title=" " alt="" coords="312,123,303,119,288,117,273,119,264,124,260,130,261,139,257,137,255,129,260,120,271,114,288,112,305,114,317,123"/>
+<area shape="rect" id="Node000010" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,127,152,153"/>
+<area shape="poly" id="edge15_Node000009_Node000010" title=" " alt="" coords="192,149,153,146,152,140,197,148"/>
+<area shape="poly" id="edge16_Node000010_Node000005" title=" " alt="" coords="85,131,55,124,54,118,90,128"/>
+</map>

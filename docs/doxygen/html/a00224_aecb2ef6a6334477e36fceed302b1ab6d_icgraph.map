@@ -1,0 +1,10 @@
+<map id="flash_program_byte" name="flash_program_byte">
+<area shape="rect" id="Node000001" title="Program one byte at the requested Flash address." alt="" coords="321,29,456,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="416,14,407,10,389,8,371,10,362,15,360,20,364,30,360,28,355,21,358,11,370,5,389,3,409,5,421,15"/>
+<area shape="rect" id="Node000002" href="$a00224.html#a640b8cf9669cf22d0ff26e8543874b7d" title="Program one value using the requested Flash programming width." alt="" coords="170,29,273,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="302,43,273,45,273,40,308,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="247,14,239,10,221,8,205,10,197,15,194,20,199,30,194,28,189,21,192,11,204,5,221,3,240,5,252,15"/>
+<area shape="rect" id="Node000003" href="$a00224.html#abeb2a0445eff51b190850da2e3a554da" title="Erase the required sector range and program a sequence of 32&#45;bit words." alt="" coords="5,29,122,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="151,43,122,45,122,40,157,42"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="89,14,81,10,63,8,47,10,39,15,37,20,41,29,36,29,31,21,35,11,46,5,64,3,83,5,94,14"/>
+</map>

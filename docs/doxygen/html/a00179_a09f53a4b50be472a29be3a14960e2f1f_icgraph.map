@@ -1,0 +1,16 @@
+<map id="IWDG_ErrorHandler" name="IWDG_ErrorHandler">
+<area shape="rect" id="Node000001" title="Handle IWDG driver errors." alt="" coords="379,104,517,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="475,88,466,85,448,83,431,85,422,89,420,95,424,105,420,102,415,95,418,86,430,80,448,77,468,80,480,89"/>
+<area shape="rect" id="Node000002" href="$a00179.html#af739069840f17d1cf1d01000abc97567" title="Initialize the independent watchdog." alt="" coords="247,29,320,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="400,97,314,59,315,54,406,97"/>
+<area shape="rect" id="Node000005" href="$a00179.html#ac910995fda6e2ca341defee96ec9b0f3" title="Reload the independent watchdog." alt="" coords="236,104,331,131"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="361,118,331,120,331,115,366,117"/>
+<area shape="rect" id="Node000006" href="$a00179.html#ac8006b22ebfff3edea05692e0ada8e92" title="Validate heartbeats and refresh the watchdog when healthy." alt="" coords="5,129,188,156"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="383,134,331,145,258,150,188,150,188,145,258,145,331,140,377,135"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="310,14,301,10,283,8,266,10,257,15,255,20,260,30,255,28,250,21,253,11,265,5,283,3,303,5,315,14"/>
+<area shape="rect" id="Node000003" href="$a00894.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="72,29,121,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="230,45,122,45,121,40,234,41"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="310,88,301,85,283,83,266,85,257,89,255,95,260,105,255,103,250,95,253,86,265,80,283,77,303,80,315,89"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="217,126,188,133,188,128,223,125"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="127,114,117,110,96,108,77,110,67,115,64,120,69,129,64,128,59,121,63,111,76,105,97,103,119,105,132,114"/>
+</map>

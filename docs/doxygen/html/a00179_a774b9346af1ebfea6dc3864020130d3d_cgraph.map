@@ -1,0 +1,10 @@
+<map id="DS18B20_AppLogErrorDelay" name="DS18B20_AppLogErrorDelay">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,196,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="63,29,56,21,61,11,76,5,101,3,127,5,142,14,137,14,125,10,100,8,77,10,64,15,62,20,68,29"/>
+<area shape="rect" id="Node000002" href="$a00179.html#a1c76b011c93d918abda8b15b18e36495" title=" " alt="" coords="244,29,402,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="196,40,231,43,225,43,196,45"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="294,28,289,21,293,11,304,5,323,3,343,5,355,15,350,14,341,10,323,8,306,10,297,15,294,20,299,30"/>
+<area shape="rect" id="Node000003" href="$a00275.html#ab7cce8122024d7ba47bf10f434956de4" title="Apply a millisecond delay." alt="" coords="450,29,527,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="402,40,437,43,431,43,402,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="460,28,455,21,458,11,470,5,489,3,509,5,521,15,515,13,507,10,489,8,472,10,462,15,460,20,465,30"/>
+</map>

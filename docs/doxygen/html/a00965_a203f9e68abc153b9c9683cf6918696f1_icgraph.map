@@ -1,0 +1,10 @@
+<map id="derive_keys_from_shared_secret_receiver" name="derive_keys_from_shared_secret_receiver">
+<area shape="rect" id="Node000001" title="Derive receiver AES and MAC keys from the receiver shared secret." alt="" coords="383,29,553,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="498,13,488,10,468,8,450,10,439,15,434,21,435,30,431,27,429,19,435,10,448,5,468,3,489,5,504,14"/>
+<area shape="rect" id="Node000002" href="$a00965.html#a485927a3f8f78dfda692da15cb915d0b" title="Validate peer material, compute receiver ECDH secret and derive session keys." alt="" coords="209,29,335,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="365,51,335,53,335,48,370,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="301,13,291,10,272,8,254,10,244,15,239,21,240,30,236,27,234,19,240,10,253,5,272,3,292,5,306,14"/>
+<area shape="rect" id="Node000003" href="$a00866.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="5,29,161,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="191,51,161,53,161,48,196,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="112,14,102,10,83,8,65,10,55,15,50,21,52,29,47,28,45,19,51,10,64,5,83,3,103,5,117,13"/>
+</map>

@@ -1,0 +1,22 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/bme680_defs.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/bme680_defs.h">
+<area shape="rect" id="Node000001" title="BME680 register definitions, configuration values and data types." alt="" coords="156,5,504,128"/>
+<area shape="rect" id="Node000002" href="$a00092.html" title="I2C DMA, synchronization and shared fault handling declarations." alt="" coords="289,176,370,203"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="331,126,332,162,327,159,328,131"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="296,325,361,352"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="286,193,218,200,134,210,59,227,31,239,13,252,8,264,13,276,30,289,57,300,129,317,210,328,283,335,278,336,209,333,128,323,55,306,28,294,9,279,3,264,9,249,28,234,57,222,133,204,217,194,291,191"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="24,251,92,277"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="288,204,108,252,106,247,289,199"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="116,251,210,277"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="298,204,207,246,205,242,303,202"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="233,251,328,277"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="323,202,299,240,296,236,319,205"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="352,251,409,277"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="339,201,366,239,360,238,338,206"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="433,251,509,277"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="355,201,435,243,430,243,354,206"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="532,251,621,277"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="371,200,521,245,516,246,371,205"/>
+<area shape="rect" id="Node000010" href="$a00981.html" title="USART2 logging, ring&#45;buffer TX and RX/TX helper declarations." alt="" coords="645,251,700,277"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="371,195,484,216,633,250,627,251,483,221,371,200"/>
+<area shape="poly" id="edge10_Node000010_Node000003" title=" " alt="" coords="648,273,633,280,493,310,376,332,376,327,492,305,632,275,642,274"/>
+</map>

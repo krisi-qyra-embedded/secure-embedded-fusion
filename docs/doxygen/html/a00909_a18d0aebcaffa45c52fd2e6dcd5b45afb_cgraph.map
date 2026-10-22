@@ -1,0 +1,56 @@
+<map id="mpu9250_task" name="mpu9250_task">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,321,112,348"/>
+<area shape="poly" id="edge29_Node000001_Node000001" title=" " alt="" coords="24,322,18,313,22,303,36,297,59,295,82,297,96,305,92,307,81,302,58,300,38,302,26,307,24,312,29,320"/>
+<area shape="rect" id="Node000002" href="$a00191.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="665,388,803,415"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="75,346,127,390,206,447,302,505,354,529,408,548,465,564,511,572,557,568,610,548,627,532,654,500,712,428,716,425,659,503,631,536,613,553,558,573,511,577,464,569,406,553,352,534,300,510,203,452,124,394,75,351"/>
+<area shape="rect" id="Node000004" href="$a00203.html#a514a5807d084eb48770e3fef77e381e9" title="Run one MPU9250 runtime cycle and recovery step." alt="" coords="183,313,336,356"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="111,332,170,333,166,336,113,337"/>
+<area shape="rect" id="Node000006" href="$a00191.html#aef0fe391151f498b87061f7abc9a9b19" title="Mark fault recovery as in progress." alt="" coords="659,205,809,248"/>
+<area shape="poly" id="edge39_Node000001_Node000006" title=" " alt="" coords="78,319,133,284,212,240,306,197,356,180,406,167,464,156,509,152,555,156,612,167,650,179,686,197,681,198,648,184,611,172,554,161,509,158,464,161,408,172,357,185,308,202,214,245,136,289,82,322"/>
+<area shape="rect" id="Node000058" href="$a00194.html#a14fb51100b561389c651739b3d4871b2" title="Request a controlled watchdog reset." alt="" coords="442,637,576,664"/>
+<area shape="poly" id="edge30_Node000001_Node000058" title=" " alt="" coords="61,345,69,395,84,463,96,498,113,533,135,565,161,593,191,613,223,628,293,648,363,656,429,659,424,659,363,662,292,654,221,633,188,617,158,597,130,569,108,536,91,500,79,464,63,396,60,351"/>
+<area shape="rect" id="Node000060" href="$a00191.html#a1d925e7ed7950e2ebce495db8b01325d" title="Mark fault recovery as completed." alt="" coords="160,29,359,56"/>
+<area shape="poly" id="edge36_Node000001_Node000060" title=" " alt="" coords="58,321,65,274,81,208,94,172,111,136,132,102,158,73,177,61,174,65,161,77,136,105,116,138,99,174,87,209,70,275,64,322"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="699,387,693,379,697,370,711,363,734,361,759,364,773,373,768,373,757,369,734,367,712,369,701,373,698,379,704,388"/>
+<area shape="rect" id="Node000003" href="$a00254.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="886,388,996,415"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="803,399,873,401,868,402,804,404"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="905,387,899,379,904,370,918,363,941,361,965,364,980,373,975,373,964,369,941,367,919,369,907,373,905,379,910,388"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="336,343,652,388,648,391,336,348"/>
+<area shape="poly" id="edge17_Node000004_Node000004" title=" " alt="" coords="221,312,219,303,226,294,239,289,259,287,281,289,295,297,290,298,280,294,259,292,241,294,229,299,225,305,226,313"/>
+<area shape="rect" id="Node000005" href="$a00203.html#a327baa96552b5847067de6a60dd0e06f" title=" " alt="" coords="421,205,597,248"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="298,311,406,258,425,252,420,255,408,262,301,315"/>
+<area shape="rect" id="Node000008" href="$a00203.html#a9ec6ffbeedc9d886486e28a6f3ac5bca" title=" " alt="" coords="433,421,585,464"/>
+<area shape="poly" id="edge14_Node000004_Node000008" title=" " alt="" coords="311,354,447,414,442,416,311,359"/>
+<area shape="rect" id="Node000042" href="$a00194.html#a66b10b0eb144add187cd9402aaf989b9" title="Signal a valid MPU9250 application sample." alt="" coords="407,512,611,539"/>
+<area shape="poly" id="edge18_Node000004_Node000042" title=" " alt="" coords="280,354,336,412,371,444,408,474,462,505,456,505,406,478,367,448,332,416,279,359"/>
+<area shape="rect" id="Node000044" href="$a00203.html#a1c5f336c4c3d69521a581a8448776245" title="Read and update processed accelerometer and gyroscope data." alt="" coords="422,296,596,323"/>
+<area shape="poly" id="edge22_Node000004_Node000044" title=" " alt="" coords="335,324,409,318,405,321,337,329"/>
+<area shape="rect" id="Node000057" href="$a00191.html#a13cf982f485a32d152a600e3533ff04b" title="Clear one subsystem from the active fault mask." alt="" coords="668,115,800,157"/>
+<area shape="poly" id="edge26_Node000004_Node000057" title=" " alt="" coords="270,311,291,278,322,238,360,198,406,167,467,143,533,130,596,125,656,127,651,130,597,131,533,136,469,148,408,172,364,202,326,241,296,281,275,314"/>
+<area shape="poly" id="edge8_Node000005_Node000002" title=" " alt="" coords="591,246,613,258,646,284,675,315,719,375,714,374,671,319,642,288,610,262,591,251"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="466,204,465,195,472,186,487,181,509,179,533,181,549,189,544,190,532,186,509,184,488,186,475,191,470,197,472,206"/>
+<area shape="poly" id="edge10_Node000005_Node000006" title=" " alt="" coords="597,224,646,226,641,228,598,229"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="695,204,693,195,700,186,713,181,734,179,756,181,771,190,766,190,755,186,734,184,715,186,703,191,698,197,700,206"/>
+<area shape="rect" id="Node000007" href="$a00191.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="857,115,1025,157"/>
+<area shape="poly" id="edge12_Node000006_Node000007" title=" " alt="" coords="784,202,879,163,874,165,786,207"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="901,113,900,105,906,96,920,90,941,88,963,90,978,99,973,99,962,96,941,93,921,95,910,100,905,106,906,115"/>
+<area shape="poly" id="edge15_Node000008_Node000002" title=" " alt="" coords="585,426,653,416,647,417,586,431"/>
+<area shape="poly" id="edge16_Node000008_Node000008" title=" " alt="" coords="467,420,465,411,472,402,487,397,509,395,533,397,549,406,544,406,532,402,509,400,488,402,475,407,470,413,471,422"/>
+<area shape="poly" id="edge19_Node000042_Node000042" title=" " alt="" coords="471,511,464,503,469,493,484,487,509,485,536,488,552,497,546,497,534,493,509,491,486,493,473,497,470,503,476,512"/>
+<area shape="rect" id="Node000043" href="$a00248.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="702,537,766,564"/>
+<area shape="poly" id="edge20_Node000042_Node000043" title=" " alt="" coords="612,534,689,545,684,546,612,540"/>
+<area shape="poly" id="edge21_Node000043_Node000043" title=" " alt="" coords="699,536,693,529,697,519,711,513,734,511,759,513,774,523,768,522,758,519,734,516,712,518,701,523,698,528,704,538"/>
+<area shape="poly" id="edge23_Node000044_Node000002" title=" " alt="" coords="560,321,612,339,697,380,692,381,610,344,560,326"/>
+<area shape="poly" id="edge25_Node000044_Node000006" title=" " alt="" coords="547,293,662,253,657,255,549,298"/>
+<area shape="poly" id="edge24_Node000044_Node000044" title=" " alt="" coords="471,295,464,287,469,277,484,271,509,269,536,272,552,280,546,281,534,277,509,275,486,277,473,281,470,287,476,296"/>
+<area shape="poly" id="edge28_Node000057_Node000007" title=" " alt="" coords="799,133,844,135,839,137,801,139"/>
+<area shape="poly" id="edge27_Node000057_Node000057" title=" " alt="" coords="695,113,693,105,700,96,713,90,734,88,756,90,771,99,766,99,755,96,734,93,715,95,703,100,698,106,700,115"/>
+<area shape="poly" id="edge31_Node000058_Node000002" title=" " alt="" coords="546,634,579,617,609,593,627,570,636,549,644,527,657,500,710,428,715,425,662,503,649,529,641,551,631,573,613,597,582,621,548,639"/>
+<area shape="poly" id="edge34_Node000058_Node000043" title=" " alt="" coords="541,634,685,571,690,570,542,639"/>
+<area shape="poly" id="edge35_Node000058_Node000058" title=" " alt="" coords="471,636,464,629,469,619,484,613,509,611,536,613,552,623,546,622,534,618,509,616,486,618,473,623,470,628,476,638"/>
+<area shape="rect" id="Node000059" href="$a00194.html#a694918902eb14e657ca03408fa5168e3" title=" " alt="" coords="661,637,807,664"/>
+<area shape="poly" id="edge32_Node000058_Node000059" title=" " alt="" coords="577,648,649,651,643,651,577,653"/>
+<area shape="poly" id="edge33_Node000059_Node000059" title=" " alt="" coords="699,636,693,629,697,619,711,613,734,611,759,613,773,623,768,622,757,618,734,616,712,618,701,623,698,628,704,638"/>
+<area shape="poly" id="edge38_Node000060_Node000007" title=" " alt="" coords="358,37,455,36,568,41,690,54,809,76,849,89,888,107,883,108,848,94,808,81,689,59,568,47,455,42,360,41"/>
+<area shape="poly" id="edge37_Node000060_Node000060" title=" " alt="" coords="225,29,219,21,223,11,237,5,259,3,283,5,297,13,292,15,282,10,259,8,238,10,227,15,224,20,230,29"/>
+</map>

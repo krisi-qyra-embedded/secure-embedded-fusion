@@ -1,0 +1,17 @@
+<map id="spi_dma_wait_complete" name="spi_dma_wait_complete">
+<area shape="rect" id="Node000001" title=" " alt="" coords="429,83,590,109"/>
+<area shape="poly" id="edge10_Node000001_Node000001" title=" " alt="" coords="543,67,533,64,510,61,488,63,476,68,474,73,479,83,474,81,468,74,473,64,487,58,510,56,534,59,549,68"/>
+<area shape="rect" id="Node000002" href="$a00227.html#aec9794c46b6960e18217f364350014e0" title="Wait for DMA2 Stream0 completion." alt="" coords="226,29,381,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="428,79,381,70,382,65,434,79"/>
+<area shape="rect" id="Node000023" href="$a00227.html#ae466194cb71dab771038e10031039b3c" title="Wait for DMA2 Stream1 completion." alt="" coords="226,120,381,163"/>
+<area shape="poly" id="edge5_Node000001_Node000023" title=" " alt="" coords="434,113,382,127,381,122,428,114"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="335,14,324,10,303,8,284,10,272,15,268,21,269,30,264,28,262,19,269,10,283,5,303,3,326,5,340,14"/>
+<area shape="rect" id="Node000003" href="$a00200.html#aba481ea1ed28d6c8ba8c4637f101e22c" title="Read multiple bytes from a MAX31865 register." alt="" coords="5,45,178,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="208,55,179,58,177,53,213,53"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="126,31,115,26,91,24,69,26,57,31,55,36,60,44,55,45,49,37,54,27,68,21,92,19,117,21,132,29"/>
+<area shape="poly" id="edge6_Node000023_Node000003" title=" " alt="" coords="230,114,177,94,128,75,129,70,179,90,236,113"/>
+<area shape="poly" id="edge9_Node000023_Node000023" title=" " alt="" coords="335,104,324,101,303,99,284,101,272,105,268,111,269,121,264,118,262,110,269,101,283,95,303,93,326,96,340,105"/>
+<area shape="rect" id="Node000024" href="$a00200.html#a9c518b06dd3224d083447b9d12f137ba" title="Write one 8&#45;bit MAX31865 register." alt="" coords="5,128,178,155"/>
+<area shape="poly" id="edge7_Node000023_Node000024" title=" " alt="" coords="208,142,178,144,178,139,213,141"/>
+<area shape="poly" id="edge8_Node000024_Node000024" title=" " alt="" coords="126,113,115,109,91,107,69,109,57,113,55,119,61,128,55,127,49,119,54,110,68,103,92,101,117,104,132,113"/>
+</map>

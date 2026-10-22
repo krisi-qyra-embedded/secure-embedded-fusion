@@ -1,0 +1,56 @@
+<map id="OneWire_WriteByte" name="OneWire_WriteByte">
+<area shape="rect" id="Node000001" title="Write one byte on the 1&#45;Wire bus." alt="" coords="947,255,1083,281"/>
+<area shape="poly" id="edge40_Node000001_Node000001" title=" " alt="" coords="1049,239,1038,236,1015,233,993,235,981,240,979,245,984,255,979,253,973,246,978,236,992,230,1015,228,1040,231,1054,240"/>
+<area shape="rect" id="Node000002" href="$a00161.html#a7a48e520e7d07a4c1147229dd698da3f" title="Read the configured resolution from one device." alt="" coords="498,29,665,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="996,240,957,183,929,152,897,126,841,97,780,75,720,61,666,52,665,47,721,56,781,70,843,92,900,122,933,148,961,180,1002,241"/>
+<area shape="rect" id="Node000003" href="$a00161.html#aeeb7e8c7e01e0cac05775aeef5ae9779" title="Read one DS18B20 temperature." alt="" coords="524,379,639,405"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="953,285,632,381,630,376,948,287"/>
+<area shape="rect" id="Node000014" href="$a00161.html#ad2d442e54d7c29c1c27a9c040cd4b5f6" title="Set the resolution of one DS18B20." alt="" coords="498,179,664,205"/>
+<area shape="poly" id="edge11_Node000001_Node000014" title=" " alt="" coords="984,244,946,218,898,196,838,183,777,178,718,179,666,182,664,177,718,173,777,173,839,178,900,191,949,214,990,245"/>
+<area shape="rect" id="Node000017" href="$a00161.html#ab0b75ef863c6628fd001639a18c3786f" title="Configure the temperature alarm limits." alt="" coords="496,104,666,131"/>
+<area shape="poly" id="edge17_Node000001_Node000017" title=" " alt="" coords="991,242,951,204,925,184,898,168,840,146,780,132,720,124,667,120,666,115,721,118,780,127,842,141,900,163,928,180,954,200,996,243"/>
+<area shape="rect" id="Node000018" href="$a00161.html#a8317cc4bec6d4994a541fec4faaeae23" title="Start conversion on one DS18B20." alt="" coords="525,253,637,280"/>
+<area shape="poly" id="edge21_Node000001_Node000018" title=" " alt="" coords="929,269,714,271,638,270,637,265,714,265,934,268"/>
+<area shape="rect" id="Node000019" href="$a00161.html#ae06f16956738981c37bd373eba2a4739" title="Start conversion on every device on the bus." alt="" coords="518,453,645,480"/>
+<area shape="poly" id="edge23_Node000001_Node000019" title=" " alt="" coords="990,291,949,327,900,360,850,383,809,396,715,423,622,455,620,450,714,417,808,391,848,378,897,355,946,323,986,293"/>
+<area shape="rect" id="Node000020" href="$a00194.html#a530b83f7aee36893b693db97eb2d97e3" title="Run a 1&#45;Wire ROM search." alt="" coords="746,456,867,483"/>
+<area shape="poly" id="edge27_Node000001_Node000020" title=" " alt="" coords="999,293,957,354,930,386,900,415,869,439,837,458,835,453,866,435,897,411,926,382,953,350,995,296"/>
+<area shape="rect" id="Node000022" href="$a00194.html#a155cb652e809bdba8310e4c4196f10e5" title="Select one device by ROM address." alt="" coords="714,229,899,256"/>
+<area shape="poly" id="edge33_Node000001_Node000022" title=" " alt="" coords="928,258,899,257,899,251,934,258"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="618,15,607,10,581,8,557,10,545,15,542,20,548,29,543,29,536,21,541,11,556,5,581,3,608,5,624,14"/>
+<area shape="poly" id="edge10_Node000003_Node000003" title=" " alt="" coords="618,363,607,360,581,357,557,359,545,364,542,369,548,379,543,377,536,370,541,360,556,354,581,352,608,355,624,364"/>
+<area shape="rect" id="Node000004" href="$a00161.html#aa8465204abd075b1e25b6b4d39f2c8dd" title=" " alt="" coords="5,196,197,239"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="533,372,447,337,300,284,173,242,172,237,302,279,449,332,539,372"/>
+<area shape="rect" id="Node000005" href="$a00161.html#ac8a6a2235f78b506554c9e56744c2480" title="Run one DS18B20 application state&#45;machine step." alt="" coords="281,461,412,488"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="519,410,497,420,382,463,381,458,495,415,514,411"/>
+<area shape="rect" id="Node000009" href="$a00161.html#a956871d061ccecb139d8527c34101b0b" title=" " alt="" coords="245,371,448,413"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="505,393,449,395,448,389,510,391"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="139,182,126,177,101,175,78,177,63,181,58,187,60,195,55,196,53,186,61,177,77,171,101,169,127,172,144,179"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="386,446,373,442,346,440,322,442,308,447,305,452,312,462,306,460,300,453,305,443,320,437,346,435,375,437,391,447"/>
+<area shape="poly" id="edge9_Node000009_Node000009" title=" " alt="" coords="383,355,370,352,346,349,324,351,311,356,305,362,307,371,302,369,300,361,308,352,323,346,346,344,371,346,388,355"/>
+<area shape="poly" id="edge12_Node000014_Node000004" title=" " alt="" coords="503,210,448,220,317,226,198,225,196,220,317,221,448,215,508,208"/>
+<area shape="poly" id="edge16_Node000014_Node000014" title=" " alt="" coords="618,164,607,160,581,157,557,159,545,164,542,169,548,179,543,178,536,170,541,160,556,154,581,152,608,155,624,163"/>
+<area shape="rect" id="Node000015" href="$a00161.html#a3f70ccde53d51ad8e16cf23d5f597e6b" title="Initialize the DS18B20 driver and discover devices." alt="" coords="295,179,398,205"/>
+<area shape="poly" id="edge13_Node000014_Node000015" title=" " alt="" coords="481,193,399,195,397,189,485,191"/>
+<area shape="poly" id="edge14_Node000015_Node000004" title=" " alt="" coords="277,201,198,210,196,205,282,197"/>
+<area shape="poly" id="edge15_Node000015_Node000015" title=" " alt="" coords="386,164,373,160,346,157,322,159,308,164,305,169,312,178,306,178,300,170,305,160,320,154,346,152,375,155,391,163"/>
+<area shape="poly" id="edge18_Node000017_Node000004" title=" " alt="" coords="478,116,366,123,305,132,245,145,186,169,137,197,133,194,184,164,244,140,304,126,366,118,483,113"/>
+<area shape="poly" id="edge19_Node000017_Node000015" title=" " alt="" coords="516,137,497,145,390,180,387,176,495,140,521,134"/>
+<area shape="poly" id="edge20_Node000017_Node000017" title=" " alt="" coords="618,89,607,85,581,83,557,85,545,89,542,95,548,104,543,103,536,95,541,85,556,79,581,77,608,80,624,88"/>
+<area shape="poly" id="edge22_Node000018_Node000018" title=" " alt="" coords="618,238,607,234,581,232,557,234,545,239,542,244,548,253,543,252,536,245,541,235,556,229,581,227,608,229,624,238"/>
+<area shape="poly" id="edge24_Node000019_Node000005" title=" " alt="" coords="499,470,413,475,412,470,504,469"/>
+<area shape="poly" id="edge25_Node000019_Node000009" title=" " alt="" coords="520,449,415,417,416,411,525,448"/>
+<area shape="poly" id="edge26_Node000019_Node000019" title=" " alt="" coords="618,438,607,434,581,432,557,434,545,439,542,444,548,454,543,452,536,445,541,435,556,429,581,427,608,429,624,438"/>
+<area shape="poly" id="edge31_Node000020_Node000015" title=" " alt="" coords="782,444,732,395,700,368,665,345,620,326,582,318,542,311,495,294,419,250,364,208,365,203,422,246,497,290,544,306,583,313,622,321,668,340,703,364,736,391,787,445"/>
+<area shape="poly" id="edge32_Node000020_Node000020" title=" " alt="" coords="841,440,830,437,806,435,785,437,773,441,770,447,776,457,771,454,765,447,769,438,783,431,807,429,831,432,846,441"/>
+<area shape="rect" id="Node000021" href="$a00161.html#ad6591fd44059b2333aeb7c6d92f22413" title="Search for devices with an active alarm." alt="" coords="502,528,661,555"/>
+<area shape="poly" id="edge28_Node000020_Node000021" title=" " alt="" coords="750,488,626,530,625,525,745,488"/>
+<area shape="poly" id="edge30_Node000021_Node000005" title=" " alt="" coords="514,523,396,491,397,486,519,523"/>
+<area shape="poly" id="edge29_Node000021_Node000021" title=" " alt="" coords="618,512,607,509,581,507,557,509,545,513,542,519,548,529,543,526,536,519,541,509,556,503,581,501,608,504,624,513"/>
+<area shape="poly" id="edge34_Node000022_Node000002" title=" " alt="" coords="788,215,740,144,705,104,665,70,645,59,644,54,668,66,709,100,744,141,794,216"/>
+<area shape="poly" id="edge35_Node000022_Node000003" title=" " alt="" coords="774,264,604,381,602,376,769,266"/>
+<area shape="poly" id="edge36_Node000022_Node000014" title=" " alt="" coords="726,226,644,209,644,203,732,225"/>
+<area shape="poly" id="edge37_Node000022_Node000017" title=" " alt="" coords="776,219,726,182,665,145,638,134,638,129,668,140,730,178,781,219"/>
+<area shape="poly" id="edge38_Node000022_Node000018" title=" " alt="" coords="697,255,638,263,637,258,702,253"/>
+<area shape="poly" id="edge39_Node000022_Node000022" title=" " alt="" coords="841,214,830,210,806,208,785,210,773,215,770,220,776,230,771,228,765,221,769,211,783,205,807,203,831,205,846,214"/>
+</map>

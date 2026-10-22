@@ -1,0 +1,26 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/wifi_reset_button.c" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/wifi_reset_button.c">
+<area shape="rect" id="Node000001" title="BOOT button interrupt and Wi&#45;Fi reset requests." alt="" coords="270,5,542,112"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="161,235,304,261"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="267,79,193,94,118,112,55,135,33,148,17,162,9,178,11,192,21,204,38,214,88,229,148,240,143,242,87,234,36,219,17,208,6,194,4,177,13,158,30,143,53,130,116,107,192,88,272,76"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="28,160,133,187"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="268,109,133,157,131,152,271,105"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="158,160,281,187"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="321,111,254,154,252,149,316,114"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="305,160,397,187"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="383,110,366,148,362,144,379,114"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="422,160,499,187"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="433,110,450,147,445,145,430,114"/>
+<area shape="rect" id="Node000007" href="$a00356.html" title="FreeRTOS task stack sizes, priorities and core assignments." alt="" coords="524,160,645,187"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="490,110,554,152,549,151,489,115"/>
+<area shape="rect" id="Node000008" href="$a00362.html" title="Wi&#45;Fi settings, control messages and application callbacks." alt="" coords="670,160,750,187"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="543,108,664,154,659,154,542,113"/>
+<area shape="rect" id="Node000012" href="$a00368.html" title="BOOT button Wi&#45;Fi reset interface." alt="" coords="774,160,905,187"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="543,93,778,155,773,156,542,98"/>
+<area shape="poly" id="edge11_Node000008_Node000002" title=" " alt="" coords="672,184,658,189,478,218,320,239,319,234,477,213,658,184,667,185"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="569,235,654,261"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="695,186,641,228,639,223,690,188"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="678,235,742,261"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="712,185,712,221,708,217,708,189"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="766,235,886,261"/>
+<area shape="poly" id="edge10_Node000008_Node000011" title=" " alt="" coords="731,185,795,226,790,225,729,190"/>
+</map>

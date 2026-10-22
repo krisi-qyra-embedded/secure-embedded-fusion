@@ -1,0 +1,10 @@
+<map id="log_printf" name="log_printf">
+<area shape="rect" id="Node000001" title="Format and queue a log message." alt="" coords="5,29,80,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="17,29,13,21,16,11,26,5,43,3,60,5,70,14,65,14,58,10,42,8,28,10,21,14,19,20,23,29"/>
+<area shape="rect" id="Node000002" href="$a01062.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="128,29,240,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="80,40,115,42,110,43,80,45"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="160,28,155,21,158,11,168,5,184,3,201,5,211,15,206,14,199,10,184,8,170,10,163,14,161,20,164,30"/>
+<area shape="rect" id="Node000003" href="$a00978.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="288,29,355,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="240,40,275,43,269,43,241,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="297,28,293,21,296,11,306,5,322,3,339,5,349,15,343,13,337,10,322,8,308,10,300,14,299,20,302,30"/>
+</map>

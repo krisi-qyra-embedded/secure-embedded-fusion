@@ -1,0 +1,10 @@
+<map id="device_uid_read" name="device_uid_read">
+<area shape="rect" id="Node000001" title="Read the STM32 device UID into the local buffer." alt="" coords="5,29,121,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="38,29,34,21,37,11,47,5,63,3,80,5,91,14,86,14,78,10,63,8,49,10,41,14,39,20,43,29"/>
+<area shape="rect" id="Node000002" href="$a01009.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="169,29,243,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="121,40,156,42,150,43,121,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="181,28,177,21,180,11,190,5,206,3,223,5,233,15,228,14,221,10,206,8,192,10,184,14,182,20,186,30"/>
+<area shape="rect" id="Node000003" href="$a01009.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="291,29,403,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="244,40,278,43,273,43,244,45"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="322,28,318,21,321,11,331,5,347,3,364,5,375,15,370,13,362,10,347,8,333,10,325,14,323,20,327,30"/>
+</map>

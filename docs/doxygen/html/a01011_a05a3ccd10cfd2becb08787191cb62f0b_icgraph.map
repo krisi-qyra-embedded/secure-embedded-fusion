@@ -1,0 +1,12 @@
+<map id="generate_nonce_and_iv_per_transfer" name="generate_nonce_and_iv_per_transfer">
+<area shape="rect" id="Node000001" title="Generate the per&#45;transfer nonce state and DRBG&#45;backed IV." alt="" coords="497,75,638,117"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="600,59,589,56,568,53,548,55,536,60,531,66,533,76,528,73,526,65,533,56,547,50,568,48,590,50,605,59"/>
+<area shape="rect" id="Node000002" href="$a01011.html#a488a72dc38b4dec4dd02c663ea057b6c" title="Generate the transfer IV and encrypt through the AES&#45;GCM sender path." alt="" coords="269,29,449,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="479,77,450,73,450,68,484,77"/>
+<area shape="rect" id="Node000004" href="$a01011.html#a956e503503fd19545be52e101e30ef31" title="Generate transfer IV, encrypt with AES&#45;CTR and authenticate with HMAC." alt="" coords="269,120,449,163"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="484,114,450,124,449,119,479,115"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="391,14,380,10,359,8,339,10,327,15,323,21,324,30,319,28,317,19,324,10,338,5,359,3,381,5,396,14"/>
+<area shape="rect" id="Node000003" href="$a01014.html#ae0f5e3d87c01bfba1f72168c91121bdc" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="5,37,221,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="250,51,222,53,221,48,256,50"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="391,104,380,101,359,99,339,101,327,105,323,111,324,121,319,118,317,110,324,101,338,95,359,93,381,96,396,105"/>
+</map>

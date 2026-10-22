@@ -1,0 +1,13 @@
+<map id="ESP32_UART_LinkTest_PrintHealth" name="ESP32_UART_LinkTest_PrintHealth">
+<area shape="rect" id="Node000001" title="Print the compact encrypted&#45;link health summary." alt="" coords="5,59,167,101"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="46,58,44,49,51,40,65,34,86,32,109,34,124,43,119,44,107,40,86,37,66,39,54,44,49,50,51,58"/>
+<area shape="rect" id="Node000002" href="$a00191.html#aa41cf56600f91eb0d18ba7c32f1439cc" title="Copy the current USART6 statistics." alt="" coords="215,67,379,93"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,77,201,80,196,80,168,83"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="261,65,255,58,259,48,273,42,297,40,322,43,337,52,331,51,320,48,297,45,275,47,263,52,260,57,266,67"/>
+<area shape="rect" id="Node000003" href="$a00191.html#a0de65ee146e0df0eee7bb43774e49d6b" title=" " alt="" coords="427,29,593,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="376,63,412,60,418,59,377,69"/>
+<area shape="rect" id="Node000004" href="$a00191.html#aaa94cc49b18baf6e03258003078fe677" title=" " alt="" coords="431,104,589,131"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="377,91,418,101,413,101,376,97"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="474,28,468,21,472,11,487,5,510,3,536,5,551,14,545,14,534,10,510,8,488,10,476,15,473,20,479,30"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="474,102,468,95,472,86,487,79,510,77,536,80,550,89,545,88,534,85,510,83,488,85,476,89,473,95,479,105"/>
+</map>

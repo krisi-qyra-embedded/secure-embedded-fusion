@@ -1,0 +1,7 @@
+<map id="runtime_load_i16_le" name="runtime_load_i16_le">
+<area shape="rect" id="Node000001" title="Read a signed 16&#45;bit little&#45;endian value." alt="" coords="5,29,142,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="41,29,36,21,40,11,53,5,74,3,96,5,109,14,104,14,94,10,73,8,54,10,44,15,41,20,47,29"/>
+<area shape="rect" id="Node000002" href="$a00329.html#aa85aedd26d76435e264409bcd90279b0" title="Read an unsigned 16&#45;bit little&#45;endian value." alt="" coords="190,29,330,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="142,40,177,42,172,43,142,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="228,28,222,21,226,11,239,5,260,3,282,5,295,14,290,14,281,10,260,8,240,10,230,15,228,20,233,30"/>
+</map>

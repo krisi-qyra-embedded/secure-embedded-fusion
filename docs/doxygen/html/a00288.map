@@ -1,0 +1,13 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Inc/flash_protection.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Inc/flash_protection.h">
+<area shape="rect" id="Node000001" title="Option&#45;byte protection, OTP provisioning and application handoff declarations." alt="" coords="33,5,252,112"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,160,70,187"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,114,62,150,57,147,95,110"/>
+<area shape="rect" id="Node000003" href="$a00284.html" title="STM32F4 Flash erase, programming and read helper declarations." alt="" coords="93,160,192,187"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="144,110,145,145,140,143,142,114"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="217,160,285,187"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="194,109,231,148,226,149,192,115"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="42,235,135,261"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="136,186,109,224,105,220,131,188"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="159,235,233,261"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="153,185,181,222,175,222,151,190"/>
+</map>

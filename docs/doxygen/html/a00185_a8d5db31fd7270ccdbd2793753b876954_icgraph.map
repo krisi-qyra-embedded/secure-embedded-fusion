@@ -1,0 +1,10 @@
+<map id="esp32_uart_mark_fault_owner_from_isr" name="esp32_uart_mark_fault_owner_from_isr">
+<area shape="rect" id="Node000001" title=" " alt="" coords="432,29,585,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="542,13,530,10,509,8,488,10,476,15,471,21,472,30,468,27,466,19,473,10,487,5,509,3,532,5,547,14"/>
+<area shape="rect" id="Node000002" href="$a00185.html#a57d4d1e767fd0d2f175b9088c0949811" title="Handle USART6 RX/TX and error interrupts." alt="" coords="203,37,384,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="414,51,385,53,384,48,419,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="328,22,317,18,293,16,271,18,259,23,256,28,262,38,257,36,251,29,255,19,270,13,293,11,319,13,334,22"/>
+<area shape="rect" id="Node000003" href="$a00185.html#a12c827857d907ad0cccd586fd934d446" title=" " alt="" coords="5,37,155,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="184,51,155,53,155,48,190,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="115,22,104,18,80,16,58,18,46,23,43,28,49,37,43,37,37,29,42,19,56,13,80,11,105,13,120,22"/>
+</map>

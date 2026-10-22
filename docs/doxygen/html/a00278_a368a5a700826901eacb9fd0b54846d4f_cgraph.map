@@ -1,0 +1,16 @@
+<map id="wait_for_image_ready_flag" name="wait_for_image_ready_flag">
+<area shape="rect" id="Node000001" title="Poll the image&#45;ready flag until valid or until the poll limit is reached." alt="" coords="5,104,182,131"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="56,104,50,95,54,85,69,79,94,77,119,80,135,88,130,89,118,85,93,83,71,85,58,89,55,95,61,103"/>
+<area shape="rect" id="Node000002" href="$a00275.html#ab7cce8122024d7ba47bf10f434956de4" title="Apply a millisecond delay." alt="" coords="274,29,351,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,101,229,65,261,57,256,60,231,71,132,106"/>
+<area shape="rect" id="Node000003" href="$a00266.html#a15f57c0c7804dd6a8fdc55cb9ae947eb" title="Validate the external&#45;flasher image&#45;ready flag." alt="" coords="230,104,395,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="182,115,217,117,212,118,183,120"/>
+<area shape="rect" id="Node000004" href="$a01059.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="275,179,350,205"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="135,129,262,173,258,176,135,134"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="280,28,275,21,279,11,292,5,312,3,335,5,348,14,343,14,333,10,312,8,293,10,282,15,280,20,285,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="280,103,275,95,279,86,292,79,312,77,335,80,348,89,343,89,333,85,312,83,293,85,282,89,280,95,285,104"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="280,177,275,170,279,160,292,154,312,152,335,155,348,164,343,163,333,160,312,157,293,159,282,164,280,169,285,179"/>
+<area shape="rect" id="Node000005" href="$a01059.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="443,179,555,205"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="350,189,430,192,425,192,350,195"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="467,177,462,170,465,160,478,154,499,152,522,155,535,164,530,163,520,160,499,157,480,159,469,164,467,169,472,179"/>
+</map>

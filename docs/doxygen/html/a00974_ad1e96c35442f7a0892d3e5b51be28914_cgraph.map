@@ -1,0 +1,26 @@
+<map id="compute_all_adc_hashes" name="compute_all_adc_hashes">
+<area shape="rect" id="Node000001" title="Hash all ADC entropy sources." alt="" coords="5,157,174,184"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="52,157,46,149,50,139,65,133,90,131,116,133,131,141,126,143,114,138,89,136,66,138,54,143,51,148,57,156"/>
+<area shape="rect" id="Node000002" href="$a00974.html#abb25e68d779777b4bb811cc0503c2fcb" title=" " alt="" coords="222,29,398,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,155,157,119,220,82,235,77,231,80,223,86,160,124,111,159"/>
+<area shape="rect" id="Node000004" href="$a00974.html#ac59776a98ffcad426da444c7a3cfcc91" title=" " alt="" coords="222,120,398,163"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="173,157,208,154,204,156,175,162"/>
+<area shape="rect" id="Node000007" href="$a01013.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="599,160,674,187"/>
+<area shape="poly" id="edge16_Node000001_Node000007" title=" " alt="" coords="174,171,222,172,585,172,583,177,222,177,175,176"/>
+<area shape="rect" id="Node000011" href="$a00974.html#aa5d2aeb7eb4e97639fc7c68071618614" title=" " alt="" coords="222,261,398,304"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="119,182,255,252,250,255,117,187"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="274,28,272,19,278,10,291,5,310,3,330,5,344,13,339,14,329,10,310,8,292,10,282,15,277,21,279,30"/>
+<area shape="rect" id="Node000003" href="$a00971.html#ad6f57779015846671708f306c8717ade" title="Hash the PB0 ADC entropy buffer." alt="" coords="446,37,551,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="398,48,433,50,428,51,399,53"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="474,36,470,29,473,19,483,13,499,11,516,13,526,22,520,22,514,18,499,16,485,18,477,22,476,28,479,38"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="274,118,272,110,278,101,291,95,310,93,330,96,344,104,339,105,329,101,310,99,292,101,282,105,277,111,279,120"/>
+<area shape="rect" id="Node000005" href="$a00971.html#accbe07d7a1c7e456aa6a025232927816" title="Hash the PC4 ADC entropy buffer." alt="" coords="446,132,551,159"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="398,141,433,143,428,144,399,146"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="474,131,470,123,473,114,483,108,499,105,516,108,526,117,520,116,514,113,499,111,485,113,477,117,476,123,479,133"/>
+<area shape="poly" id="edge9_Node000005_Node000007" title=" " alt="" coords="552,153,587,163,581,163,552,159"/>
+<area shape="poly" id="edge10_Node000007_Node000007" title=" " alt="" coords="612,158,608,151,611,142,621,136,637,133,653,136,663,145,658,144,651,141,636,139,623,141,615,145,613,151,617,161"/>
+<area shape="poly" id="edge12_Node000011_Node000011" title=" " alt="" coords="274,259,272,251,278,242,291,237,310,235,330,237,344,246,339,245,329,242,310,240,292,242,282,247,277,253,278,262"/>
+<area shape="rect" id="Node000012" href="$a00971.html#af36184a913bd8a79ddce127b78b52aed" title="Hash the PC5 ADC entropy buffer." alt="" coords="446,269,551,296"/>
+<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="398,280,433,283,428,283,398,285"/>
+<area shape="poly" id="edge14_Node000012_Node000012" title=" " alt="" coords="474,268,470,261,473,251,483,245,499,243,516,245,526,255,520,253,514,250,499,248,485,250,477,254,476,260,479,270"/>
+</map>

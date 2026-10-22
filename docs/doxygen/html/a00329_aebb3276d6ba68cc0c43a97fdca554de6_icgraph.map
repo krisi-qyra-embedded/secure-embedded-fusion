@@ -1,0 +1,14 @@
+<map id="compute_shared_internal" name="compute_shared_internal">
+<area shape="rect" id="Node000001" title="Compute and export a fixed&#45;width directional ECDH secret." alt="" coords="434,83,600,109"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="551,67,540,64,517,61,496,63,484,68,481,73,487,83,482,81,476,74,480,64,494,58,517,56,542,59,556,68"/>
+<area shape="rect" id="Node000002" href="$a00329.html#a6158aa183a933f37e068ebe3fa4d9fc7" title="Compute the ESP32 RX secret from its private scalar and the STM32 sender point." alt="" coords="238,29,386,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="436,79,386,70,387,64,441,79"/>
+<area shape="rect" id="Node000006" href="$a00329.html#af8f7d3a8ca68f7e6f4f152bad638f1ee" title="Compute the ESP32 TX secret from its private scalar and the STM32 receiver point." alt="" coords="238,120,386,163"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="441,113,387,128,386,122,436,114"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="343,14,332,10,312,8,293,10,281,15,276,21,278,30,273,28,271,19,278,10,291,5,312,3,334,5,349,14"/>
+<area shape="rect" id="Node000003" href="$a00329.html#a1e0f9a95b841e92b2903bd53c0642677" title="Compute both directional secrets and verify their lengths." alt="" coords="5,75,190,117"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="220,70,191,79,189,74,225,69"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="131,60,119,56,97,53,77,55,65,60,60,66,62,74,57,74,55,65,62,56,76,50,98,48,121,50,136,58"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="220,123,190,118,190,113,225,122"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="343,104,332,101,312,99,293,101,281,105,276,111,277,121,273,118,271,110,278,101,291,95,312,93,334,96,349,105"/>
+</map>

@@ -1,0 +1,27 @@
+var a00242 =
+[
+    [ "stm32_gcm_nvm_record_t", "a00545.html", "a00545" ],
+    [ "STM32_GCM_NVM_COMMIT", "a00242.html#a4f753c2f9c4b5c3ff4c5973f6e84ed00", null ],
+    [ "STM32_GCM_NVM_MAGIC", "a00242.html#a856fcfb92361d06353fcf00210f0848a", null ],
+    [ "STM32_GCM_NVM_VERSION", "a00242.html#a202c346eb85f03367932c3f8d5132857", null ],
+    [ "stm32_gcm_record_word_aligned", "a00242.html#a92681acd2f4749f8a154623cb22a8304", null ],
+    [ "stm32_gcm_append_record", "a00242.html#a4e243c23d4df349f187f9e2a4674c2a0", null ],
+    [ "stm32_gcm_clear_flash_flags", "a00242.html#a577b1e15fd1347bd61b6aa39eb9d3a6e", null ],
+    [ "stm32_gcm_crc32", "a00242.html#abd0f7dc0f28799a7114e5729a6b89e6d", null ],
+    [ "stm32_gcm_nvm_check_and_commit_rx", "a00242.html#ad3befa25fcb365baff8024e4afa912df", null ],
+    [ "stm32_gcm_nvm_current_rx_counter", "a00242.html#a5d6879ccb4fbe8d1ea28a79375076dd6", null ],
+    [ "stm32_gcm_nvm_current_rx_session", "a00242.html#aa29203757acedfddcab39fe9f8a5275f", null ],
+    [ "stm32_gcm_nvm_current_tx_session", "a00242.html#ac6a473ef94323a1107467033773ca561", null ],
+    [ "stm32_gcm_nvm_init", "a00242.html#a44cfbbcdf47faf166f09abfed3f9f53a", null ],
+    [ "stm32_gcm_nvm_remaining_record_slots", "a00242.html#a8c037f36ce4d1208d8d3eaac3ead5674", null ],
+    [ "stm32_gcm_nvm_reserve_tx_session", "a00242.html#a9b5566d836896405016c098ccac6fc44", null ],
+    [ "stm32_gcm_record_erased", "a00242.html#a13bfe8dc97b085101532ba73ffba89bf", null ],
+    [ "stm32_gcm_record_valid", "a00242.html#a3f29e0f6bb9fad8b1d5f9a38c6167a7d", null ],
+    [ "s_initialized", "a00242.html#a7fc89b5882bba49f4709da759efb40a8", null ],
+    [ "s_next_address", "a00242.html#aeb2a17338c012861a4d27a6c5e9998ff", null ],
+    [ "s_rx_counter", "a00242.html#a3466d0f643e89aaa635fc248f17f9d2f", null ],
+    [ "s_rx_session_id", "a00242.html#ab25ec58123e37f9cd83c47d5f931e7d5", null ],
+    [ "s_state", "a00242.html#a84204011015d774ddec30b8cc7cb4ba8", null ],
+    [ "s_tx_session_id_this_boot", "a00242.html#acf1e628d998f74ba39c21b432d35193e", null ],
+    [ "s_tx_session_reserved_this_boot", "a00242.html#a1697146557f2c292f57bde5beb845bb8", null ]
+];

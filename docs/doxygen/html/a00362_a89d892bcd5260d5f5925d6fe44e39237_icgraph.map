@@ -1,0 +1,15 @@
+<map id="wifi_app_get_softap_client_count" name="wifi_app_get_softap_client_count">
+<area shape="rect" id="Node000001" title="Get the tracked SoftAP client count." alt="" coords="443,85,580,128"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="541,69,531,66,512,64,494,66,482,71,478,77,479,86,475,83,473,75,479,66,492,61,512,59,533,61,547,70"/>
+<area shape="rect" id="Node000002" href="$a00909.html#ace1df51f7924ed07625502194d1bfaec" title="Start AWS after the SoftAP is idle and station connectivity is recorded." alt="" coords="240,93,395,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="425,107,396,109,395,104,430,106"/>
+<area shape="rect" id="Node000003" href="$a00909.html#ac10eca01dabd05e9690c3b55c69b5b87" title="Wait five seconds before switching an idle SoftAP to cloud mode." alt="" coords="5,29,192,56"/>
+<area shape="poly" id="edge7_Node000001_Node000003" title=" " alt="" coords="452,78,394,60,343,51,290,45,192,42,192,36,291,40,344,45,396,55,458,78"/>
+<area shape="rect" id="Node000006" href="$a00909.html#ae558e7f34f3db75b4e8e1fd0f16be6ce" title="Record station connectivity and select the application mode." alt="" coords="10,115,187,157"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="430,127,395,135,287,142,187,142,187,137,287,137,395,129,425,127"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="349,78,339,74,317,72,297,74,286,79,284,84,289,94,284,92,278,85,282,75,296,69,317,67,341,69,354,78"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="252,90,147,59,147,54,257,87"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="222,120,188,127,187,121,227,119"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="135,15,123,10,98,8,76,10,63,15,60,20,66,28,61,29,55,21,59,11,74,5,99,3,124,5,140,13"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="132,99,121,96,98,93,78,95,65,100,60,106,62,115,57,113,55,105,62,96,77,90,99,88,122,90,138,99"/>
+</map>

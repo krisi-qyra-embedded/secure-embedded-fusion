@@ -1,0 +1,58 @@
+<map id="app_mpu9250_runtime_process" name="app_mpu9250_runtime_process">
+<area shape="rect" id="Node000001" title="Run one MPU9250 runtime cycle with recovery." alt="" coords="5,460,158,503"/>
+<area shape="poly" id="edge21_Node000001_Node000001" title=" " alt="" coords="38,460,37,450,44,441,59,435,82,433,106,436,122,443,117,446,104,441,81,439,60,441,47,445,42,451,44,459"/>
+<area shape="rect" id="Node000002" href="$a00176.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="718,280,855,307"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="104,458,161,408,245,346,294,314,346,285,401,260,457,241,512,230,556,227,600,232,655,241,702,254,746,273,741,274,700,259,654,247,599,237,556,232,513,235,459,247,403,265,349,290,296,319,248,350,165,412,108,461"/>
+<area shape="rect" id="Node000004" href="$a00188.html#a327baa96552b5847067de6a60dd0e06f" title=" " alt="" coords="220,523,396,565"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="157,500,216,517,211,519,159,505"/>
+<area shape="rect" id="Node000007" href="$a00188.html#a9ec6ffbeedc9d886486e28a6f3ac5bca" title=" " alt="" coords="232,117,384,160"/>
+<area shape="poly" id="edge12_Node000001_Node000007" title=" " alt="" coords="85,459,99,408,122,340,157,266,179,231,204,198,222,181,246,166,243,170,226,185,208,202,183,234,161,269,127,342,104,410,90,460"/>
+<area shape="rect" id="Node000041" href="$a00179.html#a66b10b0eb144add187cd9402aaf989b9" title="Signal a valid MPU9250 application sample." alt="" coords="206,736,410,763"/>
+<area shape="poly" id="edge22_Node000001_Node000041" title=" " alt="" coords="93,500,138,583,170,632,208,677,238,704,271,728,266,728,235,708,204,681,166,635,134,586,92,505"/>
+<area shape="rect" id="Node000043" href="$a00188.html#a1c5f336c4c3d69521a581a8448776245" title="Read and update processed accelerometer and gyroscope data." alt="" coords="221,427,394,453"/>
+<area shape="poly" id="edge26_Node000001_Node000043" title=" " alt="" coords="157,465,218,455,214,458,159,470"/>
+<area shape="rect" id="Node000056" href="$a00176.html#a13cf982f485a32d152a600e3533ff04b" title="Clear one subsystem from the active fault mask." alt="" coords="242,624,374,667"/>
+<area shape="poly" id="edge38_Node000001_Node000056" title=" " alt="" coords="110,501,207,575,263,615,258,616,204,579,109,506"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="754,279,749,271,753,262,766,255,787,253,809,256,822,265,817,265,807,261,786,259,767,261,757,265,754,271,759,280"/>
+<area shape="rect" id="Node000003" href="$a00239.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="919,280,1028,307"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="855,291,906,293,901,294,856,296"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="941,279,936,271,940,262,953,255,973,253,996,256,1009,265,1004,265,994,261,973,259,954,261,943,265,941,271,946,280"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="396,556,457,560,524,557,591,544,623,532,653,516,678,497,700,474,736,421,760,366,776,324,780,320,765,368,740,423,704,477,682,501,656,521,625,537,593,549,525,563,457,565,397,562"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="265,521,263,513,270,504,285,498,308,496,332,498,348,507,343,507,331,504,308,501,286,503,273,508,268,514,270,523"/>
+<area shape="rect" id="Node000005" href="$a00176.html#aef0fe391151f498b87061f7abc9a9b19" title="Mark fault recovery as in progress." alt="" coords="482,605,631,648"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="374,563,478,599,473,601,374,569"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="513,603,511,595,518,586,533,581,556,579,581,581,597,590,592,590,580,586,556,584,534,586,521,591,516,597,517,606"/>
+<area shape="rect" id="Node000006" href="$a00176.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="702,635,871,677"/>
+<area shape="poly" id="edge10_Node000005_Node000006" title=" " alt="" coords="631,634,690,643,684,644,631,639"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="751,633,749,625,755,616,768,610,787,608,807,610,820,619,815,619,805,616,786,613,769,615,759,620,754,626,755,636"/>
+<area shape="poly" id="edge13_Node000007_Node000002" title=" " alt="" coords="384,140,445,146,514,157,586,174,655,198,714,231,762,269,756,269,711,235,653,202,584,179,513,162,444,151,386,145"/>
+<area shape="poly" id="edge17_Node000007_Node000007" title=" " alt="" coords="265,117,263,107,270,98,285,93,308,91,332,93,348,101,343,103,331,98,308,96,286,98,273,103,268,109,270,117"/>
+<area shape="rect" id="Node000008" href="$a00188.html#a0de5b9e88e18ac776a7f4ae28d3d3c00" title="Initialize the MPU9250 I2C/DMA peripherals." alt="" coords="458,29,654,56"/>
+<area shape="poly" id="edge14_Node000007_Node000008" title=" " alt="" coords="348,115,400,89,457,66,482,59,478,62,459,70,402,94,352,119"/>
+<area shape="rect" id="Node000034" href="$a00176.html#a0ba429bdcf4478be7b3e2e48f8c99f1f" title="Recover an I2C peripheral after a stalled transfer." alt="" coords="512,104,600,131"/>
+<area shape="poly" id="edge18_Node000007_Node000034" title=" " alt="" coords="383,130,498,121,494,124,386,135"/>
+<area shape="poly" id="edge15_Node000008_Node000002" title=" " alt="" coords="634,54,656,66,680,87,702,112,737,167,763,221,779,266,774,265,758,223,733,169,698,116,677,91,653,70,635,59"/>
+<area shape="poly" id="edge16_Node000008_Node000008" title=" " alt="" coords="517,29,510,21,515,11,531,5,556,3,584,5,600,14,595,15,583,10,556,8,532,10,519,15,516,20,522,29"/>
+<area shape="poly" id="edge19_Node000034_Node000002" title=" " alt="" coords="600,124,629,133,656,147,691,175,723,206,771,268,765,267,719,210,688,179,653,152,627,138,601,129"/>
+<area shape="poly" id="edge20_Node000034_Node000034" title=" " alt="" coords="517,104,510,95,515,85,531,79,556,77,584,80,600,89,595,90,583,85,556,83,532,85,519,89,516,95,522,104"/>
+<area shape="poly" id="edge23_Node000041_Node000041" title=" " alt="" coords="269,735,263,727,268,717,283,711,308,709,335,712,350,721,345,720,333,717,308,715,284,717,271,721,268,727,274,736"/>
+<area shape="rect" id="Node000042" href="$a00233.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="524,747,588,773"/>
+<area shape="poly" id="edge24_Node000041_Node000042" title=" " alt="" coords="411,751,511,758,506,758,410,756"/>
+<area shape="poly" id="edge25_Node000042_Node000042" title=" " alt="" coords="521,748,511,740,514,729,529,722,556,720,591,725,600,730,601,739,597,736,595,734,589,730,556,725,531,728,518,733,516,739,526,750"/>
+<area shape="poly" id="edge27_Node000043_Node000002" title=" " alt="" coords="394,438,454,434,520,426,588,412,653,391,684,375,713,356,759,319,764,316,716,360,687,380,655,396,589,418,521,432,454,440,396,443"/>
+<area shape="poly" id="edge35_Node000043_Node000005" title=" " alt="" coords="346,451,380,466,412,484,477,538,529,594,524,593,473,542,408,489,377,471,347,456"/>
+<area shape="poly" id="edge34_Node000043_Node000043" title=" " alt="" coords="269,426,263,418,268,408,283,402,308,400,335,403,350,411,345,412,333,408,308,405,284,407,271,412,268,417,275,426"/>
+<area shape="rect" id="Node000044" href="$a00188.html#ab5bb4fe0355e5bf9f16727035901af59" title="Convert the latest accelerometer sample to physical units." alt="" coords="487,480,625,507"/>
+<area shape="poly" id="edge28_Node000043_Node000044" title=" " alt="" coords="373,451,478,475,473,477,373,457"/>
+<area shape="rect" id="Node000052" href="$a00188.html#ac6655367b65aec29fc6f401400c8b224" title="Convert the latest gyroscope sample to physical units." alt="" coords="490,355,622,381"/>
+<area shape="poly" id="edge31_Node000043_Node000052" title=" " alt="" coords="355,424,495,385,491,388,358,429"/>
+<area shape="rect" id="Node000054" href="$a00188.html#afcda4241c37bfc2c519078503f9b47ac" title="Publish the latest MPU9250 sample." alt="" coords="464,280,648,307"/>
+<area shape="poly" id="edge36_Node000043_Node000054" title=" " alt="" coords="320,424,376,372,415,342,457,316,474,311,470,314,459,321,418,346,380,376,324,428"/>
+<area shape="poly" id="edge29_Node000044_Node000002" title=" " alt="" coords="585,477,619,459,653,435,716,374,764,321,768,317,720,378,656,439,621,463,588,482"/>
+<area shape="poly" id="edge30_Node000044_Node000044" title=" " alt="" coords="517,479,510,471,515,461,531,455,556,453,584,456,600,465,595,465,583,461,556,459,532,461,519,465,516,471,522,480"/>
+<area shape="poly" id="edge32_Node000052_Node000002" title=" " alt="" coords="599,352,731,311,726,313,601,357"/>
+<area shape="poly" id="edge33_Node000052_Node000052" title=" " alt="" coords="517,354,510,346,515,336,531,330,556,328,584,331,600,340,595,340,583,336,556,333,532,335,519,340,516,345,522,354"/>
+<area shape="poly" id="edge37_Node000054_Node000054" title=" " alt="" coords="517,279,510,271,515,261,531,255,556,253,584,256,600,265,595,266,583,261,556,259,532,261,519,265,516,271,522,280"/>
+<area shape="poly" id="edge40_Node000056_Node000006" title=" " alt="" coords="374,650,458,657,556,659,654,657,689,659,684,660,654,663,556,665,458,663,374,656"/>
+<area shape="poly" id="edge39_Node000056_Node000056" title=" " alt="" coords="265,622,263,614,270,605,285,599,308,597,332,600,348,608,343,609,331,605,308,603,286,605,273,609,268,615,270,624"/>
+</map>

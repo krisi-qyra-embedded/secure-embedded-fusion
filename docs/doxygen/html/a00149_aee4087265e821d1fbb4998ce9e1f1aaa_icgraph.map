@@ -1,0 +1,19 @@
+<map id="i2c_dma_read" name="i2c_dma_read">
+<area shape="rect" id="Node000001" title="Read register data using I2C DMA." alt="" coords="421,169,523,196"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="501,154,492,150,472,148,454,150,444,155,441,160,446,170,441,168,436,161,440,151,452,145,472,143,494,145,507,155"/>
+<area shape="rect" id="Node000002" href="$a00161.html#a63da6d6c512086448a3596153aa1a7af" title=" " alt="" coords="212,128,373,155"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="403,168,353,158,354,153,409,167"/>
+<area shape="rect" id="Node000015" href="$a00116.html#a264fa3bd66601d9d6fb4fbf04cce3fb3" title="Read BME680 registers through the project I2C adapter." alt="" coords="241,207,344,233"/>
+<area shape="poly" id="edge8_Node000001_Node000015" title=" " alt="" coords="409,196,345,212,344,207,403,197"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="321,113,312,109,292,107,274,109,264,113,261,119,266,128,261,127,256,119,260,110,272,103,292,101,314,104,327,113"/>
+<area shape="rect" id="Node000003" href="$a00161.html#a86eeeaea07da09a4f35eb0b0cb4ec8c9" title="Perform one blocking accelerometer update." alt="" coords="5,29,164,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="244,122,163,86,138,75,137,70,165,82,249,120"/>
+<area shape="rect" id="Node000011" href="$a00161.html#ac2c44562cb7644baf76ed9637dea5867" title="Perform one blocking gyroscope update." alt="" coords="8,120,161,163"/>
+<area shape="poly" id="edge5_Node000002_Node000011" title=" " alt="" coords="193,142,162,144,161,139,198,140"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="117,15,105,10,84,8,65,10,53,15,48,21,50,29,45,29,43,19,50,10,64,5,85,3,107,5,122,13"/>
+<area shape="poly" id="edge6_Node000011_Node000011" title=" " alt="" coords="117,105,105,101,84,99,65,101,53,105,48,111,50,120,45,119,43,110,50,101,64,95,85,93,107,96,122,104"/>
+<area shape="poly" id="edge11_Node000015_Node000015" title=" " alt="" coords="321,191,312,188,292,185,274,187,264,192,261,197,266,207,261,205,256,198,260,188,272,182,292,180,314,183,327,192"/>
+<area shape="rect" id="Node000016" href="$a00182.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="39,211,130,237"/>
+<area shape="poly" id="edge9_Node000015_Node000016" title=" " alt="" coords="223,222,131,226,131,220,228,221"/>
+<area shape="poly" id="edge10_Node000016_Node000016" title=" " alt="" coords="119,196,108,192,84,189,63,191,51,196,48,201,54,210,49,210,43,202,47,192,61,186,85,184,109,187,124,195"/>
+</map>

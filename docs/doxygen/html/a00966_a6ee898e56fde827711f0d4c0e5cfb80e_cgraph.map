@@ -1,0 +1,13 @@
+<map id="jitter_rearm_dma" name="jitter_rearm_dma">
+<area shape="rect" id="Node000001" title="Return the DMA stream to a known idle state." alt="" coords="5,104,124,131"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="32,104,27,95,31,86,44,79,65,77,87,80,100,88,95,89,85,85,64,83,45,85,35,89,32,95,38,103"/>
+<area shape="rect" id="Node000002" href="$a01035.html#a5bc37cdbd4a7e4f355e7e321c6df109d" title=" " alt="" coords="206,29,295,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,101,171,66,193,59,189,62,173,70,95,106"/>
+<area shape="rect" id="Node000003" href="$a01035.html#ae14d8c179e3602d167cb0741686ca81a" title=" " alt="" coords="176,104,324,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="124,115,163,116,158,118,125,120"/>
+<area shape="rect" id="Node000004" href="$a01035.html#abb39952b631e6f25ed7b69905cc63e59" title=" " alt="" coords="172,179,329,205"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="100,129,203,171,199,174,99,134"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="218,29,213,21,217,11,230,5,250,3,273,5,286,14,281,14,271,10,250,8,231,10,221,15,218,20,223,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="218,103,213,95,217,86,230,79,250,77,273,80,286,89,281,89,271,85,250,83,231,85,221,89,218,95,223,104"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="218,177,213,170,217,160,230,154,250,152,273,155,286,164,281,163,271,160,250,157,231,159,221,164,218,169,223,179"/>
+</map>

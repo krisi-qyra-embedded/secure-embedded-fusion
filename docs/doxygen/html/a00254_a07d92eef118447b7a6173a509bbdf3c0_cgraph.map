@@ -1,0 +1,13 @@
+<map id="flash_set_rdp_level" name="flash_set_rdp_level">
+<area shape="rect" id="Node000001" title="Program the requested read&#45;protection level." alt="" coords="5,104,139,131"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="40,104,35,95,39,86,51,79,72,77,94,80,107,88,102,89,93,85,72,83,53,85,42,89,40,95,45,103"/>
+<area shape="rect" id="Node000002" href="$a00254.html#a7c6f5eb980b138fc472986af6dc1a745" title="Lock option&#45;byte programming." alt="" coords="194,29,320,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,101,186,66,205,61,200,63,188,70,105,106"/>
+<area shape="rect" id="Node000003" href="$a00254.html#abd53401726236bf1969d049c26544142" title="Unlock option&#45;byte programming with the STM32 key sequence." alt="" coords="187,104,327,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="139,115,174,116,169,118,140,120"/>
+<area shape="rect" id="Node000004" href="$a00254.html#a8261c04c0013b72d4c6b116fc3d36bd2" title=" " alt="" coords="187,179,327,205"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="108,129,210,171,206,174,107,134"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="225,29,220,21,223,11,236,5,257,3,279,5,292,14,287,14,277,10,257,8,238,10,227,15,225,20,230,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="225,103,220,95,223,86,236,79,257,77,279,80,292,89,287,89,277,85,257,83,238,85,227,89,225,95,230,104"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="225,177,220,170,223,160,236,154,257,152,279,155,292,164,287,163,277,160,257,157,238,159,227,164,225,169,230,179"/>
+</map>

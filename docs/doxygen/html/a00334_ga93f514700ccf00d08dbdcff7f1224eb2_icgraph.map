@@ -1,0 +1,5 @@
+<map id="SystemInit" name="SystemInit">
+<area shape="rect" id="Node000001" title="Setup the microcontroller system Initialize the FPU setting, vector table location and External memor..." alt="" coords="138,5,222,32"/>
+<area shape="rect" id="Node000002" href="$a00859.html#a93f514700ccf00d08dbdcff7f1224eb2" title="Configure the vector&#45;table base during early system startup." alt="" coords="5,5,90,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,19,90,21,90,16,125,18"/>
+</map>

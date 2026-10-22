@@ -1,0 +1,11 @@
+<map id="esp32_aes_gcm_runtime_state_t" name="esp32_aes_gcm_runtime_state_t">
+<area shape="rect" id="Node000001" title="Contexts and handle used by the UART crypto task." alt="" coords="98,224,264,267"/>
+<area shape="rect" id="Node000002" href="$a00602.html" title="Independent GCM objects and the current transmit nonce." alt="" coords="23,125,176,152"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,162,167,223,162,224,117,166"/>
+<area shape="rect" id="Node000003" href="$a00598.html" title="Persistent TX session with packet counters held in RAM." alt="" coords="5,5,183,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="96,46,101,125,96,125,94,50"/>
+<area shape="rect" id="Node000004" href="$a00610.html" title="ECDH working objects and independent TX/RX key material." alt="" coords="208,125,335,152"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="253,163,200,226,197,221,248,165"/>
+<area shape="rect" id="Node000005" href="$a00606.html" title="Private scalar, public point and raw exported material." alt="" coords="206,5,344,32"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="276,46,274,126,269,124,273,50"/>
+</map>

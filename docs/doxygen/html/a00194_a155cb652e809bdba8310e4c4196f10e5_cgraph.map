@@ -1,0 +1,13 @@
+<map id="OneWire_SelectWithPointer" name="OneWire_SelectWithPointer">
+<area shape="rect" id="Node000001" title="Select one device by ROM code." alt="" coords="5,67,190,93"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="62,66,56,58,60,48,74,42,98,40,122,43,137,51,132,52,121,48,97,45,76,47,64,52,61,57,67,66"/>
+<area shape="rect" id="Node000002" href="$a00194.html#adc1b20ba0318926a0d72120fbd7f23da" title="Write one byte to the 1&#45;Wire bus." alt="" coords="238,67,374,93"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="190,77,225,80,220,80,191,83"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="271,65,265,58,269,48,283,42,306,40,330,43,345,52,339,51,329,48,306,45,285,47,273,52,270,57,276,67"/>
+<area shape="rect" id="Node000003" href="$a00194.html#acc6e9ea7c6dc7212a487982a942d86c4" title=" " alt="" coords="432,29,588,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="374,65,416,60,421,59,375,70"/>
+<area shape="rect" id="Node000004" href="$a00194.html#a5508ed83415366ef360b607f0e27dd4a" title=" " alt="" coords="422,104,597,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="374,90,421,101,416,101,374,95"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="475,28,469,21,473,11,487,5,510,3,534,5,548,14,543,14,532,10,510,8,488,10,477,15,474,20,480,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="475,102,469,95,473,86,487,79,510,77,534,80,548,89,543,88,532,85,510,83,488,85,477,89,474,95,480,105"/>
+</map>

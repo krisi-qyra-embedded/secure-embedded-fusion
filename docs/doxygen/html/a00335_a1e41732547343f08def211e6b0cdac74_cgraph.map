@@ -1,0 +1,6 @@
+<map id="log_mbedtls_error" name="log_mbedtls_error">
+<area shape="rect" id="Node000001" title="Log an Mbed TLS operation and its error code." alt="" coords="5,29,130,56"/>
+<area shape="rect" id="Node000002" href="$a00329.html#a1e41732547343f08def211e6b0cdac74" title="Log an Mbed TLS operation and its error code." alt="" coords="178,29,302,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,40,165,42,160,43,130,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="210,28,205,21,209,11,221,5,240,3,261,5,273,14,268,14,259,10,240,8,222,10,212,15,210,20,215,30"/>
+</map>

@@ -1,0 +1,52 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Src/ecdh.c" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Src/ecdh.c">
+<area shape="rect" id="Node000001" title="ECDH and AES&#45;GCM handling for the STM32 link." alt="" coords="246,5,547,128"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="294,325,358,352"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="244,87,173,108,137,123,104,141,73,162,47,187,26,217,12,252,9,265,12,276,29,289,56,300,127,317,208,328,281,335,276,336,207,333,126,323,54,305,26,294,8,279,3,265,7,250,22,215,43,184,70,158,101,136,135,118,172,103,248,83"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="481,251,549,277"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="454,126,488,175,502,205,511,237,507,235,497,207,484,177,452,131"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="1096,325,1161,352"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="547,87,701,113,865,150,942,171,1010,195,1066,221,1105,249,1116,262,1123,278,1130,311,1125,308,1118,280,1111,265,1101,253,1063,225,1008,200,940,176,864,155,700,118,547,92"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="242,176,306,203"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="337,127,299,167,296,163,333,130"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="22,251,96,277"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="244,86,200,100,154,119,112,145,76,178,68,191,63,205,60,236,54,235,58,204,63,188,72,174,109,140,152,114,198,95,248,83"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="405,176,473,203"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="419,126,432,162,427,161,417,131"/>
+<area shape="rect" id="Node000008" href="$a00101.html" title="TIM2 delay, one&#45;shot and interrupt helper declarations." alt="" coords="330,176,380,203"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="378,126,366,163,362,160,374,130"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="549,176,609,203"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="489,126,550,167,545,167,488,131"/>
+<area shape="rect" id="Node000012" href="$a00092.html" title="Flash journal for AES&#45;GCM TX sessions and RAM replay tracking." alt="" coords="86,176,219,203"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="271,130,193,171,190,167,276,127"/>
+<area shape="rect" id="Node000013" href="$a00044.html" title="I2C DMA, synchronization and shared fault handling declarations." alt="" coords="633,176,715,203"/>
+<area shape="poly" id="edge16_Node000001_Node000013" title=" " alt="" coords="537,126,634,169,629,170,536,131"/>
+<area shape="poly" id="edge10_Node000008_Node000002" title=" " alt="" coords="355,202,334,312,329,309,351,205"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="363,251,457,277"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="366,201,394,239,389,238,364,206"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="171,251,289,277"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="336,202,266,245,264,240,331,204"/>
+<area shape="poly" id="edge14_Node000012_Node000002" title=" " alt="" coords="151,201,150,239,153,258,161,276,186,299,216,315,248,325,281,334,275,334,247,330,214,320,183,303,157,279,148,260,144,239,148,206"/>
+<area shape="poly" id="edge13_Node000012_Node000006" title=" " alt="" coords="135,205,89,243,85,239,138,201"/>
+<area shape="poly" id="edge15_Node000012_Node000010" title=" " alt="" coords="167,201,208,240,203,240,165,206"/>
+<area shape="poly" id="edge17_Node000013_Node000002" title=" " alt="" coords="664,202,621,242,593,262,563,280,514,300,464,315,374,334,373,328,462,310,513,295,561,275,590,258,618,238,659,204"/>
+<area shape="poly" id="edge18_Node000013_Node000003" title=" " alt="" coords="649,202,558,246,556,241,644,204"/>
+<area shape="poly" id="edge19_Node000013_Node000009" title=" " alt="" coords="635,201,472,249,470,243,630,203"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="624,251,718,277"/>
+<area shape="poly" id="edge20_Node000013_Node000014" title=" " alt="" coords="675,201,674,237,670,233,672,205"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="743,251,800,277"/>
+<area shape="poly" id="edge21_Node000013_Node000015" title=" " alt="" coords="692,201,745,242,740,241,690,206"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="824,251,900,277"/>
+<area shape="poly" id="edge22_Node000013_Node000016" title=" " alt="" coords="707,201,817,245,812,245,706,206"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="1003,251,1091,277"/>
+<area shape="poly" id="edge23_Node000013_Node000017" title=" " alt="" coords="715,196,990,250,985,251,715,201"/>
+<area shape="rect" id="Node000018" href="$a00728.html" title="USART2 logging, ring&#45;buffer TX and RX/TX helper declarations." alt="" coords="924,251,978,277"/>
+<area shape="poly" id="edge24_Node000013_Node000018" title=" " alt="" coords="715,198,912,250,906,250,715,203"/>
+<area shape="poly" id="edge26_Node000018_Node000002" title=" " alt="" coords="926,274,912,280,758,305,606,322,374,338,373,333,606,317,758,300,911,275,921,275"/>
+<area shape="poly" id="edge27_Node000018_Node000004" title=" " alt="" coords="979,274,1086,319,1081,319,978,279"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="920,325,980,352"/>
+<area shape="poly" id="edge25_Node000018_Node000019" title=" " alt="" coords="953,276,952,311,948,308,949,280"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="1004,325,1072,352"/>
+<area shape="poly" id="edge28_Node000018_Node000020" title=" " alt="" coords="967,275,1014,316,1009,315,965,280"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="789,325,895,352"/>
+<area shape="poly" id="edge29_Node000018_Node000021" title=" " alt="" coords="935,277,874,319,872,314,930,279"/>
+</map>

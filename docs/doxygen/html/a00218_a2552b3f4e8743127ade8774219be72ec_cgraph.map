@@ -1,0 +1,19 @@
+<map id="PMS25_ReadInternal" name="PMS25_ReadInternal">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,151,131"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="42,104,36,95,40,86,55,79,78,77,103,80,118,88,113,90,102,85,78,83,56,85,44,89,41,95,47,103"/>
+<area shape="rect" id="Node000002" href="$a00218.html#a2e7f230098e317d180f281d06b15cc34" title=" " alt="" coords="210,29,370,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,101,198,65,223,59,218,62,200,71,112,106"/>
+<area shape="rect" id="Node000003" href="$a00218.html#af289f4343d7455db5ee8f6b89b4cd23e" title=" " alt="" coords="223,104,357,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="151,115,209,116,205,119,152,120"/>
+<area shape="rect" id="Node000004" href="$a00215.html#a797e971c65b919c7a1a49efd38904ec1" title="Receive one PM2.5 frame block using DMA." alt="" coords="199,179,381,205"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="119,129,237,171,233,175,118,134"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="254,29,248,21,252,11,266,5,290,3,315,5,330,14,325,14,314,10,290,8,268,10,256,15,253,20,259,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="254,103,248,95,252,86,266,79,290,77,315,80,330,89,325,89,314,85,290,83,268,85,256,89,253,95,259,104"/>
+<area shape="poly" id="edge11_Node000004_Node000004" title=" " alt="" coords="254,177,248,170,252,160,266,154,290,152,315,155,330,164,325,163,314,160,290,157,268,159,256,164,253,169,259,179"/>
+<area shape="rect" id="Node000005" href="$a00119.html#ae773c19af7068683ac8b4aa144aa19c2" title=" " alt="" coords="450,141,582,168"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="374,175,438,168,432,168,375,181"/>
+<area shape="rect" id="Node000006" href="$a00215.html#a5c2e8f50d1b49751bd250a16cdc9f559" title=" " alt="" coords="429,216,603,243"/>
+<area shape="poly" id="edge9_Node000004_Node000006" title=" " alt="" coords="375,203,419,213,413,213,374,209"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="478,140,471,133,476,123,491,117,516,115,543,117,559,126,554,126,542,122,516,120,492,122,479,127,476,132,483,142"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="478,214,471,207,476,197,491,191,516,189,543,192,559,201,554,200,542,197,516,195,492,197,479,201,476,207,483,217"/>
+</map>

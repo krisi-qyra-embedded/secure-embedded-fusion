@@ -1,0 +1,10 @@
+<map id="BME280_task_start" name="BME280_task_start">
+<area shape="rect" id="Node000001" title="Start the measurement task through the BME280 alias." alt="" coords="5,29,142,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,29,36,21,40,11,53,5,74,3,96,5,109,14,103,14,94,10,73,8,54,10,44,15,42,20,47,29"/>
+<area shape="rect" id="Node000002" href="$a00308.html#a6bc477ebd2e3850359bec681055b9486" title="Start the BMP280/BME280 measurement task." alt="" coords="190,29,326,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="142,40,177,42,171,43,142,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="229,28,224,21,228,11,239,5,258,3,278,5,290,15,284,14,276,10,258,8,241,10,232,15,230,20,234,30"/>
+<area shape="rect" id="Node000003" href="$a00308.html#aab004cc86cfdbaba5f47aafcb678fe9f" title="Sample the environmental sensor and recover after repeated read failures." alt="" coords="374,29,470,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="326,40,361,43,355,43,326,45"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="394,28,389,21,392,11,404,5,422,3,442,5,454,15,449,14,440,10,422,8,405,10,396,15,394,20,398,30"/>
+</map>

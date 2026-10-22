@@ -1,0 +1,10 @@
+<map id="compute_adc_pc4_hashed_global" name="compute_adc_pc4_hashed_global">
+<area shape="rect" id="Node000001" title="Hash the global PC4 ADC buffer into its global digest." alt="" coords="5,59,182,101"/>
+<area shape="rect" id="Node000002" href="$a00974.html#ac59776a98ffcad426da444c7a3cfcc91" title=" " alt="" coords="230,29,406,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,66,217,64,211,65,182,71"/>
+<area shape="rect" id="Node000003" href="$a00971.html#accbe07d7a1c7e456aa6a025232927816" title="Hash the PC4 ADC entropy buffer." alt="" coords="454,67,559,93"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="182,80,230,81,406,81,441,83,436,83,406,87,230,87,182,86"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="282,27,280,19,286,10,299,5,318,3,338,5,352,14,347,13,337,10,318,8,300,10,290,15,285,21,286,30"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="406,62,441,70,436,69,406,67"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="474,65,469,58,473,48,486,42,507,40,529,43,543,52,537,51,528,48,507,45,487,47,476,52,474,57,479,67"/>
+</map>

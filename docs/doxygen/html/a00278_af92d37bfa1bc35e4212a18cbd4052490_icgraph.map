@@ -1,0 +1,12 @@
+<map id="erase_manifest_sector" name="erase_manifest_sector">
+<area shape="rect" id="Node000001" title="Erase and verify the manifest sector." alt="" coords="352,43,505,69"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="462,27,451,24,429,21,408,23,396,28,394,33,399,43,394,41,388,34,393,24,406,18,429,16,453,19,467,28"/>
+<area shape="rect" id="Node000002" href="$a00263.html#aa645a5bb9138b5a99ff098c71cb22b23" title="Store the signed manifest in Flash, verify it and restore write protection." alt="" coords="152,35,304,77"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="334,56,305,59,304,53,339,56"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="254,19,245,16,228,13,212,15,202,20,198,26,199,35,195,33,193,25,199,16,210,10,228,8,247,10,259,19"/>
+<area shape="rect" id="Node000003" href="$a00906.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="30,5,79,32"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="134,38,80,26,79,21,139,35"/>
+<area shape="rect" id="Node000004" href="$a00275.html#a143124af5faa46c359a927e339deab51" title="Write one 32&#45;bit value in big&#45;endian form into a bounded buffer." alt="" coords="5,80,104,107"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="134,76,105,85,104,80,139,75"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="82,65,74,61,54,59,37,61,27,65,25,71,30,79,24,80,19,71,23,62,35,56,55,53,75,56,88,64"/>
+</map>

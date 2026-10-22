@@ -1,0 +1,10 @@
+<map id="jitter_trigger_capture_event" name="jitter_trigger_capture_event">
+<area shape="rect" id="Node000001" title="Trigger the TIM1 Channel 3 capture event in software." alt="" coords="421,29,560,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="520,13,510,10,491,8,473,10,462,15,458,21,459,30,454,27,452,19,459,10,471,5,491,3,511,5,525,14"/>
+<area shape="rect" id="Node000002" href="$a01038.html#a065424f1fa20ad18eec9b3b216a19cc1" title="Collect the configured number of TIM1 capture samples through DMA." alt="" coords="226,37,373,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="403,51,373,53,373,48,408,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="331,22,321,18,299,16,279,18,269,23,266,28,271,38,266,36,261,29,265,19,278,13,299,11,322,13,336,22"/>
+<area shape="rect" id="Node000003" href="$a01038.html#a90aecad7973b81903ab0ebfa862f6980" title="Initialize the jitter hardware and collect one complete sample set." alt="" coords="5,37,178,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="207,51,178,53,178,48,213,50"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="126,22,115,18,91,16,70,18,58,23,55,28,61,37,56,37,50,29,54,19,68,13,92,11,116,13,131,22"/>
+</map>

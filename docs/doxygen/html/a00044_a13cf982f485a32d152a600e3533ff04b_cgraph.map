@@ -1,0 +1,7 @@
+<map id="system_fault_clear_active" name="system_fault_clear_active">
+<area shape="rect" id="Node000001" title="Clear one subsystem from the active fault mask." alt="" coords="5,29,137,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="33,28,32,19,38,10,51,5,71,3,92,5,107,13,101,14,91,10,71,8,53,10,41,15,37,21,38,29"/>
+<area shape="rect" id="Node000002" href="$a00149.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="185,29,353,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="137,48,172,50,166,51,137,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="231,27,229,19,236,10,249,5,269,3,290,5,304,14,299,13,289,10,269,8,250,10,239,15,235,21,236,30"/>
+</map>

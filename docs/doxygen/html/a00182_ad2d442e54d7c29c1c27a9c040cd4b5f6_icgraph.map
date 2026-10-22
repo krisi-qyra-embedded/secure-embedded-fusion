@@ -1,0 +1,20 @@
+<map id="DS18B20_SetResolution" name="DS18B20_SetResolution">
+<area shape="rect" id="Node000001" title="Set sensor resolution." alt="" coords="438,91,604,117"/>
+<area shape="poly" id="edge12_Node000001_Node000001" title=" " alt="" coords="551,75,541,72,521,69,502,71,492,76,490,81,495,91,490,89,484,82,488,72,501,66,521,64,543,67,556,76"/>
+<area shape="rect" id="Node000002" href="$a00182.html#aa8465204abd075b1e25b6b4d39f2c8dd" title=" " alt="" coords="27,29,218,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="421,93,219,66,218,61,425,89"/>
+<area shape="rect" id="Node000003" href="$a00182.html#a3f70ccde53d51ad8e16cf23d5f597e6b" title="Initialize the DS18B20 driver and discover devices." alt="" coords="288,128,390,155"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="436,122,391,133,389,128,441,120"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="156,15,144,10,122,8,102,10,90,15,85,21,87,29,81,29,80,19,87,10,101,5,123,3,146,5,161,13"/>
+<area shape="poly" id="edge10_Node000003_Node000002" title=" " alt="" coords="302,120,239,86,209,75,208,70,241,82,307,119"/>
+<area shape="poly" id="edge11_Node000003_Node000003" title=" " alt="" coords="368,113,359,109,339,107,320,109,310,113,307,119,312,128,307,127,302,119,306,110,318,103,339,101,361,104,374,113"/>
+<area shape="rect" id="Node000004" href="$a00182.html#ab4c44777ee22223c90cad045f4572e23" title=" " alt="" coords="24,120,221,163"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="270,142,222,144,220,139,275,140"/>
+<area shape="rect" id="Node000006" href="$a00182.html#a2386eca87edc03610e3998c4b7ed6e19" title=" " alt="" coords="5,211,240,237"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="286,162,161,213,159,208,289,159"/>
+<area shape="rect" id="Node000012" href="$a00182.html#a677a25d61dade4cf362ef8920c25d22a" title=" " alt="" coords="16,285,229,312"/>
+<area shape="poly" id="edge8_Node000003_Node000012" title=" " alt="" coords="321,166,287,211,241,251,206,272,169,287,168,282,203,267,238,247,283,207,317,169"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="156,105,144,101,122,99,102,101,90,105,85,111,87,120,81,119,80,110,87,101,101,95,123,93,146,96,161,104"/>
+<area shape="poly" id="edge7_Node000006_Node000006" title=" " alt="" coords="158,196,147,192,122,189,100,191,88,196,85,201,91,210,85,210,79,202,84,192,99,186,123,184,148,187,163,195"/>
+<area shape="poly" id="edge9_Node000012_Node000012" title=" " alt="" coords="158,270,147,266,122,264,100,266,88,271,85,276,91,285,86,284,79,277,84,267,99,261,123,259,148,261,163,270"/>
+</map>

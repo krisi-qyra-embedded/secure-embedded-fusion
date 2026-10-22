@@ -1,0 +1,10 @@
+<map id="compute_device_uid_hashed_global" name="compute_device_uid_hashed_global">
+<area shape="rect" id="Node000001" title="Hash the device UID into the global personalization buffer." alt="" coords="5,29,146,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="39,28,37,19,43,10,56,5,76,3,96,5,110,13,105,14,95,10,75,8,58,10,47,15,42,21,44,29"/>
+<area shape="rect" id="Node000002" href="$a01020.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 UID with SHA&#45;256." alt="" coords="194,29,340,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="146,48,181,50,175,51,146,53"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="233,27,231,19,237,10,249,5,267,3,286,5,299,14,294,13,285,10,267,8,250,10,240,14,236,21,237,30"/>
+<area shape="rect" id="Node000003" href="$a00999.html#a6733451d1d006e2b019f6301ebedd5e6" title="Read the STM32 device UID into the local buffer." alt="" coords="388,37,503,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="340,48,375,51,370,51,340,53"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="415,36,410,29,413,19,426,13,446,11,467,13,480,23,475,22,465,18,446,16,427,18,417,23,415,28,420,38"/>
+</map>

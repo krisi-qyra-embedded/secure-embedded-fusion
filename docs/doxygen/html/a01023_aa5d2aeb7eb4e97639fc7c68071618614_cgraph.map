@@ -1,0 +1,7 @@
+<map id="compute_adc_pc5_hashed_global" name="compute_adc_pc5_hashed_global">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,182,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="57,28,56,19,62,10,75,5,94,3,114,5,128,14,122,14,112,10,93,8,76,10,65,15,61,21,62,29"/>
+<area shape="rect" id="Node000002" href="$a01020.html#af36184a913bd8a79ddce127b78b52aed" title="Hash the PC5 ADC entropy buffer." alt="" coords="230,37,335,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="182,48,217,50,212,51,182,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="250,36,244,29,248,19,261,13,282,11,305,13,318,22,313,22,303,18,282,16,263,18,252,23,250,28,255,38"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="do_sector_erase_cmsis" name="do_sector_erase_cmsis">
+<area shape="rect" id="Node000001" title=" " alt="" coords="386,29,545,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="497,14,487,10,466,8,446,10,435,15,432,20,437,30,433,28,427,21,431,11,444,5,466,3,489,5,502,15"/>
+<area shape="rect" id="Node000002" href="$a00275.html#a081f04242b6e41611a70a9b9e1f4b6fd" title="Erase one STM32F411 Flash sector and verify the result." alt="" coords="207,29,338,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="368,43,338,45,338,40,373,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="303,14,294,10,272,8,253,10,242,15,239,20,245,30,240,28,234,21,238,11,251,5,272,3,295,5,309,14"/>
+<area shape="rect" id="Node000003" href="$a00275.html#af92d37bfa1bc35e4212a18cbd4052490" title="Erase the configured manifest sector." alt="" coords="5,29,159,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="188,43,159,45,159,40,194,43"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="113,14,103,10,82,8,62,10,52,15,49,20,54,29,49,29,44,21,48,11,61,5,82,3,105,5,118,14"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="spi4_short_delay_ms" name="spi4_short_delay_ms">
+<area shape="rect" id="Node000001" title="Apply the short SPI recovery delay." alt="" coords="5,104,150,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="46,104,41,95,44,86,57,79,78,77,99,80,113,88,107,89,98,85,77,83,58,85,48,89,46,95,51,103"/>
+<area shape="rect" id="Node000002" href="$a00251.html#a25abc234b668fbf72bc90b8bbf5f282d" title="Delay using the SysTick millisecond timebase." alt="" coords="198,67,324,93"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="145,101,185,95,180,97,147,106"/>
+<area shape="rect" id="Node000005" href="$a00257.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="206,141,316,168"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="146,129,193,140,188,141,146,134"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="230,66,225,58,229,48,241,42,261,40,282,43,295,52,289,51,280,48,261,45,243,47,233,52,230,57,235,67"/>
+<area shape="rect" id="Node000003" href="$a00251.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="406,29,470,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="324,64,393,52,388,53,325,69"/>
+<area shape="rect" id="Node000004" href="$a00140.html#afeed462b65fcba438b265de4487b3bc6" title="Application hook for SysTick diagnostics." alt="" coords="372,104,503,131"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="325,91,359,100,354,100,324,96"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="407,28,402,21,406,11,418,5,438,3,459,5,472,14,466,14,457,10,438,8,419,10,410,15,407,20,412,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="407,102,402,95,406,86,418,79,438,77,459,80,472,89,466,88,457,85,438,83,419,85,410,89,407,95,412,105"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="230,140,225,133,229,123,241,117,261,115,282,117,295,127,289,126,280,122,261,120,243,122,233,127,230,132,235,142"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="compute_sram_entropy_hashed_global" name="compute_sram_entropy_hashed_global">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,163,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="47,28,45,19,51,10,65,5,84,3,105,5,119,13,114,14,103,10,84,8,66,10,55,15,50,21,52,29"/>
+<area shape="rect" id="Node000002" href="$a00767.html#ab9d02fa37fb19aaf03445cd7c771e874" title="Hash the sampled SRAM startup entropy." alt="" coords="211,37,346,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="163,48,198,50,192,51,163,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="245,36,239,29,243,19,257,13,278,11,302,13,315,22,310,22,300,18,278,16,258,18,247,23,245,28,250,38"/>
+</map>

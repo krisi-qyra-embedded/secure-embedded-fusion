@@ -1,0 +1,10 @@
+<map id="app_watchdog_all_healthy" name="app_watchdog_all_healthy">
+<area shape="rect" id="Node000001" title="Check the age of each enabled task heartbeat." alt="" coords="476,29,650,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="603,14,590,10,563,8,538,10,525,15,521,20,528,30,523,28,516,21,521,11,537,5,563,3,592,5,608,15"/>
+<area shape="rect" id="Node000002" href="$a00278.html#a0e7ceafb2af87fb6a6bda97f7a220c71" title="Feed TWDT only while all enabled tasks are healthy." alt="" coords="224,29,428,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="458,43,428,45,428,40,463,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="365,14,353,10,326,8,301,10,288,15,284,20,291,30,286,28,279,21,284,11,300,5,326,3,354,5,371,15"/>
+<area shape="rect" id="Node000003" href="$a00278.html#a883bcd8d597d58f00a4c7528dd3ed375" title="Start the watchdog supervisor on core 0." alt="" coords="5,29,176,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="205,43,176,45,176,40,211,43"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="130,15,118,10,90,8,66,10,52,15,49,20,56,29,50,29,44,21,49,11,65,5,91,3,119,5,135,14"/>
+</map>

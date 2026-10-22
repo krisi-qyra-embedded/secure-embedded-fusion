@@ -1,0 +1,7 @@
+<map id="bmp280_fatal_stop_kicking_watchdog" name="bmp280_fatal_stop_kicking_watchdog">
+<area shape="rect" id="Node000001" title="Invalidate the reading and wait without refreshing the heartbeat." alt="" coords="5,29,185,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="55,28,54,19,60,10,74,5,95,3,117,5,132,13,127,14,116,10,95,8,75,10,63,15,59,21,60,29"/>
+<area shape="rect" id="Node000002" href="$a00305.html#af85f81f87fcf052fcfa48adcbf18c102" title="Mark the cached environmental reading invalid." alt="" coords="233,29,375,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="185,48,220,50,215,51,185,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="264,27,262,19,269,10,283,5,304,3,326,5,341,14,336,13,325,10,304,8,284,10,272,15,268,21,269,30"/>
+</map>

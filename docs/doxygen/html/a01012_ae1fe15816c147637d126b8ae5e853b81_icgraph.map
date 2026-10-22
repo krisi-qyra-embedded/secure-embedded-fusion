@@ -1,0 +1,9 @@
+<map id="uart2_gpio_init" name="uart2_gpio_init">
+<area shape="rect" id="Node000001" title=" " alt="" coords="261,29,366,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="339,14,331,10,314,8,298,10,289,15,287,20,291,30,287,28,282,21,285,11,296,5,314,3,333,5,344,15"/>
+<area shape="rect" id="Node000002" href="$a01009.html#add9dfbf225e308fcaab4f9594f4ab080" title="Initialize USART2 TX/RX." alt="" coords="103,29,213,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="243,43,214,45,214,40,248,43"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="178,14,172,10,158,8,145,10,138,14,137,20,140,30,135,28,131,21,134,11,143,5,158,3,174,5,183,15"/>
+<area shape="rect" id="Node000003" href="$a00859.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,44,55,45,55,40,90,42"/>
+</map>

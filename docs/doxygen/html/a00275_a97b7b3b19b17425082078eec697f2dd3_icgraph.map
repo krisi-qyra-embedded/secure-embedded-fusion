@@ -1,0 +1,10 @@
+<map id="http_server_fw_update_reset_timer" name="http_server_fw_update_reset_timer">
+<area shape="rect" id="Node000001" title="Arm an eight&#45;second restart timer after a successful OTA update." alt="" coords="384,29,537,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="490,13,480,10,461,8,443,10,432,15,427,21,428,30,424,27,422,19,428,10,441,5,461,3,482,5,495,14"/>
+<area shape="rect" id="Node000002" href="$a00275.html#a485e257e30e27229a9609348467183ac" title="Process status events, refresh the HTTPS heartbeat and log heap usage." alt="" coords="200,37,336,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="366,51,337,53,337,48,371,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="299,22,289,18,268,16,248,18,238,23,235,28,240,38,235,36,230,29,234,19,247,13,268,11,290,13,304,22"/>
+<area shape="rect" id="Node000003" href="$a00275.html#a144f3a03b04b7f1669cd84e63a4d03cc" title="Create the monitor resources, start HTTPS and register the dashboard routes." alt="" coords="5,37,152,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="181,51,152,53,152,48,186,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="109,22,100,18,78,16,59,18,48,23,46,28,51,37,46,37,40,29,44,19,57,13,79,11,101,13,115,22"/>
+</map>

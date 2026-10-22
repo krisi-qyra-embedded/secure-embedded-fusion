@@ -1,0 +1,13 @@
+<map id="flash_unlock" name="flash_unlock">
+<area shape="rect" id="Node000001" title="Unlock the STM32 Flash controller for erase/program operations." alt="" coords="370,71,464,97"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="442,55,434,52,417,49,401,51,393,56,391,61,395,71,390,69,386,62,389,52,400,46,417,44,436,47,447,56"/>
+<area shape="rect" id="Node000002" href="$a00224.html#abeb2a0445eff51b190850da2e3a554da" title="Erase the required sector range and program a sequence of 32&#45;bit words." alt="" coords="206,71,322,97"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="352,84,323,87,322,81,357,84"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="288,55,281,52,264,49,248,51,240,56,238,61,242,71,237,69,232,62,236,52,246,46,264,44,282,47,294,56"/>
+<area shape="rect" id="Node000003" href="$a00224.html#ab73f1283e4736d63809779d4a4c3c83a" title="Store one float in Flash using the generic word&#45;write path." alt="" coords="23,29,140,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="188,68,140,59,140,53,193,67"/>
+<area shape="rect" id="Node000004" href="$a00221.html#aa645a5bb9138b5a99ff098c71cb22b23" title="Store the signed manifest in Flash, verify it and restore write protection." alt="" coords="5,104,158,147"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="188,101,159,111,157,105,193,100"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="111,15,102,10,81,8,63,10,52,15,50,20,55,29,50,29,45,21,49,11,61,5,82,3,103,5,116,13"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="109,89,100,85,81,83,65,85,54,89,50,95,52,104,46,103,45,94,51,85,63,79,82,77,101,80,115,88"/>
+</map>

@@ -1,0 +1,45 @@
+<map id="nonce_simple_init" name="nonce_simple_init">
+<area shape="rect" id="Node000001" title="Reset nonce state and initialize static entropy when a platform RNG is available." alt="" coords="5,444,131,471"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="36,444,31,435,35,426,48,419,68,417,90,420,103,428,98,430,88,425,68,423,49,425,39,429,37,435,42,443"/>
+<area shape="rect" id="Node000002" href="$a00910.html#a7d93edcb89071bebc220d556a863db5f" title="Fill a buffer from an optional platform randomness source." alt="" coords="179,436,322,479"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="130,464,165,465,161,468,132,468"/>
+<area shape="rect" id="Node000020" href="$a00979.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="420,768,512,795"/>
+<area shape="poly" id="edge30_Node000001_Node000020" title=" " alt="" coords="85,468,203,571,372,710,435,759,429,758,368,714,200,575,84,474"/>
+<area shape="poly" id="edge19_Node000002_Node000001" title=" " alt="" coords="176,450,148,451,145,446,181,447"/>
+<area shape="poly" id="edge27_Node000002_Node000002" title=" " alt="" coords="215,435,214,426,220,417,232,411,250,409,270,412,283,420,278,421,269,417,250,415,233,417,223,421,219,427,220,436"/>
+<area shape="rect" id="Node000003" href="$a00979.html#a5b74437bb341db1f2cd53ca496e500ed" title="Build the static entropy value from the hashed hardware sources." alt="" coords="828,287,980,329"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="322,440,561,388,815,329,810,332,562,393,323,445"/>
+<area shape="rect" id="Node000004" href="$a00979.html#a3962c0bff64b3d8b1e4dbc292f8d4014" title="Get the current counter string." alt="" coords="609,589,780,616"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="263,477,320,595,351,651,372,679,397,692,420,700,441,704,462,704,506,694,561,679,589,668,617,654,662,627,667,625,619,659,591,673,562,684,508,700,463,709,441,709,418,706,395,697,368,683,346,654,315,597,260,481"/>
+<area shape="rect" id="Node000005" href="$a00979.html#afa5dae5ee46cd32527de4e19818c6dca" title="Get the current message counter." alt="" coords="370,261,561,288"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="260,434,301,366,332,329,368,298,380,293,376,297,372,302,336,333,305,370,264,437"/>
+<area shape="rect" id="Node000006" href="$a00979.html#a7404c52d7aa3a6ba766121c9a8e7d803" title="Increment the message counter after a transmission." alt="" coords="376,336,556,379"/>
+<area shape="poly" id="edge9_Node000002_Node000006" title=" " alt="" coords="291,433,369,395,400,383,396,387,371,400,294,438"/>
+<area shape="rect" id="Node000007" href="$a00979.html#ac3f2ada5efd0c8e753063263d53a66d3" title="Generate the next nonce into the shared nonce buffer." alt="" coords="615,187,774,213"/>
+<area shape="poly" id="edge11_Node000002_Node000007" title=" " alt="" coords="253,434,264,389,286,330,320,271,342,245,368,223,395,208,424,197,484,183,544,179,602,183,597,186,544,184,485,188,425,202,398,213,372,228,346,249,324,274,291,332,270,390,258,436"/>
+<area shape="rect" id="Node000011" href="$a00979.html#a5dbdbff50096db6be4717c5ee249cc42" title="Generate a nonce and copy it to an external buffer." alt="" coords="386,120,545,163"/>
+<area shape="poly" id="edge14_Node000002_Node000011" title=" " alt="" coords="253,435,264,384,286,316,320,244,342,210,368,179,384,169,380,173,372,183,346,213,324,247,291,318,269,385,258,437"/>
+<area shape="rect" id="Node000012" href="$a00979.html#a28aaf03d1c02d38b520403da3fb9a008" title="Get the last generated nonce." alt="" coords="388,568,543,595"/>
+<area shape="poly" id="edge17_Node000002_Node000012" title=" " alt="" coords="285,477,371,530,426,560,420,561,369,534,285,482"/>
+<area shape="rect" id="Node000013" href="$a00979.html#a0c48c94546e1852b42367a605b5e9b15" title="Print a nonce in hexadecimal form." alt="" coords="399,643,532,669"/>
+<area shape="poly" id="edge20_Node000002_Node000013" title=" " alt="" coords="265,476,310,539,339,573,372,605,418,635,413,636,368,609,335,577,305,542,264,482"/>
+<area shape="rect" id="Node000018" href="$a00979.html#a3c8d08dcd72e8bd62b3539b39617ba61" title="Print the current nonce with its internal fields." alt="" coords="399,477,532,520"/>
+<area shape="poly" id="edge22_Node000002_Node000018" title=" " alt="" coords="322,468,386,482,381,484,323,474"/>
+<area shape="rect" id="Node000019" href="$a00979.html#a47783ab89ae68e23e7b82e0b49d6742a" title="Check the current nonce against the previous value." alt="" coords="396,29,536,72"/>
+<area shape="poly" id="edge25_Node000002_Node000019" title=" " alt="" coords="250,435,255,368,272,274,287,223,308,172,334,124,368,82,383,72,380,76,372,86,339,127,312,174,292,224,277,275,260,369,255,436"/>
+<area shape="poly" id="edge28_Node000002_Node000020" title=" " alt="" coords="263,477,324,608,336,642,343,670,353,695,372,724,393,743,419,761,414,760,390,747,368,727,348,698,338,671,331,644,320,610,261,481"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="864,285,862,277,869,268,883,262,904,260,926,262,941,271,936,271,925,268,904,265,884,267,872,272,867,278,869,287"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="659,588,653,581,657,571,671,565,695,563,719,565,734,574,729,574,718,570,694,568,673,570,661,575,658,580,664,590"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="429,261,423,253,427,243,442,237,466,235,491,237,506,246,501,247,490,242,466,240,443,242,431,247,428,252,434,261"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="425,335,423,326,430,317,444,311,466,309,489,312,504,320,499,321,487,317,466,315,445,317,433,321,428,327,430,336"/>
+<area shape="poly" id="edge12_Node000007_Node000003" title=" " alt="" coords="722,211,850,279,845,280,722,217"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="659,186,653,178,657,168,671,162,695,160,719,163,734,171,729,172,718,168,694,165,673,167,661,172,658,177,664,186"/>
+<area shape="poly" id="edge15_Node000011_Node000007" title=" " alt="" coords="545,159,627,181,622,183,546,164"/>
+<area shape="poly" id="edge16_Node000011_Node000011" title=" " alt="" coords="425,119,423,110,430,101,444,95,466,93,489,96,504,104,499,105,487,101,466,99,445,101,433,105,428,111,430,120"/>
+<area shape="poly" id="edge18_Node000012_Node000012" title=" " alt="" coords="429,567,423,559,427,550,442,543,466,541,491,544,506,553,501,553,490,549,466,547,443,549,431,553,428,559,434,568"/>
+<area shape="poly" id="edge21_Node000013_Node000013" title=" " alt="" coords="429,641,423,634,427,624,442,618,466,616,491,619,506,628,501,627,490,624,466,621,443,623,431,628,428,633,434,643"/>
+<area shape="poly" id="edge23_Node000018_Node000004" title=" " alt="" coords="533,518,562,530,660,581,654,581,560,534,533,523"/>
+<area shape="poly" id="edge24_Node000018_Node000018" title=" " alt="" coords="425,476,423,467,430,458,444,453,466,451,489,453,504,461,499,462,487,458,466,456,445,458,433,463,428,469,430,478"/>
+<area shape="poly" id="edge26_Node000019_Node000019" title=" " alt="" coords="425,28,423,19,430,10,444,5,466,3,489,5,504,13,499,15,487,10,466,8,445,10,433,15,428,21,430,29"/>
+<area shape="poly" id="edge29_Node000020_Node000020" title=" " alt="" coords="429,766,423,759,427,750,442,743,466,741,491,744,506,753,501,752,490,749,466,747,443,749,431,753,428,759,434,769"/>
+</map>

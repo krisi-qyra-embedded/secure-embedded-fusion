@@ -1,0 +1,18 @@
+<map id="ecdh_party_free" name="ecdh_party_free">
+<area shape="rect" id="Node000001" title="Free one directional key container and wipe its exported bytes." alt="" coords="655,63,769,89"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="738,47,730,44,712,41,695,43,686,48,684,53,688,63,683,61,678,54,682,44,693,38,712,36,732,39,744,48"/>
+<area shape="rect" id="Node000002" href="$a00335.html#a59a5a213a71bbd3e91e8eb56283139fe" title="Free the ECDH objects and wipe the context." alt="" coords="486,63,607,89"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="636,76,607,79,607,73,641,76"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="573,47,565,44,546,41,529,43,520,48,518,53,523,63,518,61,513,54,516,44,528,38,547,36,566,39,578,48"/>
+<area shape="rect" id="Node000003" href="$a00909.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,29,83,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="507,55,475,41,438,29,353,15,286,14,131,29,84,37,82,32,130,24,285,8,353,10,439,24,477,36,513,55"/>
+<area shape="rect" id="Node000004" href="$a00335.html#a70e001929d2257bc46d861c021d76c16" title="Initialize a zeroed context for secp256r1 ECDH." alt="" coords="323,63,438,89"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="468,76,439,79,439,73,473,76"/>
+<area shape="rect" id="Node000005" href="$a00909.html#a60c9a25e76daf5ea2be5f5fcfcb28652" title="Prepare both ECDH directions, AES&#45;GCM contexts and the TX nonce session." alt="" coords="131,63,275,105"/>
+<area shape="poly" id="edge11_Node000002_Node000005" title=" " alt="" coords="485,93,439,104,354,106,275,99,276,94,354,101,438,99,480,94"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="70,15,61,10,44,8,28,10,19,15,17,20,21,28,16,29,12,21,15,11,26,5,44,3,63,5,75,13"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="407,47,399,44,381,41,364,43,354,48,352,53,357,63,352,61,347,54,350,44,362,38,381,36,401,39,413,48"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="305,79,276,83,275,78,310,79"/>
+<area shape="poly" id="edge9_Node000005_Node000003" title=" " alt="" coords="113,62,83,55,83,50,118,60"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="227,47,218,43,203,41,188,43,179,48,176,54,177,63,172,61,171,53,176,44,187,38,203,36,220,38,232,47"/>
+</map>

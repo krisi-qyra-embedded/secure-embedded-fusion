@@ -1,0 +1,18 @@
+<map id="derive_keys_from_shared_secret" name="derive_keys_from_shared_secret">
+<area shape="rect" id="Node000001" title="Derive AES and MAC keys from the selected ECDH shared secret." alt="" coords="637,88,808,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="756,72,745,69,722,67,702,69,689,73,684,79,686,89,681,86,679,78,686,69,701,63,723,61,746,64,762,73"/>
+<area shape="rect" id="Node000002" href="$a01014.html#a203f9e68abc153b9c9683cf6918696f1" title="Derive receiver&#45;direction keys." alt="" coords="419,29,589,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="624,83,586,75,586,70,629,84"/>
+<area shape="rect" id="Node000003" href="$a01014.html#a485927a3f8f78dfda692da15cb915d0b" title="Validate peer material, compute receiver ECDH secret and derive session keys." alt="" coords="227,56,353,99"/>
+<area shape="poly" id="edge8_Node000001_Node000003" title=" " alt="" coords="619,103,353,85,353,79,624,101"/>
+<area shape="rect" id="Node000007" href="$a01014.html#a8f6eba2d8e6fee98435b15f1b5a71e8b" title="Initialize sender ECDH material and derive the sender session keys." alt="" coords="209,147,371,173"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="625,121,372,153,371,148,619,121"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="537,14,526,10,504,8,484,10,472,15,467,21,468,30,464,27,462,19,469,10,483,5,504,3,527,5,543,14"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="401,64,354,72,353,67,406,63"/>
+<area shape="poly" id="edge7_Node000003_Node000003" title=" " alt="" coords="322,40,311,37,290,35,270,37,259,41,254,47,255,57,250,54,249,46,255,37,269,31,290,29,312,32,327,40"/>
+<area shape="rect" id="Node000004" href="$a00915.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="5,97,161,140"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="209,94,162,106,160,101,214,92"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="115,82,104,78,83,76,64,78,52,83,47,89,49,97,43,96,42,87,49,78,62,73,83,71,105,73,120,81"/>
+<area shape="poly" id="edge10_Node000007_Node000004" title=" " alt="" coords="202,143,161,137,161,132,207,143"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="324,131,313,128,290,125,268,127,256,132,254,137,259,147,255,145,248,138,253,128,267,122,290,120,314,123,329,132"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/ds18b20.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/ds18b20.h">
+<area shape="rect" id="Node000001" title="DS18B20 driver, runtime state and application API declarations." alt="" coords="173,5,492,128"/>
+<area shape="rect" id="Node000002" href="$a00134.html" title="DS18B20 driver and runtime handling." alt="" coords="5,176,327,299"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="264,138,228,177,224,173,260,141"/>
+<area shape="rect" id="Node000003" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="350,176,651,299"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="405,137,443,176,437,175,403,142"/>
+</map>

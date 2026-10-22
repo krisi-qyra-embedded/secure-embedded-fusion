@@ -1,0 +1,10 @@
+<map id="runtime_load_float_le" name="runtime_load_float_le">
+<area shape="rect" id="Node000001" title="Decode a float from four little&#45;endian bytes." alt="" coords="464,37,608,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="569,22,559,18,536,16,515,18,504,23,501,28,506,38,502,36,496,29,500,19,514,13,536,11,560,13,575,23"/>
+<area shape="rect" id="Node000002" href="$a00329.html#a698e15f23f74d91016cbdfbaf9e22805" title="Check sensor identifiers and parse a complete STM32 telemetry frame." alt="" coords="252,29,416,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="446,51,417,53,416,48,452,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="365,13,354,10,334,8,315,10,303,15,299,21,300,30,296,27,294,19,300,10,314,5,334,3,356,5,370,14"/>
+<area shape="rect" id="Node000003" href="$a00329.html#a791cb4daf364afc6794c7f1356c26d9c" title="Authenticate requests, apply replay checks, commit telemetry and send responses." alt="" coords="5,37,204,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="233,51,204,53,204,48,239,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="143,23,131,18,104,16,80,18,67,23,64,28,71,37,65,37,59,29,64,19,79,13,105,11,132,13,148,22"/>
+</map>

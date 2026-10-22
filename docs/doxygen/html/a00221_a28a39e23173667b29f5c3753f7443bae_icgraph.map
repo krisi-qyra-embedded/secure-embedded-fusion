@@ -1,0 +1,12 @@
+<map id="provision_public_key_to_otp" name="provision_public_key_to_otp">
+<area shape="rect" id="Node000001" title="Provision the Ed25519 public key to OTP and remove its RAM copy." alt="" coords="326,47,468,89"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="423,31,414,27,397,25,382,27,372,32,368,38,369,48,365,45,363,37,369,28,380,22,397,20,416,22,428,31"/>
+<area shape="rect" id="Node000002" href="$a00233.html#a143124af5faa46c359a927e339deab51" title="Write one 32&#45;bit value in big&#45;endian form into a bounded buffer." alt="" coords="180,55,278,81"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="308,68,279,71,278,65,313,68"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="255,39,246,36,229,33,212,35,204,40,201,45,206,55,201,53,196,46,200,36,211,30,229,28,248,31,260,40"/>
+<area shape="rect" id="Node000003" href="$a00221.html#a89ee2c9aaeeea6a80c5ce21db4555fca" title="Serialize manifest fields into the canonical big&#45;endian buffer." alt="" coords="5,29,132,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="162,58,132,55,132,50,167,57"/>
+<area shape="rect" id="Node000012" href="$a00221.html#a143124af5faa46c359a927e339deab51" title=" " alt="" coords="19,80,118,107"/>
+<area shape="poly" id="edge6_Node000002_Node000012" title=" " alt="" coords="162,79,119,88,118,83,167,78"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="94,15,86,10,68,8,52,10,43,15,41,20,46,29,40,29,36,21,39,11,50,5,69,3,88,5,99,14"/>
+</map>

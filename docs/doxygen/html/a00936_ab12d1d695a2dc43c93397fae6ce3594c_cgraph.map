@@ -1,0 +1,19 @@
+<map id="generate_private_key_digital_signature" name="generate_private_key_digital_signature">
+<area shape="rect" id="Node000001" title="Prepare private&#45;key material for the digital&#45;signature context." alt="" coords="5,112,151,155"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="38,111,37,102,43,93,57,87,78,85,100,88,115,96,110,97,99,93,78,91,58,93,47,97,42,103,43,112"/>
+<area shape="rect" id="Node000002" href="$a01008.html#a21fb3bc304a056c1d419a1ed0dc0eee6" title="Generate one Ed25519 signing keypair with the project CTR&#45;DRBG." alt="" coords="199,29,374,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,109,198,82,216,77,211,79,200,86,133,114"/>
+<area shape="rect" id="Node000004" href="$a01056.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="249,120,324,147"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="151,131,236,132,231,135,152,136"/>
+<area shape="rect" id="Node000008" href="$a01026.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="240,195,332,221"/>
+<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="140,153,235,188,230,190,139,158"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="250,28,248,19,254,10,267,5,286,3,307,5,321,13,316,14,306,10,286,8,268,10,258,15,253,21,255,30"/>
+<area shape="rect" id="Node000003" href="$a01008.html#a07d477162ee57bff940a7a9951cf3a77" title=" " alt="" coords="426,37,531,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="374,48,412,50,407,51,375,53"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="445,36,440,29,444,19,457,13,478,11,501,13,515,22,509,22,500,18,478,16,458,18,447,23,445,28,450,38"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="253,119,248,111,252,102,265,95,286,93,309,96,323,105,318,105,308,101,286,99,266,101,256,105,253,111,258,120"/>
+<area shape="rect" id="Node000005" href="$a01056.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="422,120,534,147"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="324,131,409,133,404,134,324,136"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="445,119,440,111,444,102,457,95,478,93,501,96,515,105,509,104,500,101,478,99,458,101,447,105,445,111,450,121"/>
+<area shape="poly" id="edge11_Node000008_Node000008" title=" " alt="" coords="253,193,248,186,252,176,265,170,286,168,309,171,323,180,318,179,308,176,286,173,266,175,256,180,253,185,258,195"/>
+</map>

@@ -1,0 +1,24 @@
+<map id="wifi_application_connected_events" name="wifi_application_connected_events">
+<area shape="rect" id="Node000001" title="Record station connectivity and select the application mode." alt="" coords="5,171,183,213"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="53,170,52,161,58,152,73,146,94,144,117,146,132,154,127,156,116,152,94,149,74,151,62,156,57,162,58,170"/>
+<area shape="rect" id="Node000002" href="$a00909.html#ace1df51f7924ed07625502194d1bfaec" title="Start AWS after the SoftAP is idle and station connectivity is recorded." alt="" coords="231,179,386,205"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,189,218,191,213,193,184,195"/>
+<area shape="rect" id="Node000003" href="$a00909.html#a1535a2ab20693c8e0566c4201d6f48b0" title="Request AWS shutdown and start the local HTTPS dashboard." alt="" coords="434,29,652,56"/>
+<area shape="poly" id="edge13_Node000001_Node000003" title=" " alt="" coords="147,168,277,118,433,65,465,59,460,61,435,71,279,123,150,173"/>
+<area shape="rect" id="Node000060" href="$a00359.html#a89d892bcd5260d5f5925d6fe44e39237" title="Get the tracked SoftAP client count." alt="" coords="474,344,612,387"/>
+<area shape="poly" id="edge14_Node000001_Node000060" title=" " alt="" coords="152,211,473,336,469,340,151,217"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="272,178,266,170,270,160,285,154,308,152,334,155,349,163,344,164,332,160,308,157,286,159,274,164,271,169,277,179"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="317,176,362,122,395,92,433,66,449,61,444,63,435,70,399,96,366,126,321,180"/>
+<area shape="rect" id="Node000044" href="$a00305.html#aafc76bd7e6c7a18de1fc9a45147da11c" title="Start the AWS IoT task if it is not already running." alt="" coords="494,104,593,131"/>
+<area shape="poly" id="edge5_Node000002_Node000044" title=" " alt="" coords="340,176,433,140,481,130,476,132,435,145,342,181"/>
+<area shape="rect" id="Node000055" href="$a00323.html#afffb5f05a179c9702078a824048dab36" title="Stop HTTPS, disable its watchdog and release the monitor resources." alt="" coords="484,179,602,205"/>
+<area shape="poly" id="edge7_Node000002_Node000055" title=" " alt="" coords="386,189,471,191,466,193,387,195"/>
+<area shape="rect" id="Node000056" href="$a00341.html#aed5950cdae0b210440880aec1071cb5b" title="Start the periodic SNTP clock&#45;check task." alt="" coords="470,253,616,296"/>
+<area shape="poly" id="edge9_Node000002_Node000056" title=" " alt="" coords="349,203,469,247,463,248,348,208"/>
+<area shape="poly" id="edge11_Node000002_Node000060" title=" " alt="" coords="323,203,371,252,436,306,483,337,478,336,432,310,367,255,321,208"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="503,29,497,21,501,11,517,5,543,3,572,5,588,14,582,15,570,10,543,8,518,10,505,15,502,20,508,29"/>
+<area shape="poly" id="edge6_Node000044_Node000044" title=" " alt="" coords="503,103,497,95,501,85,517,79,543,77,572,80,588,89,582,89,570,85,543,83,518,85,505,89,502,95,508,104"/>
+<area shape="poly" id="edge8_Node000055_Node000055" title=" " alt="" coords="503,178,497,170,501,160,517,154,543,152,572,155,588,164,582,164,570,160,543,157,518,159,505,164,502,169,508,179"/>
+<area shape="poly" id="edge10_Node000056_Node000056" title=" " alt="" coords="499,251,497,243,504,234,520,229,543,227,568,229,585,238,580,238,567,234,543,232,521,234,507,239,502,245,504,254"/>
+<area shape="poly" id="edge12_Node000060_Node000060" title=" " alt="" coords="499,342,497,334,504,325,520,319,543,317,568,320,585,329,580,328,567,325,543,323,521,325,507,329,502,335,503,345"/>
+</map>

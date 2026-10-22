@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['rb_5fnext_0',['rb_next',['../a00191.html#a6cabe6c1d574128a88443f342658f020',1,'ESP32_uart.c']]],
+  ['rcc_5fcrc_5fclk_5fenable_1',['RCC_CRC_CLK_ENABLE',['../a00999.html#a922c817f6b763284c0139031df58df27',1,'RCC_CRC_CLK_ENABLE(void):&#160;cmox_low_level.c'],['../a00996.html#a922c817f6b763284c0139031df58df27',1,'RCC_CRC_CLK_ENABLE(void):&#160;cmox_low_level.c']]],
+  ['read_5ffield_5fdata_2',['read_field_data',['../a00164.html#a1218d033abf33a82f27b86836fc9feb3',1,'bme680.c']]],
+  ['read_5ftim1_5fcounter_3',['read_tim1_counter',['../a01035.html#a050a1266b3e065a9850a897b2a3398ce',1,'read_tim1_counter(void):&#160;nonce.c'],['../a01032.html#a050a1266b3e065a9850a897b2a3398ce',1,'read_tim1_counter(void):&#160;nonce.c']]],
+  ['read_5ftim1_5fhashed_5floop_4',['read_tim1_hashed_loop',['../a01035.html#a8af10b21d3f570b16bad20a866618454',1,'read_tim1_hashed_loop(void):&#160;nonce.c'],['../a01032.html#a8af10b21d3f570b16bad20a866618454',1,'read_tim1_hashed_loop(void):&#160;nonce.c']]],
+  ['receiver_5finit_5fecdh_5fcrypto_5',['receiver_init_ecdh_crypto',['../a00945.html#a485927a3f8f78dfda692da15cb915d0b',1,'receiver_init_ecdh_crypto(crypto_ctx_t *ctx):&#160;ecdh.c'],['../a01017.html#a485927a3f8f78dfda692da15cb915d0b',1,'receiver_init_ecdh_crypto(crypto_ctx_t *ctx):&#160;ecdh.c'],['../a01014.html#a485927a3f8f78dfda692da15cb915d0b',1,'receiver_init_ecdh_crypto(crypto_ctx_t *ctx):&#160;ecdh.c'],['../a00942.html#a485927a3f8f78dfda692da15cb915d0b',1,'receiver_init_ecdh_crypto(crypto_ctx_t *ctx):&#160;ecdh.c']]],
+  ['recombine_5fadc_5fvalues_6',['recombine_adc_values',['../a00945.html#a9d18f04aea9ccb2338ed93224948eff0',1,'recombine_adc_values(crypto_ctx_t *ctx):&#160;ecdh.c'],['../a01017.html#a9d18f04aea9ccb2338ed93224948eff0',1,'recombine_adc_values(crypto_ctx_t *ctx):&#160;ecdh.c'],['../a01014.html#a9d18f04aea9ccb2338ed93224948eff0',1,'recombine_adc_values(crypto_ctx_t *ctx):&#160;ecdh.c'],['../a00942.html#a9d18f04aea9ccb2338ed93224948eff0',1,'recombine_adc_values(crypto_ctx_t *ctx):&#160;ecdh.c']]],
+  ['reg_5fbarrier_7',['reg_barrier',['../a00197.html#a99dd604d30f687344c56866416357c49',1,'i2c_dma.c']]],
+  ['request_5fiwdg_5freset_8',['request_iwdg_reset',['../a00095.html#a14fb51100b561389c651739b3d4871b2',1,'request_iwdg_reset(const char *reason):&#160;iwdg.c'],['../a00200.html#a14fb51100b561389c651739b3d4871b2',1,'request_iwdg_reset(const char *reason):&#160;iwdg.c']]],
+  ['run_5fexpected_5fauth_5ffailure_9',['run_expected_auth_failure',['../a00269.html#aeafdb491188b6310b770b925e3e38c28',1,'digital_signature.c']]],
+  ['runtime_5fbuild_5fresponse_5fplaintext_10',['runtime_build_response_plaintext',['../a00329.html#ab958ba5fa37c53443066e0e570406230',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fchecksum8_11',['runtime_checksum8',['../a00329.html#a19358204429fb0052356f57c157765b5',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5fbe32_12',['runtime_load_be32',['../a00329.html#a0fd12320a3e91200b47172ed2a3f5129',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5fbe64_13',['runtime_load_be64',['../a00329.html#ac19fc45f136161d8c7c9a7cf12c9f59c',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5ffloat_5fle_14',['runtime_load_float_le',['../a00329.html#aaee85d1882fdb0ff849fe2eeb57f127a',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5fi16_5fle_15',['runtime_load_i16_le',['../a00329.html#a43eddad61971d7367db04045898e47a4',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5fsequence_5fle_16',['runtime_load_sequence_le',['../a00329.html#a7ca6f1796286087a35d9cd46e85086bc',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5fu16_5fle_17',['runtime_load_u16_le',['../a00329.html#aa85aedd26d76435e264409bcd90279b0',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fload_5fu32_5fle_18',['runtime_load_u32_le',['../a00329.html#ab5cf68c38cd748def5ec6637b5ea79de',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5flog_5ftelemetry_19',['runtime_log_telemetry',['../a00329.html#ad3312196fadaae3b7344ab4b98f8e226',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fparse_5ftelemetry_5fframe_20',['runtime_parse_telemetry_frame',['../a00329.html#a698e15f23f74d91016cbdfbaf9e22805',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fsend_5fencrypted_5fresponse_21',['runtime_send_encrypted_response',['../a00329.html#a30ff8984c3968cd656ba75f7da031a14',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fstore_5flatest_5ftelemetry_22',['runtime_store_latest_telemetry',['../a00329.html#a8d006e8ecc7b41283855e7a06ccf8cf3',1,'mbedtls_aes_gcm.c']]],
+  ['runtime_5fvalidate_5fplaintext_5fframe_23',['runtime_validate_plaintext_frame',['../a00329.html#a9ee449b5ba875c031b733d54a8886a0b',1,'mbedtls_aes_gcm.c']]]
+];

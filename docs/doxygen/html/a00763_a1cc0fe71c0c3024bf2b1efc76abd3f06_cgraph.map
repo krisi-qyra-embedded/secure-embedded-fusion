@@ -1,0 +1,22 @@
+<map id="compute_device_uid_hashed_global" name="compute_device_uid_hashed_global">
+<area shape="rect" id="Node000001" title="Hash the device UID into the global personalization buffer." alt="" coords="5,29,146,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="39,28,37,19,43,10,56,5,76,3,96,5,110,13,105,14,95,10,75,8,58,10,47,15,42,21,44,29"/>
+<area shape="rect" id="Node000002" href="$a00766.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 UID with SHA&#45;256." alt="" coords="194,29,340,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="146,48,181,50,175,51,146,53"/>
+<area shape="poly" id="edge13_Node000002_Node000002" title=" " alt="" coords="233,27,231,19,237,10,249,5,267,3,286,5,299,14,294,13,285,10,267,8,250,10,240,14,236,21,237,30"/>
+<area shape="rect" id="Node000003" href="$a00745.html#a6733451d1d006e2b019f6301ebedd5e6" title="Read the STM32 device UID into the local buffer." alt="" coords="388,37,503,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="340,48,375,51,370,51,340,53"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="421,36,416,29,419,19,429,13,446,11,463,13,474,23,468,21,461,18,446,16,431,18,423,22,422,28,425,38"/>
+<area shape="rect" id="Node000004" href="$a00805.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="551,37,626,64"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="504,48,538,51,533,51,504,53"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="564,36,559,29,562,19,572,13,589,11,606,13,616,23,611,21,604,18,588,16,574,18,567,22,565,28,568,38"/>
+<area shape="rect" id="Node000005" href="$a00805.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="674,37,786,64"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="626,48,661,51,656,51,626,53"/>
+<area shape="poly" id="edge12_Node000005_Node000005" title=" " alt="" coords="706,36,701,29,704,19,714,13,730,11,747,13,757,23,752,21,745,18,730,16,716,18,709,22,707,28,710,38"/>
+<area shape="rect" id="Node000006" href="$a00721.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="834,37,901,64"/>
+<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="787,48,821,51,815,51,787,53"/>
+<area shape="poly" id="edge9_Node000006_Node000006" title=" " alt="" coords="847,35,843,28,845,19,854,13,868,11,882,13,891,23,886,21,880,18,868,16,856,18,850,22,848,28,851,38"/>
+<area shape="rect" id="Node000007" href="$a00721.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="949,37,1023,64"/>
+<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="902,48,937,51,931,51,902,53"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="965,35,961,28,964,19,972,13,986,11,1001,13,1009,23,1004,21,999,18,986,16,974,18,968,22,967,28,969,38"/>
+</map>

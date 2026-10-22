@@ -1,0 +1,27 @@
+<map id="spi4_dma_transmit" name="spi4_dma_transmit">
+<area shape="rect" id="Node000001" title="Transmit a buffer over SPI4 DMA." alt="" coords="621,192,753,219"/>
+<area shape="poly" id="edge17_Node000001_Node000001" title=" " alt="" coords="720,177,709,173,687,171,666,173,655,177,652,183,658,192,653,191,647,183,651,174,665,167,687,165,711,168,725,177"/>
+<area shape="rect" id="Node000002" href="$a00158.html#a9c518b06dd3224d083447b9d12f137ba" title="Write one 8&#45;bit MAX31865 register." alt="" coords="401,192,573,219"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="603,206,574,208,573,203,608,205"/>
+<area shape="poly" id="edge16_Node000002_Node000002" title=" " alt="" coords="520,177,509,173,487,171,466,173,455,177,452,183,458,192,453,191,447,183,451,174,465,167,487,165,511,168,525,177"/>
+<area shape="rect" id="Node000003" href="$a00158.html#ac6ea9adbdb4babf722ce7f91ff6d5c3e" title="Enable or disable automatic conversion." alt="" coords="194,29,353,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="464,179,417,125,386,96,352,70,330,59,329,54,354,66,389,92,421,121,470,179"/>
+<area shape="rect" id="Node000013" href="$a00158.html#a47fe66cc8c41859511d4f9d607db2816" title="Clear the current MAX31865 fault state." alt="" coords="201,104,346,131"/>
+<area shape="poly" id="edge4_Node000002_Node000013" title=" " alt="" coords="436,186,352,152,309,134,309,129,354,147,442,185"/>
+<area shape="rect" id="Node000014" href="$a00158.html#a1fc4b0b4a7dd3393229614da71aae892" title="Read the raw RTD conversion value." alt="" coords="5,155,146,181"/>
+<area shape="poly" id="edge11_Node000002_Node000014" title=" " alt="" coords="384,198,146,177,145,172,387,194"/>
+<area shape="rect" id="Node000015" href="$a00158.html#a854dfdf167b7b34020353b12314b4791" title="Enable or disable the MAX31865 bias." alt="" coords="197,229,350,256"/>
+<area shape="poly" id="edge8_Node000002_Node000015" title=" " alt="" coords="390,223,351,232,349,227,395,221"/>
+<area shape="rect" id="Node000016" href="$a00158.html#a69185b67ae3a9ac375d48d6f73b2e030" title="Configure the 50/60 Hz rejection filter." alt="" coords="206,304,341,331"/>
+<area shape="poly" id="edge12_Node000002_Node000016" title=" " alt="" coords="449,226,302,306,300,301,444,227"/>
+<area shape="rect" id="Node000017" href="$a00158.html#aea838a55d8e8cc0b2dfd0ed66fb03d5f" title="Configure the RTD wiring mode." alt="" coords="203,379,344,405"/>
+<area shape="poly" id="edge14_Node000002_Node000017" title=" " alt="" coords="467,230,417,286,355,345,301,381,299,376,351,341,414,283,462,232"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="306,15,295,10,273,8,253,10,242,15,239,20,245,29,239,29,234,21,238,11,251,5,273,3,297,5,311,13"/>
+<area shape="poly" id="edge5_Node000013_Node000013" title=" " alt="" coords="306,89,295,85,273,83,253,85,242,89,239,95,245,104,239,104,234,95,238,86,251,79,273,77,297,80,311,88"/>
+<area shape="poly" id="edge6_Node000013_Node000014" title=" " alt="" coords="202,137,132,156,129,152,205,133"/>
+<area shape="poly" id="edge7_Node000014_Node000014" title=" " alt="" coords="108,140,98,136,75,133,55,135,44,140,41,145,47,154,41,155,36,146,40,136,54,130,76,128,99,131,113,138"/>
+<area shape="poly" id="edge10_Node000015_Node000014" title=" " alt="" coords="220,225,113,184,113,179,224,222"/>
+<area shape="poly" id="edge9_Node000015_Node000015" title=" " alt="" coords="306,214,295,210,273,208,253,210,242,215,239,220,245,229,239,229,234,221,238,211,251,205,273,203,297,205,311,214"/>
+<area shape="poly" id="edge13_Node000016_Node000016" title=" " alt="" coords="306,289,295,285,273,283,253,285,242,289,239,295,244,304,239,303,234,295,238,286,251,279,273,277,297,280,311,289"/>
+<area shape="poly" id="edge15_Node000017_Node000017" title=" " alt="" coords="306,363,295,360,273,357,253,359,242,364,239,369,244,379,239,377,234,370,238,360,251,354,273,352,297,355,311,364"/>
+</map>

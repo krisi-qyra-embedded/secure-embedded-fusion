@@ -1,0 +1,5 @@
+<map id="_sbrk" name="_sbrk">
+<area shape="rect" id="Node000001" title="_sbrk() allocates memory to the newlib heap and is used by malloc and others from the C library" alt="" coords="107,5,160,32"/>
+<area shape="rect" id="Node000002" href="$a01056.html#a68125648bcce70b6bb3aa0be50e99700" title="_sbrk() allocates memory to the newlib heap and is used by malloc and others from the C library" alt="" coords="5,5,59,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,19,59,21,59,16,93,18"/>
+</map>

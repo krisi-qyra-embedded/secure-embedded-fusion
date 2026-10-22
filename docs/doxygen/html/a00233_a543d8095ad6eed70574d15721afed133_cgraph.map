@@ -1,0 +1,10 @@
+<map id="hash_firmware_binary" name="hash_firmware_binary">
+<area shape="rect" id="Node000001" title="Hash a firmware image directly from Flash." alt="" coords="5,29,154,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="52,29,47,21,50,11,62,5,80,3,99,5,110,14,105,14,97,10,79,8,63,10,54,15,52,20,57,29"/>
+<area shape="rect" id="Node000002" href="$a01013.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="202,29,276,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="154,40,189,43,183,43,154,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="214,28,210,21,213,11,223,5,239,3,256,5,266,15,261,14,254,10,239,8,225,10,217,14,215,20,219,30"/>
+<area shape="rect" id="Node000003" href="$a01013.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="324,29,436,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="277,40,311,43,306,43,277,45"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="355,28,351,21,354,11,364,5,380,3,397,5,408,15,403,13,395,10,380,8,366,10,358,14,356,20,360,30"/>
+</map>

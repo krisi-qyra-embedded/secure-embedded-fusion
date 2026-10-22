@@ -1,0 +1,14 @@
+<map id="telemetry_put_u32_le" name="telemetry_put_u32_le">
+<area shape="rect" id="Node000001" title=" " alt="" coords="738,37,884,64"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="843,22,833,18,811,16,791,18,780,23,777,28,782,38,778,36,772,29,776,19,789,13,811,11,834,13,848,23"/>
+<area shape="rect" id="Node000002" href="$a00170.html#a1ace640503ede8f704d8459a843bd936" title="Build the plaintext telemetry frame sent to ESP32." alt="" coords="295,29,493,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="720,41,690,41,616,39,541,41,494,44,493,39,541,36,616,34,690,36,725,41"/>
+<area shape="rect" id="Node000008" href="$a00170.html#af3acc8522a772627b0a6a342d062e462" title=" " alt="" coords="541,75,690,101"/>
+<area shape="poly" id="edge5_Node000001_Node000008" title=" " alt="" coords="726,67,689,77,688,71,720,68"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="428,14,416,10,394,8,373,10,360,15,355,21,356,30,352,27,350,19,357,10,372,5,394,3,418,5,433,14"/>
+<area shape="rect" id="Node000003" href="$a00170.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="5,37,247,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="276,51,247,53,247,48,282,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="171,23,157,19,126,16,98,18,82,23,79,28,86,37,81,37,73,29,79,19,97,13,126,11,158,13,176,22"/>
+<area shape="poly" id="edge6_Node000008_Node000002" title=" " alt="" coords="523,73,493,70,494,65,529,73"/>
+<area shape="poly" id="edge7_Node000008_Node000008" title=" " alt="" coords="648,59,637,56,616,53,595,55,584,60,582,65,587,75,582,73,576,66,581,56,594,50,616,48,639,51,653,60"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="device_uid_hash" name="device_uid_hash">
+<area shape="rect" id="Node000001" title="Calculate the project UID hash." alt="" coords="5,55,124,81"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="33,54,28,46,32,36,44,30,65,28,86,31,99,39,94,40,85,36,64,33,46,35,35,40,33,45,38,54"/>
+<area shape="rect" id="Node000002" href="$a00949.html#a9e326938c764a375d370db99692af5e2" title="Read the UID as three 32&#45;bit words." alt="" coords="172,29,322,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,57,159,55,153,56,125,62"/>
+<area shape="rect" id="Node000003" href="$a00949.html#a6733451d1d006e2b019f6301ebedd5e6" title="Read the STM32 device UID into the local buffer." alt="" coords="370,55,485,81"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="124,65,355,65,355,71,124,71"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="216,28,210,21,214,11,227,5,247,3,269,5,281,14,276,14,267,10,247,8,228,10,218,15,216,20,221,30"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="322,51,357,58,352,58,322,56"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="397,53,391,46,395,36,407,30,428,28,449,31,462,40,457,39,448,36,428,33,409,35,399,40,396,45,401,55"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="esp32_aes_gcm_free" name="esp32_aes_gcm_free">
+<area shape="rect" id="Node000001" title="Free both GCM objects, close NVS state and wipe the context." alt="" coords="5,29,151,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="44,29,38,21,42,11,56,5,78,3,102,5,116,14,110,14,100,10,78,8,57,10,46,15,44,20,49,29"/>
+<area shape="rect" id="Node000002" href="$a00326.html#af4e7a64ae3803695df4948086f47caf2" title="Close the NVS handle and clear cached TX and RX state." alt="" coords="199,29,353,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="151,40,186,43,180,43,151,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="242,28,236,21,240,11,254,5,276,3,299,5,313,14,308,14,298,10,276,8,255,10,244,15,241,20,247,30"/>
+</map>

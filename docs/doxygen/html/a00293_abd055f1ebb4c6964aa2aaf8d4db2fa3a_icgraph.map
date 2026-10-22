@@ -1,0 +1,10 @@
+<map id="sntp_time_sync" name="sntp_time_sync">
+<area shape="rect" id="Node000001" title="Check the clock every ten seconds." alt="" coords="402,37,515,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="487,22,478,18,459,16,440,18,430,23,428,28,433,38,428,36,423,29,427,19,439,13,459,11,480,13,493,23"/>
+<area shape="rect" id="Node000002" href="$a00293.html#aed5950cdae0b210440880aec1071cb5b" title="Start the periodic SNTP clock&#45;check task." alt="" coords="209,29,354,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="384,51,355,53,354,48,389,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="308,13,299,10,281,8,265,10,255,14,251,21,252,30,247,27,246,19,251,10,263,5,281,3,301,5,314,14"/>
+<area shape="rect" id="Node000003" href="$a00860.html#ace1df51f7924ed07625502194d1bfaec" title="Start AWS after the SoftAP is idle and station connectivity is recorded." alt="" coords="5,37,161,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="190,51,161,53,161,48,196,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="115,22,105,18,83,16,62,18,51,23,49,28,54,37,49,37,43,29,47,19,61,13,83,11,107,13,121,22"/>
+</map>

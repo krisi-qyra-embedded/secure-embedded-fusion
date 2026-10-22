@@ -1,0 +1,13 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/pm2_5.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/pm2_5.h">
+<area shape="rect" id="Node000001" title="PMS5003 frame parsing, runtime timing and recovery declarations." alt="" coords="342,5,652,128"/>
+<area shape="rect" id="Node000002" href="$a00065.html" title="USART1 DMA receive path for the PMS5003 sensor." alt="" coords="331,176,662,299"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="498,142,499,177,494,174,495,146"/>
+<area shape="rect" id="Node000003" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="5,347,306,469"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="367,139,321,178,283,218,247,263,191,348,187,344,243,260,279,215,318,174,371,135"/>
+<area shape="rect" id="Node000005" href="$a00173.html" title="PMS5003 frame parsing, telemetry and runtime recovery." alt="" coords="688,347,999,469"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="624,134,676,174,716,215,752,260,811,347,806,345,748,263,712,219,672,178,623,139"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="362,305,280,349,277,344,358,307"/>
+<area shape="rect" id="Node000004" href="$a00170.html" title="USART1 DMA receive path for the PM2.5 sensor." alt="" coords="330,347,664,469"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="499,313,499,348,495,345,495,317"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="636,303,721,346,716,346,635,309"/>
+</map>

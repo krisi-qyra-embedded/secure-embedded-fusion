@@ -1,0 +1,10 @@
+<map id="build_sensor_json_payload" name="build_sensor_json_payload">
+<area shape="rect" id="Node000001" title="Build JSON from local sensors and the latest STM32 snapshot." alt="" coords="299,29,476,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="418,14,408,10,388,8,368,10,358,15,356,20,361,30,356,28,350,21,354,11,367,5,388,3,410,5,423,15"/>
+<area shape="rect" id="Node000002" href="$a00302.html#a500d275476b6ba32815804434f32885b" title="Connect to AWS, publish sensor telemetry and process MQTT traffic." alt="" coords="153,29,251,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="281,43,252,45,252,40,286,43"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="225,14,218,10,202,8,187,10,179,14,177,20,181,30,176,28,172,21,175,11,185,5,202,3,220,5,230,15"/>
+<area shape="rect" id="Node000003" href="$a00302.html#aafc76bd7e6c7a18de1fc9a45147da11c" title="Start the AWS IoT task if it is not already running." alt="" coords="5,29,105,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="134,43,105,45,105,40,140,42"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="78,14,71,10,55,8,40,10,32,14,30,20,34,29,29,29,25,21,28,11,38,5,55,3,73,5,84,14"/>
+</map>

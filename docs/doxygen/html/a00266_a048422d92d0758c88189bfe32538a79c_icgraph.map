@@ -1,0 +1,7 @@
+<map id="flash_obytes_get_user" name="flash_obytes_get_user">
+<area shape="rect" id="Node000001" title="Read the user option&#45;byte bits." alt="" coords="216,29,368,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="325,14,315,10,292,8,270,10,259,15,256,20,262,30,257,28,251,21,255,11,269,5,292,3,316,5,331,14"/>
+<area shape="rect" id="Node000002" href="$a00254.html#a60c48d3594bc83c76006711be159b58e" title="Read the current Flash option&#45;byte configuration." alt="" coords="5,29,168,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,43,168,45,168,40,202,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="120,14,109,10,86,8,65,10,53,15,51,20,57,29,51,29,45,21,50,11,64,5,87,3,111,5,125,14"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="flash_check_errors" name="flash_check_errors">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,137,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="44,29,40,21,43,11,54,5,71,3,89,5,100,14,95,14,87,10,71,8,56,10,47,14,45,20,50,29"/>
+<area shape="rect" id="Node000002" href="$a01062.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="185,29,259,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="137,40,171,42,166,43,137,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="197,28,193,21,196,11,206,5,222,3,239,5,249,15,244,14,237,10,222,8,208,10,200,14,198,20,202,30"/>
+<area shape="rect" id="Node000003" href="$a01062.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="307,29,419,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="260,40,294,43,289,43,260,45"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="338,28,334,21,337,11,347,5,363,3,380,5,391,15,386,13,378,10,363,8,349,10,341,14,339,20,343,30"/>
+</map>

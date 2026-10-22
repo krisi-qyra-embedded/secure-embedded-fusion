@@ -1,0 +1,17 @@
+<map id="runtime_parse_telemetry_frame" name="runtime_parse_telemetry_frame">
+<area shape="rect" id="Node000001" title="Check sensor identifiers and parse a complete STM32 telemetry frame." alt="" coords="5,96,170,139"/>
+<area shape="poly" id="edge10_Node000001_Node000001" title=" " alt="" coords="49,95,47,86,54,77,67,71,88,69,109,72,124,80,119,81,108,77,87,75,69,77,57,81,52,87,54,96"/>
+<area shape="rect" id="Node000002" href="$a00329.html#aaee85d1882fdb0ff849fe2eeb57f127a" title="Decode a float from four little&#45;endian bytes." alt="" coords="218,29,362,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,93,217,66,237,61,232,63,219,70,146,98"/>
+<area shape="rect" id="Node000004" href="$a00329.html#a43eddad61971d7367db04045898e47a4" title="Read a signed 16&#45;bit little&#45;endian value." alt="" coords="222,104,358,131"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="170,115,209,117,204,118,170,120"/>
+<area shape="rect" id="Node000005" href="$a00329.html#aa85aedd26d76435e264409bcd90279b0" title="Read an unsigned 16&#45;bit little&#45;endian value." alt="" coords="410,129,550,156"/>
+<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="170,133,218,140,309,145,397,147,392,147,309,150,217,145,170,138"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="257,28,252,21,256,11,269,5,290,3,313,5,326,14,321,14,311,10,290,8,270,10,259,15,257,20,262,30"/>
+<area shape="rect" id="Node000003" href="$a00329.html#ab5cf68c38cd748def5ec6637b5ea79de" title="Read an unsigned 32&#45;bit little&#45;endian value." alt="" coords="410,29,550,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="362,40,397,42,392,43,363,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="447,28,442,21,446,11,459,5,480,3,503,5,516,14,511,14,501,10,480,8,460,10,450,15,447,20,452,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="257,103,252,95,256,86,269,79,290,77,313,80,326,89,321,88,311,85,290,83,270,85,259,89,257,95,262,105"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="359,124,397,131,392,131,358,129"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="448,128,442,121,446,111,459,105,480,103,503,105,516,115,511,114,501,110,480,108,460,110,450,115,447,120,452,130"/>
+</map>

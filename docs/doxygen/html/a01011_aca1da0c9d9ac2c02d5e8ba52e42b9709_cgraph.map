@@ -1,0 +1,10 @@
+<map id="derive_keys_from_shared_secret" name="derive_keys_from_shared_secret">
+<area shape="rect" id="Node000001" title="Derive AES and MAC keys from the selected ECDH shared secret." alt="" coords="5,59,176,101"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="54,58,53,49,59,40,72,34,91,32,111,34,124,43,119,44,109,40,90,37,73,39,62,44,58,50,60,59"/>
+<area shape="rect" id="Node000002" href="$a01011.html#a59f18c3818b5d6fd5d528d214ed1c6bc" title=" " alt="" coords="224,29,332,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="175,60,211,56,206,57,177,66"/>
+<area shape="rect" id="Node000003" href="$a01029.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="232,104,324,131"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="176,94,219,105,214,105,176,100"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="245,28,240,21,244,11,257,5,278,3,300,5,314,14,308,14,299,10,278,8,258,10,248,15,245,20,251,30"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="246,102,240,95,244,86,257,79,278,77,300,80,314,89,308,88,299,85,278,83,258,85,248,89,245,95,251,105"/>
+</map>

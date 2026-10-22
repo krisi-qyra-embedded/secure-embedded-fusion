@@ -1,0 +1,20 @@
+<map id="telemetry_publish_ds18b20" name="telemetry_publish_ds18b20">
+<area shape="rect" id="Node000001" title="Publish the full DS18B20 temperature group." alt="" coords="5,41,185,68"/>
+<area shape="rect" id="Node000002" href="$a00209.html#aa891c98d9faefbdb171bf6d9ea70ec17" title="Advance a telemetry generation counter." alt="" coords="698,29,873,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,47,460,36,650,36,685,39,680,40,650,41,460,41,186,52"/>
+<area shape="rect" id="Node000003" href="$a00098.html#af44119227935e708caf643522b25b604" title="Publish the latest DS18B20 temperature set." alt="" coords="233,104,412,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="146,66,259,98,254,101,146,71"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="746,28,740,21,745,11,760,5,786,3,813,5,829,15,824,14,812,10,785,8,761,10,748,15,745,20,751,30"/>
+<area shape="poly" id="edge6_Node000003_Node000002" title=" " alt="" coords="353,101,402,82,459,65,575,48,685,43,680,44,575,53,461,71,404,87,355,106"/>
+<area shape="poly" id="edge9_Node000003_Node000003" title=" " alt="" coords="284,103,277,95,282,85,297,79,322,77,350,80,366,89,360,89,348,85,322,83,298,85,285,89,282,95,289,104"/>
+<area shape="rect" id="Node000004" href="$a00209.html#ac350ed070c7c85fc9a4701c51e6f1b41" title="Commit the sample IDs from a successfully transmitted snapshot." alt="" coords="462,104,648,131"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="412,115,450,117,444,118,413,120"/>
+<area shape="rect" id="Node000005" href="$a00209.html#a074ae1d52dde9fa61e0a88879fd156dc" title="Build a snapshot only when all five sources are newer." alt="" coords="482,179,628,221"/>
+<area shape="poly" id="edge7_Node000003_Node000005" title=" " alt="" coords="362,129,481,173,476,173,362,134"/>
+<area shape="rect" id="Node000006" href="$a00158.html#a8f13c6af18cdda853a903bc57d1541b9" title="Publish the latest MAX31865 temperature." alt="" coords="460,269,650,296"/>
+<area shape="poly" id="edge10_Node000003_Node000006" title=" " alt="" coords="338,128,391,177,461,231,512,262,507,262,459,236,388,181,337,134"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="516,103,509,95,514,85,530,79,555,77,583,80,599,89,594,89,582,85,555,83,531,85,518,89,515,95,521,104"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="512,177,510,169,517,160,532,154,555,152,580,154,596,163,591,163,579,160,555,157,533,159,520,164,515,170,516,179"/>
+<area shape="poly" id="edge11_Node000006_Node000002" title=" " alt="" coords="591,266,620,251,649,231,687,191,721,147,768,71,773,68,725,150,691,195,652,235,623,256,593,271"/>
+<area shape="poly" id="edge12_Node000006_Node000006" title=" " alt="" coords="516,268,509,261,514,251,530,245,555,243,583,245,599,255,594,254,582,250,555,248,531,250,518,255,515,260,521,270"/>
+</map>

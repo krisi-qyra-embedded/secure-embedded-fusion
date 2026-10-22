@@ -1,0 +1,10 @@
+<map id="sram_sample_runtime" name="sram_sample_runtime">
+<area shape="rect" id="Node000001" title="Capture SRAM state from the runtime fallback sampling region." alt="" coords="5,29,155,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="52,29,47,21,51,11,62,5,80,3,99,5,111,14,106,14,98,10,80,8,64,10,55,15,53,20,57,29"/>
+<area shape="rect" id="Node000002" href="$a01041.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="203,29,277,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="155,40,190,43,184,43,155,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="215,28,211,21,214,11,224,5,240,3,257,5,267,15,262,14,255,10,240,8,226,10,218,14,216,20,220,30"/>
+<area shape="rect" id="Node000003" href="$a01041.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="325,29,437,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="278,40,312,43,307,43,278,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="356,28,352,21,355,11,365,5,381,3,398,5,409,15,404,13,396,10,381,8,367,10,359,14,357,20,361,30"/>
+</map>

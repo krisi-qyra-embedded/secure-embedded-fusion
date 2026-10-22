@@ -1,0 +1,25 @@
+<map id="DMA2_Stream0_IRQHandler" name="DMA2_Stream0_IRQHandler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,179,196,205"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="60,179,54,170,58,160,74,154,101,152,129,155,145,163,140,165,128,160,100,157,76,159,62,164,59,169,65,178"/>
+<area shape="rect" id="Node000002" href="$a00152.html#ad3a9d4634cf8652c3ed926d1650b349a" title="Signal SPI/MAX31865 DMA activity to the supervisor." alt="" coords="267,29,408,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="112,176,165,123,202,92,242,66,258,60,254,64,245,70,205,96,168,127,116,180"/>
+<area shape="rect" id="Node000004" href="$a00185.html#a2f3757fd2a5b7236a7f417cfa2f18780" title=" " alt="" coords="279,104,396,131"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="138,176,243,140,270,134,266,137,244,145,141,180"/>
+<area shape="rect" id="Node000005" href="$a00185.html#a3fddd4d05db3fc56194a69bad3d924a4" title="Clear SPI4 overrun when present." alt="" coords="250,179,425,205"/>
+<area shape="poly" id="edge8_Node000001_Node000005" title=" " alt="" coords="195,189,236,191,232,193,197,195"/>
+<area shape="rect" id="Node000006" href="$a00185.html#afd00185b9d1b92638523cb641c9d9d5e" title=" " alt="" coords="244,253,431,280"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="145,203,280,247,276,250,145,209"/>
+<area shape="rect" id="Node000007" href="$a00185.html#ac8ff03f355e829dd1b908c908b753c61" title=" " alt="" coords="268,328,406,371"/>
+<area shape="poly" id="edge12_Node000001_Node000007" title=" " alt="" coords="122,203,245,290,289,320,284,319,242,294,120,208"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="298,29,292,21,297,11,312,5,337,3,365,5,381,14,376,15,364,10,337,8,313,10,300,15,297,20,304,29"/>
+<area shape="rect" id="Node000003" href="$a00206.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="534,29,598,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="407,40,521,42,516,44,408,45"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="531,31,521,23,524,12,539,5,566,3,600,7,609,13,611,22,606,20,605,16,599,12,566,8,541,10,528,16,526,22,537,32"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="298,103,292,95,297,85,312,79,337,77,365,80,381,89,376,90,364,85,337,83,313,85,300,89,297,95,304,104"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="298,178,292,170,297,160,312,154,337,152,365,155,381,164,376,164,364,160,337,157,313,159,300,164,297,169,304,179"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="298,252,292,245,297,235,312,229,337,227,365,229,381,239,376,238,364,234,337,232,313,234,300,239,297,244,304,254"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="294,326,292,318,299,309,315,303,337,301,362,304,378,313,373,312,361,309,337,307,316,309,303,313,297,319,299,329"/>
+<area shape="rect" id="Node000008" href="$a00149.html#a41b0b8abbc5ea0d93b77a9751fe4a36c" title="Mark one subsystem fault as active from an ISR." alt="" coords="479,328,653,371"/>
+<area shape="poly" id="edge14_Node000007_Node000008" title=" " alt="" coords="407,347,466,349,461,349,407,352"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="523,326,521,318,528,309,543,303,566,301,591,304,607,313,602,312,589,309,566,307,545,309,531,313,526,319,527,329"/>
+</map>

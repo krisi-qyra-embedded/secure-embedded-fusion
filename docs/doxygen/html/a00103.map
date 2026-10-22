@@ -1,0 +1,36 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/tim.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/tim.h">
+<area shape="rect" id="Node000001" title="TIM2 delay, one&#45;shot and interrupt helper declarations." alt="" coords="1758,5,2046,128"/>
+<area shape="rect" id="Node000002" href="$a00104.html" title="TIM3 microsecond timebase and blocking delay declarations." alt="" coords="538,176,834,299"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1739,73,1559,85,1336,104,1094,134,972,154,853,179,835,183,833,178,852,173,971,149,1093,129,1335,98,1559,80,1745,72"/>
+<area shape="rect" id="Node000003" href="$a00134.html" title="DS18B20 driver and runtime handling." alt="" coords="5,347,327,469"/>
+<area shape="poly" id="edge7_Node000001_Node000003" title=" " alt="" coords="1740,70,1442,78,1076,95,895,109,728,127,586,150,528,163,480,178,407,213,339,257,278,304,227,349,224,344,274,300,336,252,405,208,478,174,527,158,585,145,727,122,894,103,1076,90,1441,73,1745,69"/>
+<area shape="rect" id="Node000004" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="350,347,651,469"/>
+<area shape="poly" id="edge11_Node000001_Node000004" title=" " alt="" coords="1740,70,1420,79,1038,96,858,110,704,128,589,150,551,164,528,178,514,195,503,214,491,258,488,303,491,347,486,345,482,303,485,257,498,212,509,192,524,174,549,159,588,145,704,122,858,104,1037,90,1419,73,1745,69"/>
+<area shape="rect" id="Node000005" href="$a00167.html" title="Blocking 1&#45;Wire bus handling and ROM search." alt="" coords="997,347,1314,469"/>
+<area shape="poly" id="edge14_Node000001_Node000005" title=" " alt="" coords="1740,74,1505,88,1240,109,1118,122,1015,138,939,157,914,167,899,178,880,207,874,235,881,265,899,297,932,318,999,348,993,348,929,322,895,300,876,267,869,236,875,205,895,174,911,162,937,152,1014,133,1117,117,1239,103,1504,83,1745,73"/>
+<area shape="rect" id="Node000007" href="$a00116.html" title="BME680 sensor driver and measurement handling." alt="" coords="908,176,1226,299"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1740,86,1504,124,1370,149,1239,179,1228,182,1226,176,1237,173,1369,143,1503,118,1745,85"/>
+<area shape="rect" id="Node000008" href="$a00760.html" title="ECDH and AES&#45;GCM handling for the STM32 link." alt="" coords="1250,176,1551,299"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="1746,116,1564,179,1552,183,1551,178,1562,173,1740,118"/>
+<area shape="rect" id="Node000009" href="$a00149.html" title="I2C DMA, recovery and shared fault handling." alt="" coords="1575,176,1896,299"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="1833,138,1797,178,1794,173,1829,141"/>
+<area shape="rect" id="Node000010" href="$a00152.html" title="IWDG supervision, heartbeat checks and fault reset handling." alt="" coords="1920,176,2220,299"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="1974,137,2012,176,2007,175,1972,142"/>
+<area shape="rect" id="Node000011" href="$a00158.html" title="MAX31865 SPI/DMA driver and runtime handling." alt="" coords="2244,176,2576,299"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="2061,117,2232,173,2246,180,2241,180,2230,179,2061,123"/>
+<area shape="rect" id="Node000012" href="$a00161.html" title="MPU9250 I2C/DMA driver and runtime handling." alt="" coords="2601,176,2926,299"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="2062,82,2312,118,2452,143,2589,173,2603,179,2598,179,2588,179,2450,148,2311,123,2062,88"/>
+<area shape="rect" id="Node000013" href="$a00170.html" title="USART1 DMA receive path for the PM2.5 sensor." alt="" coords="2950,176,3283,299"/>
+<area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="2061,71,2242,82,2462,101,2701,131,2821,150,2939,173,2952,179,2947,178,2937,179,2820,156,2700,136,2462,106,2242,87,2062,76"/>
+<area shape="rect" id="Node000014" href="$a00173.html" title="PMS5003 frame parsing, telemetry and runtime recovery." alt="" coords="3308,176,3619,299"/>
+<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="2062,72,2355,87,2710,110,3049,139,3189,155,3296,173,3310,179,3305,179,3295,179,3188,161,3049,144,2710,115,2355,93,2062,78"/>
+<area shape="rect" id="Node000015" href="$a00185.html" title="SPI4 DMA handling, synchronization and recovery for MAX31865." alt="" coords="3643,176,3964,299"/>
+<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="2061,70,2421,82,2873,103,3313,133,3494,152,3632,173,3645,178,3639,178,3631,179,3493,157,3312,139,2873,109,2421,87,2062,75"/>
+<area shape="rect" id="Node000016" href="$a00212.html" title="TIM2 delay, one&#45;shot and interrupt helpers." alt="" coords="3988,176,4278,299"/>
+<area shape="poly" id="edge18_Node000001_Node000016" title=" " alt="" coords="2062,67,2487,75,3040,93,3322,107,3583,125,3807,147,3977,173,3990,179,3984,178,3976,179,3807,152,3582,130,3321,113,3040,99,2487,81,2062,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="521,289,339,349,328,353,326,348,337,344,526,287"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="610,308,569,348,566,344,606,311"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="848,294,854,296,999,350,994,350,852,301,848,300"/>
+<area shape="rect" id="Node000006" href="$a00215.html" title="TIM3 microsecond timebase and blocking delay helper." alt="" coords="675,347,972,469"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="746,308,776,347,771,345,744,313"/>
+</map>

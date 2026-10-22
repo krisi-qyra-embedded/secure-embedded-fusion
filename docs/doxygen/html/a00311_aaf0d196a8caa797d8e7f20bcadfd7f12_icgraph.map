@@ -1,0 +1,10 @@
+<map id="ccs811_test" name="ccs811_test">
+<area shape="rect" id="Node000001" title="Sample CCS811 data and handle soft faults, retries and recovery." alt="" coords="314,29,405,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="386,14,377,10,360,8,343,10,334,15,332,20,336,30,332,28,327,21,330,11,341,5,360,3,379,5,391,15"/>
+<area shape="rect" id="Node000002" href="$a00311.html#a9cd2f4b62bfb2be5e7e22bc42edc34e9" title="Start the CCS811 sampling and recovery task." alt="" coords="131,29,266,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="296,43,267,45,266,40,301,43"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="223,14,215,10,198,8,183,10,174,15,172,20,176,30,171,28,167,21,170,11,181,5,198,3,217,5,228,15"/>
+<area shape="rect" id="Node000003" href="$a00903.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,29,83,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="112,43,83,45,83,40,118,42"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="69,14,61,10,44,8,28,10,20,15,18,20,22,28,17,29,12,21,16,11,27,5,44,3,63,5,74,14"/>
+</map>

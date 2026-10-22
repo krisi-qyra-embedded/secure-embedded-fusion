@@ -1,0 +1,16 @@
+<map id="OneWire_CRC8" name="OneWire_CRC8">
+<area shape="rect" id="Node000001" title="Calculate the Dallas/Maxim CRC&#45;8." alt="" coords="420,120,536,147"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="504,104,496,101,478,99,461,101,452,105,450,111,455,121,450,119,445,111,448,102,460,96,478,93,498,96,510,105"/>
+<area shape="rect" id="Node000002" href="$a00182.html#aeeb7e8c7e01e0cac05775aeef5ae9779" title="Read one DS18B20 temperature." alt="" coords="257,120,372,147"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="402,134,373,136,372,131,407,133"/>
+<area shape="poly" id="edge8_Node000002_Node000002" title=" " alt="" coords="341,105,332,101,314,99,297,101,288,105,286,111,291,120,286,119,281,111,284,102,296,96,314,93,334,96,346,105"/>
+<area shape="rect" id="Node000003" href="$a00182.html#aa8465204abd075b1e25b6b4d39f2c8dd" title=" " alt="" coords="11,29,203,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="270,113,208,86,178,75,178,70,210,82,275,112"/>
+<area shape="rect" id="Node000004" href="$a00182.html#ac8a6a2235f78b506554c9e56744c2480" title="Run one DS18B20 application state&#45;machine step." alt="" coords="41,120,173,147"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="239,134,174,136,173,131,244,132"/>
+<area shape="rect" id="Node000008" href="$a00182.html#a956871d061ccecb139d8527c34101b0b" title=" " alt="" coords="5,195,209,237"/>
+<area shape="poly" id="edge6_Node000002_Node000008" title=" " alt="" coords="267,152,164,197,162,192,262,153"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="139,15,128,10,107,8,88,10,76,15,71,21,73,29,67,29,66,19,72,10,86,5,107,3,129,5,144,13"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="141,105,130,101,107,99,85,101,74,105,71,111,77,119,71,120,66,111,70,102,84,95,107,93,132,96,146,104"/>
+<area shape="poly" id="edge7_Node000008_Node000008" title=" " alt="" coords="139,179,128,176,107,173,88,175,76,180,71,186,73,195,67,193,66,185,72,176,86,170,107,168,129,170,144,179"/>
+</map>

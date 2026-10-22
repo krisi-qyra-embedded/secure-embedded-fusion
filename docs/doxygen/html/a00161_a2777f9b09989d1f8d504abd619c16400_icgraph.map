@@ -1,0 +1,16 @@
+<map id="DS18B20_AppEnableGpioClock" name="DS18B20_AppEnableGpioClock">
+<area shape="rect" id="Node000001" title=" " alt="" coords="467,120,675,147"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="609,105,597,101,571,99,547,101,534,105,531,111,537,120,532,119,526,111,531,101,546,95,571,93,599,96,615,105"/>
+<area shape="rect" id="Node000002" href="$a00161.html#a497cd9e6c2ee367cea309c1857e730b2" title=" " alt="" coords="267,120,419,147"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="449,134,420,136,419,131,454,133"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="381,105,369,101,343,99,319,101,306,105,303,111,309,120,304,119,297,111,302,101,318,95,343,93,370,96,386,105"/>
+<area shape="rect" id="Node000003" href="$a00161.html#ab4c44777ee22223c90cad045f4572e23" title=" " alt="" coords="14,29,210,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="292,114,218,87,185,75,185,70,220,81,297,113"/>
+<area shape="rect" id="Node000011" href="$a00161.html#a677a25d61dade4cf362ef8920c25d22a" title=" " alt="" coords="5,120,219,147"/>
+<area shape="poly" id="edge6_Node000002_Node000011" title=" " alt="" coords="248,134,220,136,219,131,254,133"/>
+<area shape="rect" id="Node000012" href="$a00161.html#aa8465204abd075b1e25b6b4d39f2c8dd" title=" " alt="" coords="16,195,208,237"/>
+<area shape="poly" id="edge8_Node000002_Node000012" title=" " alt="" coords="292,152,175,197,173,191,287,153"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="148,15,135,10,112,8,90,10,77,15,72,21,73,29,68,29,66,19,74,10,89,5,112,3,137,5,153,13"/>
+<area shape="poly" id="edge7_Node000011_Node000011" title=" " alt="" coords="151,106,139,101,112,99,88,101,75,105,71,111,78,119,73,120,66,111,71,101,87,95,112,93,140,96,156,105"/>
+<area shape="poly" id="edge9_Node000012_Node000012" title=" " alt="" coords="148,179,135,176,112,173,90,175,77,180,72,186,73,195,68,193,66,185,74,176,89,170,112,168,137,170,153,179"/>
+</map>

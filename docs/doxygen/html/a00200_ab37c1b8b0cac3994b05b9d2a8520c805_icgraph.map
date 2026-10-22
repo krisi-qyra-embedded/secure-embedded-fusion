@@ -1,0 +1,16 @@
+<map id="heartbeat_signal_bme680main" name="heartbeat_signal_bme680main">
+<area shape="rect" id="Node000001" title="Signal a valid BME680 application sample." alt="" coords="392,79,589,105"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="531,64,519,60,491,57,465,59,451,64,448,69,455,79,450,77,443,70,448,60,464,54,491,52,520,55,537,64"/>
+<area shape="rect" id="Node000002" href="$a00164.html#af1c810695225472f06b8591fa57c6cca" title="Run one BME680 runtime sample/recovery cycle." alt="" coords="153,29,344,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="391,76,344,70,344,64,396,75"/>
+<area shape="rect" id="Node000006" href="$a00230.html#a31a8322595da5370e79f2be8d627f4f2" title="Build the gas&#45;resistance reference from valid samples." alt="" coords="169,120,328,147"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="396,108,328,122,328,117,391,109"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="278,14,268,10,248,8,230,10,219,15,215,21,216,30,211,28,210,19,216,10,229,5,248,3,269,5,283,14"/>
+<area shape="rect" id="Node000003" href="$a00915.html#a049ced0e0b8c31b8e3546c5897b7e1ee" title=" " alt="" coords="5,37,105,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="135,52,106,53,105,48,139,49"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="87,23,77,18,55,16,35,18,24,23,21,28,27,36,22,38,16,29,20,19,33,13,55,11,78,13,92,21"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="280,104,270,101,248,99,228,101,217,105,215,111,220,121,215,119,209,111,214,102,227,95,248,93,271,96,285,105"/>
+<area shape="rect" id="Node000007" href="$a00230.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="9,120,101,147"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="151,134,101,136,101,131,156,133"/>
+<area shape="poly" id="edge8_Node000007_Node000007" title=" " alt="" coords="87,105,77,101,55,99,35,101,24,105,21,111,27,119,22,120,16,111,20,102,33,95,55,93,78,96,92,104"/>
+</map>

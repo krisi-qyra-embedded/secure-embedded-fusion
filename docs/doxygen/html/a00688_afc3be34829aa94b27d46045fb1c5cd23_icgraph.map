@@ -1,0 +1,23 @@
+<map id="encrypt_aes_gcm_aead" name="encrypt_aes_gcm_aead">
+<area shape="rect" id="Node000001" title="Encrypt with streaming AES&#45;GCM." alt="" coords="1416,37,1575,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="1531,22,1520,18,1495,16,1472,18,1460,23,1457,28,1463,38,1458,36,1452,29,1456,19,1471,13,1495,11,1521,13,1536,23"/>
+<area shape="rect" id="Node000002" href="$a00757.html#a488a72dc38b4dec4dd02c663ea057b6c" title="Generate the transfer IV and encrypt through the AES&#45;GCM sender path." alt="" coords="1187,29,1368,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="1397,51,1368,53,1368,48,1403,51"/>
+<area shape="poly" id="edge13_Node000002_Node000002" title=" " alt="" coords="1311,13,1299,10,1277,8,1257,10,1244,15,1240,21,1241,30,1237,27,1234,19,1241,10,1256,5,1278,3,1301,5,1316,14"/>
+<area shape="rect" id="Node000003" href="$a00760.html#ae0f5e3d87c01bfba1f72168c91121bdc" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="924,37,1139,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="1169,51,1140,53,1140,48,1174,51"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="1073,22,1060,18,1032,16,1006,18,992,23,988,28,995,38,990,36,983,29,988,19,1005,13,1032,11,1061,13,1078,23"/>
+<area shape="rect" id="Node000004" href="$a00143.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="635,37,876,64"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="905,51,876,53,876,48,911,51"/>
+<area shape="poly" id="edge12_Node000004_Node000004" title=" " alt="" coords="797,22,784,18,755,16,729,18,715,23,711,28,718,38,713,36,706,29,711,19,728,13,755,11,785,13,802,23"/>
+<area shape="rect" id="Node000005" href="$a00143.html#a268b20b4b63514a09028648067fa60f6" title="Run one authenticated telemetry transaction with the ESP32." alt="" coords="425,29,587,72"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="616,51,587,53,587,48,622,51"/>
+<area shape="poly" id="edge11_Node000005_Node000005" title=" " alt="" coords="540,13,528,10,506,8,486,10,473,15,468,21,469,30,465,27,463,19,470,10,484,5,506,3,529,5,545,14"/>
+<area shape="rect" id="Node000006" href="$a00658.html#a4754db43d332d65b964e88dedb2182c9" title=" " alt="" coords="200,37,377,64"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="407,51,378,53,378,48,412,51"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="315,22,306,18,289,16,272,18,263,23,261,28,265,38,261,36,256,29,259,19,270,13,289,11,308,13,320,23"/>
+<area shape="rect" id="Node000007" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,37,152,64"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="182,51,152,53,152,48,187,50"/>
+<area shape="rect" id="Node000008" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge10_Node000007_Node000008" title=" " alt="" coords="84,52,55,53,55,48,89,50"/>
+</map>

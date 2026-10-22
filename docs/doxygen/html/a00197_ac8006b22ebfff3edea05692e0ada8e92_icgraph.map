@@ -1,0 +1,9 @@
+<map id="supervisor_check_and_kick" name="supervisor_check_and_kick">
+<area shape="rect" id="Node000001" title="Run fault capture and heartbeat supervision." alt="" coords="264,29,446,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="387,14,377,10,355,8,335,10,324,15,321,20,326,30,322,28,316,21,320,11,333,5,355,3,379,5,392,15"/>
+<area shape="rect" id="Node000002" href="$a00912.html#ac2752a6ed4b808362b35335735ea093c" title=" " alt="" coords="103,29,216,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="246,43,216,45,216,40,251,43"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="180,14,173,10,159,8,146,10,139,14,138,20,141,30,136,28,132,21,135,11,144,5,159,3,175,5,185,15"/>
+<area shape="rect" id="Node000003" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,29,55,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,43,55,45,55,40,90,42"/>
+</map>

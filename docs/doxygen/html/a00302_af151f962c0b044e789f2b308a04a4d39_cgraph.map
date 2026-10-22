@@ -1,0 +1,7 @@
+<map id="http_server_watchdog_kick" name="http_server_watchdog_kick">
+<area shape="rect" id="Node000001" title="Refresh the HTTPS heartbeat while the server is active and healthy." alt="" coords="5,29,186,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="60,29,54,21,59,11,73,5,96,3,120,5,135,14,129,14,119,10,95,8,74,10,62,15,60,20,65,29"/>
+<area shape="rect" id="Node000002" href="$a00278.html#af92177eb6358035c5fef8d881cec1546" title="Update the heartbeat timestamp for a monitored task." alt="" coords="234,29,370,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="186,40,221,43,215,43,186,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="267,28,261,21,265,11,279,5,302,3,326,5,341,14,336,14,325,10,302,8,280,10,269,15,266,20,272,30"/>
+</map>

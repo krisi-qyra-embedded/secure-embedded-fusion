@@ -1,0 +1,55 @@
+<map id="http_server_fatal_stop_kicking_watchdog" name="http_server_fatal_stop_kicking_watchdog">
+<area shape="rect" id="Node000001" title="Latch an HTTPS fault and wait without refreshing its heartbeat." alt="" coords="466,737,616,780"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="574,722,563,718,541,716,521,718,509,723,504,729,506,737,500,736,499,727,506,718,520,713,541,711,564,713,579,721"/>
+<area shape="rect" id="Node000002" href="$a00320.html#a6df01acd9aa466a2c5ca1c0efecf2a78" title="Send a response and track consecutive send failures." alt="" coords="237,696,418,739"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="448,742,419,737,417,732,453,740"/>
+<area shape="rect" id="Node000005" href="$a00320.html#ae5fb127f629ed9aecaba445bd1512221" title="Start the HTTPS server and enable its watchdog checks." alt="" coords="268,787,387,813"/>
+<area shape="poly" id="edge34_Node000001_Node000005" title=" " alt="" coords="449,778,389,791,386,786,453,775"/>
+<area shape="poly" id="edge27_Node000002_Node000002" title=" " alt="" coords="360,681,349,677,327,675,307,677,295,681,290,687,292,696,287,695,285,686,292,677,306,671,327,669,350,672,365,679"/>
+<area shape="rect" id="Node000003" href="$a00320.html#afa3468a9e2906a45df6a21aaf0d350e7" title="Serve the dashboard stylesheet." alt="" coords="26,29,168,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="320,680,305,549,278,372,260,282,239,199,214,132,187,86,170,71,168,66,191,82,219,130,244,198,265,280,284,371,311,549,325,681"/>
+<area shape="rect" id="Node000015" href="$a00320.html#a627af28895f5e77abe6d4b3be767fe7b" title="Serve the dashboard JavaScript." alt="" coords="31,120,163,163"/>
+<area shape="poly" id="edge5_Node000002_Node000015" title=" " alt="" coords="318,680,301,566,272,416,254,340,234,271,211,215,187,176,164,159,162,154,191,173,216,213,239,270,259,339,278,414,306,565,324,680"/>
+<area shape="rect" id="Node000016" href="$a00320.html#ac5df3865572c3abea7ca9bc43b4a2a23" title="Serve the dashboard favicon." alt="" coords="29,211,165,253"/>
+<area shape="poly" id="edge7_Node000002_Node000016" title=" " alt="" coords="323,680,316,597,296,487,278,428,255,370,225,316,187,267,166,251,164,246,191,263,229,313,260,368,283,426,301,485,321,596,328,681"/>
+<area shape="rect" id="Node000017" href="$a00320.html#a750fba09c038f43cf41179d927081786" title="Return the ESP32 access&#45;point SSID as JSON." alt="" coords="31,301,163,344"/>
+<area shape="poly" id="edge9_Node000002_Node000017" title=" " alt="" coords="319,680,308,613,284,526,267,481,245,437,218,395,187,358,165,341,163,336,190,354,223,392,250,434,272,479,289,525,313,612,325,681"/>
+<area shape="rect" id="Node000018" href="$a00320.html#a3e2a8fcec737e74f7fc6997873a461ab" title="Serve the shared BMP280/BME280 reading as JSON." alt="" coords="15,392,179,451"/>
+<area shape="poly" id="edge11_Node000002_Node000018" title=" " alt="" coords="312,681,294,634,267,576,232,517,187,465,175,454,173,449,191,461,236,514,272,574,299,632,317,681"/>
+<area shape="rect" id="Node000019" href="$a00320.html#a445841fb77cdd2323464c23f3d46d859" title="Serve the cached CCS811 reading as JSON." alt="" coords="17,499,177,557"/>
+<area shape="poly" id="edge13_Node000002_Node000019" title=" " alt="" coords="299,684,250,628,220,598,187,571,172,560,170,556,190,567,224,594,254,625,304,683"/>
+<area shape="rect" id="Node000020" href="$a00320.html#addc140ee15df4caf83d1939edf9ca34d" title="Return local time once time synchronization is ready." alt="" coords="24,605,170,648"/>
+<area shape="poly" id="edge15_Node000002_Node000020" title=" " alt="" coords="259,691,188,662,160,651,158,646,190,658,264,688"/>
+<area shape="rect" id="Node000021" href="$a00320.html#af30286882ef78925a3cf3f67373d49bc" title="Serve the latest authenticated STM32 snapshot as JSON." alt="" coords="16,696,178,739"/>
+<area shape="poly" id="edge17_Node000002_Node000021" title=" " alt="" coords="219,719,180,720,177,715,223,716"/>
+<area shape="rect" id="Node000022" href="$a00320.html#a67f5fb9db2d8b2bfa041bb66338d801c" title="Return station IP details when connected." alt="" coords="6,787,188,829"/>
+<area shape="poly" id="edge19_Node000002_Node000022" title=" " alt="" coords="250,747,238,753,152,788,148,784,236,748,254,743"/>
+<area shape="rect" id="Node000023" href="$a00320.html#a6b9b5a22e77f419c680e93e21009216b" title="Serve the dashboard HTML page." alt="" coords="19,877,175,920"/>
+<area shape="poly" id="edge21_Node000002_Node000023" title=" " alt="" coords="239,750,239,753,221,774,214,796,207,818,191,843,168,863,145,878,141,875,165,859,187,840,202,816,209,794,217,772,235,749,242,745"/>
+<area shape="rect" id="Node000024" href="$a00320.html#a76ae00db7345fc99769d7a184c0b1846" title="Serve the embedded jQuery script." alt="" coords="33,968,161,1011"/>
+<area shape="poly" id="edge23_Node000002_Node000024" title=" " alt="" coords="237,751,239,752,223,775,215,796,213,839,212,884,205,908,191,934,171,954,149,969,145,966,168,950,187,930,200,906,206,884,207,839,210,795,218,772,235,749,240,746"/>
+<area shape="rect" id="Node000025" href="$a00320.html#a17943ba8d92714b90c1d48233f642d15" title="Return the OTA status and firmware build time as JSON." alt="" coords="16,1059,178,1101"/>
+<area shape="poly" id="edge25_Node000002_Node000025" title=" " alt="" coords="236,752,239,752,217,786,208,819,208,851,211,883,216,916,217,951,210,986,191,1024,172,1045,150,1060,146,1056,169,1041,186,1021,205,985,211,950,211,917,206,884,202,851,203,818,212,784,235,749,239,747"/>
+<area shape="rect" id="Node000026" href="$a00320.html#a3b8145dd054fd41a8498320e7a85a4cb" title="Read station credentials from request headers and request a connection." alt="" coords="14,1149,180,1192"/>
+<area shape="poly" id="edge28_Node000002_Node000026" title=" " alt="" coords="236,752,239,752,223,776,212,798,201,842,203,885,210,928,218,972,222,1017,214,1064,205,1089,191,1115,173,1135,151,1151,147,1147,169,1131,186,1112,200,1087,209,1063,216,1017,213,972,205,929,197,885,196,841,207,796,218,773,235,749,239,747"/>
+<area shape="rect" id="Node000027" href="$a00320.html#a34de4e2dc4bbb91cccdef9f90c9097f5" title="Return the current station connection status as JSON." alt="" coords="14,1240,180,1283"/>
+<area shape="poly" id="edge30_Node000002_Node000027" title=" " alt="" coords="236,752,239,752,219,782,206,810,198,838,194,865,198,919,209,972,221,1027,226,1083,225,1112,219,1142,208,1173,191,1206,173,1226,152,1241,148,1237,170,1222,186,1202,203,1171,214,1141,219,1112,221,1083,215,1028,204,973,192,919,189,865,193,837,201,808,215,779,235,749,239,748"/>
+<area shape="rect" id="Node000028" href="$a00320.html#ac27fb8904af04696e7804d90a86d1b7f" title="Reply to the disconnect request and forward it to the Wi&#45;Fi task." alt="" coords="5,1331,189,1373"/>
+<area shape="poly" id="edge32_Node000002_Node000028" title=" " alt="" coords="236,752,239,752,227,773,219,798,210,862,208,938,211,1020,215,1102,215,1180,208,1246,201,1273,191,1296,173,1317,151,1332,149,1328,170,1313,186,1293,196,1272,203,1245,210,1179,210,1102,206,1020,203,938,204,862,213,797,222,770,234,749,239,748"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="133,15,120,10,97,8,75,10,62,15,57,21,59,29,53,29,52,19,59,10,74,5,97,3,122,5,138,12"/>
+<area shape="poly" id="edge6_Node000015_Node000015" title=" " alt="" coords="133,106,120,101,97,99,75,101,62,105,57,111,59,119,53,120,52,110,59,101,74,95,97,93,122,96,138,103"/>
+<area shape="poly" id="edge8_Node000016_Node000016" title=" " alt="" coords="133,196,120,192,97,189,75,191,62,196,57,202,59,210,53,210,52,201,59,192,74,186,97,184,122,186,138,194"/>
+<area shape="poly" id="edge10_Node000017_Node000017" title=" " alt="" coords="133,287,120,282,97,280,75,282,62,287,57,293,59,301,53,301,52,291,59,282,74,277,97,275,122,277,138,284"/>
+<area shape="poly" id="edge12_Node000018_Node000018" title=" " alt="" coords="133,379,120,373,97,371,77,373,64,377,57,384,57,392,52,392,53,382,61,373,76,367,97,365,122,368,137,376"/>
+<area shape="poly" id="edge14_Node000019_Node000019" title=" " alt="" coords="133,486,120,480,97,477,77,479,64,484,57,490,57,499,52,498,53,488,61,479,76,474,97,472,122,475,137,483"/>
+<area shape="poly" id="edge16_Node000020_Node000020" title=" " alt="" coords="133,591,120,586,97,584,75,586,62,591,57,597,59,605,53,605,52,595,59,586,74,581,97,579,122,581,138,588"/>
+<area shape="poly" id="edge18_Node000021_Node000021" title=" " alt="" coords="133,682,120,677,97,675,75,677,62,681,57,687,59,695,53,696,52,686,59,677,74,671,97,669,122,672,138,679"/>
+<area shape="poly" id="edge20_Node000022_Node000022" title=" " alt="" coords="133,772,120,768,97,765,75,767,62,772,57,778,59,786,53,786,52,777,59,768,74,762,97,760,122,762,138,770"/>
+<area shape="poly" id="edge22_Node000023_Node000023" title=" " alt="" coords="133,863,120,858,97,856,75,858,62,863,57,869,59,877,53,877,52,867,59,858,74,853,97,851,122,853,138,860"/>
+<area shape="poly" id="edge24_Node000024_Node000024" title=" " alt="" coords="133,954,120,949,97,947,75,949,62,953,57,959,59,967,53,968,52,958,59,949,74,943,97,941,122,944,138,951"/>
+<area shape="poly" id="edge26_Node000025_Node000025" title=" " alt="" coords="133,1044,120,1040,97,1037,75,1039,62,1044,57,1050,59,1058,53,1058,52,1049,59,1040,74,1034,97,1032,122,1034,138,1042"/>
+<area shape="poly" id="edge29_Node000026_Node000026" title=" " alt="" coords="133,1135,120,1130,97,1128,75,1130,62,1135,57,1141,59,1149,53,1149,52,1139,59,1130,74,1125,97,1123,122,1125,138,1133"/>
+<area shape="poly" id="edge31_Node000027_Node000027" title=" " alt="" coords="133,1225,120,1221,97,1219,75,1221,62,1225,57,1231,59,1240,53,1239,52,1230,59,1221,74,1215,97,1213,122,1216,138,1224"/>
+<area shape="poly" id="edge33_Node000028_Node000028" title=" " alt="" coords="133,1315,120,1312,97,1309,75,1311,62,1316,57,1322,58,1331,53,1329,52,1321,59,1312,74,1306,97,1304,122,1306,138,1315"/>
+<area shape="poly" id="edge35_Node000005_Node000005" title=" " alt="" coords="363,772,351,768,327,765,305,767,293,772,290,777,296,786,291,786,285,778,289,768,304,762,327,760,353,763,368,771"/>
+</map>

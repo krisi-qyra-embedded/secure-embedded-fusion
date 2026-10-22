@@ -1,0 +1,82 @@
+<map id="PMS25_AppRun" name="PMS25_AppRun">
+<area shape="rect" id="Node000001" title="Run one PM2.5 application cycle." alt="" coords="5,516,124,543"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="28,516,22,507,26,498,41,491,65,489,90,492,104,499,100,502,88,497,64,495,42,497,30,501,27,507,33,515"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="458,29,596,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,515,73,425,92,288,106,217,124,153,145,101,157,81,170,66,202,44,238,28,275,18,314,13,391,14,459,24,455,27,390,19,315,19,276,24,239,33,205,49,173,70,161,84,149,103,129,155,111,219,97,289,78,425,69,516"/>
+<area shape="rect" id="Node000004" href="$a00173.html#a31a7fd96b0d8c61eaa08779571462973" title=" " alt="" coords="205,553,350,580"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="123,537,191,550,187,553,125,542"/>
+<area shape="rect" id="Node000006" href="$a00173.html#ac4e306b709321fae02fd13f45b58045e" title=" " alt="" coords="212,628,342,655"/>
+<area shape="poly" id="edge10_Node000001_Node000006" title=" " alt="" coords="87,541,173,590,233,620,229,622,170,594,88,546"/>
+<area shape="rect" id="Node000007" href="$a00173.html#ad02c0a10f4f2df3482a2800d30eec181" title=" " alt="" coords="193,703,362,729"/>
+<area shape="poly" id="edge12_Node000001_Node000007" title=" " alt="" coords="73,540,113,600,141,634,173,665,197,681,224,695,219,697,195,685,170,669,137,638,109,603,74,546"/>
+<area shape="rect" id="Node000010" href="$a00173.html#a1e89e817cbe4ce065809fe123611083f" title=" " alt="" coords="172,179,383,205"/>
+<area shape="poly" id="edge16_Node000001_Node000010" title=" " alt="" coords="66,515,76,469,95,403,126,329,146,293,170,260,199,232,234,211,231,215,202,236,174,263,151,296,131,331,100,404,81,470,71,516"/>
+<area shape="rect" id="Node000011" href="$a00173.html#ac18900a14e5e82929407e8685db704de" title=" " alt="" coords="431,179,623,205"/>
+<area shape="poly" id="edge26_Node000001_Node000011" title=" " alt="" coords="68,515,81,481,102,435,132,385,170,341,201,315,234,292,306,254,378,226,445,208,441,211,380,231,308,259,237,297,204,319,174,345,136,388,107,437,86,483,73,516"/>
+<area shape="rect" id="Node000014" href="$a00173.html#ae9b6af4f80d6ed9a02951c4606dee4db" title=" " alt="" coords="209,104,346,131"/>
+<area shape="poly" id="edge23_Node000001_Node000014" title=" " alt="" coords="65,515,77,438,99,326,131,214,149,170,170,141,196,125,194,130,174,145,154,173,136,216,105,327,82,439,70,516"/>
+<area shape="rect" id="Node000015" href="$a00173.html#a2552b3f4e8743127ade8774219be72ec" title=" " alt="" coords="205,479,350,505"/>
+<area shape="poly" id="edge27_Node000001_Node000015" title=" " alt="" coords="122,517,191,505,187,509,125,521"/>
+<area shape="rect" id="Node000020" href="$a00173.html#a6f417ed32974cb7e4da51c9541253df6" title=" " alt="" coords="202,777,353,804"/>
+<area shape="poly" id="edge38_Node000001_Node000020" title=" " alt="" coords="69,540,83,580,104,633,134,689,152,716,173,739,194,756,219,770,214,771,191,760,170,743,148,719,129,692,99,635,78,582,69,546"/>
+<area shape="rect" id="Node000021" href="$a00152.html#a851bbecefd1f7269163e6ea626fa8bd4" title="Check whether fault capture or a critical fault is active." alt="" coords="198,852,356,895"/>
+<area shape="poly" id="edge40_Node000001_Node000021" title=" " alt="" coords="68,540,78,592,97,663,127,742,148,780,174,814,209,844,203,844,170,818,144,783,123,744,91,665,73,593,67,546"/>
+<area shape="rect" id="Node000022" href="$a00173.html#a4cf83ecf4294e08d4025a37efe753092" title="Publish the latest PMS5003 sample." alt="" coords="196,943,358,969"/>
+<area shape="poly" id="edge42_Node000001_Node000022" title=" " alt="" coords="66,541,72,606,85,702,99,755,117,808,142,859,174,905,192,921,215,936,209,936,189,926,170,908,137,862,112,810,93,756,80,703,66,607,66,546"/>
+<area shape="rect" id="Node000024" href="$a00170.html#a3f6f5e245a673e9289bdc5d9ea5e0a70" title="Recover the PM2.5 UART/DMA receive path." alt="" coords="197,379,358,405"/>
+<area shape="poly" id="edge46_Node000001_Node000024" title=" " alt="" coords="78,514,119,479,170,440,231,410,227,414,173,445,122,483,83,517"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="486,29,479,21,484,11,501,5,527,3,556,5,573,14,568,15,555,10,527,8,502,10,488,15,485,20,491,29"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="714,29,824,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="595,40,701,41,697,44,598,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="728,29,721,21,726,11,742,5,769,3,798,5,815,14,810,15,797,10,769,8,744,10,730,15,726,20,733,29"/>
+<area shape="poly" id="edge9_Node000004_Node000004" title=" " alt="" coords="241,553,235,545,239,535,254,529,277,527,303,529,318,537,312,539,301,534,277,532,255,534,243,539,240,544,246,553"/>
+<area shape="rect" id="Node000005" href="$a00074.html#ae773c19af7068683ac8b4aa144aa19c2" title=" " alt="" coords="703,641,835,668"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="350,573,385,590,397,603,403,616,408,643,414,669,421,680,432,690,468,707,507,715,547,717,587,714,664,696,729,674,724,676,665,701,588,719,547,723,506,721,467,712,430,694,417,683,409,671,403,644,398,618,392,606,381,594,351,578"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="728,640,721,633,726,623,742,617,769,615,798,617,815,627,810,627,797,622,769,620,744,622,730,627,726,632,733,641"/>
+<area shape="poly" id="edge11_Node000006_Node000006" title=" " alt="" coords="241,628,235,619,239,610,254,603,277,601,303,604,318,612,312,613,301,609,277,607,255,609,243,613,240,619,246,627"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="241,702,235,694,239,684,254,678,277,676,303,679,318,687,312,688,301,684,277,681,255,683,243,688,240,693,246,702"/>
+<area shape="rect" id="Node000008" href="$a00149.html#a13cf982f485a32d152a600e3533ff04b" title="Clear one subsystem from the active fault mask." alt="" coords="462,779,593,821"/>
+<area shape="poly" id="edge14_Node000007_Node000008" title=" " alt="" coords="342,727,384,739,466,772,461,772,382,744,343,733"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="482,777,480,769,487,760,503,754,527,752,553,754,570,763,565,763,552,760,527,757,504,759,490,764,485,770,486,779"/>
+<area shape="poly" id="edge17_Node000010_Node000002" title=" " alt="" coords="320,176,352,161,381,141,396,122,404,103,412,84,429,66,446,58,443,62,433,70,416,87,409,105,401,125,385,145,354,165,323,180"/>
+<area shape="poly" id="edge18_Node000010_Node000010" title=" " alt="" coords="241,179,235,170,239,160,254,154,277,152,303,155,317,162,312,164,301,160,277,157,255,159,243,164,240,169,246,178"/>
+<area shape="poly" id="edge19_Node000010_Node000011" title=" " alt="" coords="382,190,418,191,413,193,385,194"/>
+<area shape="rect" id="Node000013" href="$a00173.html#a8dace3a2e5f2b9c29eaf65eb2cbc86f3" title="Convert a PMS5003 status to text." alt="" coords="464,104,590,131"/>
+<area shape="poly" id="edge21_Node000010_Node000013" title=" " alt="" coords="318,176,430,140,459,134,455,137,432,145,322,180"/>
+<area shape="poly" id="edge20_Node000011_Node000011" title=" " alt="" coords="486,178,479,170,484,160,501,154,527,152,556,155,573,163,568,165,555,160,527,157,502,159,488,164,485,169,491,178"/>
+<area shape="poly" id="edge22_Node000013_Node000013" title=" " alt="" coords="486,104,479,95,484,85,501,79,527,77,556,80,573,88,568,90,555,85,527,83,502,85,488,89,485,95,491,103"/>
+<area shape="poly" id="edge24_Node000014_Node000002" title=" " alt="" coords="318,101,430,65,459,59,455,62,432,71,322,105"/>
+<area shape="poly" id="edge25_Node000014_Node000014" title=" " alt="" coords="241,104,235,95,239,86,254,79,277,77,303,80,317,88,313,90,301,85,277,83,255,85,243,89,240,95,246,103"/>
+<area shape="poly" id="edge32_Node000015_Node000015" title=" " alt="" coords="241,478,235,470,239,460,254,454,277,452,303,455,317,463,312,464,301,460,277,457,255,459,243,464,240,469,246,478"/>
+<area shape="rect" id="Node000016" href="$a00173.html#a2e7f230098e317d180f281d06b15cc34" title=" " alt="" coords="448,579,607,605"/>
+<area shape="poly" id="edge28_Node000015_Node000016" title=" " alt="" coords="346,503,384,515,409,527,432,540,488,571,483,572,430,545,406,531,382,520,347,509"/>
+<area shape="rect" id="Node000017" href="$a00173.html#af289f4343d7455db5ee8f6b89b4cd23e" title=" " alt="" coords="460,653,594,680"/>
+<area shape="poly" id="edge30_Node000015_Node000017" title=" " alt="" coords="350,498,385,515,397,527,404,540,411,565,417,590,433,616,452,631,475,646,470,647,449,636,429,619,412,592,406,566,399,542,393,531,381,519,351,503"/>
+<area shape="rect" id="Node000018" href="$a00170.html#a797e971c65b919c7a1a49efd38904ec1" title="Receive one PM2.5 frame block using DMA." alt="" coords="436,504,618,531"/>
+<area shape="poly" id="edge33_Node000015_Node000018" title=" " alt="" coords="349,497,423,505,418,508,351,502"/>
+<area shape="poly" id="edge29_Node000016_Node000016" title=" " alt="" coords="486,578,479,570,484,560,501,554,527,552,556,555,573,564,568,564,555,560,527,557,502,559,488,564,485,569,491,578"/>
+<area shape="poly" id="edge31_Node000017_Node000017" title=" " alt="" coords="486,653,479,645,484,635,501,629,527,627,556,629,573,638,568,639,555,634,527,632,502,634,488,639,485,644,491,653"/>
+<area shape="poly" id="edge34_Node000018_Node000005" title=" " alt="" coords="594,529,624,540,659,560,692,584,746,631,740,630,689,588,656,565,622,545,595,534"/>
+<area shape="poly" id="edge37_Node000018_Node000018" title=" " alt="" coords="486,503,479,495,484,485,501,479,527,477,556,480,573,489,568,490,555,485,527,483,502,485,488,489,485,495,491,504"/>
+<area shape="rect" id="Node000019" href="$a00170.html#a5c2e8f50d1b49751bd250a16cdc9f559" title=" " alt="" coords="682,467,856,493"/>
+<area shape="poly" id="edge35_Node000018_Node000019" title=" " alt="" coords="617,501,669,495,664,497,619,506"/>
+<area shape="poly" id="edge36_Node000019_Node000019" title=" " alt="" coords="728,466,721,458,726,448,742,442,769,440,798,443,815,452,810,452,797,448,769,445,744,447,730,452,726,457,733,467"/>
+<area shape="poly" id="edge39_Node000020_Node000020" title=" " alt="" coords="241,777,235,769,239,759,254,753,277,751,303,753,318,762,312,762,301,758,277,756,255,758,243,763,240,768,246,777"/>
+<area shape="poly" id="edge41_Node000021_Node000021" title=" " alt="" coords="237,850,235,842,242,833,256,827,277,825,300,828,315,836,310,836,299,833,277,831,257,833,245,837,240,843,242,853"/>
+<area shape="poly" id="edge45_Node000022_Node000022" title=" " alt="" coords="241,941,235,934,239,924,254,918,277,916,303,919,318,928,312,927,301,924,277,921,255,923,243,928,240,933,246,943"/>
+<area shape="rect" id="Node000023" href="$a00209.html#aa891c98d9faefbdb171bf6d9ea70ec17" title="Advance a telemetry generation counter." alt="" coords="440,943,614,969"/>
+<area shape="poly" id="edge43_Node000022_Node000023" title=" " alt="" coords="359,953,427,956,422,956,359,959"/>
+<area shape="poly" id="edge44_Node000023_Node000023" title=" " alt="" coords="486,941,479,934,484,924,501,918,527,916,556,919,573,928,568,927,555,924,527,921,502,923,488,928,485,933,491,943"/>
+<area shape="poly" id="edge49_Node000024_Node000019" title=" " alt="" coords="356,403,677,462,673,465,356,409"/>
+<area shape="poly" id="edge54_Node000024_Node000024" title=" " alt="" coords="241,379,235,370,239,360,254,354,277,352,303,355,317,363,312,364,301,360,277,357,255,359,243,364,240,369,246,378"/>
+<area shape="rect" id="Node000025" href="$a00173.html#a46c2e45fa93903bbf3b2a977516ad0f2" title="Initialize the PM2.5 runtime context." alt="" coords="471,253,583,280"/>
+<area shape="poly" id="edge47_Node000024_Node000025" title=" " alt="" coords="294,376,352,334,390,310,430,290,458,281,454,284,432,294,393,315,355,338,298,380"/>
+<area shape="rect" id="Node000026" href="$a00170.html#aa28d9b166af81b94e0b76d80553b3639" title="Initialize USART1 and DMA for PM2.5 reception." alt="" coords="462,328,592,355"/>
+<area shape="poly" id="edge50_Node000024_Node000026" title=" " alt="" coords="346,376,449,356,445,359,348,380"/>
+<area shape="rect" id="Node000027" href="$a00170.html#a7d9c653949a8b659ee4bcb466afb995c" title=" " alt="" coords="671,353,867,380"/>
+<area shape="poly" id="edge55_Node000024_Node000027" title=" " alt="" coords="358,385,658,371,654,374,359,390"/>
+<area shape="poly" id="edge48_Node000025_Node000025" title=" " alt="" coords="486,253,479,245,484,235,501,229,527,227,556,229,573,238,568,239,555,234,527,232,502,234,488,239,485,244,491,253"/>
+<area shape="poly" id="edge51_Node000026_Node000026" title=" " alt="" coords="486,328,479,319,484,309,501,303,527,301,556,304,573,313,568,314,555,309,527,307,502,309,488,313,485,319,491,327"/>
+<area shape="poly" id="edge52_Node000026_Node000027" title=" " alt="" coords="592,346,658,354,654,356,593,351"/>
+<area shape="poly" id="edge53_Node000027_Node000027" title=" " alt="" coords="728,353,721,345,726,335,742,329,769,327,798,329,815,338,810,339,797,334,769,332,744,334,730,339,726,344,733,353"/>
+</map>

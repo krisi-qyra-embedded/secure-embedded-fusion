@@ -1,0 +1,18 @@
+<map id="mpu9250_calibrateGyro" name="mpu9250_calibrateGyro">
+<area shape="rect" id="Node000001" title="Calibrate gyroscope offsets." alt="" coords="5,29,164,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="51,29,46,21,50,11,63,5,85,3,108,5,121,13,116,15,106,10,84,8,64,10,54,15,51,20,56,28"/>
+<area shape="rect" id="Node000002" href="$a00176.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="592,43,730,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,31,212,28,310,27,408,30,579,46,574,47,408,35,310,32,212,33,165,37"/>
+<area shape="rect" id="Node000004" href="$a00188.html#ac6655367b65aec29fc6f401400c8b224" title="Convert the latest gyroscope sample to physical units." alt="" coords="212,67,344,93"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="157,54,199,63,194,65,157,59"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="631,41,626,34,630,24,642,18,661,16,682,19,694,28,689,27,680,24,661,21,643,23,634,28,632,33,636,43"/>
+<area shape="rect" id="Node000003" href="$a00239.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="778,43,887,69"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="730,53,765,56,759,56,730,59"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="803,41,798,34,801,24,813,18,832,16,853,19,865,28,860,27,851,24,832,21,815,23,805,28,803,33,808,43"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="344,73,579,60,574,62,345,79"/>
+<area shape="poly" id="edge11_Node000004_Node000004" title=" " alt="" coords="245,65,240,58,244,48,257,42,278,40,301,43,314,52,309,51,299,48,278,45,258,47,247,52,245,57,250,67"/>
+<area shape="rect" id="Node000005" href="$a00188.html#ac2c44562cb7644baf76ed9637dea5867" title="Perform one blocking gyroscope update." alt="" coords="392,117,544,160"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="324,91,385,112,379,112,323,97"/>
+<area shape="poly" id="edge9_Node000005_Node000002" title=" " alt="" coords="519,114,611,77,616,76,521,119"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="432,115,430,107,436,98,449,93,468,91,489,93,503,102,497,101,487,98,468,96,450,98,440,103,435,109,436,118"/>
+</map>

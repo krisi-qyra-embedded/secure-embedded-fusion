@@ -1,0 +1,10 @@
+<map id="compute_sram_entropy_hashed_global" name="compute_sram_entropy_hashed_global">
+<area shape="rect" id="Node000001" title="Hash the global SRAM entropy buffer into its global digest." alt="" coords="5,59,163,101"/>
+<area shape="rect" id="Node000002" href="$a00770.html#aeafd5ea6a6031388ae8904b409741025" title=" " alt="" coords="211,29,368,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,66,198,64,192,65,164,71"/>
+<area shape="rect" id="Node000003" href="$a00767.html#ab9d02fa37fb19aaf03445cd7c771e874" title="Hash the sampled SRAM startup entropy." alt="" coords="416,67,551,93"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="163,80,211,81,368,81,403,83,398,83,368,87,211,87,163,86"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="252,27,251,19,257,10,270,5,289,3,310,5,324,14,319,14,309,10,289,8,271,10,260,15,256,21,257,30"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="369,60,403,68,398,67,369,65"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="450,65,445,58,449,48,462,42,484,40,507,43,521,52,515,51,505,48,484,45,463,47,453,52,450,57,455,67"/>
+</map>

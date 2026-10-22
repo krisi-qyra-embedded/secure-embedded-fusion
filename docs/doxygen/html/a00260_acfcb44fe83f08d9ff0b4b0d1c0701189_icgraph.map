@@ -1,0 +1,7 @@
+<map id="tim2_1hz_interrupt_init" name="tim2_1hz_interrupt_init">
+<area shape="rect" id="Node000001" title="Configure TIM2 for a continuous 1 Hz update interrupt." alt="" coords="159,29,311,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="263,14,254,10,235,8,217,10,207,15,204,20,209,30,204,28,199,21,203,11,215,5,235,3,256,5,269,14"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a2ee7ad6c09f01af9b8c137c28e12a3b1" title="Apply the fixed 1 s TIM2 delay." alt="" coords="5,29,111,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="140,43,111,45,111,40,145,42"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="87,14,78,10,58,8,40,10,30,15,28,20,33,29,27,29,22,21,26,11,38,5,58,3,79,5,92,14"/>
+</map>

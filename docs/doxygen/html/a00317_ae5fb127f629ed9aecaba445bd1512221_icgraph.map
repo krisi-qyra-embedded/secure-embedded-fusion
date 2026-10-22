@@ -1,0 +1,23 @@
+<map id="http_server_start" name="http_server_start">
+<area shape="rect" id="Node000001" title="Start the HTTPS server and enable its watchdog checks." alt="" coords="707,163,827,189"/>
+<area shape="poly" id="edge10_Node000001_Node000001" title=" " alt="" coords="803,147,791,144,767,141,744,143,732,148,729,153,735,163,730,161,724,154,728,144,743,138,767,136,793,139,808,148"/>
+<area shape="rect" id="Node000002" href="$a00903.html#a1535a2ab20693c8e0566c4201d6f48b0" title="Request AWS shutdown and start the local HTTPS dashboard." alt="" coords="441,121,659,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="690,162,624,151,624,146,695,162"/>
+<area shape="rect" id="Node000009" href="$a00353.html#a767d80a57af268276da3f7c9daa9f52d" title="Initialize APSTA mode and process Wi&#45;Fi control messages." alt="" coords="500,200,601,227"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="695,188,602,207,601,202,690,189"/>
+<area shape="poly" id="edge6_Node000002_Node000002" title=" " alt="" coords="586,106,574,102,550,100,527,102,515,107,512,112,518,122,513,120,507,113,511,103,526,97,550,95,576,97,591,106"/>
+<area shape="rect" id="Node000003" href="$a00903.html#ace1df51f7924ed07625502194d1bfaec" title="Start AWS after the SoftAP is idle and station connectivity is recorded." alt="" coords="234,29,390,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="497,116,349,59,349,54,502,115"/>
+<area shape="rect" id="Node000007" href="$a00903.html#ae558e7f34f3db75b4e8e1fd0f16be6ce" title="Record station connectivity and select the application mode." alt="" coords="5,47,183,89"/>
+<area shape="poly" id="edge9_Node000002_Node000007" title=" " alt="" coords="437,121,183,84,183,78,441,116"/>
+<area shape="rect" id="Node000008" href="$a00903.html#aa20fe992bdfc6f337f6eedd0f79ae063" title="Cancel the cloud debounce and enter local dashboard mode." alt="" coords="231,155,393,197"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="452,152,394,165,393,159,457,151"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="348,14,336,10,312,8,289,10,277,15,274,20,280,29,275,29,268,21,273,11,288,5,312,3,338,5,353,14"/>
+<area shape="poly" id="edge4_Node000003_Node000007" title=" " alt="" coords="217,55,184,60,182,55,221,52"/>
+<area shape="poly" id="edge5_Node000007_Node000007" title=" " alt="" coords="128,32,116,28,94,25,74,27,61,32,56,38,58,46,52,46,51,37,58,28,72,22,94,20,117,22,133,30"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="345,139,334,136,312,133,291,135,279,140,274,146,275,155,271,153,269,145,276,136,290,130,312,128,335,130,351,139"/>
+<area shape="poly" id="edge14_Node000009_Node000009" title=" " alt="" coords="586,184,574,181,550,179,527,181,515,185,512,191,518,201,513,199,507,191,511,182,526,175,550,173,576,176,591,185"/>
+<area shape="rect" id="Node000010" href="$a00353.html#ac2af98a9df667dec7b75c10a5717f09d" title="Allocate Wi&#45;Fi state and start the application task." alt="" coords="261,245,363,272"/>
+<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="487,226,364,252,363,246,482,226"/>
+<area shape="poly" id="edge13_Node000010_Node000010" title=" " alt="" coords="348,230,336,226,312,224,289,226,277,231,274,236,280,246,275,244,268,237,273,227,288,221,312,219,338,221,353,230"/>
+</map>

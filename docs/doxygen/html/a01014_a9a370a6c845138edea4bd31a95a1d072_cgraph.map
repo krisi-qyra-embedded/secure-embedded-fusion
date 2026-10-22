@@ -1,0 +1,10 @@
+<map id="compute_jitter_accum_hashed_global" name="compute_jitter_accum_hashed_global">
+<area shape="rect" id="Node000001" title="Hash the global timer&#45;jitter capture into its global digest." alt="" coords="5,59,155,101"/>
+<area shape="rect" id="Node000002" href="$a01017.html#a9a370a6c845138edea4bd31a95a1d072" title=" " alt="" coords="203,29,352,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,66,190,64,185,65,155,72"/>
+<area shape="rect" id="Node000003" href="$a01014.html#a4f7cb982dacf067b2f834fc54447c991" title="Hash the captured timer&#45;jitter samples." alt="" coords="400,67,527,93"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="155,80,203,81,352,81,387,83,382,83,352,87,203,87,155,85"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="242,27,240,19,246,10,259,5,277,3,298,5,311,14,306,14,296,10,277,8,260,10,249,15,245,21,246,30"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="352,60,388,68,382,68,352,65"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="432,65,426,58,430,48,443,42,464,40,486,43,499,52,494,51,484,48,464,45,444,47,434,52,431,57,436,67"/>
+</map>

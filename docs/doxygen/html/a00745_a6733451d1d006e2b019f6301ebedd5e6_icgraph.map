@@ -1,0 +1,45 @@
+<map id="device_uid_read" name="device_uid_read">
+<area shape="rect" id="Node000001" title="Read and validate the factory&#45;programmed STM32 device UID." alt="" coords="632,379,747,405"/>
+<area shape="poly" id="edge21_Node000001_Node000001" title=" " alt="" coords="721,363,711,360,689,357,669,359,658,364,655,369,661,379,656,378,650,370,654,360,668,354,689,352,713,355,727,363"/>
+<area shape="rect" id="Node000002" href="$a00745.html#a16af4aa754783374a8313f9dd9c2f763" title="Build a device fingerprint from UID, Flash size and DBGMCU identification." alt="" coords="403,29,584,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="685,362,679,303,664,223,650,182,633,141,610,103,582,70,568,59,567,54,585,66,614,100,638,139,655,180,669,222,684,302,690,364"/>
+<area shape="rect" id="Node000003" href="$a00745.html#af9de0b91396ba1a2c3e546b7f779928c" title="Compare the local device UID with another 12&#45;byte UID." alt="" coords="423,104,564,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="682,362,672,316,653,257,624,196,605,169,582,145,564,133,564,128,585,141,609,165,629,194,658,255,677,315,687,364"/>
+<area shape="rect" id="Node000004" href="$a00745.html#a763e51648d699c347156dec599e5c5cf" title="Get the cached 12&#45;byte device UID." alt="" coords="420,179,567,205"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="676,363,663,331,642,292,616,253,582,219,564,209,564,203,585,215,620,249,647,289,667,329,681,365"/>
+<area shape="rect" id="Node000005" href="$a00745.html#a503198de36d938eb62e994e0ba0370a8" title="Copy the device UID into a caller&#45;provided buffer." alt="" coords="420,253,567,280"/>
+<area shape="poly" id="edge7_Node000001_Node000005" title=" " alt="" coords="663,367,627,334,582,301,544,283,544,278,585,296,631,330,668,367"/>
+<area shape="rect" id="Node000006" href="$a00745.html#a9e326938c764a375d370db99692af5e2" title="Return the device UID as three 32&#45;bit words." alt="" coords="418,379,569,405"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="614,393,570,395,569,389,619,391"/>
+<area shape="rect" id="Node000007" href="$a00745.html#a489703ccb98f50b6b479eea79bc2dc13" title="Fold the three UID words into a compact 32&#45;bit diagnostic value." alt="" coords="218,317,337,344"/>
+<area shape="poly" id="edge15_Node000001_Node000007" title=" " alt="" coords="650,371,619,357,583,345,518,334,452,328,338,329,336,324,452,323,519,328,584,340,621,352,655,370"/>
+<area shape="rect" id="Node000008" href="$a00745.html#afbfd2acb2398d94376b6e6a5ef7956a3" title="Print the device UID as three hexadecimal words." alt="" coords="220,404,335,431"/>
+<area shape="poly" id="edge18_Node000001_Node000008" title=" " alt="" coords="624,410,584,420,518,425,451,427,337,424,335,419,451,422,517,420,583,415,629,409"/>
+<area shape="rect" id="Node000009" href="$a00745.html#ac0fe3d027eaef41f30b5def90cb386f3" title="Check that the cached UID is not all&#45;zero or all&#45;0xFF." alt="" coords="426,504,561,531"/>
+<area shape="poly" id="edge16_Node000001_Node000009" title=" " alt="" coords="657,413,585,464,519,506,516,501,582,459,653,416"/>
+<area shape="rect" id="Node000010" href="$a00745.html#aeb3ae7e904433039e3bc15c01dc319b7" title="Print the device UID as a byte array." alt="" coords="416,579,571,605"/>
+<area shape="poly" id="edge19_Node000001_Node000010" title=" " alt="" coords="676,417,640,481,614,514,585,545,558,565,529,581,527,576,555,560,582,541,610,511,635,478,672,421"/>
+<area shape="rect" id="Node000011" href="$a00763.html#a47c3e08ac074e7ffcd9a480692aaa91f" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="414,653,573,696"/>
+<area shape="poly" id="edge22_Node000001_Node000011" title=" " alt="" coords="682,418,670,463,649,514,621,569,586,619,564,639,540,655,538,650,561,635,582,616,617,566,644,512,665,461,679,422"/>
+<area shape="rect" id="Node000015" href="$a00763.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 device UID into a fixed&#45;size SHA&#45;256 buffer." alt="" coords="420,720,567,763"/>
+<area shape="poly" id="edge28_Node000001_Node000015" title=" " alt="" coords="688,419,682,480,666,557,652,598,635,638,613,676,586,710,568,723,566,718,582,706,608,673,630,636,647,596,661,556,677,479,685,423"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="526,15,515,10,493,8,473,10,462,15,460,20,465,29,460,29,454,21,458,11,472,5,494,3,517,5,531,13"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="526,89,515,85,493,83,473,85,462,89,460,95,465,104,460,104,454,95,458,86,472,79,494,77,517,80,531,88"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="525,164,515,160,493,157,473,159,462,164,460,169,465,178,460,178,454,170,458,160,472,154,494,152,517,155,531,163"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="525,239,515,234,493,232,473,234,462,239,460,244,465,253,460,253,454,245,458,235,472,229,494,227,517,229,531,238"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="525,364,515,360,493,357,473,359,462,364,460,369,465,379,460,378,454,370,458,360,472,354,494,352,517,355,531,363"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="427,375,328,347,327,342,432,373"/>
+<area shape="poly" id="edge13_Node000006_Node000008" title=" " alt="" coords="401,404,337,413,335,408,406,401"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="302,303,294,298,278,296,262,298,254,302,252,308,256,317,251,317,247,309,250,299,261,293,278,291,296,293,307,302"/>
+<area shape="poly" id="edge14_Node000008_Node000008" title=" " alt="" coords="302,389,294,385,278,383,262,385,254,389,252,395,256,404,251,403,247,395,250,386,261,380,278,377,296,380,307,388"/>
+<area shape="poly" id="edge17_Node000009_Node000009" title=" " alt="" coords="525,489,515,485,493,483,473,485,462,489,460,495,465,504,460,503,454,495,458,486,472,479,494,477,517,480,531,489"/>
+<area shape="poly" id="edge20_Node000010_Node000010" title=" " alt="" coords="525,563,515,560,493,557,473,559,462,564,460,569,465,579,460,577,454,570,458,560,472,554,494,552,517,555,531,564"/>
+<area shape="poly" id="edge27_Node000011_Node000011" title=" " alt="" coords="523,637,513,634,493,632,475,634,464,639,460,645,461,654,456,651,454,643,461,634,474,629,494,627,515,629,529,638"/>
+<area shape="rect" id="Node000012" href="$a00658.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,653,355,696"/>
+<area shape="poly" id="edge23_Node000011_Node000012" title=" " alt="" coords="396,675,356,677,355,672,402,674"/>
+<area shape="poly" id="edge24_Node000012_Node000012" title=" " alt="" coords="300,638,292,634,278,632,264,634,256,638,252,644,253,654,248,652,247,643,252,635,262,629,278,627,294,629,305,638"/>
+<area shape="rect" id="Node000013" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,661,152,688"/>
+<area shape="poly" id="edge25_Node000012_Node000013" title=" " alt="" coords="182,676,153,677,152,672,187,674"/>
+<area shape="rect" id="Node000014" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,661,55,688"/>
+<area shape="poly" id="edge26_Node000013_Node000014" title=" " alt="" coords="85,676,56,677,54,672,89,673"/>
+</map>

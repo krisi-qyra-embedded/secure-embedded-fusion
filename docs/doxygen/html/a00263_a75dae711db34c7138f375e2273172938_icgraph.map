@@ -1,0 +1,10 @@
+<map id="bmp280_fatal_stop_kicking_watchdog" name="bmp280_fatal_stop_kicking_watchdog">
+<area shape="rect" id="Node000001" title="Invalidate the reading and wait without refreshing the heartbeat." alt="" coords="334,29,513,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="452,13,442,10,424,8,406,10,396,15,392,21,393,30,388,27,386,19,392,10,405,5,424,3,444,5,457,14"/>
+<area shape="rect" id="Node000002" href="$a00263.html#aab004cc86cfdbaba5f47aafcb678fe9f" title="Sample the environmental sensor and recover after repeated read failures." alt="" coords="190,37,286,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="316,51,287,53,286,48,321,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="264,22,256,18,238,16,221,18,212,23,210,28,214,38,209,36,204,29,208,19,219,13,238,11,258,13,270,22"/>
+<area shape="rect" id="Node000003" href="$a00263.html#a6bc477ebd2e3850359bec681055b9486" title="Start the BMP280/BME280 measurement task." alt="" coords="5,37,142,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="172,51,142,53,142,48,177,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="100,22,92,18,73,16,57,18,48,23,45,28,50,37,45,37,40,29,44,19,55,13,74,11,93,13,105,22"/>
+</map>

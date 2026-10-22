@@ -1,0 +1,7 @@
+<map id="runtime_build_response_plaintext" name="runtime_build_response_plaintext">
+<area shape="rect" id="Node000001" title="Build the ACK/NACK header, sequence, reason and checksum." alt="" coords="5,29,164,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="47,28,45,19,52,10,65,5,85,3,106,5,120,13,115,14,104,10,84,8,66,10,55,15,51,21,52,29"/>
+<area shape="rect" id="Node000002" href="$a00281.html#a19358204429fb0052356f57c157765b5" title="Sum frame bytes modulo 256." alt="" coords="212,37,350,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="164,48,199,50,194,51,164,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="247,36,241,29,246,19,259,13,281,11,304,13,318,22,313,22,303,18,281,16,260,18,249,23,247,28,252,38"/>
+</map>

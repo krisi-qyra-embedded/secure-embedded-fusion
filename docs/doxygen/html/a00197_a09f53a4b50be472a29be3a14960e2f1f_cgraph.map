@@ -1,0 +1,16 @@
+<map id="IWDG_ErrorHandler" name="IWDG_ErrorHandler">
+<area shape="rect" id="Node000001" title="Handle IWDG driver errors." alt="" coords="5,67,144,93"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="42,66,37,58,41,48,54,42,75,40,97,43,110,51,105,52,95,48,74,45,55,47,45,52,42,57,48,66"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="192,29,329,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,64,179,59,174,60,145,69"/>
+<area shape="rect" id="Node000004" href="$a01059.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="223,104,298,131"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="144,91,211,106,206,107,144,97"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="230,28,225,21,229,11,241,5,260,3,281,5,294,14,288,14,279,10,260,8,242,10,233,15,231,20,235,30"/>
+<area shape="rect" id="Node000003" href="$a00257.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="378,29,488,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="329,40,365,42,360,43,330,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="403,28,398,21,402,11,414,5,433,3,454,5,466,14,461,14,452,10,433,8,415,10,406,15,403,20,408,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="230,102,225,95,229,86,241,80,260,77,281,80,294,89,288,88,279,85,260,83,242,85,233,89,231,95,235,105"/>
+<area shape="rect" id="Node000005" href="$a01059.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="377,104,489,131"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="298,115,364,117,359,117,298,120"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="403,102,398,95,402,86,414,80,433,77,454,80,466,89,461,88,452,85,433,83,415,85,406,89,403,95,408,105"/>
+</map>

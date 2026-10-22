@@ -1,0 +1,6 @@
+<map id="sram_get_entropy_size" name="sram_get_entropy_size">
+<area shape="rect" id="Node000001" title="Get the configured SRAM entropy buffer size." alt="" coords="5,29,162,56"/>
+<area shape="rect" id="Node000002" href="$a00790.html#a1200504883eecf5ae399b9d15840b9ad" title="Get the SRAM entropy buffer size." alt="" coords="210,29,366,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="162,40,197,43,192,43,162,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="253,28,247,21,251,11,265,5,288,3,312,5,327,14,321,14,311,10,288,8,266,10,255,15,252,20,258,30"/>
+</map>

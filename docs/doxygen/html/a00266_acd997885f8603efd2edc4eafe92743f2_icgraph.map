@@ -1,0 +1,27 @@
+<map id="otp_key_material_is_valid" name="otp_key_material_is_valid">
+<area shape="rect" id="Node000001" title=" " alt="" coords="728,128,865,170"/>
+<area shape="poly" id="edge4_Node000001_Node000001" title=" " alt="" coords="826,112,816,109,796,106,778,108,767,113,763,119,764,129,760,126,758,118,764,109,777,103,796,101,817,104,831,112"/>
+<area shape="rect" id="Node000002" href="$a01011.html#a73702acacbe45e9c0c5fb7223867e497" title="Provision Ed25519 OTP when enabled and load the OTP keypair into RAM." alt="" coords="103,112,254,154"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="753,118,719,97,679,77,576,36,533,22,491,12,450,8,406,11,358,20,303,37,272,52,244,71,200,113,196,109,240,67,269,47,301,32,357,15,406,5,450,3,492,7,534,16,578,31,681,72,721,93,759,119"/>
+<area shape="rect" id="Node000004" href="$a01011.html#acd997885f8603efd2edc4eafe92743f2" title=" " alt="" coords="535,86,673,129"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="710,131,673,125,673,120,715,131"/>
+<area shape="rect" id="Node000005" href="$a00266.html#a8bcdbe9c78747ac0a265dc0eb9b12aef" title=" " alt="" coords="528,177,680,204"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="710,168,670,179,668,174,715,167"/>
+<area shape="rect" id="Node000024" href="$a01011.html#a8bcdbe9c78747ac0a265dc0eb9b12aef" title=" " alt="" coords="316,302,467,329"/>
+<area shape="poly" id="edge16_Node000001_Node000024" title=" " alt="" coords="750,178,681,218,583,260,481,293,444,304,443,299,480,288,581,255,679,213,745,180"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="200,97,193,93,178,90,165,92,157,97,153,103,154,112,149,111,148,102,153,93,163,87,178,85,195,88,206,96"/>
+<area shape="rect" id="Node000003" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,120,55,146"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,135,57,135,54,131,89,131"/>
+<area shape="poly" id="edge11_Node000005_Node000005" title=" " alt="" coords="635,162,625,158,604,156,584,158,573,162,571,168,576,178,571,176,565,168,569,159,583,153,604,150,627,153,641,162"/>
+<area shape="rect" id="Node000006" href="$a00266.html#a1182ffe265553de35b9e2111a5ca9c5c" title=" " alt="" coords="308,70,474,97"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="567,168,527,143,504,126,479,111,450,100,450,95,481,107,507,122,530,139,572,169"/>
+<area shape="rect" id="Node000021" href="$a01011.html#ade17dd0334ee250faa04f5e3d7fc1ed0" title=" " alt="" coords="304,145,479,188"/>
+<area shape="poly" id="edge9_Node000005_Node000021" title=" " alt="" coords="510,180,479,179,479,174,516,180"/>
+<area shape="poly" id="edge12_Node000005_Node000024" title=" " alt="" coords="581,214,537,256,482,293,453,304,452,299,479,288,534,252,576,216"/>
+<area shape="rect" id="Node000023" href="$a01011.html#ae7dcff87a95731d651bb7218e46d7fbd" title=" " alt="" coords="302,236,480,278"/>
+<area shape="poly" id="edge13_Node000005_Node000023" title=" " alt="" coords="547,208,462,238,461,233,542,210"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="426,55,415,51,391,49,369,51,357,56,354,61,360,70,355,70,349,62,353,52,368,46,391,44,416,46,431,55"/>
+<area shape="poly" id="edge10_Node000021_Node000021" title=" " alt="" coords="424,130,413,126,391,124,371,126,359,130,354,136,356,146,351,143,349,135,356,126,370,120,391,118,414,121,429,129"/>
+<area shape="poly" id="edge14_Node000023_Node000002" title=" " alt="" coords="337,229,216,158,217,152,342,227"/>
+<area shape="poly" id="edge15_Node000023_Node000023" title=" " alt="" coords="424,220,413,217,391,214,371,216,359,221,354,227,355,237,351,234,349,226,356,217,370,211,391,209,414,211,429,220"/>
+</map>

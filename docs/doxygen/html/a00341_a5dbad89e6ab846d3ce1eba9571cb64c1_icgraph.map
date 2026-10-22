@@ -1,0 +1,10 @@
+<map id="sntp_time_sync_obtain_time" name="sntp_time_sync_obtain_time">
+<area shape="rect" id="Node000001" title="Start SNTP if the clock still reports a year before 2016." alt="" coords="360,37,547,64"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="486,22,476,18,454,16,433,18,422,23,419,28,425,38,420,36,414,29,418,19,432,13,454,11,477,13,491,23"/>
+<area shape="rect" id="Node000002" href="$a00341.html#abd055f1ebb4c6964aa2aaf8d4db2fa3a" title="Check the clock every ten seconds." alt="" coords="199,37,312,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="342,51,312,53,312,48,347,51"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="284,22,275,18,255,16,237,18,227,23,225,28,230,38,225,36,219,29,223,19,235,13,255,11,277,13,289,22"/>
+<area shape="rect" id="Node000003" href="$a00341.html#aed5950cdae0b210440880aec1071cb5b" title="Start the periodic SNTP clock&#45;check task." alt="" coords="5,29,151,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="180,51,151,53,151,48,186,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="105,14,96,10,78,8,62,10,52,14,48,21,49,29,44,28,42,19,48,10,60,5,78,3,97,5,110,13"/>
+</map>

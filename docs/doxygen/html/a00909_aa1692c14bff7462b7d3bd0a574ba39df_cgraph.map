@@ -1,0 +1,48 @@
+<map id="app_bme680_sensor_stack_init_" name="app_bme680_sensor_stack_init_">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,521,186,564"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="60,521,59,511,65,502,77,497,96,495,115,497,129,505,124,507,114,502,95,500,78,502,68,507,64,513,65,521"/>
+<area shape="rect" id="Node000002" href="$a00224.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="234,355,325,381"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="117,519,253,390,252,395,121,523"/>
+<area shape="rect" id="Node000071" href="$a01056.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="242,567,316,593"/>
+<area shape="poly" id="edge29_Node000001_Node000071" title=" " alt="" coords="185,558,229,569,224,570,186,564"/>
+<area shape="poly" id="edge17_Node000002_Node000002" title=" " alt="" coords="247,354,242,346,246,336,259,330,279,328,301,331,314,339,309,340,300,336,279,333,260,335,250,340,248,345,253,354"/>
+<area shape="rect" id="Node000003" href="$a00158.html#a998b8edfb948379a192e3df5645a106a" title="This API is used to get the profile duration of the sensor." alt="" coords="389,29,548,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="278,354,281,301,292,224,304,181,320,139,343,100,371,66,378,63,375,67,375,70,347,103,325,142,309,183,298,225,286,301,283,355"/>
+<area shape="rect" id="Node000007" href="$a00158.html#aee75ae524b7ca8f4a9b6dbb7f640c2e4" title="Initialize BME680: soft&#45;reset, read chip&#45;id, and calibration data." alt="" coords="423,104,514,131"/>
+<area shape="poly" id="edge5_Node000002_Node000007" title=" " alt="" coords="280,354,288,314,304,259,331,200,349,172,371,147,388,135,410,127,406,131,391,140,375,151,353,175,335,202,309,261,293,315,285,356"/>
+<area shape="rect" id="Node000014" href="$a00158.html#a5ca765226e758e71c862553c7cc0b371" title="This API is used to set the power mode of the sensor." alt="" coords="612,229,790,256"/>
+<area shape="poly" id="edge7_Node000002_Node000014" title=" " alt="" coords="281,353,289,319,306,273,332,227,350,207,372,191,408,175,448,167,488,167,528,172,603,194,664,221,659,222,601,199,527,177,488,172,448,173,410,180,374,196,354,211,337,231,310,276,294,320,285,355"/>
+<area shape="rect" id="Node000015" href="$a00158.html#a2fea1365b4fa1d33eef434769b16e811" title="This API is used to set the oversampling, filter and T,P,H, gas selection settings in the sensor." alt="" coords="373,229,564,256"/>
+<area shape="poly" id="edge9_Node000002_Node000015" title=" " alt="" coords="288,352,321,310,345,286,372,266,385,261,381,264,374,270,348,290,325,313,292,356"/>
+<area shape="rect" id="Node000020" href="$a00224.html#a31a8322595da5370e79f2be8d627f4f2" title="Build the gas&#45;resistance reference from valid samples." alt="" coords="390,304,548,331"/>
+<area shape="poly" id="edge12_Node000002_Node000020" title=" " alt="" coords="324,354,403,334,399,337,327,358"/>
+<area shape="rect" id="Node000005" href="$a00254.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="646,329,756,356"/>
+<area shape="poly" id="edge18_Node000002_Node000005" title=" " alt="" coords="325,363,633,345,629,349,326,368"/>
+<area shape="rect" id="Node000030" href="$a00158.html#a954c888e376e63b3997d17e89f906c77" title="Convert the configured address value to 7&#45;bit I2C form." alt="" coords="674,555,728,581"/>
+<area shape="poly" id="edge19_Node000002_Node000030" title=" " alt="" coords="325,371,377,379,438,393,503,414,566,442,600,464,632,490,681,543,676,542,628,494,597,468,563,446,501,419,437,398,376,384,326,376"/>
+<area shape="rect" id="Node000031" href="$a00158.html#adc86d5995b888a6f4ef7dd5647b94f8f" title="Delay callback used by the BME680 driver." alt="" coords="414,480,523,507"/>
+<area shape="poly" id="edge21_Node000002_Node000031" title=" " alt="" coords="298,379,374,435,432,472,427,472,372,440,298,385"/>
+<area shape="rect" id="Node000032" href="$a00158.html#a264fa3bd66601d9d6fb4fbf04cce3fb3" title="Read BME680 registers through the project I2C adapter." alt="" coords="418,555,520,581"/>
+<area shape="poly" id="edge23_Node000002_Node000032" title=" " alt="" coords="287,379,320,444,345,482,375,517,395,532,419,548,414,548,392,537,371,521,340,486,315,447,285,384"/>
+<area shape="rect" id="Node000069" href="$a00158.html#a7726d2bb1fccd06c8d70f788fcd49ea0" title="Write BME680 registers through the project I2C adapter." alt="" coords="416,629,521,656"/>
+<area shape="poly" id="edge26_Node000002_Node000069" title=" " alt="" coords="284,379,294,421,311,477,337,537,355,566,375,591,393,607,416,623,410,622,390,612,371,595,350,569,333,539,306,479,289,423,282,384"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="436,29,431,21,435,11,448,5,469,3,491,5,505,13,500,15,490,10,469,8,449,10,438,15,436,20,441,29"/>
+<area shape="poly" id="edge6_Node000007_Node000007" title=" " alt="" coords="436,104,431,95,435,86,448,79,469,77,491,80,505,88,500,89,490,85,469,83,449,85,438,89,436,95,441,104"/>
+<area shape="poly" id="edge8_Node000014_Node000014" title=" " alt="" coords="661,229,655,221,660,211,675,205,701,203,729,205,745,214,740,215,728,210,701,208,677,210,663,215,660,220,667,229"/>
+<area shape="poly" id="edge10_Node000015_Node000014" title=" " alt="" coords="564,240,599,242,594,244,566,245"/>
+<area shape="poly" id="edge11_Node000015_Node000015" title=" " alt="" coords="436,229,431,221,435,211,448,205,469,203,491,205,505,214,500,215,490,210,469,208,449,210,438,215,436,220,441,229"/>
+<area shape="poly" id="edge13_Node000020_Node000014" title=" " alt="" coords="511,301,645,260,640,263,514,306"/>
+<area shape="poly" id="edge14_Node000020_Node000020" title=" " alt="" coords="436,303,431,295,435,286,448,279,469,277,491,280,505,288,499,289,490,285,469,283,449,285,438,289,436,295,441,304"/>
+<area shape="poly" id="edge15_Node000020_Node000005" title=" " alt="" coords="548,323,633,334,628,336,549,329"/>
+<area shape="poly" id="edge16_Node000005_Node000005" title=" " alt="" coords="661,328,655,321,660,311,675,305,701,303,729,305,745,314,740,315,728,310,701,308,677,310,663,315,660,320,667,329"/>
+<area shape="poly" id="edge20_Node000030_Node000030" title=" " alt="" coords="671,559,657,551,657,539,672,531,701,528,725,530,741,535,747,544,743,554,739,550,742,544,738,539,724,535,701,533,674,536,661,542,662,549,677,560"/>
+<area shape="poly" id="edge22_Node000031_Node000031" title=" " alt="" coords="436,479,431,471,435,462,448,455,469,453,491,456,505,465,499,465,490,461,469,459,449,461,438,465,436,471,441,480"/>
+<area shape="poly" id="edge24_Node000032_Node000030" title=" " alt="" coords="520,565,662,567,656,569,521,571"/>
+<area shape="poly" id="edge25_Node000032_Node000032" title=" " alt="" coords="436,553,431,546,435,536,448,530,469,528,491,531,505,540,499,539,490,536,469,533,449,535,438,540,436,545,441,555"/>
+<area shape="poly" id="edge27_Node000069_Node000030" title=" " alt="" coords="512,626,657,582,662,580,513,631"/>
+<area shape="poly" id="edge28_Node000069_Node000069" title=" " alt="" coords="436,628,431,621,435,611,448,605,469,603,491,605,505,614,499,614,490,610,469,608,449,610,438,615,436,620,441,630"/>
+<area shape="poly" id="edge30_Node000071_Node000071" title=" " alt="" coords="248,566,242,558,246,548,259,542,279,540,301,543,314,551,309,552,300,548,279,545,260,547,250,552,248,557,253,567"/>
+<area shape="rect" id="Node000072" href="$a01056.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="412,704,525,731"/>
+<area shape="poly" id="edge31_Node000071_Node000072" title=" " alt="" coords="294,591,329,627,375,666,425,697,419,696,371,670,325,631,292,596"/>
+<area shape="poly" id="edge32_Node000072_Node000072" title=" " alt="" coords="436,702,431,695,435,686,448,679,469,677,491,680,505,689,500,688,490,685,469,683,449,685,438,689,436,695,441,705"/>
+</map>

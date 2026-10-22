@@ -1,0 +1,32 @@
+<map id="otp_public_key_is_programmed" name="otp_public_key_is_programmed">
+<area shape="rect" id="Node000001" title=" " alt="" coords="602,289,807,316"/>
+<area shape="poly" id="edge21_Node000001_Node000001" title=" " alt="" coords="743,274,731,270,704,268,680,270,667,275,664,280,670,290,665,288,658,281,663,271,679,265,705,263,733,265,749,275"/>
+<area shape="rect" id="Node000002" href="$a00263.html#acc453df9bd39a595b3cb2dc77dd8da4a" title=" " alt="" coords="389,195,554,237"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="649,284,531,240,531,235,655,283"/>
+<area shape="rect" id="Node000015" href="$a00263.html#a40d7872d8c828bf871487c75b1f37a43" title="Load and validate the signed manifest from protected Flash." alt="" coords="173,376,320,403"/>
+<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="617,320,321,378,320,373,613,318"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="507,179,494,176,472,173,450,175,437,180,432,186,434,195,429,193,427,185,434,176,449,170,472,168,496,170,512,179"/>
+<area shape="rect" id="Node000003" href="$a00263.html#adce8d12f93ac9f85f46fada6009cbba9" title=" " alt="" coords="170,195,322,237"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="371,217,324,219,322,213,376,215"/>
+<area shape="rect" id="Node000007" href="$a00263.html#a41a72ec191a649af3ebda6508ca2ece5" title="Create the firmware manifest and sign its canonical form with Ed25519." alt="" coords="152,120,341,147"/>
+<area shape="poly" id="edge5_Node000002_Node000007" title=" " alt="" coords="409,188,340,161,305,150,304,145,342,156,414,187"/>
+<area shape="rect" id="Node000014" href="$a00263.html#aa645a5bb9138b5a99ff098c71cb22b23" title="Store the signed manifest in Flash, verify it and restore write protection." alt="" coords="170,285,322,328"/>
+<area shape="poly" id="edge10_Node000002_Node000014" title=" " alt="" coords="405,243,302,287,300,282,400,245"/>
+<area shape="rect" id="Node000011" href="$a00263.html#a89ccf247a17667c73a761948c4b573b0" title="Verify the stored manifest signature using the OTP Ed25519 trust anchor." alt="" coords="154,29,338,72"/>
+<area shape="poly" id="edge14_Node000002_Node000011" title=" " alt="" coords="442,182,398,134,370,109,340,86,320,75,319,70,342,82,373,104,401,130,448,183"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="276,179,266,176,246,173,228,175,218,180,213,186,215,195,210,193,208,185,214,176,227,170,246,168,267,170,281,179"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="278,105,268,101,246,99,226,101,216,105,213,111,219,120,213,120,208,111,212,102,225,95,246,93,269,96,283,104"/>
+<area shape="rect" id="Node000008" href="$a00906.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="30,169,79,196"/>
+<area shape="poly" id="edge6_Node000007_Node000008" title=" " alt="" coords="176,153,81,179,78,174,179,149"/>
+<area shape="rect" id="Node000009" href="$a00275.html#a143124af5faa46c359a927e339deab51" title="Write one 32&#45;bit value in big&#45;endian form into a bounded buffer." alt="" coords="5,293,104,320"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="157,156,153,161,120,192,94,229,63,294,58,292,90,227,116,189,150,157,161,152"/>
+<area shape="poly" id="edge9_Node000009_Node000009" title=" " alt="" coords="86,279,76,274,54,272,35,274,24,279,21,284,27,292,21,294,16,285,20,275,33,269,55,267,77,269,91,277"/>
+<area shape="poly" id="edge11_Node000014_Node000008" title=" " alt="" coords="193,278,150,252,75,199,75,194,153,247,198,276"/>
+<area shape="poly" id="edge13_Node000014_Node000009" title=" " alt="" coords="152,308,105,309,104,304,157,305"/>
+<area shape="poly" id="edge12_Node000014_Node000014" title=" " alt="" coords="276,270,266,266,246,264,228,266,218,271,213,277,215,286,210,284,208,275,214,266,227,261,246,259,267,261,281,270"/>
+<area shape="poly" id="edge15_Node000011_Node000008" title=" " alt="" coords="158,81,153,86,127,106,103,129,68,170,64,168,99,126,123,102,150,82,161,77"/>
+<area shape="poly" id="edge16_Node000011_Node000011" title=" " alt="" coords="276,14,266,10,246,8,228,10,218,15,213,21,215,29,209,28,208,19,214,10,227,5,246,3,267,5,281,13"/>
+<area shape="poly" id="edge19_Node000015_Node000008" title=" " alt="" coords="192,369,171,358,150,342,132,321,122,302,101,259,64,199,65,194,106,256,127,300,137,318,154,338,174,354,197,369"/>
+<area shape="poly" id="edge20_Node000015_Node000009" title=" " alt="" coords="197,371,87,323,88,318,201,368"/>
+<area shape="poly" id="edge18_Node000015_Node000015" title=" " alt="" coords="278,360,268,357,246,355,226,357,216,361,213,367,218,377,213,375,208,367,212,358,225,351,246,349,269,352,283,361"/>
+</map>

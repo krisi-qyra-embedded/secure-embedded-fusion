@@ -1,0 +1,24 @@
+<map id="bme680_get_sensor_mode" name="bme680_get_sensor_mode">
+<area shape="rect" id="Node000001" title="This API is used to get the power mode of the sensor." alt="" coords="5,29,183,56"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="60,29,54,21,58,11,72,5,94,3,118,5,132,13,127,15,116,10,94,8,73,10,62,15,59,20,65,28"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="715,105,852,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,27,283,18,405,14,537,22,603,32,668,47,715,67,756,96,751,95,713,72,666,52,602,37,537,27,405,19,284,23,184,32"/>
+<area shape="rect" id="Node000004" href="$a00164.html#af5548cbdbf327e2c77bdb0afb1dde9e4" title="This API reads the data from the given register address of the sensor." alt="" coords="231,129,355,156"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="123,54,253,121,249,124,122,59"/>
+<area shape="rect" id="Node000005" href="$a00164.html#a42e0f090abb1ef2f0cce2e572419f25e" title="Validate the BME680 device context." alt="" coords="561,85,667,112"/>
+<area shape="poly" id="edge16_Node000001_Node000005" title=" " alt="" coords="183,49,547,89,545,94,183,55"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="754,104,749,97,753,87,764,81,783,79,804,81,816,91,811,90,802,86,783,84,766,86,757,91,754,96,759,106"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="900,105,1009,132"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="852,116,887,119,882,119,852,121"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="925,104,920,97,924,87,935,81,955,79,975,81,988,91,982,90,974,86,955,84,937,86,927,91,925,96,930,106"/>
+<area shape="poly" id="edge6_Node000004_Node000002" title=" " alt="" coords="317,154,357,175,404,191,450,197,497,198,544,193,590,185,673,161,736,139,742,138,675,166,591,190,544,198,497,203,449,203,402,196,355,179,316,159"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="264,128,259,121,263,111,274,105,293,103,313,105,325,114,319,114,311,110,293,108,276,110,267,115,265,120,269,130"/>
+<area shape="poly" id="edge8_Node000004_Node000005" title=" " alt="" coords="350,126,403,116,548,102,543,103,403,121,351,131"/>
+<area shape="rect" id="Node000006" href="$a00164.html#a25e8a0a8d3226f33a5d8f57ffb2fb3d2" title="This internal API is used to set the memory page based on register address." alt="" coords="403,155,513,181"/>
+<area shape="poly" id="edge11_Node000004_Node000006" title=" " alt="" coords="356,150,391,157,385,157,356,155"/>
+<area shape="poly" id="edge9_Node000005_Node000002" title=" " alt="" coords="667,102,702,109,697,109,667,108"/>
+<area shape="poly" id="edge10_Node000005_Node000005" title=" " alt="" coords="587,84,582,77,585,67,596,61,614,59,633,61,644,71,639,70,631,66,614,64,598,66,590,71,587,76,592,86"/>
+<area shape="poly" id="edge12_Node000006_Node000002" title=" " alt="" coords="513,157,697,132,702,131,514,162"/>
+<area shape="poly" id="edge13_Node000006_Node000005" title=" " alt="" coords="489,152,566,119,571,118,491,157"/>
+<area shape="poly" id="edge14_Node000006_Node000006" title=" " alt="" coords="431,153,426,146,430,136,441,130,458,128,477,131,488,140,483,139,475,136,458,133,442,135,434,140,432,145,436,155"/>
+</map>

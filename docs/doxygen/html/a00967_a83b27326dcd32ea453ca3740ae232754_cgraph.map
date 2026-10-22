@@ -1,0 +1,13 @@
+<map id="hash_device_uid_into_hashed_buf" name="hash_device_uid_into_hashed_buf">
+<area shape="rect" id="Node000001" title="Hash the STM32 device UID into a fixed&#45;size SHA&#45;256 buffer." alt="" coords="5,21,152,64"/>
+<area shape="rect" id="Node000002" href="$a00949.html#a6733451d1d006e2b019f6301ebedd5e6" title="Read the STM32 device UID into the local buffer." alt="" coords="394,29,509,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,29,199,24,273,21,346,24,381,30,376,30,346,29,273,26,200,29,152,34"/>
+<area shape="rect" id="Node000007" href="$a00970.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 UID with SHA&#45;256." alt="" coords="200,63,346,105"/>
+<area shape="poly" id="edge5_Node000001_Node000007" title=" " alt="" coords="152,56,188,65,182,66,152,61"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="427,28,422,21,425,11,435,5,452,3,469,5,480,15,474,14,467,10,452,8,437,10,429,14,428,20,431,30"/>
+<area shape="rect" id="Node000003" href="$a01009.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="557,29,632,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="509,40,544,42,539,43,510,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="569,28,565,21,568,11,578,5,595,3,612,5,622,15,617,13,610,10,594,8,580,10,572,14,570,20,574,30"/>
+<area shape="poly" id="edge6_Node000007_Node000002" title=" " alt="" coords="346,64,376,60,381,59,347,70"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="239,61,237,53,243,44,255,38,273,36,292,38,305,47,300,47,291,44,273,41,256,43,246,48,242,54,243,64"/>
+</map>

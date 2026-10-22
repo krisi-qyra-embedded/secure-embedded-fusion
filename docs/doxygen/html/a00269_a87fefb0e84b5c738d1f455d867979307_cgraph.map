@@ -1,0 +1,7 @@
+<map id="ccs811_init_desc_with_retries" name="ccs811_init_desc_with_retries">
+<area shape="rect" id="Node000001" title="Initialize the CCS811 I2C descriptor with bounded retries." alt="" coords="5,29,158,72"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="45,28,43,19,49,10,62,5,82,3,102,5,116,13,111,14,101,10,81,8,64,10,53,15,48,21,50,29"/>
+<area shape="rect" id="Node000002" href="$a00251.html#af92177eb6358035c5fef8d881cec1546" title="Update the heartbeat timestamp for a monitored task." alt="" coords="206,37,342,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="158,48,193,50,188,51,158,53"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="241,36,235,29,239,19,252,13,274,11,297,13,310,22,305,22,295,18,274,16,254,18,243,23,240,28,246,38"/>
+</map>

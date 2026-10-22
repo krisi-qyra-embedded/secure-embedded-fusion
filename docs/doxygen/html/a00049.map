@@ -1,0 +1,23 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/iwdg.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/iwdg.h">
+<area shape="rect" id="Node000001" title="IWDG supervision, heartbeat tracking and fault&#45;reset declarations." alt="" coords="1554,5,1852,128"/>
+<area shape="rect" id="Node000002" href="$a00143.html" title="USART6 link between STM32 and ESP32." alt="" coords="5,176,348,299"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1536,69,1306,78,1011,95,850,109,686,127,521,150,361,179,349,181,347,176,360,173,520,145,685,122,850,104,1011,90,1306,73,1541,69"/>
+<area shape="rect" id="Node000003" href="$a00116.html" title="BME680 sensor driver and measurement handling." alt="" coords="372,176,690,299"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1536,74,1365,88,1155,107,927,136,813,156,702,179,691,181,690,176,701,173,812,151,927,131,1154,102,1364,82,1542,74"/>
+<area shape="rect" id="Node000004" href="$a00149.html" title="I2C DMA, recovery and shared fault handling." alt="" coords="714,176,1036,299"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1542,87,1306,125,1176,150,1049,179,1037,182,1036,177,1048,173,1175,144,1305,120,1536,88"/>
+<area shape="rect" id="Node000005" href="$a00152.html" title="IWDG supervision, heartbeat checks and fault reset handling." alt="" coords="1060,176,1360,299"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1542,119,1372,179,1361,183,1359,177,1370,173,1537,120"/>
+<area shape="rect" id="Node000006" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="1384,176,1684,299"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1634,138,1596,178,1594,173,1629,140"/>
+<area shape="rect" id="Node000007" href="$a00158.html" title="MAX31865 SPI/DMA driver and runtime handling." alt="" coords="1708,176,2040,299"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1776,137,1815,176,1810,175,1774,142"/>
+<area shape="rect" id="Node000008" href="$a00161.html" title="MPU9250 I2C/DMA driver and runtime handling." alt="" coords="2064,176,2390,299"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1867,115,2053,173,2067,180,2061,179,2052,179,1866,120"/>
+<area shape="rect" id="Node000009" href="$a00173.html" title="PMS5003 frame parsing, telemetry and runtime recovery." alt="" coords="2414,176,2726,299"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1867,82,2121,117,2263,142,2402,173,2416,179,2411,179,2401,179,2262,147,2120,122,1867,87"/>
+<area shape="rect" id="Node000010" href="$a00185.html" title="SPI4 DMA handling, synchronization and recovery for MAX31865." alt="" coords="2749,176,3070,299"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1867,71,2048,81,2267,100,2503,130,2622,150,2738,173,2751,179,2746,178,2737,179,2621,155,2503,135,2266,106,2047,87,1867,76"/>
+<area shape="rect" id="Node000011" href="$a00206.html" title="SysTick 1 ms timebase, delay and self&#45;test helpers." alt="" coords="3094,176,3408,299"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1867,64,2107,69,2411,85,2578,99,2748,118,2918,142,3084,173,3096,179,3091,178,3083,179,2917,147,2747,123,2577,104,2411,90,2106,74,1867,70"/>
+</map>

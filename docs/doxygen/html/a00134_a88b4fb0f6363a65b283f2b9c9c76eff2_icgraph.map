@@ -1,0 +1,14 @@
+<map id="telemetry_publish_ds18b20" name="telemetry_publish_ds18b20">
+<area shape="rect" id="Node000001" title="Publish the full DS18B20 temperature group." alt="" coords="530,29,709,56"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="653,14,642,10,619,8,598,10,587,15,584,20,589,30,585,28,579,21,583,11,597,5,619,3,644,5,658,15"/>
+<area shape="rect" id="Node000002" href="$a00134.html#ac8a6a2235f78b506554c9e56744c2480" title="Run one DS18B20 application state&#45;machine step." alt="" coords="350,29,482,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="512,43,482,45,482,40,517,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="443,14,434,10,416,8,399,10,390,15,388,20,392,30,387,28,382,21,386,11,397,5,416,3,436,5,448,15"/>
+<area shape="rect" id="Node000003" href="$a00658.html#adc37d956e02510e6d3b03c4c0a267ad3" title=" " alt="" coords="200,29,302,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="332,43,303,45,303,40,337,43"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="270,13,264,10,251,8,239,10,232,14,231,20,234,30,229,28,225,20,228,11,237,5,251,3,267,5,276,15"/>
+<area shape="rect" id="Node000004" href="$a00658.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,29,152,56"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="182,43,152,45,152,40,187,43"/>
+<area shape="rect" id="Node000005" href="$a00655.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="84,44,55,45,55,40,89,42"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="application_vector_table_relocate" name="application_vector_table_relocate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="200,29,326,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="283,13,276,10,263,8,251,10,244,14,241,20,241,30,237,27,235,19,240,11,249,5,263,3,278,5,288,14"/>
+<area shape="rect" id="Node000002" href="$a00915.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,37,152,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="182,51,153,53,152,48,187,50"/>
+<area shape="rect" id="Node000003" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,52,55,53,55,48,89,50"/>
+</map>

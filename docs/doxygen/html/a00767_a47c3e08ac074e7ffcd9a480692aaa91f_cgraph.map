@@ -1,0 +1,81 @@
+<map id="entropy_personalisation_HW_init" name="entropy_personalisation_HW_init">
+<area shape="rect" id="Node000001" title="Initialize the ADC, timer&#45;jitter, SRAM and UID entropy sources." alt="" coords="5,267,164,309"/>
+<area shape="poly" id="edge22_Node000001_Node000001" title=" " alt="" coords="44,266,42,257,49,248,63,242,85,240,107,242,122,250,118,252,106,248,84,245,64,247,52,252,47,258,49,266"/>
+<area shape="rect" id="Node000002" href="$a00755.html#acd304899aa990448e87dd7796692ed1d" title="Initialize ADC DMA collection." alt="" coords="238,149,358,176"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,265,152,224,210,186,227,180,223,184,213,190,155,229,110,268"/>
+<area shape="rect" id="Node000007" href="$a00809.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="468,224,543,251"/>
+<area shape="poly" id="edge52_Node000001_Node000007" title=" " alt="" coords="163,282,269,273,384,260,456,248,451,251,384,265,269,279,165,286"/>
+<area shape="rect" id="Node000011" href="$a00749.html#a6733451d1d006e2b019f6301ebedd5e6" title="Read the STM32 device UID into the local buffer." alt="" coords="240,349,356,376"/>
+<area shape="poly" id="edge19_Node000001_Node000011" title=" " alt="" coords="147,307,245,342,241,345,148,313"/>
+<area shape="rect" id="Node000012" href="$a00785.html#a90aecad7973b81903ab0ebfa862f6980" title="Initialize jitter capture with the project retry policy." alt="" coords="212,424,384,451"/>
+<area shape="poly" id="edge23_Node000001_Node000012" title=" " alt="" coords="111,307,159,345,213,386,260,415,254,417,210,390,155,350,111,312"/>
+<area shape="rect" id="Node000024" href="$a00791.html#a72417f62b45bd754bb65ef7398b22aba" title="Capture a runtime SRAM sample." alt="" coords="223,224,372,251"/>
+<area shape="poly" id="edge53_Node000001_Node000024" title=" " alt="" coords="163,267,226,253,222,257,166,271"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="262,149,256,141,261,131,275,125,298,123,323,125,337,133,332,135,321,130,298,128,276,130,264,135,262,140,267,149"/>
+<area shape="rect" id="Node000003" href="$a00758.html#a60a282738b0c3016969afdbe1e3e6924" title="Collect ADC samples until all byte buffers are full." alt="" coords="434,59,577,101"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="332,147,438,106,434,109,335,151"/>
+<area shape="rect" id="Node000006" href="$a00755.html#a01f0e8e37ac3607c9fbe5457c843a2cc" title="Configure DMA2 for ADC samples from PC4, PC5 and PB0." alt="" coords="444,149,568,176"/>
+<area shape="poly" id="edge9_Node000002_Node000006" title=" " alt="" coords="357,160,430,161,426,164,360,165"/>
+<area shape="poly" id="edge11_Node000002_Node000007" title=" " alt="" coords="348,174,385,185,462,217,457,218,383,191,350,179"/>
+<area shape="poly" id="edge6_Node000003_Node000003" title=" " alt="" coords="466,58,464,49,471,40,485,34,506,32,528,34,543,42,538,44,527,40,506,37,486,39,474,44,470,50,471,59"/>
+<area shape="rect" id="Node000004" href="$a00758.html#ac6835e1da70e1c9fd891c4df2aebffa2" title="Get the latest ADC sample triplet." alt="" coords="641,29,787,56"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="577,65,628,57,623,60,579,70"/>
+<area shape="rect" id="Node000005" href="$a00758.html#adc2dd216f72fe9136ffb9c9d09a597e7" title="Store the latest ADC channel values." alt="" coords="636,104,792,131"/>
+<area shape="poly" id="edge7_Node000003_Node000005" title=" " alt="" coords="577,90,623,100,618,102,579,95"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="678,29,672,21,677,11,691,5,714,3,739,5,753,14,748,14,737,10,714,8,692,10,680,15,678,20,684,29"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="678,103,672,95,677,86,691,79,714,77,739,80,753,88,748,89,737,85,714,83,692,85,680,89,678,95,684,104"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="470,149,464,141,468,131,483,125,506,123,530,125,545,134,540,135,529,130,506,128,484,130,472,135,469,140,475,149"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="470,223,464,215,468,206,483,199,506,197,530,200,545,208,540,209,529,205,506,203,484,205,472,209,469,215,475,224"/>
+<area shape="rect" id="Node000008" href="$a00809.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="658,216,770,243"/>
+<area shape="poly" id="edge13_Node000007_Node000008" title=" " alt="" coords="542,233,645,231,640,233,544,238"/>
+<area shape="poly" id="edge18_Node000008_Node000008" title=" " alt="" coords="678,215,672,207,677,198,691,191,714,189,739,192,753,201,748,201,737,197,714,195,692,197,680,201,678,207,684,216"/>
+<area shape="rect" id="Node000009" href="$a00725.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="894,216,961,243"/>
+<area shape="poly" id="edge14_Node000008_Node000009" title=" " alt="" coords="770,227,881,229,876,230,771,232"/>
+<area shape="poly" id="edge15_Node000009_Node000009" title=" " alt="" coords="899,215,894,207,898,198,909,192,927,189,947,192,959,201,954,201,945,197,927,195,911,197,902,201,899,207,904,216"/>
+<area shape="rect" id="Node000010" href="$a00725.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="1054,216,1127,243"/>
+<area shape="poly" id="edge16_Node000009_Node000010" title=" " alt="" coords="961,227,1041,229,1036,230,962,232"/>
+<area shape="poly" id="edge17_Node000010_Node000010" title=" " alt="" coords="1062,215,1057,207,1061,198,1072,192,1091,189,1110,192,1122,201,1117,201,1109,197,1091,195,1074,197,1065,201,1063,207,1067,216"/>
+<area shape="poly" id="edge21_Node000011_Node000007" title=" " alt="" coords="320,347,471,257,467,261,323,351"/>
+<area shape="poly" id="edge20_Node000011_Node000011" title=" " alt="" coords="262,349,256,341,261,331,275,325,298,323,323,325,337,334,332,335,321,330,298,328,276,330,264,335,262,340,267,349"/>
+<area shape="poly" id="edge24_Node000012_Node000012" title=" " alt="" coords="262,423,256,415,261,406,275,399,298,397,323,400,337,408,332,409,321,405,298,403,276,405,264,409,262,415,267,424"/>
+<area shape="rect" id="Node000013" href="$a00785.html#a065424f1fa20ad18eec9b3b216a19cc1" title="Collect the complete jitter sample set." alt="" coords="432,424,579,451"/>
+<area shape="poly" id="edge25_Node000012_Node000013" title=" " alt="" coords="384,435,419,436,414,438,385,440"/>
+<area shape="rect" id="Node000023" href="$a00785.html#aac0f5707bbf1aec838b7e3aa59e8dc02" title="Initialize GPIO, TIM1, DMA2 Stream6 and NVIC for jitter capture." alt="" coords="679,581,749,608"/>
+<area shape="poly" id="edge47_Node000012_Node000023" title=" " alt="" coords="336,449,666,575,662,578,335,454"/>
+<area shape="poly" id="edge30_Node000013_Node000013" title=" " alt="" coords="470,423,464,415,468,406,483,399,506,397,530,400,545,409,540,409,529,405,506,403,484,405,472,409,469,415,475,424"/>
+<area shape="rect" id="Node000014" href="$a00230.html#ab08497f80e933a6a6171b89f1e524d37" title="Block for the requested number of system ticks." alt="" coords="688,291,740,317"/>
+<area shape="poly" id="edge26_Node000013_Node000014" title=" " alt="" coords="519,421,564,379,626,334,675,315,670,317,629,338,567,383,522,426"/>
+<area shape="rect" id="Node000016" href="$a00785.html#ad8c1b2e4a886e28dfb68eed2ee666166" title="Convert raw timer captures into successive differences." alt="" coords="627,507,801,533"/>
+<area shape="poly" id="edge31_Node000013_Node000016" title=" " alt="" coords="542,449,667,500,661,501,541,454"/>
+<area shape="rect" id="Node000017" href="$a00785.html#a05ee64087bf80d4f2b3b52bc322994b3" title="Arm DMA for one capture sample." alt="" coords="650,416,778,459"/>
+<area shape="poly" id="edge33_Node000013_Node000017" title=" " alt="" coords="579,435,637,437,632,438,580,440"/>
+<area shape="rect" id="Node000020" href="$a00785.html#abb39952b631e6f25ed7b69905cc63e59" title=" " alt="" coords="849,365,1006,392"/>
+<area shape="poly" id="edge46_Node000013_Node000020" title=" " alt="" coords="527,421,572,397,627,377,679,369,733,364,836,368,831,369,733,370,680,374,628,383,574,402,530,426"/>
+<area shape="rect" id="Node000022" href="$a00785.html#abbe27430e128986ba835ec4cf1640af5" title="Trigger the TIM1 Channel 3 capture event in software." alt="" coords="644,656,784,699"/>
+<area shape="poly" id="edge43_Node000013_Node000022" title=" " alt="" coords="515,449,558,526,591,574,629,618,663,648,658,647,625,622,587,577,554,529,512,453"/>
+<area shape="poly" id="edge27_Node000014_Node000014" title=" " alt="" coords="685,294,674,286,675,274,689,267,714,264,748,270,755,277,754,286,750,283,750,279,745,275,714,269,690,272,679,277,679,284,690,295"/>
+<area shape="rect" id="Node000015" href="$a00230.html#a1ecf3b22458f872484b8267be7b86e7f" title="Read the current SysTick timebase value atomically." alt="" coords="894,291,961,317"/>
+<area shape="poly" id="edge28_Node000014_Node000015" title=" " alt="" coords="740,301,881,303,876,305,741,307"/>
+<area shape="poly" id="edge29_Node000015_Node000015" title=" " alt="" coords="899,289,894,282,898,272,909,266,927,264,947,267,959,276,954,275,945,272,927,269,911,271,902,276,899,281,904,291"/>
+<area shape="poly" id="edge32_Node000016_Node000016" title=" " alt="" coords="678,505,672,498,677,488,691,482,714,480,739,483,753,492,748,491,737,488,714,485,692,487,680,492,678,497,683,507"/>
+<area shape="poly" id="edge38_Node000017_Node000017" title=" " alt="" coords="674,414,673,406,679,397,693,391,714,389,736,392,751,400,746,400,735,397,714,395,694,397,683,401,678,407,679,417"/>
+<area shape="rect" id="Node000018" href="$a00785.html#a5bc37cdbd4a7e4f355e7e321c6df109d" title=" " alt="" coords="883,589,972,616"/>
+<area shape="poly" id="edge34_Node000017_Node000018" title=" " alt="" coords="779,454,802,469,820,490,828,510,836,530,851,551,887,582,882,581,847,555,831,533,823,512,815,492,799,473,778,459"/>
+<area shape="rect" id="Node000019" href="$a00785.html#ae14d8c179e3602d167cb0741686ca81a" title=" " alt="" coords="853,515,1002,541"/>
+<area shape="poly" id="edge36_Node000017_Node000019" title=" " alt="" coords="773,457,802,468,886,508,880,508,800,473,773,462"/>
+<area shape="poly" id="edge39_Node000017_Node000020" title=" " alt="" coords="778,417,864,396,859,398,779,422"/>
+<area shape="rect" id="Node000021" href="$a00785.html#a466ff66a460b352ff5e755fa8bec96d0" title=" " alt="" coords="850,440,1004,467"/>
+<area shape="poly" id="edge41_Node000017_Node000021" title=" " alt="" coords="778,439,837,446,832,447,779,445"/>
+<area shape="poly" id="edge35_Node000018_Node000018" title=" " alt="" coords="899,588,894,581,898,571,909,565,927,563,947,565,959,575,954,574,945,570,927,568,911,570,902,575,899,580,904,590"/>
+<area shape="poly" id="edge37_Node000019_Node000019" title=" " alt="" coords="899,513,894,506,898,496,909,490,927,488,947,491,959,500,954,499,945,496,927,493,911,495,902,500,899,505,904,515"/>
+<area shape="poly" id="edge40_Node000020_Node000020" title=" " alt="" coords="899,364,894,357,898,347,909,341,927,339,947,341,959,350,954,350,945,346,927,344,911,346,902,351,899,356,904,366"/>
+<area shape="poly" id="edge42_Node000021_Node000021" title=" " alt="" coords="899,439,894,431,898,422,909,416,927,413,947,416,959,425,954,424,945,421,927,419,911,421,902,425,899,431,904,441"/>
+<area shape="poly" id="edge44_Node000022_Node000018" title=" " alt="" coords="777,653,870,622,875,621,778,658"/>
+<area shape="poly" id="edge45_Node000022_Node000022" title=" " alt="" coords="675,654,673,646,679,637,693,631,714,629,736,632,751,641,746,640,735,637,714,635,694,637,683,641,678,647,679,657"/>
+<area shape="poly" id="edge48_Node000023_Node000018" title=" " alt="" coords="750,593,870,600,865,601,750,599"/>
+<area shape="poly" id="edge49_Node000023_Node000019" title=" " alt="" coords="749,581,865,547,870,546,750,586"/>
+<area shape="poly" id="edge51_Node000023_Node000020" title=" " alt="" coords="749,579,775,564,799,544,810,525,817,508,820,473,825,438,833,420,847,402,850,402,854,400,851,406,837,423,830,439,825,473,822,509,815,528,803,547,778,569,751,584"/>
+<area shape="poly" id="edge50_Node000023_Node000023" title=" " alt="" coords="678,580,672,573,677,563,691,557,714,555,739,557,753,566,748,566,737,562,714,560,692,562,680,567,678,572,683,582"/>
+<area shape="poly" id="edge54_Node000024_Node000007" title=" " alt="" coords="372,235,455,236,451,239,374,240"/>
+<area shape="poly" id="edge55_Node000024_Node000024" title=" " alt="" coords="262,224,256,215,261,206,275,199,298,197,323,200,337,208,332,209,321,205,298,203,276,205,264,209,262,215,267,223"/>
+</map>

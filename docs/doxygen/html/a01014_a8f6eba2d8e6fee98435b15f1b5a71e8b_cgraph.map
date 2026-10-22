@@ -1,0 +1,50 @@
+<map id="sender_init_ecdh_crypto" name="sender_init_ecdh_crypto">
+<area shape="rect" id="Node000001" title="Initialize sender ECDH material and derive the sender session keys." alt="" coords="5,485,168,512"/>
+<area shape="poly" id="edge35_Node000001_Node000001" title=" " alt="" coords="50,486,44,477,49,467,63,461,87,459,112,461,126,469,122,471,110,466,86,464,64,466,52,471,49,476,55,484"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="472,29,609,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,484,96,428,117,343,133,297,155,250,181,207,214,167,240,144,269,124,332,91,397,68,459,54,455,57,398,73,335,96,272,128,243,148,218,171,186,210,159,253,138,299,122,345,101,429,92,486"/>
+<area shape="rect" id="Node000004" href="$a01014.html#a08b24b1cac46a832987c49ea7bb7641a" title="Compute the STM32&#45;to&#45;ESP32 ECDH secret." alt="" coords="223,453,375,496"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="167,487,209,483,205,487,170,492"/>
+<area shape="rect" id="Node000007" href="$a01032.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="708,539,800,565"/>
+<area shape="poly" id="edge34_Node000001_Node000007" title=" " alt="" coords="120,510,254,561,341,587,430,607,493,617,542,622,590,619,651,607,688,592,720,575,725,573,691,597,652,612,591,625,541,627,492,622,430,612,339,593,252,566,120,515"/>
+<area shape="rect" id="Node000008" href="$a01014.html#aca1da0c9d9ac2c02d5e8ba52e42b9709" title="Derive symmetric keys from the selected ECDH secret." alt="" coords="456,531,626,573"/>
+<area shape="poly" id="edge15_Node000001_Node000008" title=" " alt="" coords="168,505,442,538,438,542,168,511"/>
+<area shape="rect" id="Node000009" href="$a01014.html#ae75951e9c5e6523d01b2fc6da2e69c93" title="Load or generate the STM32 ECDH keypairs." alt="" coords="216,205,382,232"/>
+<area shape="poly" id="edge19_Node000001_Node000009" title=" " alt="" coords="96,483,277,242,279,247,100,486"/>
+<area shape="rect" id="Node000012" href="$a01062.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="262,723,336,749"/>
+<area shape="poly" id="edge30_Node000001_Node000012" title=" " alt="" coords="96,510,144,587,178,634,217,678,262,714,257,714,214,682,174,637,139,589,95,515"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="504,29,498,21,503,11,517,5,541,3,566,5,581,13,576,15,565,10,541,8,518,10,506,15,503,20,509,29"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="699,80,809,107"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="600,54,687,76,682,78,601,59"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="717,79,711,71,716,62,730,55,754,53,779,56,794,64,789,65,778,61,754,59,732,61,720,65,717,71,723,80"/>
+<area shape="poly" id="edge12_Node000004_Node000004" title=" " alt="" coords="258,452,257,443,263,434,278,429,299,427,322,429,337,437,332,438,320,434,299,432,279,434,267,439,262,445,264,453"/>
+<area shape="rect" id="Node000005" href="$a01017.html#a2deb1156f9ae8d4fb458a3d39d7e7e42" title="Compute C&#45;MOX ECDH and keep the 32&#45;byte shared secret." alt="" coords="430,456,651,483"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="374,470,417,471,412,473,376,476"/>
+<area shape="rect" id="Node000006" href="$a01014.html#a59f18c3818b5d6fd5d528d214ed1c6bc" title=" " alt="" coords="700,419,808,445"/>
+<area shape="poly" id="edge13_Node000004_Node000006" title=" " alt="" coords="339,451,382,432,429,417,497,409,565,407,687,419,682,421,565,413,497,414,431,423,384,437,342,455"/>
+<area shape="poly" id="edge14_Node000004_Node000007" title=" " alt="" coords="318,494,366,542,397,565,431,583,490,599,539,601,588,594,651,583,703,572,708,570,652,588,589,599,539,607,489,605,429,588,394,570,362,546,317,499"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="504,455,498,447,503,438,517,431,541,429,566,432,581,441,576,441,565,437,541,435,518,437,506,441,503,447,509,456"/>
+<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="620,453,688,443,683,445,621,458"/>
+<area shape="poly" id="edge10_Node000005_Node000007" title=" " alt="" coords="615,481,652,492,688,509,722,530,717,530,686,514,650,497,615,486"/>
+<area shape="poly" id="edge9_Node000006_Node000006" title=" " alt="" coords="718,418,711,410,716,400,730,394,754,392,779,395,794,403,789,403,778,400,754,397,732,399,720,404,717,409,723,419"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="718,537,711,530,716,520,730,514,754,512,779,515,794,524,789,523,778,520,754,517,732,519,720,524,717,529,723,539"/>
+<area shape="poly" id="edge17_Node000008_Node000006" title=" " alt="" coords="584,528,650,492,716,455,721,453,653,497,587,533"/>
+<area shape="poly" id="edge18_Node000008_Node000007" title=" " alt="" coords="626,549,695,552,690,552,627,555"/>
+<area shape="poly" id="edge16_Node000008_Node000008" title=" " alt="" coords="500,529,498,521,505,512,519,506,541,504,564,506,579,515,574,515,562,512,541,509,521,511,508,516,504,522,505,531"/>
+<area shape="poly" id="edge20_Node000009_Node000002" title=" " alt="" coords="307,203,353,141,388,104,429,72,459,59,455,63,431,77,392,108,357,144,311,206"/>
+<area shape="poly" id="edge29_Node000009_Node000003" title=" " alt="" coords="311,203,359,158,392,135,429,116,495,97,563,87,628,84,687,87,682,89,628,89,563,93,496,102,431,121,395,139,362,163,315,207"/>
+<area shape="poly" id="edge24_Node000009_Node000006" title=" " alt="" coords="372,202,437,196,510,198,584,211,620,224,653,242,673,258,691,277,718,320,737,365,749,405,744,403,732,367,714,323,687,280,669,262,650,246,618,229,583,216,509,203,437,202,375,207"/>
+<area shape="poly" id="edge28_Node000009_Node000007" title=" " alt="" coords="316,230,367,271,431,316,493,346,545,362,595,381,623,396,653,418,680,443,704,471,740,526,735,524,700,474,676,447,650,422,620,401,593,386,543,368,491,351,429,321,364,275,316,235"/>
+<area shape="poly" id="edge23_Node000009_Node000009" title=" " alt="" coords="262,205,256,197,261,187,275,181,299,179,324,181,339,189,334,191,323,186,299,184,277,186,265,191,262,196,268,205"/>
+<area shape="rect" id="Node000010" href="$a01014.html#a07d477162ee57bff940a7a9951cf3a77" title=" " alt="" coords="488,280,593,307"/>
+<area shape="poly" id="edge21_Node000009_Node000010" title=" " alt="" coords="344,230,483,274,478,276,345,235"/>
+<area shape="rect" id="Node000011" href="$a01017.html#a2f167ce6818bfd3d8d986daae7480431" title=" " alt="" coords="454,155,628,181"/>
+<area shape="poly" id="edge25_Node000009_Node000011" title=" " alt="" coords="365,202,461,183,457,187,367,207"/>
+<area shape="poly" id="edge22_Node000010_Node000010" title=" " alt="" coords="504,279,498,271,503,262,517,255,541,253,566,256,581,264,576,265,565,261,541,259,518,261,506,265,503,271,509,280"/>
+<area shape="poly" id="edge27_Node000011_Node000003" title=" " alt="" coords="580,152,702,111,697,114,582,156"/>
+<area shape="poly" id="edge26_Node000011_Node000011" title=" " alt="" coords="504,154,498,146,503,136,517,130,541,128,566,131,581,139,576,140,565,136,541,133,518,135,506,140,503,145,509,154"/>
+<area shape="poly" id="edge31_Node000012_Node000012" title=" " alt="" coords="263,721,256,714,261,704,275,698,299,696,324,699,339,708,334,707,323,704,299,701,277,703,265,708,262,713,268,723"/>
+<area shape="rect" id="Node000013" href="$a01062.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="484,723,597,749"/>
+<area shape="poly" id="edge32_Node000012_Node000013" title=" " alt="" coords="336,733,472,736,466,736,337,739"/>
+<area shape="poly" id="edge33_Node000013_Node000013" title=" " alt="" coords="504,721,498,714,503,704,517,698,541,696,566,699,581,708,576,707,565,704,541,701,518,703,506,708,503,713,509,723"/>
+</map>

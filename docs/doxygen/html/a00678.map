@@ -1,0 +1,13 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/device_uid_entropy.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/device_uid_entropy.h">
+<area shape="rect" id="Node000001" title="STM32F411 device UID access and fingerprint helper declarations." alt="" coords="101,5,398,144"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="412,51,422,62,425,75,418,93,401,105,397,101,414,90,420,74,417,64,412,57"/>
+<area shape="rect" id="Node000002" href="$a00694.html" title=" " alt="" coords="5,192,308,331"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="207,160,194,193,189,190,209,156"/>
+<area shape="rect" id="Node000003" href="$a00688.html" title="ECDH, key derivation and AES&#45;GCM declarations for the STM32&#45;ESP32 link." alt="" coords="6,549,304,672"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="100,347,90,379,82,413,79,440,81,467,90,500,112,549,106,549,85,502,76,468,73,440,76,412,85,378,101,342"/>
+<area shape="rect" id="Node000004" href="$a00706.html" title="Nonce generation, counter tracking and entropy&#45;mixing declarations." alt="" coords="98,379,404,501"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="192,342,213,378,207,378,191,347"/>
+<area shape="poly" id="edge5_Node000004_Node000001" title=" " alt="" coords="303,364,317,330,326,292,329,261,326,231,317,193,298,147,299,142,322,191,331,230,334,261,331,293,322,332,307,366"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="218,365,202,334,202,329,223,365"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="211,513,192,550,188,547,207,517"/>
+</map>

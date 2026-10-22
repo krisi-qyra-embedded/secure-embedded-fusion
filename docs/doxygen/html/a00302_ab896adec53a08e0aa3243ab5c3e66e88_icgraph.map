@@ -1,0 +1,10 @@
+<map id="http_server_json_sanitize_ascii" name="http_server_json_sanitize_ascii">
+<area shape="rect" id="Node000001" title="Replace quotes, backslashes and control bytes in a JSON label." alt="" coords="410,29,579,72"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="528,13,516,10,495,8,475,10,462,15,457,21,459,30,454,27,452,19,459,10,473,5,495,3,518,5,533,14"/>
+<area shape="rect" id="Node000002" href="$a00302.html#af30286882ef78925a3cf3f67373d49bc" title="Serve the latest authenticated STM32 snapshot as JSON." alt="" coords="200,29,362,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="392,51,363,53,363,48,397,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="312,13,301,10,281,8,262,10,250,15,246,21,247,30,242,27,241,19,247,10,261,5,281,3,303,5,317,14"/>
+<area shape="rect" id="Node000003" href="$a00302.html#a144f3a03b04b7f1669cd84e63a4d03cc" title="Create the monitor resources, start HTTPS and register the dashboard routes." alt="" coords="5,37,152,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="182,51,152,53,152,48,187,50"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="112,22,101,18,78,16,57,18,46,23,43,28,49,37,44,37,38,29,42,19,56,13,79,11,103,13,117,22"/>
+</map>

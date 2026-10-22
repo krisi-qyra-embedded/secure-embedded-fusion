@@ -1,0 +1,27 @@
+<map id="http_server_wifi_connect_json_handler" name="http_server_wifi_connect_json_handler">
+<area shape="rect" id="Node000001" title="Read station credentials from request headers and request a connection." alt="" coords="5,149,172,192"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="46,149,45,139,52,130,66,125,89,123,112,125,128,133,123,135,111,130,88,128,68,130,55,135,50,141,52,149"/>
+<area shape="rect" id="Node000002" href="$a00302.html#a6df01acd9aa466a2c5ca1c0efecf2a78" title="Send a response and track consecutive send failures." alt="" coords="220,53,401,96"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,147,247,101,243,105,141,151"/>
+<area shape="rect" id="Node000004" href="$a00302.html#af151f962c0b044e789f2b308a04a4d39" title="Refresh the HTTPS heartbeat while the server is active and healthy." alt="" coords="449,120,629,147"/>
+<area shape="poly" id="edge7_Node000001_Node000004" title=" " alt="" coords="171,160,219,156,435,139,432,143,220,161,173,165"/>
+<area shape="rect" id="Node000006" href="$a00338.html#acd6606606de84f405065531c1889432a" title="Get the shared station configuration." alt="" coords="229,195,392,221"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="172,182,216,191,211,192,172,187"/>
+<area shape="rect" id="Node000007" href="$a00338.html#aec924a59c0eede746e90c5c04e682fc3" title="Queue a Wi&#45;Fi application message." alt="" coords="228,269,392,296"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="133,190,271,261,267,264,132,195"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="268,52,266,43,274,34,288,29,310,27,334,29,350,37,345,38,333,34,310,32,289,34,277,39,272,45,273,54"/>
+<area shape="rect" id="Node000003" href="$a00302.html#a4e8e7643b761c21fd2e5eec51fcf7a61" title="Latch an HTTPS fault and wait without refreshing its heartbeat." alt="" coords="464,29,614,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="400,63,451,59,446,61,402,68"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="396,94,472,115,467,116,396,99"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="497,28,496,19,503,10,517,5,539,3,563,5,578,14,573,14,561,10,539,8,518,10,506,15,501,21,502,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="502,119,495,111,500,101,515,95,539,93,565,96,581,105,575,105,564,101,539,99,516,101,504,105,501,111,507,120"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="273,194,266,186,271,176,286,170,310,168,337,171,352,179,347,179,335,176,310,173,287,175,274,180,271,185,278,195"/>
+<area shape="poly" id="edge16_Node000007_Node000007" title=" " alt="" coords="273,268,266,261,271,251,286,245,310,243,337,245,352,254,347,254,335,250,310,248,287,250,274,255,271,260,278,270"/>
+<area shape="rect" id="Node000008" href="$a00338.html#aaace492a4160a1e1e16dcee857392dd2" title="Count a Wi&#45;Fi API failure and stop when the limit is reached." alt="" coords="456,244,623,271"/>
+<area shape="poly" id="edge12_Node000007_Node000008" title=" " alt="" coords="392,271,437,268,443,268,393,276"/>
+<area shape="rect" id="Node000010" href="$a00338.html#ae31ded8e5f4d73165c5c5d5aaa8eb76a" title="Refresh the Wi&#45;Fi watchdog heartbeat." alt="" coords="677,269,841,296"/>
+<area shape="poly" id="edge17_Node000007_Node000010" title=" " alt="" coords="393,280,665,283,659,283,393,285"/>
+<area shape="poly" id="edge13_Node000008_Node000008" title=" " alt="" coords="502,243,495,235,500,225,515,219,539,217,565,220,581,229,575,228,564,225,539,223,516,225,504,229,501,235,507,245"/>
+<area shape="poly" id="edge14_Node000008_Node000010" title=" " alt="" coords="623,264,665,272,659,271,623,270"/>
+<area shape="poly" id="edge15_Node000010_Node000010" title=" " alt="" coords="722,268,715,261,720,251,735,245,759,243,785,245,800,255,795,254,784,250,759,248,736,250,723,255,721,260,726,270"/>
+</map>

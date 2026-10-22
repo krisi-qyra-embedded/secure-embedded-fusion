@@ -1,0 +1,7 @@
+<map id="wifi_app_set_callback" name="wifi_app_set_callback">
+<area shape="rect" id="Node000001" title="Set the station callback called after an IP address is obtained." alt="" coords="131,29,280,56"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="231,14,223,10,205,8,189,10,180,15,178,20,182,30,177,28,172,21,176,11,187,5,205,3,225,5,236,14"/>
+<area shape="rect" id="Node000002" href="$a00906.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,29,83,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,43,83,45,83,40,118,42"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="70,14,62,10,44,8,27,10,19,15,16,20,21,28,16,29,11,21,15,11,26,5,44,3,64,5,75,14"/>
+</map>

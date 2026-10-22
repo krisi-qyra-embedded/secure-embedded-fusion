@@ -1,0 +1,13 @@
+<map id="sram_print_buffer" name="sram_print_buffer">
+<area shape="rect" id="Node000001" title="Print the captured SRAM bytes for diagnostics." alt="" coords="5,29,127,56"/>
+<area shape="rect" id="Node000002" href="$a01056.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="344,29,418,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="126,32,174,28,235,25,296,28,331,34,326,34,296,33,235,31,175,33,127,37"/>
+<area shape="rect" id="Node000006" href="$a01041.html#ac3cf340590d0075f210449ba4f5987fa" title="Print sampled SRAM bytes for debug." alt="" coords="175,67,296,93"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="127,53,162,63,157,64,127,59"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="356,28,352,21,355,11,365,5,381,3,398,5,409,15,404,14,396,10,381,8,367,10,359,14,357,20,361,30"/>
+<area shape="rect" id="Node000003" href="$a01056.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="466,29,579,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="419,40,454,42,448,43,419,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="498,28,493,21,496,11,506,5,523,3,540,5,550,15,545,13,538,10,522,8,508,10,501,14,499,20,502,30"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="289,63,326,56,331,56,290,69"/>
+<area shape="poly" id="edge7_Node000006_Node000006" title=" " alt="" coords="210,65,205,58,208,48,219,42,235,40,253,43,264,52,258,51,251,48,235,45,220,47,213,52,211,58,215,67"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="aws_iot_watchdog_disable" name="aws_iot_watchdog_disable">
+<area shape="rect" id="Node000001" title="Disable AWS heartbeat checks." alt="" coords="494,67,671,93"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="620,51,608,48,583,45,559,47,546,52,543,57,550,67,545,65,538,58,543,48,558,42,583,40,609,43,625,52"/>
+<area shape="rect" id="Node000002" href="$a00299.html#ab7c2f5a88ac328f12166a431da7bf19a" title="Request an orderly stop of the AWS IoT task." alt="" coords="310,29,408,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="481,64,408,53,409,48,487,63"/>
+<area shape="rect" id="Node000010" href="$a00299.html#aa3ec8d34d21e667054367b174f4335fc" title="Disable supervision, clear the handle and delete the AWS task." alt="" coords="272,104,446,131"/>
+<area shape="poly" id="edge5_Node000001_Node000010" title=" " alt="" coords="487,96,443,106,443,101,482,97"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="396,14,384,10,359,8,335,10,323,15,320,20,326,30,321,28,314,21,319,11,334,5,359,3,385,5,401,14"/>
+<area shape="rect" id="Node000003" href="$a00903.html#a1535a2ab20693c8e0566c4201d6f48b0" title="Request AWS shutdown and start the local HTTPS dashboard." alt="" coords="5,29,224,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="292,43,224,45,224,40,297,42"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="156,15,143,10,114,8,89,10,75,15,71,20,78,29,73,29,66,21,71,11,88,5,115,3,144,5,161,14"/>
+<area shape="poly" id="edge8_Node000010_Node000010" title=" " alt="" coords="396,88,384,85,359,83,335,85,323,89,320,95,326,105,321,103,314,95,319,85,334,79,359,77,385,80,401,89"/>
+<area shape="rect" id="Node000011" href="$a00299.html#a500d275476b6ba32815804434f32885b" title="Connect to AWS, publish sensor telemetry and process MQTT traffic." alt="" coords="65,104,164,131"/>
+<area shape="poly" id="edge6_Node000010_Node000011" title=" " alt="" coords="254,118,164,120,164,115,259,117"/>
+<area shape="poly" id="edge7_Node000011_Node000011" title=" " alt="" coords="155,89,143,85,114,83,89,85,75,89,71,95,78,104,73,103,66,95,71,85,88,79,115,77,144,80,161,89"/>
+</map>

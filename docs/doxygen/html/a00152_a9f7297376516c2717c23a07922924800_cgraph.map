@@ -1,0 +1,7 @@
+<map id="heartbeat_signal_main" name="heartbeat_signal_main">
+<area shape="rect" id="Node000001" title="Signal a valid MAX31865 application sample." alt="" coords="5,29,157,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="54,29,49,21,52,11,63,5,81,3,100,5,111,14,106,14,98,10,81,8,65,10,57,15,54,20,59,29"/>
+<area shape="rect" id="Node000002" href="$a00206.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="205,29,269,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="157,40,192,43,186,43,157,45"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="210,28,205,21,208,11,219,5,237,3,256,5,267,15,262,14,254,10,237,8,221,10,212,15,210,20,214,30"/>
+</map>

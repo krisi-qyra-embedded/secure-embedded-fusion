@@ -1,0 +1,19 @@
+<map id="bme680_get_regs" name="bme680_get_regs">
+<area shape="rect" id="Node000001" title="This API reads the data from the given register address of the sensor." alt="" coords="5,29,130,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="39,29,34,21,37,11,49,5,68,3,87,5,99,13,94,15,86,10,67,8,50,10,41,15,39,20,44,29"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="489,53,627,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="128,26,193,15,272,6,357,5,442,15,483,27,522,46,516,46,481,32,441,20,357,10,272,12,194,20,130,31"/>
+<area shape="rect" id="Node000004" href="$a00161.html#a42e0f090abb1ef2f0cce2e572419f25e" title="Validate the BME680 device context." alt="" coords="336,53,441,80"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="130,45,322,59,319,64,130,50"/>
+<area shape="rect" id="Node000005" href="$a00161.html#a25e8a0a8d3226f33a5d8f57ffb2fb3d2" title="This internal API is used to set the memory page based on register address." alt="" coords="178,104,288,131"/>
+<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="100,54,190,96,185,99,98,59"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="529,52,524,45,527,35,539,29,558,27,578,29,591,39,585,38,577,34,558,32,541,34,531,39,529,44,534,54"/>
+<area shape="rect" id="Node000003" href="$a00257.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="675,53,784,80"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="627,64,662,67,656,67,627,69"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="700,52,695,45,698,35,710,29,729,27,750,29,762,39,757,38,748,34,729,32,712,34,702,39,700,44,705,54"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="442,64,476,66,471,67,442,69"/>
+<area shape="poly" id="edge8_Node000004_Node000004" title=" " alt="" coords="361,52,357,45,360,35,371,29,389,27,408,29,419,39,414,38,406,34,389,32,373,34,364,39,362,44,366,54"/>
+<area shape="poly" id="edge10_Node000005_Node000002" title=" " alt="" coords="288,109,441,89,481,84,486,83,442,95,289,115"/>
+<area shape="poly" id="edge11_Node000005_Node000004" title=" " alt="" coords="276,101,329,86,334,85,277,106"/>
+<area shape="poly" id="edge12_Node000005_Node000005" title=" " alt="" coords="206,102,201,95,204,86,215,80,233,77,252,80,263,89,258,88,250,85,233,83,217,85,208,89,206,95,210,105"/>
+</map>

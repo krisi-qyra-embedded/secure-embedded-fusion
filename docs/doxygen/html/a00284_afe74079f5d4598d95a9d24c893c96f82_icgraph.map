@@ -1,0 +1,10 @@
+<map id="aws_json_sanitize_ascii" name="aws_json_sanitize_ascii">
+<area shape="rect" id="Node000001" title="Replace quotes, backslashes and control bytes in a JSON label." alt="" coords="377,29,539,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="494,14,483,10,458,8,435,10,423,15,420,20,426,30,421,28,415,21,419,11,434,5,458,3,484,5,499,15"/>
+<area shape="rect" id="Node000002" href="$a00284.html#a683e5fc91a37d6cb743c569698becf04" title="Build JSON from local sensors and the latest STM32 snapshot." alt="" coords="152,29,329,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="359,43,329,45,329,40,364,43"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="271,14,261,10,240,8,221,10,211,15,208,20,213,30,208,28,203,21,207,11,220,5,240,3,263,5,276,14"/>
+<area shape="rect" id="Node000003" href="$a00284.html#a500d275476b6ba32815804434f32885b" title="Connect to AWS, publish sensor telemetry and process MQTT traffic." alt="" coords="5,29,104,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="133,43,104,45,104,40,139,42"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="85,14,75,10,54,8,35,10,25,15,22,20,28,28,22,29,17,21,21,11,34,5,55,3,77,5,90,14"/>
+</map>

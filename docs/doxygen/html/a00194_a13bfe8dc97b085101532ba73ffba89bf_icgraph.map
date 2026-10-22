@@ -1,0 +1,33 @@
+<map id="stm32_gcm_record_erased" name="stm32_gcm_record_erased">
+<area shape="rect" id="Node000001" title=" " alt="" coords="670,187,849,213"/>
+<area shape="poly" id="edge21_Node000001_Node000001" title=" " alt="" coords="798,172,786,168,759,165,736,167,723,172,720,177,726,187,721,186,714,178,719,168,734,162,760,160,787,163,803,172"/>
+<area shape="rect" id="Node000002" href="$a00194.html#a4e243c23d4df349f187f9e2a4674c2a0" title=" " alt="" coords="441,93,622,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="708,181,567,123,567,118,713,180"/>
+<area shape="rect" id="Node000013" href="$a00194.html#a44cfbbcdf47faf166f09abfed3f9f53a" title="Scan and initialize the TX session journal." alt="" coords="459,224,604,251"/>
+<area shape="poly" id="edge5_Node000001_Node000013" title=" " alt="" coords="657,217,606,228,604,223,662,215"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="570,79,558,74,532,72,508,74,495,79,492,84,498,93,493,93,486,85,491,75,507,69,532,67,559,69,575,78"/>
+<area shape="rect" id="Node000003" href="$a00194.html#a9b5566d836896405016c098ccac6fc44" title="Reserve the next persistent TX session ID for this boot." alt="" coords="215,29,386,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="456,90,388,74,386,69,461,88"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="335,15,323,10,301,8,280,10,268,15,263,21,265,29,259,28,258,19,265,10,279,5,301,3,324,5,340,13"/>
+<area shape="poly" id="edge20_Node000013_Node000003" title=" " alt="" coords="507,213,447,147,391,93,362,75,361,70,395,89,451,143,512,212"/>
+<area shape="poly" id="edge16_Node000013_Node000013" title=" " alt="" coords="570,209,558,205,532,203,508,205,495,209,492,215,498,224,493,223,486,215,491,205,507,199,532,197,559,200,575,209"/>
+<area shape="rect" id="Node000005" href="$a00866.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="5,311,161,353"/>
+<area shape="poly" id="edge6_Node000013_Node000005" title=" " alt="" coords="505,213,456,172,426,152,392,137,341,121,298,113,257,117,210,137,186,153,165,174,131,222,107,271,93,311,88,309,102,269,126,219,161,170,183,149,207,132,256,112,299,107,342,116,394,132,428,147,460,168,510,212"/>
+<area shape="rect" id="Node000014" href="$a00194.html#ad3befa25fcb365baff8024e4afa912df" title="Check and commit the RX replay high&#45;water state in RAM." alt="" coords="219,171,382,213"/>
+<area shape="poly" id="edge8_Node000013_Node000014" title=" " alt="" coords="443,221,384,211,382,205,448,220"/>
+<area shape="rect" id="Node000018" href="$a00194.html#a5d6879ccb4fbe8d1ea28a79375076dd6" title="Get the current RX replay counter." alt="" coords="217,261,385,304"/>
+<area shape="poly" id="edge10_Node000013_Node000018" title=" " alt="" coords="443,255,386,269,384,264,448,253"/>
+<area shape="rect" id="Node000019" href="$a00194.html#aa29203757acedfddcab39fe9f8a5275f" title="Get the current RX replay session ID." alt="" coords="217,352,385,395"/>
+<area shape="poly" id="edge12_Node000013_Node000019" title=" " alt="" coords="492,260,340,354,337,349,497,257"/>
+<area shape="rect" id="Node000020" href="$a00194.html#ac6a473ef94323a1107467033773ca561" title="Get the active TX session ID." alt="" coords="217,443,385,485"/>
+<area shape="poly" id="edge14_Node000013_Node000020" title=" " alt="" coords="515,262,465,333,431,372,395,409,344,444,342,440,391,405,428,369,461,330,511,265"/>
+<area shape="rect" id="Node000021" href="$a00194.html#a8c037f36ce4d1208d8d3eaac3ead5674" title="Get the remaining Flash journal capacity." alt="" coords="209,533,393,576"/>
+<area shape="poly" id="edge17_Node000013_Node000021" title=" " alt="" coords="523,264,505,315,477,375,441,440,395,499,373,519,348,535,346,530,369,515,391,496,436,437,473,373,500,312,519,268"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="117,296,105,292,83,289,63,291,50,296,45,302,47,310,41,310,40,301,47,292,61,286,83,284,106,286,122,294"/>
+<area shape="poly" id="edge9_Node000014_Node000014" title=" " alt="" coords="335,156,323,152,301,149,280,151,268,156,263,162,265,171,259,170,258,161,265,152,279,146,301,144,324,146,340,154"/>
+<area shape="poly" id="edge11_Node000018_Node000018" title=" " alt="" coords="335,246,323,242,301,240,280,242,268,247,263,253,265,261,259,260,258,251,265,242,279,237,301,235,324,237,340,245"/>
+<area shape="poly" id="edge13_Node000019_Node000019" title=" " alt="" coords="334,337,323,333,301,331,280,333,268,337,263,343,264,352,259,351,258,342,265,333,279,327,301,325,324,328,340,336"/>
+<area shape="poly" id="edge15_Node000020_Node000020" title=" " alt="" coords="334,427,323,424,301,421,280,423,268,428,263,434,264,443,260,441,258,433,265,424,279,418,301,416,324,418,340,427"/>
+<area shape="poly" id="edge18_Node000021_Node000005" title=" " alt="" coords="242,525,207,499,172,463,140,423,96,356,98,351,145,420,176,459,210,495,248,525"/>
+<area shape="poly" id="edge19_Node000021_Node000021" title=" " alt="" coords="334,517,323,514,301,512,280,514,268,519,263,525,264,534,260,531,258,523,265,514,279,509,301,507,324,509,340,518"/>
+</map>

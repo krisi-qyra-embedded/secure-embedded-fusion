@@ -1,0 +1,18 @@
+<map id="ESP32_UART_PeriodicLogAllowed" name="ESP32_UART_PeriodicLogAllowed">
+<area shape="rect" id="Node000001" title=" " alt="" coords="994,51,1220,77"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="1152,36,1138,32,1107,29,1078,31,1063,36,1059,41,1067,51,1062,49,1054,42,1059,32,1077,26,1107,24,1139,27,1158,36"/>
+<area shape="rect" id="Node000002" href="$a00191.html#a268b20b4b63514a09028648067fa60f6" title="Run one authenticated telemetry transaction with the ESP32." alt="" coords="231,29,392,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="975,53,729,41,584,38,440,41,393,45,392,39,440,36,584,33,729,36,981,52"/>
+<area shape="rect" id="Node000006" href="$a00191.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="440,75,681,101"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="976,70,682,85,682,80,981,69"/>
+<area shape="rect" id="Node000007" href="$a00191.html#ae470c360688f5561f2558cf3e85c3e5e" title="Wait for and process an encrypted ACK/NACK." alt="" coords="729,125,946,168"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="1049,82,910,127,909,122,1044,83"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="345,14,333,10,311,8,291,10,278,15,273,21,275,30,270,28,268,19,275,10,290,5,311,3,335,5,350,14"/>
+<area shape="rect" id="Node000003" href="$a00915.html#a4754db43d332d65b964e88dedb2182c9" title=" " alt="" coords="5,37,183,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="212,52,184,53,183,48,217,50"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="130,23,118,18,94,16,71,18,59,23,56,28,62,36,57,37,51,29,55,19,70,13,94,11,120,13,135,21"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="449,72,393,65,393,60,455,72"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="603,60,589,56,561,53,534,55,520,60,517,65,524,75,519,73,511,66,517,56,533,50,561,48,591,51,608,60"/>
+<area shape="poly" id="edge10_Node000007_Node000006" title=" " alt="" coords="716,122,627,105,628,99,722,122"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="880,110,866,106,837,104,812,106,796,111,790,117,792,126,787,123,785,115,793,106,811,101,838,99,867,101,886,111"/>
+</map>

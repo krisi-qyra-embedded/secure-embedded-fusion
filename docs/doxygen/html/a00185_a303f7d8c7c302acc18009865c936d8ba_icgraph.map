@@ -1,0 +1,16 @@
+<map id="Max31865_readTempC" name="Max31865_readTempC">
+<area shape="rect" id="Node000001" title="Read MAX31865 temperature in Celsius." alt="" coords="374,120,529,147"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="485,104,475,101,452,99,430,101,419,105,416,111,422,120,417,119,411,111,415,102,429,95,452,93,476,96,491,105"/>
+<area shape="rect" id="Node000002" href="$a00185.html#ac62646a29c09aa90a0baa363022c8de1" title="Run one application&#45;level MAX31865 runtime cycle." alt="" coords="167,29,326,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="400,114,301,75,302,70,405,113"/>
+<area shape="rect" id="Node000006" href="$a00185.html#ab7d63654107beba736baa7c6c7b0c2e6" title="Run the MAX31865 monitor loop at the requested interval." alt="" coords="167,120,326,147"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="356,134,327,136,326,131,361,133"/>
+<area shape="rect" id="Node000007" href="$a00185.html#af97a425dc5c597b0392bedd3a455dca4" title="Read the RTD temperature in Fahrenheit." alt="" coords="170,195,323,221"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="401,152,286,197,285,192,396,153"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="274,14,265,10,246,8,229,10,219,15,215,21,216,30,211,28,209,19,215,10,228,5,246,3,266,5,280,13"/>
+<area shape="rect" id="Node000003" href="$a00894.html#a58e3f7a6c1c6edf2b2e0f3f6cc493d62" title=" " alt="" coords="5,37,119,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="149,52,120,53,118,48,154,49"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="92,23,82,18,62,16,43,18,33,23,30,28,35,36,30,37,25,29,29,19,41,13,62,11,84,13,97,21"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="276,105,267,101,246,99,227,101,217,105,214,111,220,120,214,119,209,111,213,102,226,95,246,93,268,96,282,105"/>
+<area shape="poly" id="edge9_Node000007_Node000007" title=" " alt="" coords="276,179,267,176,246,173,227,175,217,180,214,185,219,195,215,193,209,186,213,176,226,170,246,168,268,171,282,180"/>
+</map>

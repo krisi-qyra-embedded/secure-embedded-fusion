@@ -1,0 +1,10 @@
+<map id="otp_find_free_ed25519_record_slot" name="otp_find_free_ed25519_record_slot">
+<area shape="rect" id="Node000001" title=" " alt="" coords="431,29,583,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="540,13,529,10,507,8,487,10,475,15,470,21,471,30,467,27,465,19,472,10,486,5,507,3,530,5,545,14"/>
+<area shape="rect" id="Node000002" href="$a00993.html#ae7dcff87a95731d651bb7218e46d7fbd" title=" " alt="" coords="205,29,383,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="412,51,383,53,383,48,418,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="327,13,315,10,294,8,274,10,262,15,257,21,258,30,254,27,252,19,258,10,273,5,294,3,317,5,332,14"/>
+<area shape="rect" id="Node000003" href="$a00993.html#a73702acacbe45e9c0c5fb7223867e497" title="Provision Ed25519 OTP when enabled and load the OTP keypair into RAM." alt="" coords="5,29,157,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="187,51,157,53,157,48,192,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="114,14,102,10,81,8,61,10,49,15,44,21,46,29,40,28,39,19,46,10,60,5,81,3,104,5,119,13"/>
+</map>

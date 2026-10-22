@@ -1,0 +1,13 @@
+<map id="generate_ed25519_signing_keypair_once" name="generate_ed25519_signing_keypair_once">
+<area shape="rect" id="Node000001" title="Generate or load the Ed25519 signing key pair once." alt="" coords="5,71,181,113"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="50,70,49,61,56,52,71,46,93,44,117,46,133,55,128,56,116,52,93,49,72,51,59,56,54,62,56,70"/>
+<area shape="rect" id="Node000002" href="$a01008.html#a21fb3bc304a056c1d419a1ed0dc0eee6" title="Generate one Ed25519 signing keypair with the project CTR&#45;DRBG." alt="" coords="229,29,404,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="180,73,216,69,211,70,182,78"/>
+<area shape="rect" id="Node000004" href="$a01008.html#ab5fee30550b27e5a2bd6b6dd77430c13" title="Construct the CMOX ECC context required for Ed25519 signing." alt="" coords="248,120,384,147"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="181,106,236,118,230,118,181,111"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="280,28,279,19,285,10,297,5,316,3,337,5,350,14,345,14,335,10,316,8,299,10,288,15,284,21,285,30"/>
+<area shape="rect" id="Node000003" href="$a01008.html#a07d477162ee57bff940a7a9951cf3a77" title=" " alt="" coords="452,37,557,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="404,48,439,50,434,51,405,53"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="472,36,467,29,471,19,484,13,505,11,527,13,541,22,535,22,526,18,505,16,485,18,475,23,472,28,477,38"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="284,118,278,111,282,102,295,95,316,93,339,96,352,105,347,104,337,101,316,99,297,101,286,105,284,111,289,121"/>
+</map>

@@ -1,0 +1,19 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/tasks_common.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/tasks_common.h">
+<area shape="rect" id="Node000001" title="FreeRTOS task stack sizes, priorities and core assignments." alt="" coords="952,5,1214,112"/>
+<area shape="rect" id="Node000002" href="$a00257.html" title="AWS MQTT connection and combined sensor telemetry." alt="" coords="5,160,225,267"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="934,65,789,77,613,94,423,122,329,140,237,163,226,166,224,161,236,157,328,135,422,117,612,89,788,71,939,64"/>
+<area shape="rect" id="Node000003" href="$a00263.html" title="BMP280/BME280 sampling, cached readings and recovery." alt="" coords="249,160,514,267"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="934,80,741,115,633,137,526,163,515,166,514,160,525,157,631,132,740,109,939,79"/>
+<area shape="rect" id="Node000004" href="$a00269.html" title="CCS811 sampling, fault handling and watchdog recovery." alt="" coords="538,160,798,267"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="940,113,800,167,798,162,935,114"/>
+<area shape="rect" id="Node000005" href="$a00275.html" title="HTTPS dashboard, Wi&#45;Fi control and ESP32 firmware updates." alt="" coords="822,160,1061,267"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1027,122,992,162,989,157,1022,124"/>
+<area shape="rect" id="Node000006" href="$a00281.html" title="AES&#45;GCM UART runtime, persistent TX sessions and RX replay checks." alt="" coords="1085,160,1364,267"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1143,121,1178,160,1173,159,1141,126"/>
+<area shape="rect" id="Node000007" href="$a00293.html" title="SNTP clock checks and local&#45;time formatting." alt="" coords="1388,160,1653,267"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1229,107,1377,157,1390,164,1385,164,1375,163,1229,112"/>
+<area shape="rect" id="Node000008" href="$a00311.html" title="Wi&#45;Fi control, SoftAP callbacks and watchdog supervision." alt="" coords="1678,160,1899,267"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1230,73,1438,105,1554,128,1666,157,1680,164,1674,163,1665,163,1552,134,1437,110,1229,78"/>
+<area shape="rect" id="Node000009" href="$a00317.html" title="BOOT button interrupt and Wi&#45;Fi reset requests." alt="" coords="1923,160,2195,267"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1230,65,1374,77,1545,95,1729,122,1912,157,1925,163,1920,163,1910,163,1729,127,1545,100,1374,82,1230,71"/>
+</map>

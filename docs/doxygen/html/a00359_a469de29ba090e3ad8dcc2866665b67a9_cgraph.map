@@ -1,0 +1,20 @@
+<map id="wifi_app_soft_ap_config" name="wifi_app_soft_ap_config">
+<area shape="rect" id="Node000001" title="Configure the SoftAP and its static IP in APSTA mode." alt="" coords="5,94,167,120"/>
+<area shape="poly" id="edge13_Node000001_Node000001" title=" " alt="" coords="50,94,45,85,49,75,63,69,86,67,111,70,125,78,120,79,109,75,86,72,64,74,53,79,50,84,56,93"/>
+<area shape="rect" id="Node000002" href="$a00359.html#a322bd7f5dc1f9ffd7baa98b2c4e8140f" title="Accept a successful startup call; stop on an error." alt="" coords="215,52,371,79"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,90,210,81,205,84,157,96"/>
+<area shape="rect" id="Node000003" href="$a00359.html#a624451c23613f4ff721517ef754d8a37" title="Record a fatal Wi&#45;Fi fault and wait for the watchdog reset." alt="" coords="443,44,576,87"/>
+<area shape="poly" id="edge11_Node000001_Node000003" title=" " alt="" coords="99,91,146,50,179,29,214,14,244,7,275,4,337,7,396,19,448,38,443,39,394,25,336,12,275,9,245,12,216,19,181,34,149,55,102,95"/>
+<area shape="rect" id="Node000004" href="$a00359.html#a816117cac82f1ddddd2249574e9c04ea" title="Clear the API failure count and refresh the watchdog." alt="" coords="419,135,600,162"/>
+<area shape="poly" id="edge12_Node000001_Node000004" title=" " alt="" coords="105,118,153,151,183,167,215,179,278,188,342,186,402,177,451,167,456,166,403,182,342,192,278,194,214,184,181,172,150,156,103,123"/>
+<area shape="rect" id="Node000007" href="$a00359.html#aa9263911917f6e3c4f4bd0ec2f1ea623" title="Accept ESP_OK or ESP_ERR_INVALID_STATE; stop on other errors." alt="" coords="215,127,371,170"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="156,118,202,129,197,130,156,124"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="257,51,251,44,256,34,270,28,293,26,317,28,332,37,327,37,316,33,293,31,271,33,259,38,257,43,263,52"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="371,63,430,65,425,66,372,68"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="338,77,372,89,466,128,460,129,370,94,338,82"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="469,42,467,34,474,25,488,20,510,18,533,20,548,29,543,29,532,25,510,23,489,25,477,30,472,36,473,45"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="473,134,466,126,471,117,486,110,510,108,535,111,551,120,545,119,534,116,510,114,487,116,475,120,472,126,478,136"/>
+<area shape="poly" id="edge9_Node000007_Node000003" title=" " alt="" coords="348,124,418,97,432,94,437,92,420,102,350,129"/>
+<area shape="poly" id="edge10_Node000007_Node000004" title=" " alt="" coords="371,146,406,148,401,149,372,151"/>
+<area shape="poly" id="edge8_Node000007_Node000007" title=" " alt="" coords="254,125,252,117,258,108,272,102,293,100,315,103,330,112,325,111,314,108,293,106,273,108,262,112,257,118,258,128"/>
+</map>

@@ -1,0 +1,38 @@
+<map id="bme680_set_regs" name="bme680_set_regs">
+<area shape="rect" id="Node000001" title="This API writes the given data to the register address of the sensor." alt="" coords="609,256,734,282"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="704,240,694,237,671,234,651,236,640,241,637,246,642,256,637,254,632,247,636,237,649,231,672,229,695,231,709,241"/>
+<area shape="rect" id="Node000002" href="$a00161.html#a5ca765226e758e71c862553c7cc0b371" title="This API is used to set the power mode of the sensor." alt="" coords="384,160,561,186"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="628,248,560,215,505,189,505,184,562,210,633,248"/>
+<area shape="rect" id="Node000007" href="$a00161.html#a2fea1365b4fa1d33eef434769b16e811" title="This API is used to set the oversampling, filter and T,P,H, gas selection settings in the sensor." alt="" coords="145,234,336,261"/>
+<area shape="poly" id="edge16_Node000001_Node000007" title=" " alt="" coords="591,260,561,260,337,251,336,246,561,254,597,259"/>
+<area shape="rect" id="Node000013" href="$a00161.html#a7f0f1a4378bc6cd0a34acf62509cdec7" title="This API performs the soft reset of the sensor." alt="" coords="406,368,539,394"/>
+<area shape="poly" id="edge17_Node000001_Node000013" title=" " alt="" coords="636,290,563,334,500,369,498,364,560,329,631,291"/>
+<area shape="rect" id="Node000015" href="$a00161.html#aadb617afe7c21b652a32c316fba66b5a" title="This internal API is used to set the gas configuration of the sensor." alt="" coords="418,293,527,320"/>
+<area shape="poly" id="edge23_Node000001_Node000015" title=" " alt="" coords="592,284,528,299,527,293,597,283"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="505,144,495,141,473,138,452,140,441,145,438,150,444,160,438,159,433,151,437,141,451,135,473,133,496,135,510,144"/>
+<area shape="rect" id="Node000003" href="$a00161.html#af1c810695225472f06b8591fa57c6cca" title="Run one BME680 runtime sample/recovery cycle." alt="" coords="145,144,336,186"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="366,170,337,171,336,166,371,168"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="412,193,286,236,283,231,417,190"/>
+<area shape="rect" id="Node000008" href="$a00227.html#a3e3e7167715e5a33b5ba48eac1831347" title="Initialize and configure the BME680." alt="" coords="5,152,97,178"/>
+<area shape="poly" id="edge13_Node000002_Node000008" title=" " alt="" coords="453,146,433,119,406,87,373,58,335,35,283,16,239,8,196,14,146,35,114,60,89,92,71,125,60,152,54,150,66,123,84,89,110,56,143,31,195,9,239,3,284,11,337,30,376,53,410,84,437,116,458,147"/>
+<area shape="rect" id="Node000011" href="$a00227.html#a31a8322595da5370e79f2be8d627f4f2" title="Build the gas&#45;resistance reference from valid samples." alt="" coords="161,69,320,96"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="430,153,335,110,301,99,300,94,337,105,435,151"/>
+<area shape="rect" id="Node000012" href="$a00161.html#a14d2f98e4efd330b03fad0d24f2c3eda" title=" " alt="" coords="162,309,319,352"/>
+<area shape="poly" id="edge14_Node000002_Node000012" title=" " alt="" coords="444,195,337,275,281,311,278,306,335,271,439,197"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="269,129,259,124,240,122,223,124,212,129,208,135,209,144,204,142,202,134,209,125,221,119,240,117,261,119,274,127"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="271,219,261,215,240,213,221,215,210,220,208,225,213,234,208,234,202,225,206,216,219,210,240,208,263,210,276,219"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="192,229,84,181,84,176,196,226"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="82,137,72,133,51,130,31,132,21,137,18,142,23,150,18,152,13,143,17,133,30,127,51,125,74,127,87,135"/>
+<area shape="poly" id="edge12_Node000011_Node000008" title=" " alt="" coords="161,103,146,110,106,131,73,153,69,149,103,127,144,105,164,99"/>
+<area shape="poly" id="edge11_Node000011_Node000011" title=" " alt="" coords="271,54,261,50,240,48,221,50,210,54,208,60,213,68,208,69,202,60,206,50,219,44,240,42,263,45,276,53"/>
+<area shape="poly" id="edge15_Node000012_Node000012" title=" " alt="" coords="269,293,259,290,240,288,223,289,212,294,208,300,209,309,204,307,202,299,209,290,221,284,240,282,261,285,275,293"/>
+<area shape="poly" id="edge22_Node000013_Node000012" title=" " alt="" coords="390,364,319,350,320,345,396,363"/>
+<area shape="poly" id="edge21_Node000013_Node000013" title=" " alt="" coords="505,352,495,349,473,346,452,348,441,353,438,358,444,368,439,366,433,359,437,349,451,343,473,341,496,343,510,353"/>
+<area shape="rect" id="Node000014" href="$a00161.html#aee75ae524b7ca8f4a9b6dbb7f640c2e4" title="Initialize BME680: soft&#45;reset, read chip&#45;id, and calibration data." alt="" coords="195,400,286,426"/>
+<area shape="poly" id="edge18_Node000013_Node000014" title=" " alt="" coords="394,392,287,409,286,404,388,392"/>
+<area shape="poly" id="edge20_Node000014_Node000008" title=" " alt="" coords="183,392,162,382,143,365,107,317,81,264,63,215,55,181,56,176,68,214,86,262,111,314,147,362,165,378,188,393"/>
+<area shape="poly" id="edge19_Node000014_Node000014" title=" " alt="" coords="271,384,261,381,240,378,221,380,210,385,208,390,213,400,208,398,202,391,206,381,219,375,240,373,263,375,276,385"/>
+<area shape="poly" id="edge24_Node000015_Node000007" title=" " alt="" coords="400,289,296,264,296,259,405,288"/>
+<area shape="poly" id="edge25_Node000015_Node000012" title=" " alt="" coords="400,314,320,325,319,319,405,313"/>
+<area shape="poly" id="edge26_Node000015_Node000015" title=" " alt="" coords="505,277,495,274,473,272,452,274,441,278,438,284,444,293,439,292,433,284,437,274,451,268,473,266,496,269,510,278"/>
+</map>

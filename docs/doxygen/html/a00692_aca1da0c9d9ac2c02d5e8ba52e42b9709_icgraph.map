@@ -1,0 +1,22 @@
+<map id="derive_keys_from_shared_secret" name="derive_keys_from_shared_secret">
+<area shape="rect" id="Node000001" title="Derive symmetric keys from the selected ECDH secret." alt="" coords="832,88,1002,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="951,72,939,69,917,67,897,69,884,73,879,79,880,89,876,86,874,78,881,69,895,63,917,61,941,64,956,73"/>
+<area shape="rect" id="Node000002" href="$a00761.html#a203f9e68abc153b9c9683cf6918696f1" title="Derive receiver&#45;direction keys." alt="" coords="614,29,784,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="818,83,781,75,781,70,824,84"/>
+<area shape="rect" id="Node000003" href="$a00761.html#a485927a3f8f78dfda692da15cb915d0b" title="Validate peer material, compute receiver ECDH secret and derive session keys." alt="" coords="421,56,548,99"/>
+<area shape="poly" id="edge10_Node000001_Node000003" title=" " alt="" coords="814,102,548,85,548,79,819,102"/>
+<area shape="rect" id="Node000007" href="$a00761.html#a8f6eba2d8e6fee98435b15f1b5a71e8b" title="Initialize sender ECDH material and derive the sender session keys." alt="" coords="403,147,566,173"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="819,121,566,153,566,148,814,121"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="732,13,720,10,699,8,679,10,666,15,662,21,663,30,658,27,656,19,663,10,677,5,699,3,722,5,737,14"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="596,64,549,72,548,67,601,63"/>
+<area shape="poly" id="edge9_Node000003_Node000003" title=" " alt="" coords="516,40,505,37,484,35,465,37,453,41,449,47,450,57,445,54,443,46,450,37,464,31,485,29,507,32,522,41"/>
+<area shape="rect" id="Node000004" href="$a00662.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="200,97,355,140"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="409,92,356,106,355,101,403,93"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="300,81,292,78,278,76,264,78,256,82,252,88,253,98,249,95,247,87,252,79,262,73,278,71,294,73,305,82"/>
+<area shape="rect" id="Node000005" href="$a00662.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,105,152,132"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="182,119,153,121,152,116,187,118"/>
+<area shape="rect" id="Node000006" href="$a00659.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,105,55,132"/>
+<area shape="poly" id="edge8_Node000005_Node000006" title=" " alt="" coords="85,120,55,121,54,116,89,117"/>
+<area shape="poly" id="edge12_Node000007_Node000004" title=" " alt="" coords="397,143,356,137,356,132,402,143"/>
+<area shape="poly" id="edge13_Node000007_Node000007" title=" " alt="" coords="518,131,508,128,484,125,463,127,451,132,448,137,454,147,449,145,443,138,447,128,462,122,485,120,509,123,524,132"/>
+</map>

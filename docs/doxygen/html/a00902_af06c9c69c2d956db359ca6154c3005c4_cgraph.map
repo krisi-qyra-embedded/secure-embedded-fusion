@@ -1,0 +1,51 @@
+<map id="entropy_personalisation_hash" name="entropy_personalisation_hash">
+<area shape="rect" id="Node000001" title="Hash and combine all configured entropy sources." alt="" coords="5,484,199,511"/>
+<area shape="poly" id="edge29_Node000001_Node000001" title=" " alt="" coords="62,484,55,475,60,465,76,459,102,457,131,460,147,468,142,470,129,465,102,463,77,465,63,469,60,475,67,483"/>
+<area shape="rect" id="Node000002" href="$a00974.html#ad1e96c35442f7a0892d3e5b51be28914" title="Hash all ADC entropy sources." alt="" coords="255,219,423,245"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,482,161,398,200,345,245,294,272,271,303,252,299,256,275,275,249,298,204,348,165,401,113,485"/>
+<area shape="rect" id="Node000008" href="$a01013.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="530,301,604,328"/>
+<area shape="poly" id="edge31_Node000001_Node000008" title=" " alt="" coords="108,482,128,451,158,410,198,370,245,338,279,324,315,314,388,303,457,301,517,307,512,309,457,307,389,308,316,319,281,329,248,342,201,374,163,414,133,454,113,485"/>
+<area shape="rect" id="Node000014" href="$a00974.html#af0894fb4752b832df3ae10c169592bc9" title=" " alt="" coords="247,376,431,419"/>
+<area shape="poly" id="edge11_Node000001_Node000014" title=" " alt="" coords="134,481,274,423,271,427,137,486"/>
+<area shape="rect" id="Node000007" href="$a00971.html#a26660fc91e01f3f0a98a1e0b3c89b4e2" title=" " alt="" coords="703,413,817,440"/>
+<area shape="poly" id="edge30_Node000001_Node000007" title=" " alt="" coords="198,484,246,479,689,432,687,437,247,484,201,489"/>
+<area shape="rect" id="Node000016" href="$a00971.html#a1cc0fe71c0c3024bf2b1efc76abd3f06" title="Hash the STM32 UID into the global UID hash buffer." alt="" coords="269,517,409,560"/>
+<area shape="poly" id="edge17_Node000001_Node000016" title=" " alt="" coords="182,509,256,522,251,525,183,514"/>
+<area shape="rect" id="Node000019" href="$a00974.html#a9a370a6c845138edea4bd31a95a1d072" title=" " alt="" coords="264,608,414,651"/>
+<area shape="poly" id="edge21_Node000001_Node000019" title=" " alt="" coords="128,509,288,598,283,601,128,514"/>
+<area shape="rect" id="Node000021" href="$a00974.html#aeafd5ea6a6031388ae8904b409741025" title=" " alt="" coords="260,699,418,741"/>
+<area shape="poly" id="edge25_Node000001_Node000021" title=" " alt="" coords="113,508,168,578,207,621,248,661,287,690,282,690,245,665,203,624,164,581,113,514"/>
+<area shape="rect" id="Node000023" href="$a00983.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="293,789,385,816"/>
+<area shape="poly" id="edge32_Node000001_Node000023" title=" " alt="" coords="108,509,127,555,156,618,197,688,221,721,249,751,268,767,290,782,285,782,265,771,245,755,217,725,193,691,152,621,123,557,108,514"/>
+<area shape="poly" id="edge8_Node000002_Node000002" title=" " alt="" coords="300,219,293,210,298,200,314,194,339,192,366,195,382,203,377,205,365,200,339,197,315,199,302,204,299,209,305,218"/>
+<area shape="rect" id="Node000003" href="$a00974.html#abb25e68d779777b4bb811cc0503c2fcb" title=" " alt="" coords="479,29,655,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="348,217,398,153,436,115,477,82,488,78,484,81,481,86,439,119,402,157,352,220"/>
+<area shape="rect" id="Node000005" href="$a00974.html#ac59776a98ffcad426da444c7a3cfcc91" title=" " alt="" coords="479,120,655,163"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="372,216,478,172,497,167,492,170,480,177,375,220"/>
+<area shape="rect" id="Node000012" href="$a00974.html#aa5d2aeb7eb4e97639fc7c68071618614" title=" " alt="" coords="479,211,655,253"/>
+<area shape="poly" id="edge6_Node000002_Node000012" title=" " alt="" coords="422,230,466,231,461,233,425,234"/>
+<area shape="poly" id="edge9_Node000002_Node000008" title=" " alt="" coords="378,243,518,295,513,297,378,248"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="530,28,529,19,535,10,548,5,567,3,588,5,602,13,597,14,586,10,567,8,549,10,538,15,534,21,535,29"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="530,119,529,110,535,101,548,95,567,93,588,96,602,104,597,105,586,101,567,99,549,101,538,105,534,111,535,120"/>
+<area shape="poly" id="edge7_Node000012_Node000012" title=" " alt="" coords="530,209,529,201,535,192,548,186,567,184,588,186,602,195,597,196,586,192,567,189,549,191,538,196,534,202,535,211"/>
+<area shape="poly" id="edge10_Node000008_Node000008" title=" " alt="" coords="534,301,528,293,532,283,546,277,567,275,590,277,604,286,599,286,589,282,567,280,547,282,536,287,534,292,539,301"/>
+<area shape="poly" id="edge16_Node000014_Node000014" title=" " alt="" coords="295,375,294,366,301,357,316,351,339,349,363,352,379,360,374,361,362,357,339,355,317,357,304,361,299,367,301,376"/>
+<area shape="rect" id="Node000015" href="$a00971.html#adae46830865d950aad6ffd1e5ed09635" title="Combine the individual entropy hashes into one final hash." alt="" coords="498,376,637,419"/>
+<area shape="poly" id="edge12_Node000014_Node000015" title=" " alt="" coords="430,395,484,396,480,398,432,400"/>
+<area shape="poly" id="edge13_Node000015_Node000015" title=" " alt="" coords="530,375,529,366,535,357,548,351,567,349,588,352,602,360,597,361,586,357,567,355,549,357,538,361,534,367,535,376"/>
+<area shape="poly" id="edge14_Node000015_Node000007" title=" " alt="" coords="637,405,691,415,686,416,638,411"/>
+<area shape="poly" id="edge15_Node000007_Node000007" title=" " alt="" coords="727,412,721,405,725,395,739,389,760,387,783,389,797,398,791,398,781,394,760,392,740,394,729,399,727,404,732,414"/>
+<area shape="poly" id="edge18_Node000016_Node000016" title=" " alt="" coords="296,516,294,507,301,498,316,493,339,491,363,493,380,501,374,502,362,498,339,496,317,498,304,503,299,509,301,517"/>
+<area shape="rect" id="Node000017" href="$a00974.html#a83b27326dcd32ea453ca3740ae232754" title="Hash the STM32 UID with SHA&#45;256." alt="" coords="494,517,640,560"/>
+<area shape="poly" id="edge19_Node000016_Node000017" title=" " alt="" coords="408,536,481,538,476,540,410,541"/>
+<area shape="poly" id="edge20_Node000017_Node000017" title=" " alt="" coords="530,516,529,507,535,498,548,493,567,491,588,493,602,502,597,502,586,498,567,496,549,498,538,503,534,509,535,518"/>
+<area shape="poly" id="edge22_Node000019_Node000019" title=" " alt="" coords="296,606,294,598,301,589,316,583,339,581,363,584,380,592,374,593,362,589,339,587,317,589,304,593,299,599,301,608"/>
+<area shape="rect" id="Node000020" href="$a00971.html#a4f7cb982dacf067b2f834fc54447c991" title="Hash the captured timer&#45;jitter samples." alt="" coords="504,616,631,643"/>
+<area shape="poly" id="edge23_Node000019_Node000020" title=" " alt="" coords="414,627,490,629,485,630,414,632"/>
+<area shape="poly" id="edge24_Node000020_Node000020" title=" " alt="" coords="534,615,528,607,532,598,546,591,567,589,590,592,604,601,599,601,589,597,567,595,547,597,536,601,534,607,539,616"/>
+<area shape="poly" id="edge26_Node000021_Node000021" title=" " alt="" coords="296,697,294,689,301,680,316,674,339,672,363,674,380,683,374,683,362,680,339,677,317,679,304,684,299,690,300,699"/>
+<area shape="rect" id="Node000022" href="$a00971.html#ab9d02fa37fb19aaf03445cd7c771e874" title="Hash the sampled SRAM startup entropy." alt="" coords="500,707,635,733"/>
+<area shape="poly" id="edge27_Node000021_Node000022" title=" " alt="" coords="418,717,486,720,481,720,418,723"/>
+<area shape="poly" id="edge28_Node000022_Node000022" title=" " alt="" coords="534,705,528,698,532,688,546,682,567,680,590,683,604,692,599,691,589,688,567,685,547,687,536,692,534,697,539,707"/>
+<area shape="poly" id="edge33_Node000023_Node000023" title=" " alt="" coords="300,788,293,781,298,771,314,765,339,763,366,765,382,775,377,774,365,770,339,768,315,770,302,775,299,780,305,790"/>
+</map>

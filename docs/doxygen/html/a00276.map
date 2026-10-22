@@ -1,0 +1,17 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Src/flash_protection.c" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Src/flash_protection.c">
+<area shape="rect" id="Node000001" title="Flash option&#45;byte protection, sector erase, OTP storage and boot handoff helpers." alt="" coords="162,5,382,112"/>
+<area shape="rect" id="Node000002" href="$a00287.html" title="Option&#45;byte protection, OTP provisioning and application handoff declarations." alt="" coords="121,160,245,187"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="232,110,204,149,200,146,229,114"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,235,70,261"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="172,115,110,162,80,193,56,224,52,221,76,189,106,158,175,110"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="195,309,269,336"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="294,110,305,146,311,185,310,224,300,262,286,284,266,302,264,298,281,281,295,260,305,224,306,185,300,147,292,115"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="360,160,424,187"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="329,110,370,149,365,149,328,115"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="156,190,78,230,75,225,159,185"/>
+<area shape="rect" id="Node000004" href="$a00284.html" title="STM32F4 Flash erase, programming and read helper declarations." alt="" coords="93,235,192,261"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="178,185,159,223,155,219,174,189"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="217,235,285,261"/>
+<area shape="poly" id="edge5_Node000002_Node000007" title=" " alt="" coords="195,185,231,223,226,223,194,190"/>
+<area shape="poly" id="edge4_Node000004_Node000006" title=" " alt="" coords="159,259,208,299,202,300,158,264"/>
+</map>

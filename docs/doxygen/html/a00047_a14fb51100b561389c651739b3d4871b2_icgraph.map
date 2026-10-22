@@ -1,0 +1,29 @@
+<map id="request_iwdg_reset" name="request_iwdg_reset">
+<area shape="rect" id="Node000001" title="Request a controlled watchdog reset." alt="" coords="328,216,462,243"/>
+<area shape="poly" id="edge19_Node000001_Node000001" title=" " alt="" coords="429,201,418,197,395,195,374,197,362,201,360,207,365,216,360,215,354,207,359,198,373,191,395,189,419,192,434,201"/>
+<area shape="rect" id="Node000002" href="$a00866.html#a049ced0e0b8c31b8e3546c5897b7e1ee" title=" " alt="" coords="142,29,241,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="379,202,341,136,312,100,278,70,260,60,242,53,241,48,263,55,282,66,316,97,345,133,384,202"/>
+<area shape="rect" id="Node000005" href="$a00866.html#adc37d956e02510e6d3b03c4c0a267ad3" title=" " alt="" coords="140,104,242,131"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="366,206,327,175,279,145,243,131,242,126,281,140,330,171,371,206"/>
+<area shape="rect" id="Node000006" href="$a00866.html#a4754db43d332d65b964e88dedb2182c9" title=" " alt="" coords="103,179,280,205"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="310,215,269,209,268,203,315,213"/>
+<area shape="rect" id="Node000007" href="$a00866.html#a58e3f7a6c1c6edf2b2e0f3f6cc493d62" title=" " alt="" coords="135,253,248,280"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="310,246,249,259,247,254,315,243"/>
+<area shape="rect" id="Node000008" href="$a00866.html#a18d0aebcaffa45c52fd2e6dcd5b45afb" title=" " alt="" coords="138,328,244,355"/>
+<area shape="poly" id="edge13_Node000001_Node000008" title=" " alt="" coords="358,250,219,330,216,325,353,252"/>
+<area shape="rect" id="Node000009" href="$a00866.html#a36383d53e7192d0e10d51c11f1220bd9" title=" " alt="" coords="149,403,234,429"/>
+<area shape="poly" id="edge16_Node000001_Node000009" title=" " alt="" coords="379,254,337,312,282,369,253,389,224,405,223,400,251,384,278,365,333,308,374,257"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="217,15,209,10,191,8,175,10,166,15,164,20,168,29,163,29,158,21,162,11,173,5,191,3,211,5,222,13"/>
+<area shape="rect" id="Node000003" href="$a00866.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,216,55,243"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="126,56,104,70,75,105,55,146,43,186,36,216,31,215,38,184,50,144,71,102,101,66,129,51"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="124,133,104,145,84,161,66,181,42,217,37,214,62,177,80,157,101,140,127,129"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="217,89,209,85,191,83,175,85,166,89,164,95,168,103,163,104,158,95,162,86,173,80,191,77,211,80,222,88"/>
+<area shape="poly" id="edge9_Node000006_Node000003" title=" " alt="" coords="115,211,57,226,54,221,118,207"/>
+<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="217,164,209,160,191,157,175,159,166,164,164,169,168,178,163,178,158,170,162,160,173,154,191,152,211,155,222,163"/>
+<area shape="poly" id="edge11_Node000007_Node000003" title=" " alt="" coords="117,252,56,237,54,232,121,248"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="217,238,209,234,191,232,175,234,166,239,164,244,168,253,163,253,158,245,162,235,173,229,191,227,211,229,222,238"/>
+<area shape="poly" id="edge14_Node000008_Node000003" title=" " alt="" coords="146,321,101,294,45,246,46,241,104,290,151,319"/>
+<area shape="poly" id="edge15_Node000008_Node000008" title=" " alt="" coords="217,313,209,309,191,307,175,309,166,313,164,319,168,328,163,327,158,319,162,310,173,304,191,301,211,304,223,313"/>
+<area shape="poly" id="edge17_Node000009_Node000003" title=" " alt="" coords="139,395,120,385,101,369,76,337,56,302,35,246,36,240,61,300,80,334,105,365,123,380,145,395"/>
+<area shape="poly" id="edge18_Node000009_Node000009" title=" " alt="" coords="217,387,209,384,191,381,175,383,166,388,164,393,168,403,163,401,158,394,162,384,173,378,191,376,211,379,222,388"/>
+</map>

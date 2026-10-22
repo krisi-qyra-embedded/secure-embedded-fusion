@@ -1,0 +1,15 @@
+<map id="load_be32" name="load_be32">
+<area shape="rect" id="Node000001" title=" " alt="" coords="488,96,568,123"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="556,80,547,77,528,75,510,77,501,81,498,87,503,97,498,95,493,87,497,78,509,72,528,69,549,72,561,81"/>
+<area shape="rect" id="Node000002" href="$a01017.html#a2473ac31b52535a759a4c1ea10cf1776" title="Authenticate and decode one ESP32 response." alt="" coords="270,88,440,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="470,110,441,112,440,107,475,109"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="381,72,372,69,355,67,339,69,329,73,325,79,326,89,322,86,320,78,326,69,337,63,355,61,374,64,386,73"/>
+<area shape="rect" id="Node000003" href="$a01014.html#a09f6f3d516029a09122bbc00d5ddd618" title="Authenticate/decrypt the GCM packet and rebuild the ADC samples." alt="" coords="28,5,199,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="281,83,221,63,187,51,187,46,223,57,286,82"/>
+<area shape="rect" id="Node000004" href="$a00945.html#a0b81e73c288c5256e473db2ff0eb81c2" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="6,96,221,123"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="251,110,222,112,221,107,256,109"/>
+<area shape="rect" id="Node000011" href="$a00191.html#ae470c360688f5561f2558cf3e85c3e5e" title="Wait for and process an encrypted ACK/NACK." alt="" coords="5,171,222,213"/>
+<area shape="poly" id="edge6_Node000002_Node000011" title=" " alt="" coords="279,136,179,173,177,168,273,137"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="154,82,141,77,113,75,88,77,74,81,71,87,78,95,73,96,66,87,71,77,87,71,114,69,143,72,159,81"/>
+<area shape="poly" id="edge7_Node000011_Node000011" title=" " alt="" coords="151,155,138,152,113,149,91,151,77,156,71,162,73,171,68,169,66,161,74,152,90,146,114,144,139,146,156,155"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="wifi_app_check_critical_allow_invalid_state" name="wifi_app_check_critical_allow_invalid_state">
+<area shape="rect" id="Node000001" title="Accept ESP_OK or ESP_ERR_INVALID_STATE; stop on other errors." alt="" coords="5,71,162,113"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,70,41,61,47,52,62,46,84,44,107,46,122,54,117,56,105,52,83,49,63,51,51,56,46,62,47,70"/>
+<area shape="rect" id="Node000002" href="$a00359.html#a624451c23613f4ff721517ef754d8a37" title="Record a fatal Wi&#45;Fi fault and wait for the watchdog reset." alt="" coords="234,29,367,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="161,74,221,65,216,67,163,80"/>
+<area shape="rect" id="Node000003" href="$a00359.html#a816117cac82f1ddddd2249574e9c04ea" title="Clear the API failure count and refresh the watchdog." alt="" coords="210,120,391,147"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="162,104,215,116,209,117,162,110"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="259,28,257,19,264,10,279,5,300,3,324,5,339,14,334,14,322,10,300,8,280,10,267,15,263,21,264,30"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="263,119,257,111,262,102,276,95,300,93,326,96,341,105,336,104,325,101,300,99,278,101,265,105,262,111,268,121"/>
+<area shape="rect" id="Node000004" href="$a00359.html#ae31ded8e5f4d73165c5c5d5aaa8eb76a" title="Refresh the Wi&#45;Fi watchdog heartbeat." alt="" coords="439,120,602,147"/>
+<area shape="poly" id="edge6_Node000003_Node000004" title=" " alt="" coords="391,131,426,133,421,133,391,136"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="483,118,477,111,481,101,496,95,521,93,547,96,562,105,557,104,545,101,521,99,498,101,485,105,482,111,488,121"/>
+</map>

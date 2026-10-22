@@ -1,0 +1,10 @@
+<map id="flush_caches" name="flush_caches">
+<area shape="rect" id="Node000001" title=" " alt="" coords="327,29,425,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="400,13,393,10,376,8,361,10,352,14,350,20,354,30,350,28,345,21,348,11,359,5,376,3,395,5,406,15"/>
+<area shape="rect" id="Node000002" href="$a00251.html#a86b6e328ae62963c56145dacfd3a1de9" title="Erase one or more Flash sectors or perform a mass erase." alt="" coords="170,29,279,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="309,43,280,45,279,40,314,43"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="249,14,241,10,224,8,209,10,201,14,199,20,203,30,198,28,193,21,196,11,207,5,224,3,243,5,254,15"/>
+<area shape="rect" id="Node000003" href="$a00251.html#abeb2a0445eff51b190850da2e3a554da" title="Erase the required sector range and program a sequence of 32&#45;bit words." alt="" coords="5,29,122,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="151,43,122,45,122,40,156,42"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="89,14,81,10,63,8,47,10,38,15,36,20,41,29,35,29,31,21,34,11,45,5,64,3,83,5,95,14"/>
+</map>

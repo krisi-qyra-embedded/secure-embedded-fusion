@@ -1,0 +1,13 @@
+<map id="http_server_favicon_ico_handler" name="http_server_favicon_ico_handler">
+<area shape="rect" id="Node000001" title="Serve the dashboard favicon." alt="" coords="5,71,141,113"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="34,70,32,61,39,52,52,46,73,44,95,46,110,54,105,56,94,52,73,49,54,51,42,56,37,62,39,70"/>
+<area shape="rect" id="Node000002" href="$a00275.html#a6df01acd9aa466a2c5ca1c0efecf2a78" title="Send a response and track consecutive send failures." alt="" coords="189,71,370,113"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="141,89,175,91,170,93,141,95"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="240,69,238,61,245,52,259,46,279,44,302,46,316,55,311,55,300,52,279,49,260,51,248,56,244,62,245,71"/>
+<area shape="rect" id="Node000003" href="$a00275.html#a4e8e7643b761c21fd2e5eec51fcf7a61" title="Latch an HTTPS fault and wait without refreshing its heartbeat." alt="" coords="433,29,583,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="370,73,420,66,415,67,371,78"/>
+<area shape="rect" id="Node000004" href="$a00275.html#af151f962c0b044e789f2b308a04a4d39" title="Refresh the HTTPS heartbeat while the server is active and healthy." alt="" coords="418,120,598,147"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="370,106,418,117,413,117,370,111"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="465,27,463,19,470,10,485,5,508,3,533,5,549,14,544,14,531,10,508,8,487,10,473,15,468,21,470,30"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="469,118,463,111,467,101,483,95,508,93,536,96,552,106,546,105,534,101,508,99,484,101,471,105,468,111,474,121"/>
+</map>

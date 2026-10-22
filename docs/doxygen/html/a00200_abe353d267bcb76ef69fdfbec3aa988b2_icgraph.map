@@ -1,0 +1,9 @@
+<map id="backup_read_marker" name="backup_read_marker">
+<area shape="rect" id="Node000001" title=" " alt="" coords="289,29,431,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="391,14,381,10,360,8,341,10,330,15,328,20,333,30,328,28,322,21,326,11,339,5,360,3,383,5,396,15"/>
+<area shape="rect" id="Node000002" href="$a00200.html#a3e1a863313fc05cb147ebf08916893df" title="Check and report the MCU reset source." alt="" coords="103,29,241,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="271,43,242,45,242,40,276,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="194,14,187,10,172,8,157,10,150,14,148,20,152,30,147,28,143,21,146,11,156,5,172,3,189,5,200,15"/>
+<area shape="rect" id="Node000003" href="$a00915.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,29,55,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="85,44,55,45,55,40,90,42"/>
+</map>

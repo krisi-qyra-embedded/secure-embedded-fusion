@@ -1,0 +1,10 @@
+<map id="PWR_PrepareForSleep" name="PWR_PrepareForSleep">
+<area shape="rect" id="Node000001" title="Prepare the MCU state before entering sleep." alt="" coords="215,67,372,93"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="327,51,317,48,293,45,272,47,260,52,257,57,263,67,258,65,252,58,256,48,270,42,293,40,318,43,333,52"/>
+<area shape="rect" id="Node000002" href="$a00227.html#af32648b4664b99c9449e4758b3bf0dfc" title="Enter sleep using WFE." alt="" coords="5,29,167,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,64,164,59,164,54,204,63"/>
+<area shape="rect" id="Node000003" href="$a00227.html#a346b3cbe7f3aba693c123d3fb7968229" title="Enter sleep using WFI." alt="" coords="8,104,164,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="204,96,164,106,163,101,198,97"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="120,15,109,10,86,8,64,10,53,15,50,20,56,28,50,29,45,21,49,11,63,5,86,3,111,5,125,13"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="120,89,109,85,86,83,64,85,53,89,50,95,56,104,50,103,45,95,49,86,63,79,86,77,111,80,125,89"/>
+</map>

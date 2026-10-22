@@ -1,0 +1,10 @@
+<map id="iwdg_refresh" name="iwdg_refresh">
+<area shape="rect" id="Node000001" title="Reload the independent watchdog." alt="" coords="397,29,492,56"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="475,14,465,10,445,8,425,10,415,15,412,20,417,30,413,28,407,21,411,11,424,5,445,3,467,5,480,15"/>
+<area shape="rect" id="Node000002" href="$a00152.html#ac8006b22ebfff3edea05692e0ada8e92" title="Validate heartbeats and refresh the watchdog when healthy." alt="" coords="167,29,349,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="379,43,349,45,349,40,384,43"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="288,14,279,10,258,8,238,10,228,15,226,20,231,30,226,28,220,21,224,11,237,5,258,3,280,5,293,14"/>
+<area shape="rect" id="Node000003" href="$a00866.html#ac2752a6ed4b808362b35335735ea093c" title=" " alt="" coords="5,29,119,56"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="148,43,119,45,119,40,154,42"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="94,14,84,10,62,8,42,10,31,15,28,20,34,29,28,29,23,21,27,11,40,5,62,3,85,5,99,14"/>
+</map>

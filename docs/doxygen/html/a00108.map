@@ -1,0 +1,26 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/onewire.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/onewire.h">
+<area shape="rect" id="Node000001" title="Blocking 1&#45;Wire bus, ROM search and CRC API declarations." alt="" coords="253,5,568,128"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,176,99,203"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="252,123,105,173,103,168,254,118"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="123,176,240,203"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="297,127,220,171,217,166,293,130"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="264,176,358,203"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="363,127,332,166,329,162,358,130"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="382,176,439,203"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="412,126,413,162,408,159,409,130"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="464,176,539,203"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="457,126,485,164,480,163,455,131"/>
+<area shape="rect" id="Node000007" href="$a00978.html" title="USART2 logging, ring&#45;buffer TX and RX/TX helper declarations." alt="" coords="668,176,722,203"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="554,126,656,170,650,170,553,131"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="516,251,580,277"/>
+<area shape="poly" id="edge12_Node000001_Node000009" title=" " alt="" coords="514,126,536,149,553,175,560,206,557,237,553,234,555,206,548,177,532,152,512,131"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="604,251,665,277"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="687,202,656,241,653,237,682,204"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="672,203,588,246,587,241,667,204"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="689,251,754,277"/>
+<area shape="poly" id="edge9_Node000007_Node000010" title=" " alt="" coords="701,201,714,238,709,235,698,205"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="778,251,846,277"/>
+<area shape="poly" id="edge10_Node000007_Node000011" title=" " alt="" coords="716,201,781,243,776,242,714,206"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="871,251,977,277"/>
+<area shape="poly" id="edge11_Node000007_Node000012" title=" " alt="" coords="723,197,872,246,867,245,722,202"/>
+</map>

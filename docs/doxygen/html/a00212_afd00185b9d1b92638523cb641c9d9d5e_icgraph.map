@@ -1,0 +1,10 @@
+<map id="spi_dma_give_sem_from_isr" name="spi_dma_give_sem_from_isr">
+<area shape="rect" id="Node000001" title=" " alt="" coords="244,67,431,93"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="377,52,365,48,337,45,312,47,299,52,296,57,302,67,297,65,290,58,295,48,311,42,337,40,366,43,382,52"/>
+<area shape="rect" id="Node000002" href="$a00212.html#aaf6ce196dde98712e1223b99766e06c0" title=" " alt="" coords="5,29,196,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="231,64,190,59,190,54,236,63"/>
+<area shape="rect" id="Node000003" href="$a00212.html#adab6f3e22e90bd5b1ceebb98022abdf2" title=" " alt="" coords="5,104,196,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="236,96,190,106,189,101,231,97"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="140,15,128,10,100,8,76,10,62,15,59,20,66,28,60,29,54,21,58,11,74,5,101,3,129,5,145,14"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="140,89,128,85,100,83,76,85,62,89,59,95,66,104,60,103,54,95,58,85,74,79,101,77,129,80,145,89"/>
+</map>

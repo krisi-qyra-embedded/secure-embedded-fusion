@@ -1,0 +1,13 @@
+<map id="ccs811_try_recover" name="ccs811_try_recover">
+<area shape="rect" id="Node000001" title="Invalidate the cache and retry sensor setup." alt="" coords="5,83,140,109"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="39,83,33,74,37,64,51,58,73,56,96,59,110,67,105,68,94,64,72,61,52,63,41,68,38,73,44,82"/>
+<area shape="rect" id="Node000002" href="$a00314.html#a4ca67e2473b96e8772eaf06dedf3bb9a" title="Mark the cached gas reading invalid." alt="" coords="200,29,338,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,80,187,69,182,71,134,85"/>
+<area shape="rect" id="Node000003" href="$a00314.html#a43eef45732a15fbd6965ab7f894b10ce" title="Retry sensor initialization and one&#45;second measurement mode." alt="" coords="188,120,350,163"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="134,107,175,119,170,120,133,113"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="231,28,230,19,236,10,249,5,269,3,290,5,304,14,299,14,289,10,269,8,250,10,239,15,235,21,236,30"/>
+<area shape="poly" id="edge6_Node000003_Node000003" title=" " alt="" coords="232,118,230,110,236,101,249,95,269,93,290,96,304,105,299,104,289,101,269,99,250,101,239,105,235,111,236,121"/>
+<area shape="rect" id="Node000004" href="$a00296.html#af92177eb6358035c5fef8d881cec1546" title="Update the heartbeat timestamp for a monitored task." alt="" coords="398,128,534,155"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="350,139,385,141,380,141,351,144"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="432,126,427,119,431,110,444,103,466,101,490,104,504,113,498,112,488,109,466,107,446,109,434,113,432,119,437,129"/>
+</map>

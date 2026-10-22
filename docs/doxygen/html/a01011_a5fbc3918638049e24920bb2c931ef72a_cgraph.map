@@ -1,0 +1,7 @@
+<map id="compute_hmac_over_iv_cipher_receiver" name="compute_hmac_over_iv_cipher_receiver">
+<area shape="rect" id="Node000001" title="Compute the receiver HMAC over the received IV and ciphertext." alt="" coords="5,29,165,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="51,28,50,19,56,10,67,5,85,3,104,5,117,13,111,14,102,10,85,8,69,10,59,14,55,20,57,29"/>
+<area shape="rect" id="Node000002" href="$a01029.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="213,37,305,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="165,48,200,50,194,51,165,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="229,36,224,29,227,19,239,13,259,11,280,13,292,22,287,22,278,18,259,16,241,18,231,23,229,28,234,38"/>
+</map>

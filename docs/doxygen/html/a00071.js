@@ -1,0 +1,68 @@
+var a00071 =
+[
+    [ "DS18B20_Drv_t", "a00406.html", "a00406" ],
+    [ "DS18B20_App_t", "a00410.html", "a00410" ],
+    [ "DS18B20_CMD_ALARM_SEARCH", "a00071.html#afae59ed6acc15562eda1a04e26b10b99", null ],
+    [ "DS18B20_CMD_CONVERT", "a00071.html#a6c6dc53cf17b22c66aca3d8ac6cf38ee", null ],
+    [ "DS18B20_CMD_COPYSCRATCHPAD", "a00071.html#aed08cf83d7f036479e921df3ed8d8c41", null ],
+    [ "DS18B20_CMD_READSCRATCHPAD", "a00071.html#aafb2615c0a2cae835103c402497fc088", null ],
+    [ "DS18B20_CMD_WRITESCRATCHPAD", "a00071.html#a5eeee530cda1b4390c27a67df06f2d46", null ],
+    [ "DS18B20_DECIMAL_STEPS_10BIT", "a00071.html#a55083453ffe5a5c37a91012e1bef7b4c", null ],
+    [ "DS18B20_DECIMAL_STEPS_11BIT", "a00071.html#af048a53b2ed8d920a61abf8b85d73c86", null ],
+    [ "DS18B20_DECIMAL_STEPS_12BIT", "a00071.html#a0f52e6244508ffb4373634599e5dc811", null ],
+    [ "DS18B20_DECIMAL_STEPS_9BIT", "a00071.html#a3a8807549211bdc71a6d78120443a299", null ],
+    [ "DS18B20_FAMILY_CODE", "a00071.html#a1ec4e9313d3a65fc8e543bbbfc007483", null ],
+    [ "DS18B20_LOG_PRINTF", "a00071.html#a2103bb78c9b28e0e93f1184242a32c37", null ],
+    [ "DS18B20_MaxCnt", "a00071.html#a8c363b24e4affab72c4f8b814514de49", null ],
+    [ "DS18B20_RESOLUTION_R0", "a00071.html#a6d34cae288c05b9ac2101315ca5248da", null ],
+    [ "DS18B20_RESOLUTION_R1", "a00071.html#a399ef86b1a04c574c3abffa54911c444", null ],
+    [ "SYSTEM_FAULT_MASK_DS18B20", "a00071.html#ab49001f4247c1c761e6abb7f5d0583ef", null ],
+    [ "SYSTEM_FAULT_OWNER_DS18B20", "a00071.html#a8564834b0fb246058628ab904f091d3b", null ],
+    [ "DS18B20_AppRuntimeStatus_t", "a00071.html#a7464836797a0749c572142a8b6567336", [
+      [ "DS18B20_APP_RUNTIME_OK", "a00071.html#a7464836797a0749c572142a8b6567336a0a7939cb7743c70ea4fa2a2a5c11a774", null ],
+      [ "DS18B20_APP_RUNTIME_RECOVERED", "a00071.html#a7464836797a0749c572142a8b6567336ae05dac510e19c5a8902a5559b7efb245", null ],
+      [ "DS18B20_APP_RUNTIME_BAD_PARAM", "a00071.html#a7464836797a0749c572142a8b6567336af50388e711e7056fea1ae8e348e2a248", null ],
+      [ "DS18B20_APP_RUNTIME_NO_DEVICE", "a00071.html#a7464836797a0749c572142a8b6567336a66da684d9de65d4a7ea12cd8a58a538d", null ],
+      [ "DS18B20_APP_RUNTIME_START_FAIL", "a00071.html#a7464836797a0749c572142a8b6567336ad87dbfb7b198270f835120b751bb7be9", null ],
+      [ "DS18B20_APP_RUNTIME_WAIT_FAIL", "a00071.html#a7464836797a0749c572142a8b6567336a56cebb43afe2ea44a151d69d0722f374", null ],
+      [ "DS18B20_APP_RUNTIME_READ_FAIL", "a00071.html#a7464836797a0749c572142a8b6567336a7dc7cfd46f01957b001a3a051e247759", null ],
+      [ "DS18B20_APP_RUNTIME_ALARM_FAIL", "a00071.html#a7464836797a0749c572142a8b6567336a23c3909f9db151a270f167e13fafb7ed", null ],
+      [ "DS18B20_APP_RUNTIME_RECOVERY_FAIL", "a00071.html#a7464836797a0749c572142a8b6567336a2a4cde8e87bc62fef6cef883051a32a3", null ],
+      [ "DS18B20_APP_RUNTIME_FATAL", "a00071.html#a7464836797a0749c572142a8b6567336a70ca2e29437a9f91b608f59b73167ab6", null ]
+    ] ],
+    [ "DS18B20_AppState_t", "a00071.html#a771759d700fec55c40c4260140ebf9ea", [
+      [ "DS18B20_APP_START_CONVERSION", "a00071.html#a771759d700fec55c40c4260140ebf9eaa0693a939f7302c0e762daf9c3a27fd78", null ],
+      [ "DS18B20_APP_WAIT_CONVERSION", "a00071.html#a771759d700fec55c40c4260140ebf9eaa2460a1746fab05123b200c0d931df713", null ],
+      [ "DS18B20_APP_READ_AND_PRINT", "a00071.html#a771759d700fec55c40c4260140ebf9eaad823d223c01a7ae7b8a0e2c11dd93529", null ]
+    ] ],
+    [ "DS18B20_Res_t", "a00071.html#a6dcc4af62f8ce7028628ea512937bbdc", [
+      [ "DS18B20_Resolution_9bits", "a00071.html#a6dcc4af62f8ce7028628ea512937bbdca7af72598093964b8798a27d7c532bc93", null ],
+      [ "DS18B20_Resolution_10bits", "a00071.html#a6dcc4af62f8ce7028628ea512937bbdcaae5657b213fa45da562bd1dd691ac78d", null ],
+      [ "DS18B20_Resolution_11bits", "a00071.html#a6dcc4af62f8ce7028628ea512937bbdca114134def97e90d79852e5307c7b56d1", null ],
+      [ "DS18B20_Resolution_12bits", "a00071.html#a6dcc4af62f8ce7028628ea512937bbdcaeb2038930235cfb9aeb09c176e3a641c", null ]
+    ] ],
+    [ "DS18B20_Status_t", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3", [
+      [ "DS18B20_STATUS_OK", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3ac9e477b1cd314472c4e426cfb23267a5", null ],
+      [ "DS18B20_STATUS_BAD_PARAM", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3a60cb32b9c69176f1637ee7aba48af84e", null ],
+      [ "DS18B20_STATUS_INVALID_ROM", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3a3a4792f30ce0eb2a454cdf023b94a20c", null ],
+      [ "DS18B20_STATUS_NO_DEVICE", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3ab9bb5b898b8c1935ffe85f9998a6e872", null ],
+      [ "DS18B20_STATUS_NOT_FOUND", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3aff0b1a36a463a39acea970a53b1e82fa", null ],
+      [ "DS18B20_STATUS_BUS_ERROR", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3a4b73df161f47a3d11cf8e7a159343d48", null ],
+      [ "DS18B20_STATUS_CRC_ERROR", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3a27757a71df1ee28620cdd112a32375ff", null ],
+      [ "DS18B20_STATUS_TIMEOUT", "a00071.html#ad8987e4c5fc3c8a9e493eb702d8ef7b3a652d16c1d8379df174d277d93260d480", null ]
+    ] ],
+    [ "DS18B20_AlarmSearch", "a00071.html#ad6591fd44059b2333aeb7c6d92f22413", null ],
+    [ "DS18B20_AppInit", "a00071.html#af337ca685331d5b25cf227ad5e2f53e7", null ],
+    [ "DS18B20_AppRun", "a00071.html#ac8a6a2235f78b506554c9e56744c2480", null ],
+    [ "DS18B20_AppTimerCallback", "a00071.html#a1110738b16ac2246fd9434041a598b8a", null ],
+    [ "DS18B20_GetConversionTimeMs", "a00071.html#adc85bedb25055302a593597a1d492fd4", null ],
+    [ "DS18B20_GetResolution", "a00071.html#a7a48e520e7d07a4c1147229dd698da3f", null ],
+    [ "DS18B20_Init", "a00071.html#a3f70ccde53d51ad8e16cf23d5f597e6b", null ],
+    [ "DS18B20_IsConversionDone", "a00071.html#af10e2114053a0202bccaaab0994bbed0", null ],
+    [ "DS18B20_Read", "a00071.html#aa2e4f263c873d29bc806e75ed3af5b1e", null ],
+    [ "DS18B20_SetResolution", "a00071.html#ad2d442e54d7c29c1c27a9c040cd4b5f6", null ],
+    [ "DS18B20_SetTempAlarm", "a00071.html#ab0b75ef863c6628fd001639a18c3786f", null ],
+    [ "DS18B20_Start", "a00071.html#a8317cc4bec6d4994a541fec4faaeae23", null ],
+    [ "DS18B20_StartAll", "a00071.html#ae06f16956738981c37bd373eba2a4739", null ],
+    [ "xSerialSemaphore", "a00071.html#a642a4265a30ef969b172df7c201b94b0", null ]
+];

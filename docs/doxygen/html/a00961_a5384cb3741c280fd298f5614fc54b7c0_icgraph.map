@@ -1,0 +1,7 @@
+<map id="decrypt_aes_ctr" name="decrypt_aes_ctr">
+<area shape="rect" id="Node000001" title="Decrypt the received AES&#45;CTR ciphertext with receiver key material." alt="" coords="195,37,309,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="280,22,271,18,252,16,234,18,224,23,222,28,226,38,221,36,216,29,220,19,232,13,252,11,273,13,286,22"/>
+<area shape="rect" id="Node000002" href="$a00961.html#a4de9d94651e8c708174d377a63da2f1e" title="Verify HMAC, decrypt AES&#45;CTR data and rebuild the ADC samples." alt="" coords="5,29,147,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="176,51,147,53,147,48,182,50"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="103,14,93,10,76,8,60,10,50,14,46,20,47,29,42,28,41,19,46,10,58,5,76,3,95,5,108,13"/>
+</map>

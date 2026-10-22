@@ -1,0 +1,11 @@
+<map id="runtime_load_u16_le" name="runtime_load_u16_le">
+<area shape="rect" id="Node000001" title="Read an unsigned 16&#45;bit little&#45;endian value." alt="" coords="402,55,542,81"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="502,39,493,36,472,33,453,35,442,40,440,45,445,55,440,53,435,46,439,36,451,30,472,28,494,31,508,40"/>
+<area shape="rect" id="Node000002" href="$a00281.html#a43eddad61971d7367db04045898e47a4" title="Read a signed 16&#45;bit little&#45;endian value." alt="" coords="218,29,354,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="384,56,354,55,354,49,389,56"/>
+<area shape="rect" id="Node000003" href="$a00281.html#a698e15f23f74d91016cbdfbaf9e22805" title="Check sensor identifiers and parse a complete STM32 telemetry frame." alt="" coords="5,47,170,89"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="386,71,170,71,170,65,387,65"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="316,14,307,10,286,8,266,10,256,15,254,20,259,30,254,28,248,21,252,11,265,5,286,3,308,5,321,14"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="199,54,171,60,170,55,205,53"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="118,31,107,28,87,25,69,27,58,32,53,38,55,47,49,45,48,37,54,28,68,22,88,20,109,22,123,31"/>
+</map>

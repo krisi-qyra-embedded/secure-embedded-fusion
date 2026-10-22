@@ -1,0 +1,16 @@
+<map id="PMS25_Read" name="PMS25_Read">
+<area shape="rect" id="Node000001" title="Read one validated PMS5003 frame." alt="" coords="5,104,108,131"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="27,104,22,95,25,86,37,80,57,77,77,80,89,88,84,90,75,85,56,83,39,85,29,89,27,95,32,103"/>
+<area shape="rect" id="Node000002" href="$a00221.html#a2552b3f4e8743127ade8774219be72ec" title=" " alt="" coords="156,104,301,131"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="107,115,143,116,138,118,109,120"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="198,103,194,95,197,86,209,80,228,77,249,80,261,89,256,89,247,85,228,83,211,85,201,89,199,95,204,104"/>
+<area shape="rect" id="Node000003" href="$a00221.html#a2e7f230098e317d180f281d06b15cc34" title=" " alt="" coords="360,29,520,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="260,101,348,65,374,60,369,62,350,71,262,106"/>
+<area shape="rect" id="Node000004" href="$a00221.html#af289f4343d7455db5ee8f6b89b4cd23e" title=" " alt="" coords="373,104,507,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="301,115,360,117,355,118,302,120"/>
+<area shape="rect" id="Node000005" href="$a00218.html#a797e971c65b919c7a1a49efd38904ec1" title="Receive one PM2.5 frame block using DMA." alt="" coords="349,179,531,205"/>
+<area shape="poly" id="edge8_Node000002_Node000005" title=" " alt="" coords="269,129,388,173,383,173,268,134"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="404,28,398,21,402,11,417,5,440,3,465,5,480,14,475,14,464,10,440,8,418,10,406,15,403,20,409,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="404,103,398,95,402,86,417,79,440,77,465,80,480,89,475,89,464,85,440,83,418,85,406,89,403,95,409,104"/>
+<area shape="poly" id="edge9_Node000005_Node000005" title=" " alt="" coords="404,177,398,170,402,160,417,154,440,152,465,155,480,164,475,163,464,160,440,157,418,159,406,164,403,169,409,179"/>
+</map>

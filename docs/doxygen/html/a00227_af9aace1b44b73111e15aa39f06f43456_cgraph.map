@@ -1,0 +1,15 @@
+<map id="__attribute__" name="__attribute__">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,102,131"/>
+<area shape="rect" id="Node000002" href="$a00969.html#a64bd0cfe695219e3c736b3f97f0ab37e" title=" " alt="" coords="150,104,246,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,115,136,116,131,119,103,120"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="172,103,168,95,171,86,181,80,198,77,215,80,226,89,221,89,214,85,198,83,183,85,175,89,173,95,178,104"/>
+<area shape="rect" id="Node000003" href="$a01038.html#a96788d733112f105bcafce6984daa30f" title="Calculate basic statistics for the SRAM entropy buffer." alt="" coords="301,29,436,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="222,101,293,66,312,61,307,63,295,70,224,106"/>
+<area shape="rect" id="Node000004" href="$a01038.html#a72417f62b45bd754bb65ef7398b22aba" title="Capture a runtime SRAM sample." alt="" coords="294,104,443,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="246,115,281,117,276,118,247,120"/>
+<area shape="rect" id="Node000009" href="$a01038.html#a81431e84fb77086a6b1ddb31dad847a8" title="Capture the configured SRAM startup sample." alt="" coords="296,179,442,221"/>
+<area shape="poly" id="edge7_Node000002_Node000009" title=" " alt="" coords="228,129,312,171,306,172,227,134"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="339,28,334,21,338,11,350,5,369,3,389,5,402,14,396,14,388,10,369,8,351,10,342,15,339,20,344,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="339,103,334,95,338,86,350,80,369,77,389,80,402,89,396,89,388,85,369,83,351,85,342,89,339,95,344,104"/>
+<area shape="poly" id="edge8_Node000009_Node000009" title=" " alt="" coords="336,177,334,169,340,160,351,154,369,152,387,154,400,163,395,163,386,160,369,157,353,159,343,164,339,170,340,180"/>
+</map>

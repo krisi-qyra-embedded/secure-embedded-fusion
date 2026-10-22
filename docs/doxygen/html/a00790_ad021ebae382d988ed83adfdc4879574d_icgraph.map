@@ -1,0 +1,5 @@
+<map id="sram_get_entropy_buffer" name="sram_get_entropy_buffer">
+<area shape="rect" id="Node000001" title="Get the sampled SRAM entropy buffer." alt="" coords="218,5,382,32"/>
+<area shape="rect" id="Node000002" href="$a00787.html#ad021ebae382d988ed83adfdc4879574d" title="Get the captured SRAM entropy buffer." alt="" coords="5,5,170,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,19,170,21,170,16,205,19"/>
+</map>

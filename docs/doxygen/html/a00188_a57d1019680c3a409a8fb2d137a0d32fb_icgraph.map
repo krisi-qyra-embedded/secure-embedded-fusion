@@ -1,0 +1,13 @@
+<map id="ESP32_UART_TestChecksum8" name="ESP32_UART_TestChecksum8">
+<area shape="rect" id="Node000001" title=" " alt="" coords="546,79,753,105"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="692,64,679,60,650,57,623,59,608,64,605,69,612,79,607,77,600,70,605,60,622,54,650,52,680,55,698,64"/>
+<area shape="rect" id="Node000002" href="$a00188.html#a1ace640503ede8f704d8459a843bd936" title="Build the plaintext telemetry frame sent to ESP32." alt="" coords="297,29,496,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="546,76,496,70,496,64,551,75"/>
+<area shape="rect" id="Node000008" href="$a00188.html#ada3c96bd91d688e3fadd3e261c58d06f" title=" " alt="" coords="295,120,498,147"/>
+<area shape="poly" id="edge5_Node000001_Node000008" title=" " alt="" coords="551,108,483,122,482,117,546,109"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="436,14,422,10,396,8,372,10,358,15,352,21,353,30,349,27,347,19,355,10,371,5,396,3,423,5,441,14"/>
+<area shape="rect" id="Node000003" href="$a00188.html#ad888c76e4dae3a2d281094c9360a9265" title="Run one encrypted request/response attempt." alt="" coords="5,37,247,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="279,51,248,53,247,48,284,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="172,23,157,19,126,16,97,18,82,23,78,28,86,37,80,37,73,29,78,19,96,13,126,11,159,13,177,22"/>
+<area shape="poly" id="edge6_Node000008_Node000008" title=" " alt="" coords="439,105,426,101,396,99,370,101,355,106,352,111,359,121,354,119,346,111,352,101,369,95,396,93,427,96,444,106"/>
+</map>

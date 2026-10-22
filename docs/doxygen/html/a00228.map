@@ -1,0 +1,9 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Src/pwr.c" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Src/pwr.c">
+<area shape="rect" id="Node000001" title="Cortex&#45;M sleep and pending interrupt helpers." alt="" coords="5,5,299,128"/>
+<area shape="rect" id="Node000002" href="$a00122.html" title="Cortex&#45;M sleep and pending&#45;interrupt helper declarations." alt="" coords="125,176,179,203"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,126,155,161,149,160,151,131"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="55,251,148,277"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="146,202,120,240,117,236,141,204"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="172,251,236,277"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="162,201,189,238,184,238,160,206"/>
+</map>

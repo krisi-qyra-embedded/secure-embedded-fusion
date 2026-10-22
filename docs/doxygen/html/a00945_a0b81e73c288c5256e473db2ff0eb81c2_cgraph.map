@@ -1,0 +1,58 @@
+<map id="ecdh_encrypt_uart_payload_once" name="ecdh_encrypt_uart_payload_once">
+<area shape="rect" id="Node000001" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="5,625,221,652"/>
+<area shape="poly" id="edge22_Node000001_Node000001" title=" " alt="" coords="72,625,65,616,70,606,86,600,113,598,142,601,158,609,154,611,141,606,113,604,88,606,74,610,71,616,77,624"/>
+<area shape="rect" id="Node000002" href="$a01017.html#a2473ac31b52535a759a4c1ea10cf1776" title="Authenticate and decode one ESP32 response." alt="" coords="269,576,439,618"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,622,256,612,252,616,196,627"/>
+<area shape="rect" id="Node000017" href="$a01014.html#a70c40321d225a8638f592d9da87612cd" title="Derive GCM IV material from the DRBG path." alt="" coords="269,666,439,693"/>
+<area shape="poly" id="edge20_Node000001_Node000017" title=" " alt="" coords="194,650,259,662,255,664,196,655"/>
+<area shape="rect" id="Node000018" href="$a01017.html#ae757e66c4c6f489a8cdd3abe37761f22" title="Allocate the next unique transmit nonce." alt="" coords="284,936,424,962"/>
+<area shape="poly" id="edge23_Node000001_Node000018" title=" " alt="" coords="126,650,335,922,330,924,123,654"/>
+<area shape="rect" id="Node000021" href="$a01017.html#ab99c2eddebbedc99ce71a7ac63f22d1e" title="Initialize the persistent GCM nonce session." alt="" coords="272,202,436,229"/>
+<area shape="poly" id="edge29_Node000001_Node000021" title=" " alt="" coords="120,624,336,240,338,245,124,626"/>
+<area shape="poly" id="edge8_Node000002_Node000002" title=" " alt="" coords="311,575,309,566,316,557,331,551,354,549,378,551,394,559,389,561,377,557,354,554,333,556,320,561,314,567,316,576"/>
+<area shape="rect" id="Node000003" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="510,330,648,357"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="360,574,377,532,403,478,439,422,461,396,485,374,507,362,504,366,489,378,465,400,443,426,408,481,381,534,365,576"/>
+<area shape="rect" id="Node000005" href="$a01014.html#a746265301fc8d32fe59a31901a46d9c6" title="Decrypt and authenticate with streaming AES&#45;GCM." alt="" coords="514,456,645,498"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="382,573,430,541,486,508,501,503,497,506,488,513,433,545,386,577"/>
+<area shape="rect" id="Node000007" href="$a01032.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="719,381,812,408"/>
+<area shape="poly" id="edge17_Node000002_Node000007" title=" " alt="" coords="362,574,379,538,406,495,441,452,462,433,486,417,540,395,598,384,655,381,707,385,702,387,655,387,599,390,542,400,488,422,466,437,445,456,410,498,384,541,366,577"/>
+<area shape="rect" id="Node000008" href="$a01017.html#a2e073445f2d978f532e3c07791f199a9" title=" " alt="" coords="504,546,654,573"/>
+<area shape="poly" id="edge9_Node000002_Node000008" title=" " alt="" coords="438,580,492,573,487,576,440,585"/>
+<area shape="rect" id="Node000009" href="$a01017.html#a374d8cb7314a67adbdf98a13cfc380f6" title=" " alt="" coords="539,621,619,648"/>
+<area shape="poly" id="edge11_Node000002_Node000009" title=" " alt="" coords="439,609,526,624,521,626,440,614"/>
+<area shape="rect" id="Node000010" href="$a01017.html#ac8ed6d020e45d9c052371615bb985caf" title=" " alt="" coords="539,696,619,722"/>
+<area shape="poly" id="edge13_Node000002_Node000010" title=" " alt="" coords="414,616,440,628,488,657,541,688,535,688,486,662,438,633,414,622"/>
+<area shape="rect" id="Node000011" href="$a00335.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="526,770,632,797"/>
+<area shape="poly" id="edge15_Node000002_Node000011" title=" " alt="" coords="424,616,441,628,460,655,466,681,472,706,489,733,507,748,529,763,524,763,504,753,485,736,468,708,461,682,455,657,437,632,424,622"/>
+<area shape="rect" id="Node000012" href="$a00242.html#ad3befa25fcb365baff8024e4afa912df" title="Check and commit the RX replay high&#45;water state in RAM." alt="" coords="498,845,661,888"/>
+<area shape="poly" id="edge18_Node000002_Node000012" title=" " alt="" coords="426,616,441,629,457,652,465,674,468,718,469,761,476,784,489,807,519,837,514,836,485,811,471,786,464,762,463,718,460,675,452,654,437,632,426,622"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="547,330,542,322,546,312,558,306,579,304,601,306,615,315,609,316,600,311,579,309,560,311,549,316,547,321,552,330"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="543,454,542,446,548,437,560,431,579,429,599,431,613,440,608,440,598,437,579,434,562,436,551,441,547,447,548,456"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="628,453,721,413,717,416,631,457"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="733,380,728,372,732,363,745,356,766,354,788,357,801,365,796,366,786,362,765,360,746,362,736,366,733,372,739,381"/>
+<area shape="poly" id="edge10_Node000008_Node000008" title=" " alt="" coords="547,546,542,538,546,528,558,522,579,520,601,522,615,531,609,531,600,527,579,525,560,527,549,532,547,537,552,546"/>
+<area shape="poly" id="edge12_Node000009_Node000009" title=" " alt="" coords="547,620,542,612,546,603,558,596,579,594,601,597,615,606,609,606,600,602,579,600,560,602,549,606,547,612,552,621"/>
+<area shape="poly" id="edge14_Node000010_Node000010" title=" " alt="" coords="547,695,542,687,546,677,558,671,579,669,601,672,615,680,609,680,600,677,579,674,560,676,549,681,547,686,552,696"/>
+<area shape="poly" id="edge16_Node000011_Node000011" title=" " alt="" coords="547,769,542,762,546,752,558,746,579,744,601,746,615,755,609,755,600,751,579,749,560,751,549,756,547,761,552,771"/>
+<area shape="poly" id="edge19_Node000012_Node000012" title=" " alt="" coords="544,843,542,835,548,826,560,820,579,818,599,821,613,830,608,829,598,826,579,824,562,826,551,830,547,836,548,846"/>
+<area shape="poly" id="edge21_Node000017_Node000017" title=" " alt="" coords="315,666,309,658,314,648,329,642,354,640,381,642,396,651,391,652,379,647,354,645,330,647,317,652,314,657,321,666"/>
+<area shape="poly" id="edge24_Node000018_Node000018" title=" " alt="" coords="315,934,309,927,314,917,329,911,354,909,381,912,396,921,391,920,379,917,354,914,330,916,317,921,314,926,321,936"/>
+<area shape="rect" id="Node000019" href="$a00329.html#a2dbb6bac54d7675a93c9253bb087f115" title="Encode a 32&#45;bit value in big&#45;endian order." alt="" coords="536,936,622,962"/>
+<area shape="poly" id="edge25_Node000018_Node000019" title=" " alt="" coords="424,946,523,949,518,949,425,952"/>
+<area shape="rect" id="Node000020" href="$a00329.html#a28734e2ed2d3512576c98ce386998b12" title="Encode a 64&#45;bit value in big&#45;endian order." alt="" coords="536,1010,622,1037"/>
+<area shape="poly" id="edge27_Node000018_Node000020" title=" " alt="" coords="397,960,525,1005,519,1005,396,965"/>
+<area shape="poly" id="edge26_Node000019_Node000019" title=" " alt="" coords="547,934,542,927,546,917,558,911,579,909,601,912,615,921,609,920,600,917,579,914,560,916,549,921,547,926,552,936"/>
+<area shape="poly" id="edge28_Node000020_Node000020" title=" " alt="" coords="547,1009,542,1002,546,992,558,986,579,984,601,986,615,996,609,995,600,991,579,989,560,991,549,996,547,1001,552,1011"/>
+<area shape="poly" id="edge30_Node000021_Node000003" title=" " alt="" coords="377,227,488,292,541,322,536,323,486,297,378,232"/>
+<area shape="poly" id="edge34_Node000021_Node000007" title=" " alt="" coords="358,201,374,165,400,119,437,72,460,52,486,36,537,13,582,3,604,4,626,10,649,20,673,36,692,59,709,95,735,188,753,287,764,366,759,365,748,288,730,189,704,97,688,62,670,40,646,25,625,15,603,9,583,8,538,18,488,41,463,56,441,76,405,122,378,168,363,203"/>
+<area shape="poly" id="edge31_Node000021_Node000021" title=" " alt="" coords="315,202,309,194,314,184,329,178,354,176,381,178,396,186,391,188,379,183,354,181,330,183,317,188,314,193,321,201"/>
+<area shape="rect" id="Node000022" href="$a01014.html#a59f18c3818b5d6fd5d528d214ed1c6bc" title=" " alt="" coords="525,74,633,101"/>
+<area shape="poly" id="edge32_Node000021_Node000022" title=" " alt="" coords="367,200,417,156,450,132,486,111,512,102,508,105,488,115,453,136,420,160,371,204"/>
+<area shape="rect" id="Node000023" href="$a00242.html#a8c037f36ce4d1208d8d3eaac3ead5674" title="Get the remaining Flash journal capacity." alt="" coords="487,149,671,192"/>
+<area shape="poly" id="edge35_Node000021_Node000023" title=" " alt="" coords="422,200,474,190,470,194,425,204"/>
+<area shape="rect" id="Node000024" href="$a00242.html#a9b5566d836896405016c098ccac6fc44" title="Reserve the next persistent TX session ID for this boot." alt="" coords="494,240,665,282"/>
+<area shape="poly" id="edge37_Node000021_Node000024" title=" " alt="" coords="423,227,481,240,476,242,425,232"/>
+<area shape="poly" id="edge33_Node000022_Node000022" title=" " alt="" coords="547,74,542,66,546,56,558,50,579,48,601,50,615,58,610,60,600,55,579,53,560,55,549,60,547,65,552,74"/>
+<area shape="poly" id="edge36_Node000023_Node000023" title=" " alt="" coords="543,148,542,139,548,130,560,124,579,122,599,125,613,133,608,134,598,130,579,128,562,130,551,134,547,140,549,149"/>
+<area shape="poly" id="edge38_Node000024_Node000024" title=" " alt="" coords="543,239,542,230,548,221,560,215,579,213,599,215,613,223,608,225,598,221,579,218,562,220,551,225,547,231,549,240"/>
+</map>

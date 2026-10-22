@@ -1,0 +1,5 @@
+<map id="sram_is_sampled" name="sram_is_sampled">
+<area shape="rect" id="Node000001" title="Get the current SRAM sampling state." alt="" coords="177,5,300,32"/>
+<area shape="rect" id="Node000002" href="$a00991.html#a86c6a86a4300fb2cc587fd8de7ede823" title="Return the current SRAM sampling state." alt="" coords="5,5,129,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="158,19,129,21,129,16,163,18"/>
+</map>

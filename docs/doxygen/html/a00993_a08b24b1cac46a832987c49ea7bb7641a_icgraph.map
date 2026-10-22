@@ -1,0 +1,10 @@
+<map id="compute_ecdh_shared_as_sender" name="compute_ecdh_shared_as_sender">
+<area shape="rect" id="Node000001" title="Compute the sender&#45;side secp256r1 ECDH shared secret." alt="" coords="419,29,571,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="527,13,516,10,495,8,476,10,464,15,460,21,461,30,456,27,454,19,461,10,475,5,495,3,517,5,532,14"/>
+<area shape="rect" id="Node000002" href="$a00993.html#a8f6eba2d8e6fee98435b15f1b5a71e8b" title="Initialize sender ECDH material and derive the sender session keys." alt="" coords="209,37,371,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="400,51,372,53,371,48,406,51"/>
+<area shape="poly" id="edge5_Node000002_Node000002" title=" " alt="" coords="323,22,313,18,290,16,268,18,257,23,254,28,260,38,255,36,249,29,253,19,267,13,290,11,314,13,329,22"/>
+<area shape="rect" id="Node000003" href="$a00894.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="5,29,161,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="191,51,161,53,161,48,196,50"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="115,14,104,10,83,8,64,10,52,15,47,21,49,29,43,28,42,19,49,10,62,5,83,3,105,5,120,13"/>
+</map>

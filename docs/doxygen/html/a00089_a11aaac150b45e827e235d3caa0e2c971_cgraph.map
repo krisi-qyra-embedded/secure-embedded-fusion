@@ -1,0 +1,25 @@
+<map id="OneWire_Reset" name="OneWire_Reset">
+<area shape="rect" id="Node000001" title="Reset the 1&#45;Wire bus and detect presence." alt="" coords="5,253,120,280"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="31,254,26,245,29,235,42,229,63,227,84,229,97,237,92,239,83,234,62,232,43,234,33,239,31,244,36,252"/>
+<area shape="rect" id="Node000002" href="$a00242.html#a58f9378c36dbb864c00f8c964c652173" title="Apply a blocking microsecond delay." alt="" coords="209,29,282,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="65,252,76,215,96,165,125,112,144,88,166,66,196,51,193,55,169,70,148,91,130,115,100,168,81,217,70,254"/>
+<area shape="rect" id="Node000003" href="$a00194.html#a26e4ec3781d0c88e746edd3a3f5b291b" title=" " alt="" coords="170,104,322,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="69,252,107,198,134,167,166,140,178,136,174,140,169,145,138,171,111,201,74,254"/>
+<area shape="rect" id="Node000004" href="$a00194.html#a522014edab869531d4b8c79793ffefb7" title=" " alt="" coords="174,179,318,205"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="89,251,167,215,187,209,183,213,169,220,92,255"/>
+<area shape="rect" id="Node000005" href="$a00194.html#acc6e9ea7c6dc7212a487982a942d86c4" title=" " alt="" coords="168,253,324,280"/>
+<area shape="poly" id="edge7_Node000001_Node000005" title=" " alt="" coords="119,264,154,265,150,268,121,269"/>
+<area shape="rect" id="Node000006" href="$a00194.html#a8674c1b38101f93f63f2a965c0da823a" title=" " alt="" coords="178,328,314,355"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="97,278,199,320,195,323,97,283"/>
+<area shape="rect" id="Node000007" href="$a00194.html#a2e3c9bbd2175f94b97f1c6272e044a5c" title=" " alt="" coords="177,403,314,429"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="77,278,118,319,169,365,210,394,205,395,166,369,114,323,76,283"/>
+<area shape="rect" id="Node000008" href="$a00194.html#a12d434acdcd3638828045b8f862743f1" title=" " alt="" coords="178,477,314,504"/>
+<area shape="poly" id="edge13_Node000001_Node000008" title=" " alt="" coords="70,278,107,352,136,398,170,439,206,469,201,469,166,443,131,401,103,355,69,283"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="214,29,209,21,213,11,225,5,246,3,268,5,281,13,276,15,266,10,246,8,227,10,217,15,214,20,219,29"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="214,104,209,95,213,86,225,79,246,77,268,80,281,88,276,89,266,85,246,83,227,85,217,89,214,95,219,103"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="214,178,209,170,213,160,225,154,246,152,268,155,281,163,276,164,266,160,246,157,227,159,217,164,214,169,219,178"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="214,253,209,245,213,235,225,229,246,227,268,229,281,238,276,239,266,234,246,232,227,234,217,239,214,244,219,253"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="214,327,209,319,213,310,225,303,246,301,268,304,281,313,276,313,266,309,246,307,227,309,217,313,214,319,219,328"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="214,402,209,394,213,384,225,378,246,376,268,379,281,387,276,387,266,384,246,381,227,383,217,388,214,393,219,403"/>
+<area shape="poly" id="edge14_Node000008_Node000008" title=" " alt="" coords="214,476,209,469,213,459,225,453,246,451,268,453,281,462,276,462,266,458,246,456,227,458,217,463,214,468,219,478"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="init_bme680" name="init_bme680">
+<area shape="rect" id="Node000001" title="Initialize and configure the BME680." alt="" coords="355,71,446,97"/>
+<area shape="poly" id="edge6_Node000001_Node000001" title=" " alt="" coords="433,55,423,52,401,49,380,51,369,56,367,61,372,71,367,69,361,62,365,52,379,46,401,44,424,47,438,56"/>
+<area shape="rect" id="Node000002" href="$a00143.html#a012a7bd1283123423c8cc10d467dddb5" title="Initialize the BME680 sensor stack." alt="" coords="103,29,307,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="337,72,271,59,271,54,343,71"/>
+<area shape="rect" id="Node000003" href="$a00894.html#aa1692c14bff7462b7d3bd0a574ba39df" title=" " alt="" coords="115,104,295,147"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="343,96,296,109,295,104,337,97"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="233,14,224,10,205,8,187,10,177,15,175,20,180,29,174,28,169,21,173,11,185,5,205,3,226,5,238,14"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="231,88,222,85,205,83,189,85,179,89,175,95,176,105,171,102,170,94,175,85,187,79,205,77,224,80,237,89"/>
+<area shape="rect" id="Node000004" href="$a00894.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,112,55,139"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="97,127,56,128,55,123,101,124"/>
+</map>

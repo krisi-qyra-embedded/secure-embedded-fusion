@@ -1,0 +1,11 @@
+<map id="STM32_UART_ResynchronizationActive" name="STM32_UART_ResynchronizationActive">
+<area shape="rect" id="Node000001" title="Check whether the RX quiet window is active." alt="" coords="523,59,744,101"/>
+<area shape="poly" id="edge6_Node000001_Node000001" title=" " alt="" coords="678,43,663,40,634,37,607,39,590,44,584,50,586,60,581,57,579,49,588,40,606,34,634,32,664,34,684,44"/>
+<area shape="rect" id="Node000002" href="$a00350.html#a19114f7795d12b65e9580226dd4d222f" title="Resynchronize RX when a partial packet stops receiving bytes." alt="" coords="229,29,475,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="505,67,475,66,476,61,510,67"/>
+<area shape="rect" id="Node000003" href="$a00350.html#a4214ccc6d8c08aa12ae080298960e5bf" title="Consume UART events, assemble packets and recover from RX faults." alt="" coords="5,67,181,93"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="505,84,475,87,229,87,181,86,181,80,229,81,475,81,510,83"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="392,14,378,10,352,8,327,10,312,15,306,21,308,30,303,27,301,19,309,10,326,5,352,3,379,5,398,14"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="210,67,182,73,181,67,215,66"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="137,52,123,48,93,45,66,47,51,52,47,57,55,66,49,66,42,58,47,48,65,42,93,40,124,43,142,52"/>
+</map>

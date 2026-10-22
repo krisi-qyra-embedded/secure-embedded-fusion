@@ -1,0 +1,7 @@
+<map id="STM32_UART_LinkTest_Start" name="STM32_UART_LinkTest_Start">
+<area shape="rect" id="Node000001" title="Initialize UART and start the encrypted&#45;packet event task." alt="" coords="131,29,293,72"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="237,13,228,10,212,8,196,10,187,14,183,20,184,30,180,27,178,19,183,11,195,5,212,3,230,5,242,14"/>
+<area shape="rect" id="Node000002" href="$a00888.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,37,83,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,51,83,53,83,48,118,50"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="71,23,62,18,44,16,27,18,17,23,15,28,20,36,15,37,10,29,13,19,25,13,44,11,64,13,76,22"/>
+</map>

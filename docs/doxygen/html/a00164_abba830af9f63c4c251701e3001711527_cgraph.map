@@ -1,0 +1,10 @@
+<map id="boundary_check" name="boundary_check">
+<area shape="rect" id="Node000001" title="This internal API is used to check the boundary conditions." alt="" coords="5,29,122,56"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="33,29,28,21,32,11,44,5,64,3,85,5,97,14,92,14,83,10,63,8,45,10,36,15,33,20,38,29"/>
+<area shape="rect" id="Node000002" href="$a00197.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="170,29,307,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="122,40,157,42,151,43,122,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="209,28,204,21,207,11,219,5,238,3,259,5,271,15,266,14,257,10,238,8,221,10,211,15,209,20,214,30"/>
+<area shape="rect" id="Node000003" href="$a00260.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="355,29,464,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="307,40,342,43,337,43,307,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="380,28,375,21,379,11,390,5,410,3,430,5,443,15,437,14,429,10,410,8,392,10,382,15,380,20,385,30"/>
+</map>

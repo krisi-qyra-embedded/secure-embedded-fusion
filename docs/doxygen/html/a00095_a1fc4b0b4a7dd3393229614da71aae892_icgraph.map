@@ -1,0 +1,16 @@
+<map id="Max31865_readRTD" name="Max31865_readRTD">
+<area shape="rect" id="Node000001" title="Read the raw RTD conversion value." alt="" coords="416,120,556,147"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="518,104,508,101,486,99,466,101,455,105,452,111,458,121,453,119,447,111,451,102,464,95,486,93,510,96,523,105"/>
+<area shape="rect" id="Node000002" href="$a00200.html#a303f7d8c7c302acc18009865c936d8ba" title="Read the RTD temperature in Celsius." alt="" coords="213,120,368,147"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="398,134,369,136,368,131,403,133"/>
+<area shape="poly" id="edge7_Node000002_Node000002" title=" " alt="" coords="322,105,312,101,290,99,270,101,259,105,256,111,262,120,257,119,251,111,255,102,269,95,290,93,314,96,328,105"/>
+<area shape="rect" id="Node000003" href="$a00200.html#ac62646a29c09aa90a0baa363022c8de1" title="Run one application&#45;level MAX31865 runtime cycle." alt="" coords="5,29,165,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="239,115,140,75,140,70,243,112"/>
+<area shape="rect" id="Node000007" href="$a00200.html#ab7d63654107beba736baa7c6c7b0c2e6" title="Run the MAX31865 monitor loop at the requested interval." alt="" coords="5,120,165,147"/>
+<area shape="poly" id="edge5_Node000002_Node000007" title=" " alt="" coords="195,134,166,136,165,131,200,133"/>
+<area shape="rect" id="Node000008" href="$a00200.html#af97a425dc5c597b0392bedd3a455dca4" title="Read the RTD temperature in Fahrenheit." alt="" coords="8,195,162,221"/>
+<area shape="poly" id="edge8_Node000002_Node000008" title=" " alt="" coords="239,154,125,197,123,192,235,151"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="117,15,106,10,85,8,66,10,54,15,49,21,51,29,46,29,44,19,51,10,64,5,85,3,107,5,122,13"/>
+<area shape="poly" id="edge6_Node000007_Node000007" title=" " alt="" coords="119,105,108,101,85,99,64,101,52,105,49,111,55,119,50,120,44,111,48,102,62,95,85,93,109,96,124,104"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="119,180,108,176,85,173,64,175,52,180,49,185,55,194,50,194,44,186,48,176,62,170,85,168,109,171,124,179"/>
+</map>

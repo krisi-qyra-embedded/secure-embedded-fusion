@@ -1,0 +1,16 @@
+<map id="__io_getchar" name="__io_getchar">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,101,131"/>
+<area shape="poly" id="edge9_Node000001_Node000001" title=" " alt="" coords="28,104,23,95,26,86,37,80,53,77,71,80,81,88,76,90,69,85,53,83,38,85,31,89,29,95,33,103"/>
+<area shape="rect" id="Node000002" href="$a00922.html#a64bd0cfe695219e3c736b3f97f0ab37e" title=" " alt="" coords="149,104,245,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,115,136,116,131,119,102,120"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="171,103,167,95,170,86,180,80,197,77,214,80,225,89,220,89,212,85,197,83,182,85,174,89,173,95,177,104"/>
+<area shape="rect" id="Node000003" href="$a00991.html#a96788d733112f105bcafce6984daa30f" title="Calculate basic statistics for the SRAM entropy buffer." alt="" coords="300,29,435,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="221,101,292,66,311,61,306,63,294,70,223,106"/>
+<area shape="rect" id="Node000004" href="$a00991.html#a72417f62b45bd754bb65ef7398b22aba" title="Capture a runtime SRAM sample." alt="" coords="293,104,442,131"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="245,115,280,117,275,118,246,120"/>
+<area shape="rect" id="Node000009" href="$a00991.html#a81431e84fb77086a6b1ddb31dad847a8" title="Capture the configured SRAM startup sample." alt="" coords="294,179,441,221"/>
+<area shape="poly" id="edge7_Node000002_Node000009" title=" " alt="" coords="227,129,311,171,305,172,226,134"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="338,28,333,21,337,11,349,5,368,3,388,5,401,14,395,14,387,10,368,8,350,10,341,15,338,20,343,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="338,103,333,95,337,86,349,80,368,77,388,80,401,89,395,89,387,85,368,83,350,85,341,89,338,95,343,104"/>
+<area shape="poly" id="edge8_Node000009_Node000009" title=" " alt="" coords="335,177,333,169,339,160,350,154,368,152,386,154,399,163,394,163,385,160,368,157,352,159,342,164,338,170,339,180"/>
+</map>

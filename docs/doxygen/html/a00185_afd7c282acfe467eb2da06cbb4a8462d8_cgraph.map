@@ -1,0 +1,10 @@
+<map id="spi_dma_mark_fault_owner_task" name="spi_dma_mark_fault_owner_task">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,144,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="35,28,34,19,40,10,54,5,75,3,97,5,111,13,106,14,95,10,74,8,55,10,44,15,39,21,41,29"/>
+<area shape="rect" id="Node000002" href="$a00149.html#af3ee77c1986fce49e57e98d710fbf06c" title="Mark one subsystem fault as active." alt="" coords="192,37,366,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="144,48,179,50,173,51,144,53"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="244,36,238,29,242,19,256,13,279,11,303,13,318,22,312,22,302,18,279,16,257,18,246,23,243,28,249,38"/>
+<area shape="rect" id="Node000003" href="$a00149.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="414,29,582,72"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="366,48,401,51,395,51,366,53"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="457,27,455,19,462,10,476,5,498,3,522,5,537,14,532,13,520,10,498,8,478,10,465,15,460,21,461,30"/>
+</map>

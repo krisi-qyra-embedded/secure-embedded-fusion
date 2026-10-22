@@ -1,0 +1,16 @@
+<map id="decrypt_verify_aes_gcm_receiver" name="decrypt_verify_aes_gcm_receiver">
+<area shape="rect" id="Node000001" title="Decrypt and authenticate with streaming AES&#45;GCM." alt="" coords="488,47,619,89"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="584,31,574,28,554,25,535,27,524,32,519,38,520,47,516,45,514,37,520,28,534,22,554,20,575,22,589,31"/>
+<area shape="rect" id="Node000002" href="$a01008.html#a09f6f3d516029a09122bbc00d5ddd618" title="Authenticate/decrypt the GCM packet and rebuild the ADC samples." alt="" coords="28,5,199,48"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="470,56,440,55,199,34,199,29,440,49,475,56"/>
+<area shape="rect" id="Node000003" href="$a01011.html#a2473ac31b52535a759a4c1ea10cf1776" title="Authenticate and decode one ESP32 response." alt="" coords="270,88,440,131"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="470,85,441,94,440,89,475,84"/>
+<area shape="poly" id="edge4_Node000003_Node000002" title=" " alt="" coords="281,83,221,63,187,51,187,46,223,57,286,82"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="385,72,375,69,355,67,336,69,325,73,320,79,322,89,317,86,315,78,322,69,335,63,355,61,376,64,391,72"/>
+<area shape="rect" id="Node000004" href="$a00939.html#a0b81e73c288c5256e473db2ff0eb81c2" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="6,96,221,123"/>
+<area shape="poly" id="edge6_Node000003_Node000004" title=" " alt="" coords="251,110,222,112,221,107,256,109"/>
+<area shape="rect" id="Node000011" href="$a00185.html#ae470c360688f5561f2558cf3e85c3e5e" title="Wait for and process an encrypted ACK/NACK." alt="" coords="5,171,222,213"/>
+<area shape="poly" id="edge8_Node000003_Node000011" title=" " alt="" coords="279,136,179,173,177,168,273,137"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="154,82,141,77,113,75,88,77,74,81,71,87,78,95,73,96,66,87,71,77,87,71,114,69,143,72,159,81"/>
+<area shape="poly" id="edge9_Node000011_Node000011" title=" " alt="" coords="151,155,138,152,113,149,91,151,77,156,71,162,73,171,68,169,66,161,74,152,90,146,114,144,139,146,156,155"/>
+</map>

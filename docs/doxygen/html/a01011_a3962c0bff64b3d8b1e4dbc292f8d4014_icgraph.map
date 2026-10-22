@@ -1,0 +1,10 @@
+<map id="nonce_get_counter_string" name="nonce_get_counter_string">
+<area shape="rect" id="Node000001" title="Format the current message counter as the project counter string." alt="" coords="378,67,548,93"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="496,51,485,48,463,45,442,47,431,52,428,57,434,67,429,65,423,58,427,48,441,42,463,40,487,43,501,52"/>
+<area shape="rect" id="Node000002" href="$a01011.html#a3c8d08dcd72e8bd62b3539b39617ba61" title="Print the counter, timer, ADC and jitter components of the last nonce." alt="" coords="197,29,330,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="360,65,330,63,330,58,365,65"/>
+<area shape="rect" id="Node000003" href="$a00939.html#a7d93edcb89071bebc220d556a863db5f" title="Fill a buffer from an optional platform entropy source." alt="" coords="5,59,149,101"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="360,83,330,87,197,87,149,85,149,80,197,81,330,81,365,83"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="292,14,282,10,263,8,246,10,235,15,231,21,232,30,228,27,226,19,232,10,245,5,263,3,284,5,297,14"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="179,64,150,71,149,66,184,63"/>
+</map>

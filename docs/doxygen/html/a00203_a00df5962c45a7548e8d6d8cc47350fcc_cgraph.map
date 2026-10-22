@@ -1,0 +1,13 @@
+<map id="mpu9250_wait_for_dma_completion" name="mpu9250_wait_for_dma_completion">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,59,165,101"/>
+<area shape="poly" id="edge7_Node000001_Node000001" title=" " alt="" coords="47,58,46,49,52,40,65,34,85,32,106,34,120,43,115,44,105,40,85,37,67,39,55,44,51,50,53,58"/>
+<area shape="rect" id="Node000002" href="$a00191.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="213,29,350,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,62,200,58,195,59,166,67"/>
+<area shape="rect" id="Node000004" href="$a00116.html#ae773c19af7068683ac8b4aa144aa19c2" title=" " alt="" coords="215,104,348,131"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="165,93,203,102,197,102,165,98"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="252,28,247,21,250,11,262,5,281,3,302,5,314,14,309,14,300,10,281,8,264,10,254,15,252,20,257,30"/>
+<area shape="rect" id="Node000003" href="$a00254.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="398,29,507,56"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="350,40,385,42,380,43,351,45"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="423,28,418,21,422,11,433,5,453,3,473,5,486,14,480,14,472,10,453,8,435,10,425,15,423,20,428,30"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="252,102,247,95,250,86,262,80,281,77,302,80,314,89,309,88,300,85,281,83,264,85,254,89,252,95,257,105"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="encrypt_aes_ctr" name="encrypt_aes_ctr">
+<area shape="rect" id="Node000001" title="Encrypt the current plaintext with the sender AES&#45;CTR key and IV." alt="" coords="234,37,348,64"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="323,22,313,18,291,16,270,18,259,23,257,28,262,38,257,36,252,29,256,19,269,13,291,11,314,13,328,22"/>
+<area shape="rect" id="Node000002" href="$a00993.html#a956e503503fd19545be52e101e30ef31" title="Generate transfer IV, encrypt with AES&#45;CTR and authenticate with HMAC." alt="" coords="5,29,186,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="215,51,186,53,186,48,221,50"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="125,14,115,10,95,8,77,10,66,15,62,21,63,29,58,28,57,19,63,10,76,5,96,3,117,5,131,14"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="hash_sram_entropy" name="hash_sram_entropy">
+<area shape="rect" id="Node000001" title="Hash the SRAM startup/runtime entropy buffer with SHA&#45;256." alt="" coords="211,29,346,56"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="310,14,300,10,278,8,258,10,247,15,245,20,250,30,245,28,239,21,243,11,257,5,278,3,302,5,315,14"/>
+<area shape="rect" id="Node000002" href="$a01020.html#aeafd5ea6a6031388ae8904b409741025" title="Hash the global SRAM entropy buffer into its global digest." alt="" coords="5,21,163,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,43,163,45,163,40,198,42"/>
+</map>

@@ -1,0 +1,28 @@
+<map id="otp_record_is_valid_at" name="otp_record_is_valid_at">
+<area shape="rect" id="Node000001" title=" " alt="" coords="707,323,859,349"/>
+<area shape="poly" id="edge15_Node000001_Node000001" title=" " alt="" coords="818,307,807,304,783,301,761,303,749,308,746,313,752,323,747,321,741,314,745,304,760,298,783,296,808,299,823,308"/>
+<area shape="rect" id="Node000002" href="$a00263.html#a1182ffe265553de35b9e2111a5ca9c5c" title=" " alt="" coords="488,161,655,188"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="749,313,590,191,592,186,755,313"/>
+<area shape="rect" id="Node000018" href="$a01008.html#ade17dd0334ee250faa04f5e3d7fc1ed0" title=" " alt="" coords="484,285,659,328"/>
+<area shape="poly" id="edge9_Node000001_Node000018" title=" " alt="" coords="689,323,660,322,660,316,695,323"/>
+<area shape="rect" id="Node000021" href="$a01008.html#ae7dcff87a95731d651bb7218e46d7fbd" title=" " alt="" coords="5,315,184,357"/>
+<area shape="poly" id="edge17_Node000001_Node000021" title=" " alt="" coords="690,339,659,343,446,345,232,343,185,342,184,336,232,337,446,340,659,337,695,339"/>
+<area shape="rect" id="Node000022" href="$a01008.html#a8bcdbe9c78747ac0a265dc0eb9b12aef" title=" " alt="" coords="496,403,647,429"/>
+<area shape="poly" id="edge16_Node000001_Node000022" title=" " alt="" coords="736,355,660,386,611,405,610,400,658,382,730,356"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="606,146,595,142,572,140,550,142,538,147,535,152,541,161,535,160,529,153,534,143,548,137,572,135,597,137,612,146"/>
+<area shape="rect" id="Node000003" href="$a00263.html#adce8d12f93ac9f85f46fada6009cbba9" title=" " alt="" coords="258,29,410,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="538,151,492,120,435,86,410,75,409,70,437,82,495,115,544,151"/>
+<area shape="rect" id="Node000007" href="$a00263.html#a124da816a1ad65d6f910fdfcc8e18158" title=" " alt="" coords="232,120,436,147"/>
+<area shape="poly" id="edge5_Node000002_Node000007" title=" " alt="" coords="474,159,415,150,414,145,479,157"/>
+<area shape="rect" id="Node000013" href="$a00263.html#a89ccf247a17667c73a761948c4b573b0" title="Verify the stored manifest signature using the OTP Ed25519 trust anchor." alt="" coords="242,195,426,237"/>
+<area shape="poly" id="edge7_Node000002_Node000013" title=" " alt="" coords="473,192,427,202,426,197,478,190"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="371,14,358,10,334,8,311,10,298,15,292,21,294,29,289,28,287,19,295,10,310,5,334,3,359,5,376,13"/>
+<area shape="poly" id="edge6_Node000007_Node000007" title=" " alt="" coords="374,106,361,101,334,99,309,101,295,105,292,111,299,120,293,119,287,111,292,101,308,95,334,93,363,96,379,105"/>
+<area shape="poly" id="edge8_Node000013_Node000013" title=" " alt="" coords="371,179,358,176,334,173,311,175,298,180,292,186,294,195,289,193,287,185,295,176,310,170,334,168,359,170,376,179"/>
+<area shape="poly" id="edge10_Node000018_Node000018" title=" " alt="" coords="604,270,593,266,572,264,552,266,540,271,535,277,536,286,532,283,530,275,536,266,551,261,572,259,594,261,610,270"/>
+<area shape="rect" id="Node000019" href="$a01008.html#a0e093b16432a234a2684d2dcdc5135ba" title=" " alt="" coords="260,285,408,328"/>
+<area shape="poly" id="edge11_Node000018_Node000019" title=" " alt="" coords="466,307,409,309,408,304,471,306"/>
+<area shape="poly" id="edge12_Node000019_Node000019" title=" " alt="" coords="371,270,358,266,334,264,311,266,298,271,292,277,294,286,289,284,287,275,295,266,310,261,334,259,359,261,376,270"/>
+<area shape="poly" id="edge13_Node000019_Node000021" title=" " alt="" coords="242,319,185,328,183,322,247,317"/>
+<area shape="poly" id="edge14_Node000021_Node000021" title=" " alt="" coords="132,300,119,296,94,293,72,295,58,300,53,306,54,314,49,314,47,305,55,296,71,290,95,288,120,290,137,298"/>
+</map>

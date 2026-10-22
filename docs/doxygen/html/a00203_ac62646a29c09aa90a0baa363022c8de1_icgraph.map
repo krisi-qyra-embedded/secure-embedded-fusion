@@ -1,0 +1,9 @@
+<map id="app_max31865_runtime_process" name="app_max31865_runtime_process">
+<area shape="rect" id="Node000001" title="Run one MAX31865 runtime sample cycle." alt="" coords="264,29,423,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="372,13,362,10,344,8,327,10,316,15,312,21,313,30,309,27,307,19,313,10,325,5,344,3,364,5,377,14"/>
+<area shape="rect" id="Node000002" href="$a00912.html#a58e3f7a6c1c6edf2b2e0f3f6cc493d62" title=" " alt="" coords="103,37,216,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="246,51,217,53,216,48,251,51"/>
+<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="180,22,173,18,159,16,146,18,139,22,138,28,141,38,136,36,132,29,135,19,144,13,159,11,175,13,185,22"/>
+<area shape="rect" id="Node000003" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,37,55,64"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,52,55,53,55,48,89,50"/>
+</map>

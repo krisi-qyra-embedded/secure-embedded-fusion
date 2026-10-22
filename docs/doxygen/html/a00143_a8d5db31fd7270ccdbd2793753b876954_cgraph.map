@@ -1,0 +1,13 @@
+<map id="esp32_uart_mark_fault_owner_from_isr" name="esp32_uart_mark_fault_owner_from_isr">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,75,159,117"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,74,40,65,47,56,61,50,82,48,105,50,120,58,115,60,103,56,82,53,62,55,50,60,45,66,47,74"/>
+<area shape="rect" id="Node000002" href="$a00143.html#a126596cfae6029485f18ba3a5695e0f3" title=" " alt="" coords="220,29,368,72"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="158,77,207,69,202,71,160,82"/>
+<area shape="rect" id="Node000003" href="$a00149.html#a41b0b8abbc5ea0d93b77a9751fe4a36c" title="Mark one subsystem fault as active from an ISR." alt="" coords="207,120,381,163"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="159,110,194,119,189,120,159,115"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="254,28,252,19,259,10,273,5,294,3,317,5,332,14,326,14,315,10,294,8,274,10,262,15,257,21,258,30"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="254,118,252,110,259,101,273,95,294,93,317,96,332,105,326,104,315,101,294,99,274,101,262,105,257,111,258,121"/>
+<area shape="rect" id="Node000004" href="$a00149.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="429,120,597,163"/>
+<area shape="poly" id="edge6_Node000003_Node000004" title=" " alt="" coords="381,139,416,141,410,141,381,144"/>
+<area shape="poly" id="edge7_Node000004_Node000004" title=" " alt="" coords="472,118,470,110,477,101,491,95,513,93,537,96,552,105,547,104,535,101,513,99,493,101,480,105,475,111,476,121"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/sram_startup_entropy.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/sram_startup_entropy.h">
+<area shape="rect" id="Node000001" title="SRAM startup sampling and entropy buffer declarations." alt="" coords="106,5,394,144"/>
+<area shape="rect" id="Node000002" href="$a00676.html" title="STM32F411 device UID access and fingerprint helper declarations." alt="" coords="194,192,492,331"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="291,155,311,191,306,192,291,161"/>
+<area shape="rect" id="Node000003" href="$a00694.html" title=" " alt="" coords="5,379,308,517"/>
+<area shape="poly" id="edge9_Node000001_Node000003" title=" " alt="" coords="197,160,186,193,173,240,165,289,159,378,153,378,160,288,168,239,181,191,198,155"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="506,238,516,249,518,262,512,280,494,292,491,288,507,277,513,261,511,251,506,243"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="261,344,228,380,224,377,264,340"/>
+<area shape="rect" id="Node000004" href="$a00688.html" title="ECDH, key derivation and AES&#45;GCM declarations for the STM32&#45;ESP32 link." alt="" coords="6,736,304,859"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="99,533,88,566,80,600,77,627,80,654,88,687,111,735,105,736,83,689,75,655,72,627,75,599,83,565,100,528"/>
+<area shape="rect" id="Node000005" href="$a00706.html" title="Nonce generation, counter tracking and entropy&#45;mixing declarations." alt="" coords="98,565,404,688"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="192,529,213,565,207,565,191,534"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="301,550,317,516,329,469,337,421,344,333,346,328,342,421,335,470,322,518,306,553"/>
+<area shape="poly" id="edge8_Node000005_Node000003" title=" " alt="" coords="218,551,202,521,202,515,223,551"/>
+<area shape="poly" id="edge7_Node000005_Node000004" title=" " alt="" coords="211,700,192,737,188,734,207,704"/>
+</map>

@@ -1,0 +1,79 @@
+<map id="generate_nonce_iv_encrypt_hmac_sender" name="generate_nonce_iv_encrypt_hmac_sender">
+<area shape="rect" id="Node000001" title="Generate transfer IV, encrypt with AES&#45;CTR and authenticate with HMAC." alt="" coords="5,223,186,265"/>
+<area shape="poly" id="edge51_Node000001_Node000001" title=" " alt="" coords="54,222,52,213,59,204,74,198,96,196,119,198,134,206,129,208,117,204,95,201,75,203,62,208,58,214,59,222"/>
+<area shape="rect" id="Node000002" href="$a00149.html#a6945cbdff8ff7f9ccbfd0f8b2815f1a7" title="Delay during application fault handling." alt="" coords="458,155,595,181"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,221,170,184,200,167,233,155,287,144,343,141,396,143,447,150,442,153,396,149,343,146,288,149,234,160,203,172,172,189,124,224"/>
+<area shape="rect" id="Node000004" href="$a00761.html#a3c0867283f8cb46d22df22ffe828ad3f" title="Compute sender HMAC over IV and ciphertext." alt="" coords="234,193,393,236"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="185,230,220,226,216,229,188,234"/>
+<area shape="rect" id="Node000005" href="$a00779.html#a950b9506d0cda42471cb177f65f66ece" title="Securely clear a memory region." alt="" coords="703,256,796,283"/>
+<area shape="poly" id="edge53_Node000001_Node000005" title=" " alt="" coords="186,245,689,265,687,269,186,250"/>
+<area shape="rect" id="Node000006" href="$a00761.html#a33eb4336391405e3d7ad1164170c824d" title="Encrypt the legacy payload with AES&#45;CTR." alt="" coords="256,68,370,95"/>
+<area shape="poly" id="edge9_Node000001_Node000006" title=" " alt="" coords="112,221,163,167,196,138,232,111,258,99,254,103,235,116,200,142,167,171,117,224"/>
+<area shape="rect" id="Node000008" href="$a00761.html#a05a3ccd10cfd2becb08787191cb62f0b" title="Generate per&#45;transfer nonce/IV material." alt="" coords="243,373,384,416"/>
+<area shape="poly" id="edge14_Node000001_Node000008" title=" " alt="" coords="128,263,271,363,266,365,128,269"/>
+<area shape="rect" id="Node000015" href="$a00809.html#a2473a4441580b27bdc14f48e2d2fff8e" title="Format and queue a log message." alt="" coords="712,685,787,712"/>
+<area shape="poly" id="edge52_Node000001_Node000015" title=" " alt="" coords="108,263,153,340,226,445,271,500,323,554,380,602,442,642,507,668,576,685,642,693,699,699,694,699,641,699,575,690,506,673,440,646,377,606,319,558,267,504,221,448,149,343,108,268"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="490,154,484,146,488,136,503,130,526,128,551,131,566,139,561,140,550,136,526,133,504,135,492,140,489,145,495,154"/>
+<area shape="rect" id="Node000003" href="$a00212.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="695,155,804,181"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="594,165,682,167,677,169,596,171"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="712,154,706,146,710,136,725,130,750,128,776,131,791,139,786,140,774,136,749,133,726,135,714,140,711,145,717,155"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="273,192,271,183,278,174,292,169,313,167,336,169,351,177,346,179,335,174,313,172,293,174,281,179,276,185,278,193"/>
+<area shape="poly" id="edge7_Node000004_Node000005" title=" " alt="" coords="393,221,612,248,691,260,686,262,611,253,394,227"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="712,255,706,247,710,237,725,231,750,229,776,232,791,241,786,241,774,237,749,235,726,237,714,241,711,247,717,256"/>
+<area shape="poly" id="edge13_Node000006_Node000005" title=" " alt="" coords="369,73,425,71,488,75,552,89,584,101,613,116,631,133,641,152,648,171,661,192,689,220,719,246,714,246,686,224,657,195,643,173,636,154,627,137,610,121,581,106,551,94,487,81,425,76,372,77"/>
+<area shape="poly" id="edge10_Node000006_Node000006" title=" " alt="" coords="277,68,271,59,275,50,290,43,313,41,339,44,353,52,348,54,337,49,313,47,291,49,279,53,276,59,282,67"/>
+<area shape="rect" id="Node000007" href="$a00761.html#a10da30768f6fc93bb304e0c662b2c8a9" title=" " alt="" coords="465,29,587,56"/>
+<area shape="poly" id="edge11_Node000006_Node000007" title=" " alt="" coords="370,69,452,55,448,58,372,73"/>
+<area shape="poly" id="edge12_Node000007_Node000007" title=" " alt="" coords="490,29,484,21,488,11,503,5,526,3,551,5,566,13,561,15,550,10,526,8,504,10,492,15,489,20,495,29"/>
+<area shape="poly" id="edge15_Node000008_Node000002" title=" " alt="" coords="333,371,500,195,504,191,337,375"/>
+<area shape="poly" id="edge50_Node000008_Node000005" title=" " alt="" coords="383,397,435,396,493,393,553,383,610,367,715,293,720,291,613,372,554,389,493,398,435,402,385,402"/>
+<area shape="poly" id="edge26_Node000008_Node000008" title=" " alt="" coords="273,372,271,363,278,354,292,349,313,347,336,349,351,357,346,358,335,354,313,352,293,354,281,359,276,365,278,373"/>
+<area shape="rect" id="Node000009" href="$a00761.html#a70c40321d225a8638f592d9da87612cd" title="Derive GCM IV material from the DRBG path." alt="" coords="441,605,611,632"/>
+<area shape="poly" id="edge16_Node000008_Node000009" title=" " alt="" coords="327,414,374,487,406,529,443,567,484,598,479,597,439,571,402,532,370,490,325,419"/>
+<area shape="rect" id="Node000010" href="$a00764.html#ae757e66c4c6f489a8cdd3abe37761f22" title="Allocate the next unique transmit nonce." alt="" coords="456,456,596,483"/>
+<area shape="poly" id="edge18_Node000008_Node000010" title=" " alt="" coords="377,414,474,450,469,451,377,419"/>
+<area shape="rect" id="Node000013" href="$a00761.html#a0a91b7b6a44d1c8915b253c1170dfaa2" title="Generate the legacy AES&#45;CTR IV." alt="" coords="482,331,570,357"/>
+<area shape="poly" id="edge24_Node000008_Node000013" title=" " alt="" coords="384,375,469,357,464,359,386,380"/>
+<area shape="rect" id="Node000014" href="$a00767.html#afe33546458c97e42c2f5278b88060b42" title="Generate and hash the nonce input material." alt="" coords="464,531,588,557"/>
+<area shape="poly" id="edge27_Node000008_Node000014" title=" " alt="" coords="341,414,443,492,489,523,484,523,439,497,339,419"/>
+<area shape="poly" id="edge17_Node000009_Node000009" title=" " alt="" coords="490,604,484,597,488,587,503,581,526,579,551,581,566,590,561,590,550,586,526,584,504,586,492,591,489,596,495,606"/>
+<area shape="poly" id="edge19_Node000010_Node000010" title=" " alt="" coords="490,455,484,447,488,438,503,431,526,429,551,432,566,441,561,441,550,437,526,435,504,437,492,441,489,447,495,456"/>
+<area shape="rect" id="Node000011" href="$a00281.html#a2dbb6bac54d7675a93c9253bb087f115" title="Encode a 32&#45;bit value in big&#45;endian order." alt="" coords="707,371,792,397"/>
+<area shape="poly" id="edge20_Node000010_Node000011" title=" " alt="" coords="554,453,658,407,694,398,689,400,660,412,556,458"/>
+<area shape="rect" id="Node000012" href="$a00281.html#a28734e2ed2d3512576c98ce386998b12" title="Encode a 64&#45;bit value in big&#45;endian order." alt="" coords="707,445,792,472"/>
+<area shape="poly" id="edge22_Node000010_Node000012" title=" " alt="" coords="596,463,693,461,688,462,597,469"/>
+<area shape="poly" id="edge21_Node000011_Node000011" title=" " alt="" coords="712,370,706,362,710,352,725,346,750,344,776,347,791,355,786,355,774,352,749,349,726,351,714,356,711,361,717,371"/>
+<area shape="poly" id="edge23_Node000012_Node000012" title=" " alt="" coords="712,444,706,437,710,427,725,421,750,419,776,421,791,430,786,430,774,426,749,424,726,426,714,431,711,436,717,446"/>
+<area shape="poly" id="edge25_Node000013_Node000013" title=" " alt="" coords="490,330,484,322,488,312,503,306,526,304,551,307,566,315,561,316,550,312,526,309,504,311,492,316,489,321,495,331"/>
+<area shape="poly" id="edge49_Node000014_Node000005" title=" " alt="" coords="562,528,588,513,609,493,622,472,630,453,634,415,638,377,644,355,657,333,680,308,706,292,710,289,684,312,661,336,649,358,643,378,639,416,635,454,627,475,613,496,591,517,565,533"/>
+<area shape="poly" id="edge36_Node000014_Node000014" title=" " alt="" coords="490,529,484,522,488,512,503,506,526,504,551,507,566,516,561,515,550,512,526,509,504,511,492,516,489,521,495,531"/>
+<area shape="poly" id="edge28_Node000014_Node000015" title=" " alt="" coords="589,554,613,567,631,587,639,607,646,627,661,647,703,679,698,677,657,651,642,630,634,609,626,590,610,571,588,559"/>
+<area shape="rect" id="Node000019" href="$a00779.html#a7404c52d7aa3a6ba766121c9a8e7d803" title="Increment the message counter after a transmission." alt="" coords="659,595,840,637"/>
+<area shape="poly" id="edge37_Node000014_Node000019" title=" " alt="" coords="575,555,612,567,673,589,668,589,611,572,574,561"/>
+<area shape="rect" id="Node000020" href="$a00779.html#ac3f2ada5efd0c8e753063263d53a66d3" title="Generate the next nonce into the shared nonce buffer." alt="" coords="670,520,829,547"/>
+<area shape="poly" id="edge39_Node000014_Node000020" title=" " alt="" coords="588,538,657,537,652,538,589,544"/>
+<area shape="poly" id="edge29_Node000015_Node000015" title=" " alt="" coords="712,684,706,677,710,667,725,661,750,659,776,661,791,671,786,670,774,666,749,664,726,666,714,671,711,676,717,686"/>
+<area shape="rect" id="Node000016" href="$a00809.html#ac124d466587506bf4f0a18669c435e53" title="Queue a raw byte buffer for logging." alt="" coords="913,685,1026,712"/>
+<area shape="poly" id="edge30_Node000015_Node000016" title=" " alt="" coords="787,696,900,699,895,699,787,701"/>
+<area shape="poly" id="edge35_Node000016_Node000016" title=" " alt="" coords="936,684,930,677,934,667,948,661,969,659,993,661,1006,671,1001,670,991,666,969,664,949,666,938,671,936,676,941,686"/>
+<area shape="rect" id="Node000017" href="$a00725.html#a403ab46c86d54fea97cfc787b9a6150a" title="Get the remaining ring&#45;buffer capacity." alt="" coords="1130,685,1197,712"/>
+<area shape="poly" id="edge31_Node000016_Node000017" title=" " alt="" coords="1026,696,1117,699,1111,699,1026,701"/>
+<area shape="poly" id="edge32_Node000017_Node000017" title=" " alt="" coords="1137,684,1133,677,1136,667,1146,661,1163,659,1181,661,1192,671,1187,669,1179,666,1163,664,1148,666,1140,670,1138,676,1142,686"/>
+<area shape="rect" id="Node000018" href="$a00725.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="1275,685,1349,712"/>
+<area shape="poly" id="edge33_Node000017_Node000018" title=" " alt="" coords="1197,696,1262,699,1257,699,1197,701"/>
+<area shape="poly" id="edge34_Node000018_Node000018" title=" " alt="" coords="1286,684,1281,677,1285,667,1295,661,1312,659,1330,661,1341,671,1336,669,1328,666,1312,664,1297,666,1289,670,1287,676,1291,686"/>
+<area shape="poly" id="edge38_Node000019_Node000019" title=" " alt="" coords="708,593,706,585,713,576,728,570,750,568,773,570,789,579,783,579,772,576,749,573,729,575,716,580,711,586,712,596"/>
+<area shape="poly" id="edge44_Node000020_Node000020" title=" " alt="" coords="712,519,706,511,710,501,725,495,750,493,776,496,791,505,786,505,774,501,749,499,726,501,714,505,711,511,717,520"/>
+<area shape="rect" id="Node000021" href="$a00782.html#a73b97cfc31bcd06f6b636a6e7ac06af3" title=" " alt="" coords="888,437,1051,464"/>
+<area shape="poly" id="edge40_Node000020_Node000021" title=" " alt="" coords="781,517,887,474,905,470,910,468,889,478,782,522"/>
+<area shape="rect" id="Node000022" href="$a00779.html#a5b74437bb341db1f2cd53ca496e500ed" title="Build the static entropy value from the hashed hardware sources." alt="" coords="893,512,1046,555"/>
+<area shape="poly" id="edge42_Node000020_Node000022" title=" " alt="" coords="829,531,880,533,875,534,829,536"/>
+<area shape="rect" id="Node000023" href="$a00782.html#a8af10b21d3f570b16bad20a866618454" title=" " alt="" coords="890,603,1048,629"/>
+<area shape="poly" id="edge45_Node000020_Node000023" title=" " alt="" coords="805,545,841,556,929,596,924,595,839,561,804,550"/>
+<area shape="poly" id="edge41_Node000021_Node000021" title=" " alt="" coords="936,436,930,429,934,419,948,413,969,411,993,413,1006,422,1001,422,991,418,969,416,949,418,938,423,936,428,941,438"/>
+<area shape="poly" id="edge43_Node000022_Node000022" title=" " alt="" coords="933,510,931,502,937,493,950,487,969,485,990,488,1004,497,999,496,989,493,969,491,951,493,940,497,936,503,937,513"/>
+<area shape="poly" id="edge48_Node000023_Node000023" title=" " alt="" coords="936,601,930,594,934,584,948,578,969,576,993,579,1006,588,1001,587,991,584,969,581,949,583,938,588,936,593,941,603"/>
+<area shape="rect" id="Node000024" href="$a00779.html#a050a1266b3e065a9850a897b2a3398ce" title=" " alt="" coords="1099,603,1227,629"/>
+<area shape="poly" id="edge46_Node000023_Node000024" title=" " alt="" coords="1049,613,1086,616,1081,616,1049,619"/>
+<area shape="poly" id="edge47_Node000024_Node000024" title=" " alt="" coords="1137,601,1133,594,1136,584,1146,578,1163,576,1181,579,1192,588,1187,587,1179,584,1163,581,1148,583,1140,588,1138,593,1142,603"/>
+</map>
