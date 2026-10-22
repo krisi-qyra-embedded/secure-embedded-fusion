@@ -1,3 +1,19 @@
+\## System Architecture
+
+
+
+The diagram below illustrates the STM32–ESP32 platform,
+
+including sensor acquisition, secure boot, AES-GCM
+
+communication, fault recovery, and cloud integration.
+
+
+
+\[STM32–ESP32 System Architecture](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/system-architecture.svg)
+
+
+
 \## Engineering Evidence
 
 
@@ -14,7 +30,7 @@ and corresponding demonstration evidence.
 
 
 
-\[View Development Evolution](docs/development-evolution.md)
+\[View Development Evolution](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/development-evolution.md)
 
 
 
@@ -36,5 +52,5 @@ and secure bootloader source code.
 
 
 
-\[View Runtime Demonstrations](docs/runtime-demonstrations.md)
+\[View Runtime Demonstrations](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/runtime-demonstrations.md)
 

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1600" viewBox="0 0 1840 1600" role="img" aria-labelledby="title desc">
+<title id="title">Secure STM32–ESP32 IoT Sensor Platform — system architecture</title><desc id="desc">STM32 secure boot enables supervised sensor acquisition. Directional P-256 and SHA-256 key derivation support a full-duplex AES-256-GCM UART link. The ESP32 validates data and runs either AWS MQTT over TLS or local HTTPS with ESP32 OTA. Watchdog supervision connects bounded recovery to reboot and repeated firmware verification.</desc>
+<rect width="1840" height="1600" fill="#091629"/>
+<defs>
+<marker id="blue-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6cb9ff"/></marker>
+<marker id="green-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#79dbc3"/></marker>
+<marker id="muted-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b2c7e0"/></marker>
+</defs><g font-family="DejaVu Sans, sans-serif">
+<text x="60" y="63" font-size="43" font-weight="500" fill="#e8f2ff" text-anchor="start">Secure STM32–ESP32 IoT Sensor Platform</text>
+<text x="60" y="104" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">Verified startup  /  Supervised acquisition  /  Authenticated telemetry  /  Local and cloud monitoring</text>
+<rect x="60" y="160" width="810" height="245" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="88" y="195" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">STM32 STARTUP</text>
+<text x="88" y="238" font-size="29" font-weight="500" fill="#e8f2ff" text-anchor="start">Verify before application execution</text>
+<text x="88" y="277" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">OTP public key → Ed25519 verification of the signed manifest</text>
+<text x="88" y="309" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">Application SHA-256 → compare with the manifest hash</text>
+<text x="88" y="341" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">MSP + reset handler checks → stop SysTick, clear IRQs, set VTOR</text>
+<text x="88" y="384" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">App: 0x08020000–0x0805FFFF  ·  Manifest: 0x08060000</text>
+<rect x="970" y="160" width="810" height="245" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="998" y="195" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">CRYPTOGRAPHIC SETUP</text>
+<text x="998" y="238" font-size="29" font-weight="500" fill="#e8f2ff" text-anchor="start">Separate keys for each UART direction</text>
+<text x="998" y="277" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">Provisioned P-256 ECDH material → SHA-256 key derivation</text>
+<text x="998" y="309" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">AES-256-GCM: 12-byte nonce + ciphertext + 16-byte tag</text>
+<text x="998" y="341" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">Fresh nonce per encryption attempt; nonce state persists across</text>
+<text x="998" y="373" font-size="23" font-weight="400" fill="#b2c7e0" text-anchor="start">resets</text>
+<rect x="60" y="460" width="810" height="425" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="88" y="495" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">STM32F411RE · CMSIS / HAL · FREERTOS</text>
+<text x="88" y="538" font-size="29" font-weight="500" fill="#e8f2ff" text-anchor="start">Sensor acquisition and encrypted telemetry</text>
+<rect x="87" y="562" width="310" height="294" rx="16" fill="#142f4e" stroke="#355570" stroke-width="1.5"/>
+<text x="109" y="597" font-size="25" font-weight="500" fill="#e8f2ff" text-anchor="start">Sensor bank</text>
+<text x="109" y="632" font-size="21" font-weight="500" fill="#e8f2ff" text-anchor="start">BME680 · I²C</text>
+<text x="109" y="656" font-size="16" font-weight="400" fill="#b2c7e0" text-anchor="start">Temperature / RH / pressure / gas</text>
+<text x="109" y="679" font-size="21" font-weight="500" fill="#e8f2ff" text-anchor="start">MPU9250 · I²C</text>
+<text x="109" y="703" font-size="16" font-weight="400" fill="#b2c7e0" text-anchor="start">Acceleration / angular velocity</text>
+<text x="109" y="726" font-size="21" font-weight="500" fill="#e8f2ff" text-anchor="start">MAX31865 + PT100 · SPI</text>
+<text x="109" y="750" font-size="16" font-weight="400" fill="#b2c7e0" text-anchor="start">Probe temperature</text>
+<text x="109" y="773" font-size="21" font-weight="500" fill="#e8f2ff" text-anchor="start">PMS5003 · UART</text>
+<text x="109" y="797" font-size="16" font-weight="400" fill="#b2c7e0" text-anchor="start">PM1.0 / PM2.5 / PM10 / counts</text>
+<text x="109" y="820" font-size="21" font-weight="500" fill="#e8f2ff" text-anchor="start">DS18B20 × 5 · 1-Wire</text>
+<text x="109" y="844" font-size="16" font-weight="400" fill="#b2c7e0" text-anchor="start">Temperature</text>
+<rect x="455" y="562" width="388" height="294" rx="16" fill="#142f4e" stroke="#355570" stroke-width="1.5"/>
+<text x="480" y="597" font-size="23" font-weight="500" fill="#e8f2ff" text-anchor="start">Task / peripheral coordination</text>
+<text x="480" y="639" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Dedicated sensor tasks</text>
+<text x="480" y="673" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">DMA IRQ → binary semaphore</text>
+<text x="480" y="707" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Bounded transfer waits</text>
+<text x="480" y="741" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Queues → telemetry snapshot</text>
+<text x="480" y="775" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">USART2 logging mutex</text>
+<text x="480" y="809" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">CMOX AES-256-GCM</text>
+<path d="M 401 707 H 450" fill="none" stroke="#6cb9ff" stroke-width="2.5" marker-end="url(#blue-arrow)"/>
+<text x="425" y="689" font-size="17" font-weight="400" fill="#b2c7e0" text-anchor="middle">data</text>
+<path d="M 465 406 V 452" fill="none" stroke="#6cb9ff" stroke-width="2.5" marker-end="url(#blue-arrow)"/>
+<text x="482" y="439" font-size="18" font-weight="400" fill="#b2c7e0" text-anchor="start">both checks pass</text>
+<rect x="970" y="460" width="810" height="425" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="998" y="495" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">ESP32 · MBEDTLS · FREERTOS</text>
+<text x="998" y="538" font-size="29" font-weight="500" fill="#e8f2ff" text-anchor="start">Authenticate before accepting telemetry</text>
+<text x="998" y="572" font-size="24" font-weight="400" fill="#b2c7e0" text-anchor="start">GCM authentication and decryption</text>
+<text x="998" y="617" font-size="24" font-weight="400" fill="#b2c7e0" text-anchor="start">Format, replay freshness and parsing checks</text>
+<text x="998" y="662" font-size="24" font-weight="400" fill="#b2c7e0" text-anchor="start">Accepted snapshot updates only after validation</text>
+<text x="998" y="707" font-size="24" font-weight="400" fill="#b2c7e0" text-anchor="start">Encrypted ACK/NACK carries the request sequence</text>
+<text x="998" y="752" font-size="24" font-weight="400" fill="#b2c7e0" text-anchor="start">STM32 data combines with local ESP32 readings</text>
+<text x="998" y="846" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Rejected packets leave accepted telemetry unchanged.</text>
+<path d="M 1375 406 V 452" fill="none" stroke="#6cb9ff" stroke-width="2.5" marker-end="url(#blue-arrow)"/>
+<text x="1393" y="439" font-size="18" font-weight="400" fill="#b2c7e0" text-anchor="start">directional AES keys</text>
+<text x="921" y="583" font-size="17" font-weight="500" fill="#6cb9ff" text-anchor="middle">USART6</text>
+<path d="M 876 624 H 963" fill="none" stroke="#6cb9ff" stroke-width="2.5" marker-end="url(#blue-arrow)"/>
+<text x="922" y="610" font-size="17" font-weight="500" fill="#6cb9ff" text-anchor="middle">DATA</text>
+<path d="M 965 691 H 876" fill="none" stroke="#79dbc3" stroke-width="2.5" marker-end="url(#green-arrow)"/>
+<text x="922" y="725" font-size="17" font-weight="500" fill="#79dbc3" text-anchor="middle">ACK</text>
+<text x="922" y="751" font-size="15" font-weight="400" fill="#79dbc3" text-anchor="middle">/ NACK</text>
+<rect x="60" y="954" width="810" height="375" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="88" y="989" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">STM32 HEALTH AND RECOVERY</text>
+<text x="88" y="1032" font-size="29" font-weight="500" fill="#e8f2ff" text-anchor="start">Progress gates the independent watchdog</text>
+<text x="88" y="1068" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Sensor fault → peripheral / sensor recovery, up to 3 attempts</text>
+<text x="88" y="1102" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">UART timeout / rejection → up to 3 transaction attempts</text>
+<text x="88" y="1136" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Retry uses a fresh nonce and retains the request sequence</text>
+<text x="88" y="1170" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Supervisor checks sensor and communication heartbeats</text>
+<text x="88" y="1204" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Driver activity and successful sensor readings are distinct</text>
+<text x="88" y="1238" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Healthy system → refresh IWDG; persistent fault → stop refresh</text>
+<text x="88" y="1272" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Watchdog reset → repeat secure boot before restarting</text>
+<path d="M 465 886 V 947" fill="none" stroke="#b2c7e0" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#muted-arrow)"/>
+<text x="481" y="930" font-size="19" font-weight="400" fill="#b2c7e0" text-anchor="start">heartbeats + fault reports</text>
+<path d="M 61 1240 H 27 V 275 H 52" fill="none" stroke="#79dbc3" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#green-arrow)"/>
+<rect x="970" y="954" width="810" height="375" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="998" y="989" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">ESP32 NETWORK MODE CONTROL</text>
+<text x="998" y="1032" font-size="29" font-weight="500" fill="#e8f2ff" text-anchor="start">Orderly switching manages TLS memory</text>
+<text x="998" y="1061" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">AP client present: stop AWS → start local HTTPS</text>
+<text x="998" y="1090" font-size="22" font-weight="400" fill="#b2c7e0" text-anchor="start">Last AP client leaves: stop HTTPS → restart AWS when STA is ready</text>
+<rect x="998" y="1117" width="362" height="170" rx="16" fill="#142f4e" stroke="#355570" stroke-width="1.5"/>
+<rect x="1385" y="1117" width="367" height="170" rx="16" fill="#142f4e" stroke="#355570" stroke-width="1.5"/>
+<text x="1022" y="1150" font-size="25" font-weight="500" fill="#e8f2ff" text-anchor="start">AWS IoT Core</text>
+<text x="1409" y="1150" font-size="25" font-weight="500" fill="#e8f2ff" text-anchor="start">Local HTTPS</text>
+<text x="1022" y="1182" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">MQTT over TLS</text>
+<text x="1409" y="1182" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">Dashboard + JSON updates</text>
+<text x="1022" y="1210" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">JSON publish / subscribe</text>
+<text x="1409" y="1210" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">Wi-Fi configuration</text>
+<text x="1022" y="1238" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">CA + device certificate</text>
+<text x="1409" y="1238" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">ESP32 OTA updates</text>
+<text x="1022" y="1266" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">Reconnect + keepalive</text>
+<text x="1409" y="1266" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">TLS server certificate</text>
+<text x="998" y="1311" font-size="21" font-weight="400" fill="#b2c7e0" text-anchor="start">ESP32 supervisor monitors network task health.</text>
+<path d="M 1375 886 V 947" fill="none" stroke="#6cb9ff" stroke-width="2.5" marker-end="url(#blue-arrow)"/>
+<text x="1391" y="930" font-size="19" font-weight="400" fill="#b2c7e0" text-anchor="start">accepted data + local readings</text>
+<rect x="60" y="1393" width="1720" height="131" rx="16" fill="#10243d" stroke="#355570" stroke-width="1.5"/>
+<text x="88" y="1429" font-size="20" font-weight="500" fill="#6cb9ff" text-anchor="start">FAULT-INJECTION VALIDATION</text>
+<text x="88" y="1468" font-size="22" font-weight="500" fill="#e8f2ff" text-anchor="start">Firmware / key / signature</text>
+<text x="88" y="1500" font-size="19" font-weight="400" fill="#b2c7e0" text-anchor="start">Blocks application execution</text>
+<text x="513" y="1468" font-size="22" font-weight="500" fill="#e8f2ff" text-anchor="start">Sensor communication faults</text>
+<text x="513" y="1500" font-size="19" font-weight="400" fill="#b2c7e0" text-anchor="start">Recovery and watchdog reset</text>
+<text x="938" y="1468" font-size="22" font-weight="500" fill="#e8f2ff" text-anchor="start">Ciphertext / tag corruption</text>
+<text x="938" y="1500" font-size="19" font-weight="400" fill="#b2c7e0" text-anchor="start">Authenticated rejection / retries</text>
+<text x="1363" y="1468" font-size="22" font-weight="500" fill="#e8f2ff" text-anchor="start">Replay / counter / session</text>
+<text x="1363" y="1500" font-size="19" font-weight="400" fill="#b2c7e0" text-anchor="start">Freshness rejection and logs</text>
+<text x="60" y="1568" font-size="20" font-weight="400" fill="#b2c7e0" text-anchor="start">Krisi Qyra · Architecture based on project documentation · 5 October 2026</text>
+<text x="1780" y="1568" font-size="18" font-weight="400" fill="#b2c7e0" text-anchor="end">Arrows: data / control   ·   Dashed: supervision / reset</text>
+</g></svg>
