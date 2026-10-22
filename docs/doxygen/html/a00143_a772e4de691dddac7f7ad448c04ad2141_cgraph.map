@@ -1,7 +1,0 @@
-<map id="telemetry_publish_bme680" name="telemetry_publish_bme680">
-<area shape="rect" id="Node000001" title="Publish the latest BME680 sample." alt="" coords="5,29,182,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="55,29,49,21,54,11,69,5,94,3,120,5,136,14,130,14,119,10,93,8,70,10,57,15,54,20,61,29"/>
-<area shape="rect" id="Node000002" href="$a00254.html#aa891c98d9faefbdb171bf6d9ea70ec17" title="Advance a telemetry generation counter." alt="" coords="230,29,404,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,40,217,43,212,43,182,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="279,28,272,21,277,11,292,5,317,3,343,5,359,14,354,14,342,10,317,8,293,10,281,15,278,20,284,30"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="bme680_dev" name="bme680_dev">
-<area shape="rect" id="Node000001" title="BME680 device structure." alt="" coords="176,104,272,131"/>
-<area shape="rect" id="Node000002" href="$a00339.html" title="Structure to hold the Calibration data." alt="" coords="5,5,139,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,38,206,102,202,105,104,43"/>
-<area shape="rect" id="Node000003" href="$a00343.html" title="BME680 sensor settings structure which comprises of ODR, over&#45;sampling and filter settings." alt="" coords="163,5,285,32"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="226,46,226,105,222,102,222,50"/>
-<area shape="rect" id="Node000004" href="$a00347.html" title="BME680 gas sensor which comprises of gas settings and status parameters." alt="" coords="308,5,433,32"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="344,40,285,82,247,106,245,101,283,78,339,42"/>
-</map>

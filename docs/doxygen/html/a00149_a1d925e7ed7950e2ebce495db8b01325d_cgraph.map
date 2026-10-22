@@ -1,7 +1,0 @@
-<map id="system_fault_mark_completed" name="system_fault_mark_completed">
-<area shape="rect" id="Node000001" title="Mark fault handling completed." alt="" coords="5,37,205,64"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="66,37,59,29,64,19,79,13,105,11,133,13,149,22,144,23,132,18,105,16,81,18,67,23,64,28,71,37"/>
-<area shape="rect" id="Node000002" href="$a00149.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="253,29,421,72"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="205,48,239,50,234,51,205,53"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="293,27,291,19,298,10,314,5,337,3,362,5,378,14,373,13,360,10,337,8,315,10,302,15,296,21,298,30"/>
-</map>

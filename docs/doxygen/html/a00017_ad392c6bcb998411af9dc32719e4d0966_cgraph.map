@@ -1,7 +1,0 @@
-<map id="clock_100_mhz_init" name="clock_100_mhz_init">
-<area shape="rect" id="Node000001" title="Compatibility wrapper for existing clock initialization calls." alt="" coords="5,29,142,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,29,37,21,41,11,53,5,74,3,95,5,108,14,103,14,94,10,73,8,55,10,45,15,42,20,47,29"/>
-<area shape="rect" id="Node000002" href="$a00122.html#a86315fae717e15ae91d7020f9d0191d7" title="Configure the system clock for 96 MHz from the 8 MHz HSE." alt="" coords="190,29,319,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="142,40,176,42,171,43,142,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="223,28,218,21,222,11,234,5,254,3,276,5,289,14,284,14,274,10,254,8,236,10,226,15,223,20,228,30"/>
-</map>

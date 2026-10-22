@@ -1,7 +1,0 @@
-<map id="wifi_app_set_softap_client_connected_callback" name="wifi_app_set_softap_client_connected_callback">
-<area shape="rect" id="Node000001" title="Set the callback for a SoftAP client connection." alt="" coords="131,29,312,72"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="248,13,239,10,221,8,205,10,195,14,191,21,192,30,187,27,186,19,191,10,203,5,221,3,241,5,254,14"/>
-<area shape="rect" id="Node000002" href="$a00888.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,37,83,64"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,51,83,53,83,48,118,50"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="73,23,64,18,44,16,26,18,16,23,13,28,18,36,13,38,8,29,12,19,24,13,44,11,65,13,78,22"/>
-</map>

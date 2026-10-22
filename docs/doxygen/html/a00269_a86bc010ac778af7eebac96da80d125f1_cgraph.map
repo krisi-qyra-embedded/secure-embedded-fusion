@@ -1,7 +1,0 @@
-<map id="flash_wait_for_last_operation" name="flash_wait_for_last_operation">
-<area shape="rect" id="Node000001" title="Wait for the current Flash operation to complete or time out." alt="" coords="5,29,136,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,28,41,19,45,11,55,5,71,3,87,5,98,13,92,14,85,10,70,8,57,10,49,14,46,20,47,29"/>
-<area shape="rect" id="Node000002" href="$a00275.html#a1ecf3b22458f872484b8267be7b86e7f" title="Read the current SysTick timebase value atomically." alt="" coords="184,37,251,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="136,48,171,50,165,51,136,53"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="192,36,187,29,190,19,201,13,217,11,235,13,246,23,241,22,233,18,217,16,202,18,194,22,193,28,196,38"/>
-</map>

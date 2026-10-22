@@ -1,8 +1,0 @@
-<map id="app_mpu9250_sensor_stack_init" name="app_mpu9250_sensor_stack_init">
-<area shape="rect" id="Node000001" title="Initialize the MPU9250 sensor stack." alt="" coords="200,29,348,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="296,13,289,10,274,8,261,10,253,14,249,20,250,30,246,27,244,19,249,11,259,5,274,3,290,5,301,14"/>
-<area shape="rect" id="Node000002" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,37,152,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="182,51,153,53,152,48,187,50"/>
-<area shape="rect" id="Node000003" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
-<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,52,55,53,55,48,89,50"/>
-</map>

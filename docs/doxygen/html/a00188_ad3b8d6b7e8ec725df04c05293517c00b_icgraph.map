@@ -1,7 +1,0 @@
-<map id="esp32_uart_tx_free_locked" name="esp32_uart_tx_free_locked">
-<area shape="rect" id="Node000001" title=" " alt="" coords="244,29,376,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="342,13,331,10,310,8,290,10,278,15,273,21,275,30,270,27,268,19,275,10,289,5,310,3,332,5,347,14"/>
-<area shape="rect" id="Node000002" href="$a00188.html#a60886343a52cb05b14f7a71e72d28391" title="Get the remaining TX buffer space." alt="" coords="5,37,196,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="225,51,196,53,196,48,231,50"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="135,22,124,18,100,16,79,18,67,23,64,28,70,37,65,37,59,29,63,19,77,13,101,11,125,13,140,22"/>
-</map>

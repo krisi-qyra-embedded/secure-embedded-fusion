@@ -1,5 +1,0 @@
-<map id="esp32_aes_gcm_ctx_t" name="esp32_aes_gcm_ctx_t">
-<area shape="rect" id="Node000001" title="Independent GCM objects and the current transmit nonce." alt="" coords="18,104,170,131"/>
-<area shape="rect" id="Node000002" href="$a00595.html" title="Persistent TX session with packet counters held in RAM." alt="" coords="5,5,183,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="96,46,97,104,91,103,92,49"/>
-</map>

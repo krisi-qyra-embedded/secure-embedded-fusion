@@ -1,8 +1,0 @@
-<map id="check_reset_source" name="check_reset_source">
-<area shape="rect" id="Node000001" title="Check if the last reset came from IWDG." alt="" coords="200,29,338,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="292,14,285,10,269,8,255,10,247,14,245,20,249,30,244,28,240,21,243,11,253,5,269,3,287,5,297,15"/>
-<area shape="rect" id="Node000002" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,29,152,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="182,43,152,45,152,40,187,43"/>
-<area shape="rect" id="Node000003" href="$a00906.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,44,55,45,55,40,89,42"/>
-</map>

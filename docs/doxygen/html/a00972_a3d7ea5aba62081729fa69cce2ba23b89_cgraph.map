@@ -1,6 +1,0 @@
-<map id="uart2_read" name="uart2_read">
-<area shape="rect" id="Node000001" title="Read one character from USART2." alt="" coords="5,29,88,56"/>
-<area shape="rect" id="Node000002" href="$a00975.html#a3d7ea5aba62081729fa69cce2ba23b89" title="Read one character from USART2." alt="" coords="136,29,218,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,40,123,42,117,43,88,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="154,28,150,21,153,11,162,5,177,3,193,5,202,15,197,14,191,10,177,8,164,10,157,14,155,20,159,30"/>
-</map>

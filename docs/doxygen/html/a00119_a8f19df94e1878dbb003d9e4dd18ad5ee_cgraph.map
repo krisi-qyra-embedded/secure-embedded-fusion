@@ -1,7 +1,0 @@
-<map id="bme_GetGasScore" name="bme_GetGasScore">
-<area shape="rect" id="Node000001" title="Calculate the current gas contribution to IAQ." alt="" coords="5,29,138,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="42,29,37,21,41,11,53,5,72,3,92,5,104,14,99,14,90,10,71,8,54,10,45,15,43,20,47,29"/>
-<area shape="rect" id="Node000002" href="$a00254.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="186,29,295,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="138,40,173,42,167,43,138,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="211,28,206,21,210,11,221,5,240,3,261,5,273,15,268,14,259,10,240,8,223,10,214,15,211,20,216,30"/>
-</map>

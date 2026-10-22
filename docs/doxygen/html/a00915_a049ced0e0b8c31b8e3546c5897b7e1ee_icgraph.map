@@ -1,8 +1,0 @@
-<map id="bme680_task" name="bme680_task">
-<area shape="rect" id="Node000001" title=" " alt="" coords="200,29,299,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="269,13,263,10,250,8,237,10,231,14,229,20,233,30,228,28,224,20,227,11,235,5,250,3,265,5,274,15"/>
-<area shape="rect" id="Node000002" href="$a00915.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,29,152,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="182,43,152,45,152,40,187,43"/>
-<area shape="rect" id="Node000003" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,44,55,45,55,40,89,42"/>
-</map>

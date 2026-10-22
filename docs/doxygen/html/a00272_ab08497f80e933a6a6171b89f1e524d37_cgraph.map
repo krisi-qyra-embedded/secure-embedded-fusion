@@ -1,7 +1,0 @@
-<map id="delay" name="delay">
-<area shape="rect" id="Node000001" title="Block for the requested number of system ticks." alt="" coords="5,29,58,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="12,29,9,20,11,11,19,5,32,3,45,5,53,13,48,14,42,10,31,8,21,10,15,14,14,20,17,29"/>
-<area shape="rect" id="Node000002" href="$a00272.html#a1ecf3b22458f872484b8267be7b86e7f" title="Read the current SysTick timebase value atomically." alt="" coords="106,29,173,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="58,40,93,42,88,43,58,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="120,28,116,20,119,11,127,5,139,3,153,5,161,14,156,13,150,10,139,8,129,10,123,14,122,20,125,30"/>
-</map>

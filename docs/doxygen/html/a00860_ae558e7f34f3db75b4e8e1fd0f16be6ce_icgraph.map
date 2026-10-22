@@ -1,7 +1,0 @@
-<map id="wifi_application_connected_events" name="wifi_application_connected_events">
-<area shape="rect" id="Node000001" title="Record station connectivity and select the application mode." alt="" coords="131,29,308,72"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="246,13,237,10,219,8,203,10,193,14,189,20,190,30,186,27,184,19,190,10,202,5,219,3,238,5,251,14"/>
-<area shape="rect" id="Node000002" href="$a00860.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,37,83,64"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,51,83,53,83,48,118,50"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="72,23,63,18,44,16,26,18,16,23,14,28,19,36,14,38,9,29,12,19,24,13,44,11,65,13,78,22"/>
-</map>

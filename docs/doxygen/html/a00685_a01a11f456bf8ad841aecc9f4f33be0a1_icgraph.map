@@ -1,7 +1,0 @@
-<map id="print_hex_bytes_comma" name="print_hex_bytes_comma">
-<area shape="rect" id="Node000001" title="Print a byte buffer in comma&#45;separated hexadecimal form." alt="" coords="233,29,396,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="350,14,339,10,314,8,291,10,279,15,276,20,282,30,277,28,271,21,275,11,290,5,314,3,340,5,356,14"/>
-<area shape="rect" id="Node000002" href="$a00757.html#a49de87de2ea8e960703f0261b3582e7d" title="Print the Ed25519 keypair currently stored in the signing context." alt="" coords="5,29,185,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,43,185,45,185,40,220,43"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="131,14,120,10,95,8,72,10,59,15,57,20,63,29,57,29,51,21,56,11,71,5,95,3,121,5,136,14"/>
-</map>

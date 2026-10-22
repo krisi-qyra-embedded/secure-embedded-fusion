@@ -1,7 +1,0 @@
-<map id="heartbeat_signal_mpu9250" name="heartbeat_signal_mpu9250">
-<area shape="rect" id="Node000001" title="Signal MPU9250 driver activity." alt="" coords="5,29,182,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="64,28,59,21,63,11,75,5,94,3,114,5,126,14,121,14,112,10,93,8,76,10,67,15,65,20,69,29"/>
-<area shape="rect" id="Node000002" href="$a00206.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="230,29,294,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="182,40,216,43,211,43,182,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="233,28,228,21,231,11,243,5,262,3,282,5,294,15,289,14,280,10,262,8,244,10,235,15,233,20,238,30"/>
-</map>

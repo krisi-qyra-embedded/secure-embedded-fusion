@@ -1,9 +1,0 @@
-<map id="DS18B20_AppRun" name="DS18B20_AppRun">
-<area shape="rect" id="Node000001" title="Run one DS18B20 application state&#45;machine step." alt="" coords="253,29,384,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="345,14,337,10,319,8,302,10,293,15,290,20,295,30,290,28,285,21,289,11,300,5,319,3,339,5,350,15"/>
-<area shape="rect" id="Node000002" href="$a00866.html#adc37d956e02510e6d3b03c4c0a267ad3" title=" " alt="" coords="103,29,205,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="235,43,206,45,205,40,240,43"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="173,14,167,10,154,8,141,10,135,14,133,20,137,30,132,28,128,20,131,11,140,5,154,3,169,5,178,15"/>
-<area shape="rect" id="Node000003" href="$a00866.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="85,44,55,45,55,40,90,42"/>
-</map>

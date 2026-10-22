@@ -1,7 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Src/pwm_dma.c" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/Safe_Boot_verify/Src/pwm_dma.c">
-<area shape="rect" id="Node000001" title="TIM1 input&#45;capture jitter collection through DMA2 Stream6." alt="" coords="5,5,225,112"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="18,160,110,187"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,110,78,147,74,144,89,114"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="135,160,199,187"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="141,110,157,146,152,145,138,114"/>
-</map>

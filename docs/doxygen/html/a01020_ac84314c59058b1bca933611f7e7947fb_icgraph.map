@@ -1,6 +1,0 @@
-<map id="fpu_enable" name="fpu_enable">
-<area shape="rect" id="Node000001" title="Enable the floating point unit." alt="" coords="103,29,187,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="162,13,157,10,145,8,134,10,128,14,126,20,129,30,124,28,121,20,123,11,131,5,145,3,159,5,168,14"/>
-<area shape="rect" id="Node000002" href="$a00906.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="85,44,55,45,55,40,90,42"/>
-</map>

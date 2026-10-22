@@ -1,6 +1,0 @@
-<map id="generate_nonce_iv_encrypt_gcm_sender" name="generate_nonce_iv_encrypt_gcm_sender">
-<area shape="rect" id="Node000001" title="Allocate a nonce and encrypt the sender payload." alt="" coords="269,29,449,72"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="397,13,384,10,359,8,336,10,321,15,316,21,317,30,313,27,311,19,318,10,334,5,359,3,385,5,402,14"/>
-<area shape="rect" id="Node000002" href="$a01017.html#ae0f5e3d87c01bfba1f72168c91121bdc" title="Encrypt one UART payload with AES&#45;GCM." alt="" coords="5,37,221,64"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,51,221,53,221,48,256,51"/>
-</map>

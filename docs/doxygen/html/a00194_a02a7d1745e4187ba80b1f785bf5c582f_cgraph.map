@@ -1,7 +1,0 @@
-<map id="supervisor_heartbeats_init" name="supervisor_heartbeats_init">
-<area shape="rect" id="Node000001" title="Initialize all heartbeat timestamps." alt="" coords="5,29,179,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="63,28,58,21,62,11,73,5,92,3,112,5,124,14,119,14,110,10,92,8,75,10,66,15,63,20,68,29"/>
-<area shape="rect" id="Node000002" href="$a00248.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="227,29,291,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,40,213,43,208,43,179,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="230,28,225,21,228,11,240,5,259,3,279,5,291,15,286,14,277,10,259,8,242,10,232,15,230,20,235,30"/>
-</map>

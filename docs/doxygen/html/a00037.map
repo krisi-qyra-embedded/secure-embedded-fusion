@@ -1,7 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/ESP32_uart.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/ESP32_uart.h">
-<area shape="rect" id="Node000001" title="USART6 transport, runtime state and encrypted ESP32 link declarations." alt="" coords="178,5,519,128"/>
-<area shape="rect" id="Node000002" href="$a00143.html" title="USART6 link between STM32 and ESP32." alt="" coords="5,176,348,299"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="278,138,240,178,237,173,273,141"/>
-<area shape="rect" id="Node000003" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="372,176,672,299"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="423,137,462,176,457,175,421,142"/>
-</map>

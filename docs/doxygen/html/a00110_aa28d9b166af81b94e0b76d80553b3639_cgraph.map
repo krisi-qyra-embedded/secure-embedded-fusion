@@ -1,7 +1,0 @@
-<map id="UART1_PM25_Init" name="UART1_PM25_Init">
-<area shape="rect" id="Node000001" title="Initialize USART1 and DMA for PM2.5 reception." alt="" coords="5,29,136,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="34,29,28,21,33,11,47,5,71,3,96,5,110,14,105,14,94,10,70,8,48,10,36,15,34,20,40,29"/>
-<area shape="rect" id="Node000002" href="$a00215.html#a7d9c653949a8b659ee4bcb466afb995c" title=" " alt="" coords="184,29,379,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="136,40,171,42,165,43,136,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="245,28,239,21,244,11,258,5,281,3,306,5,321,14,316,14,305,10,281,8,259,10,247,15,245,20,250,30"/>
-</map>

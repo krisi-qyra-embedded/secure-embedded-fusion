@@ -1,6 +1,0 @@
-<map id="uart2_tx_rx_init" name="uart2_tx_rx_init">
-<area shape="rect" id="Node000001" title="Configure USART2 TX/RX pins, baud rate and interrupt handling." alt="" coords="103,29,213,56"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="178,14,172,10,158,8,145,10,138,14,137,20,140,30,135,28,131,21,134,11,143,5,158,3,174,5,183,15"/>
-<area shape="rect" id="Node000002" href="$a00859.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,44,55,45,55,40,90,42"/>
-</map>

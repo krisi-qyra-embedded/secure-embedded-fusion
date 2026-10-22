@@ -1,7 +1,0 @@
-<map id="heartbeat_signal_bme680main" name="heartbeat_signal_bme680main">
-<area shape="rect" id="Node000001" title="Signal a valid BME680 application sample." alt="" coords="5,29,203,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="73,28,68,21,72,11,84,5,104,3,125,5,138,14,133,14,124,10,104,8,85,10,76,15,73,20,78,29"/>
-<area shape="rect" id="Node000002" href="$a00233.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="251,29,315,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="203,40,238,43,232,43,203,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="252,28,247,21,250,11,263,5,283,3,304,5,317,15,312,14,303,10,283,8,264,10,254,15,252,20,257,30"/>
-</map>

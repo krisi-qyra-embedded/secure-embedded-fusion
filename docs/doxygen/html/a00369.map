@@ -1,5 +1,0 @@
-<map id="crypto_ctx_t" name="crypto_ctx_t">
-<area shape="rect" id="Node000001" title="Full&#45;duplex crypto context for the STM32&#45;ESP32 link." alt="" coords="26,104,120,131"/>
-<area shape="rect" id="Node000002" href="$a00363.html" title="Per&#45;session GCM nonce state." alt="" coords="5,5,141,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="75,46,76,104,70,103,71,49"/>
-</map>

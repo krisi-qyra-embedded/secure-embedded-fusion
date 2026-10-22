@@ -1,7 +1,0 @@
-<map id="log_free" name="log_free">
-<area shape="rect" id="Node000001" title="Get the remaining ring&#45;buffer capacity." alt="" coords="5,29,73,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="18,29,14,20,17,11,25,5,39,3,54,5,63,14,57,14,52,10,39,8,27,10,21,14,20,20,23,29"/>
-<area shape="rect" id="Node000002" href="$a00925.html#a9780e8c732985160ce311c346308473e" title="Get the number of bytes currently used in the log ring." alt="" coords="121,29,194,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="73,40,108,42,103,43,73,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="136,28,133,20,135,11,144,5,157,3,172,5,181,15,176,14,170,10,157,8,146,10,139,14,138,20,141,30"/>
-</map>

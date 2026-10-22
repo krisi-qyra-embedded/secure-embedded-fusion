@@ -1,9 +1,0 @@
-<map id="crypto_uart_log_delay" name="crypto_uart_log_delay">
-<area shape="rect" id="Node000001" title=" " alt="" coords="165,55,313,81"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="268,39,259,36,239,33,220,35,211,40,208,45,213,55,208,53,203,46,207,36,219,30,239,28,260,31,273,40"/>
-<area shape="rect" id="Node000002" href="$a01014.html#adc2c96a2912054e81ce53aa9e4e790b3" title=" " alt="" coords="5,29,117,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="147,56,117,53,117,48,152,55"/>
-<area shape="rect" id="Node000003" href="$a01014.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title=" " alt="" coords="8,80,114,107"/>
-<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="146,81,114,88,114,83,152,80"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="90,15,81,10,61,8,43,10,33,15,30,20,35,28,30,29,25,21,29,11,41,5,61,3,82,5,95,13"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="uart_set_baudrate" name="uart_set_baudrate">
-<area shape="rect" id="Node000001" title="Program a USART baud&#45;rate divider." alt="" coords="5,29,131,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="38,29,33,21,37,11,49,5,68,3,89,5,101,14,96,14,87,10,68,8,50,10,41,15,38,20,43,29"/>
-<area shape="rect" id="Node000002" href="$a01059.html#abe23be5e18eb5d207ab1a39c1e2f9fad" title="Calculate the USART baud&#45;rate divider." alt="" coords="179,29,303,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,40,166,42,161,43,131,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="211,28,206,21,209,11,221,5,241,3,262,5,274,14,269,14,260,10,241,8,223,10,213,15,211,20,216,30"/>
-</map>

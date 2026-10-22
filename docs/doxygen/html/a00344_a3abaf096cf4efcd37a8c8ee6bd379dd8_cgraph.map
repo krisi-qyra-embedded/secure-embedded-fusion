@@ -1,7 +1,0 @@
-<map id="STM32_UART_EnterResynchronization" name="STM32_UART_EnterResynchronization">
-<area shape="rect" id="Node000001" title="Start the quiet window and clear RX buffers, queues and assembly." alt="" coords="5,37,258,64"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="85,37,77,29,83,19,101,13,132,11,166,13,184,23,179,23,164,19,131,16,102,18,86,23,82,28,90,37"/>
-<area shape="rect" id="Node000002" href="$a00344.html#a14e0519de47c5133ec69da2c55a1fb19" title="Clear the partial&#45;packet buffer, byte count and timestamp." alt="" coords="306,29,513,72"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="258,48,292,51,287,51,258,53"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="358,27,355,19,364,10,382,5,409,3,439,5,459,14,453,14,438,10,409,8,383,10,367,15,360,21,362,30"/>
-</map>

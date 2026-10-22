@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/STM32_uart.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/STM32_uart.h">
-<area shape="rect" id="Node000001" title="STM32 UART driver and encrypted&#45;packet queue interface." alt="" coords="261,5,506,112"/>
-<area shape="rect" id="Node000002" href="$a00302.html" title="STM32 UART transport, encrypted&#45;packet assembly and RX recovery." alt="" coords="5,160,250,267"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="285,119,217,162,215,157,280,121"/>
-<area shape="rect" id="Node000003" href="$a00652.html" title="ESP32 startup, service modes and STM32 crypto bring&#45;up." alt="" coords="274,160,493,267"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="385,125,386,161,381,158,382,129"/>
-<area shape="rect" id="Node000004" href="$a00281.html" title="AES&#45;GCM UART runtime, persistent TX sessions and RX replay checks." alt="" coords="517,160,796,267"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="491,117,565,160,560,159,490,122"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="DMA2_Stream4_IRQHandler" name="DMA2_Stream4_IRQHandler">
-<area shape="rect" id="Node000001" title="DMA2 Stream4 interrupt handler." alt="" coords="244,5,434,32"/>
-<area shape="rect" id="Node000002" href="$a00987.html#a295198ed574625d416158a5fc54205ea" title="Handle ADC1 DMA2 Stream4 completion and error flags." alt="" coords="5,5,196,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,19,196,21,196,16,231,19"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="hash_adc_pc4" name="hash_adc_pc4">
-<area shape="rect" id="Node000001" title="Hash the captured PC4 ADC entropy buffer with SHA&#45;256." alt="" coords="230,29,335,56"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="313,14,303,10,282,8,263,10,252,15,250,20,255,30,250,28,244,21,248,11,261,5,282,3,305,5,318,14"/>
-<area shape="rect" id="Node000002" href="$a00763.html#ac59776a98ffcad426da444c7a3cfcc91" title="Hash the global PC4 ADC buffer into its global digest." alt="" coords="5,21,182,64"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,43,182,45,182,40,217,42"/>
-</map>

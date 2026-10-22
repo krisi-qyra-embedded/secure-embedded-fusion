@@ -1,9 +1,0 @@
-<map id="recombine_adc_values" name="recombine_adc_values">
-<area shape="rect" id="Node000001" title="Rebuild 32&#45;bit ADC values from the decrypted plaintext bytes." alt="" coords="224,59,378,85"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="335,43,324,40,301,37,279,39,267,44,264,49,270,59,265,57,259,50,263,40,278,34,301,32,326,35,341,44"/>
-<area shape="rect" id="Node000002" href="$a00993.html#a09f6f3d516029a09122bbc00d5ddd618" title="Authenticate/decrypt the GCM packet and rebuild the ADC samples." alt="" coords="5,5,176,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="218,55,176,48,176,42,223,54"/>
-<area shape="rect" id="Node000003" href="$a00993.html#a4de9d94651e8c708174d377a63da2f1e" title="Verify HMAC, decrypt AES&#45;CTR data and rebuild the ADC samples." alt="" coords="20,96,161,139"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="218,90,162,105,161,99,224,89"/>
-<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="123,81,112,77,90,75,71,77,59,81,54,87,56,96,50,95,49,86,55,77,70,71,91,69,113,72,128,80"/>
-</map>

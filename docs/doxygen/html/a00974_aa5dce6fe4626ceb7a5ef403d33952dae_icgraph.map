@@ -1,5 +1,0 @@
-<map id="get_entropy_hashed_size" name="get_entropy_hashed_size">
-<area shape="rect" id="Node000001" title="Get final entropy hash size." alt="" coords="223,5,392,32"/>
-<area shape="rect" id="Node000002" href="$a00971.html#aa5dce6fe4626ceb7a5ef403d33952dae" title="Get the size of the final conditioned entropy buffer." alt="" coords="5,5,175,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,19,175,21,175,16,210,19"/>
-</map>

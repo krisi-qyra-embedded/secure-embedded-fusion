@@ -1,6 +1,0 @@
-<map id="nonce_get_message_counter" name="nonce_get_message_counter">
-<area shape="rect" id="Node000001" title="Return the current message counter." alt="" coords="197,29,388,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="328,14,316,10,292,8,270,10,258,15,255,20,261,30,256,28,249,21,254,11,269,5,292,3,318,5,333,14"/>
-<area shape="rect" id="Node000002" href="$a00957.html#a7d93edcb89071bebc220d556a863db5f" title="Fill a buffer from an optional platform entropy source." alt="" coords="5,21,149,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="179,43,149,45,149,40,184,42"/>
-</map>

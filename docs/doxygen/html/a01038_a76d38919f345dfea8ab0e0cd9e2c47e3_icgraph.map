@@ -1,5 +1,0 @@
-<map id="DMA2_Stream6_IRQHandler" name="DMA2_Stream6_IRQHandler">
-<area shape="rect" id="Node000001" title=" " alt="" coords="244,5,434,32"/>
-<area shape="rect" id="Node000002" href="$a01035.html#a76d38919f345dfea8ab0e0cd9e2c47e3" title="Handle TIM1 capture DMA completion and DMA error flags." alt="" coords="5,5,196,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,19,196,21,196,16,231,19"/>
-</map>

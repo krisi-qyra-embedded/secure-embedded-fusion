@@ -1,7 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/bmp280_sensor.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/bmp280_sensor.h">
-<area shape="rect" id="Node000001" title="BMP280/BME280 task and cached reading interface." alt="" coords="5,5,271,112"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="59,160,124,187"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,110,105,147,100,144,114,114"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="148,160,222,187"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="161,110,176,146,171,145,158,114"/>
-</map>

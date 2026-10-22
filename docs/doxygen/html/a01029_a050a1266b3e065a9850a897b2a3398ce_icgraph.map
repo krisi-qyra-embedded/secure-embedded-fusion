@@ -1,6 +1,0 @@
-<map id="read_tim1_counter" name="read_tim1_counter">
-<area shape="rect" id="Node000001" title=" " alt="" coords="212,29,340,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="307,14,297,10,276,8,256,10,245,15,243,20,248,30,243,28,237,21,241,11,255,5,276,3,299,5,312,14"/>
-<area shape="rect" id="Node000002" href="$a01029.html#a8af10b21d3f570b16bad20a866618454" title="Mix the current TIM1 counter snapshot into a 32&#45;bit value." alt="" coords="5,29,164,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="193,43,164,45,164,40,199,43"/>
-</map>

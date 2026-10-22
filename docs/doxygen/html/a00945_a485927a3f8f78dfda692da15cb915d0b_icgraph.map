@@ -1,9 +1,0 @@
-<map id="receiver_init_ecdh_crypto" name="receiver_init_ecdh_crypto">
-<area shape="rect" id="Node000001" title="Initialize receiver ECDH and derived keys." alt="" coords="306,29,432,72"/>
-<area shape="poly" id="edge4_Node000001_Node000001" title=" " alt="" coords="398,13,388,10,369,8,352,10,341,15,337,21,338,30,333,27,331,19,337,10,350,5,369,3,390,5,403,14"/>
-<area shape="rect" id="Node000002" href="$a00915.html#af59b8af3ef6b8408d2cd2afded9af050" title=" " alt="" coords="103,29,258,72"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="288,51,258,53,258,48,293,51"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="203,13,195,10,180,8,167,10,158,14,155,20,156,30,151,27,150,19,155,11,165,5,180,3,197,5,208,14"/>
-<area shape="rect" id="Node000003" href="$a00915.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="5,37,55,64"/>
-<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,52,55,53,55,48,89,50"/>
-</map>

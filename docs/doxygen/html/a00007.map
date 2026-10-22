@@ -1,7 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/adc_dma.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/adc_dma.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="174,5,498,128"/>
-<area shape="rect" id="Node000002" href="$a00113.html" title="ADC1 DMA configuration for PA0 and PA1." alt="" coords="5,176,331,299"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="267,138,230,178,227,173,263,141"/>
-<area shape="rect" id="Node000003" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="355,176,656,299"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="408,137,447,176,442,175,407,142"/>
-</map>

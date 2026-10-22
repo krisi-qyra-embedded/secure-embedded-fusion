@@ -1,7 +1,0 @@
-<map id="telemetry_put_i16_le" name="telemetry_put_i16_le">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,147,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="43,29,38,21,42,11,55,5,76,3,99,5,112,14,107,14,97,10,76,8,56,10,45,15,43,20,48,29"/>
-<area shape="rect" id="Node000002" href="$a00191.html#ab37c08ecd92b7be27be9a0b18fac45b6" title=" " alt="" coords="195,29,340,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="147,40,182,43,176,43,147,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="234,28,229,21,233,11,246,5,267,3,290,5,304,14,299,14,289,10,267,8,247,10,237,15,234,20,239,30"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="bme_GetHumidityScore" name="bme_GetHumidityScore">
-<area shape="rect" id="Node000001" title="Calculate the current humidity contribution to IAQ." alt="" coords="5,29,166,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="54,29,49,21,52,11,65,5,86,3,107,5,120,14,115,14,106,10,85,8,67,10,56,15,54,20,59,29"/>
-<area shape="rect" id="Node000002" href="$a00254.html#ae6d6ad4fbd6a466de24832a43d03ff1b" title="Apply a TIM2 millisecond delay." alt="" coords="214,29,323,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="166,40,201,43,196,43,166,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="237,28,231,21,235,11,248,5,268,3,290,5,303,14,298,14,289,10,268,8,249,10,239,15,237,20,242,30"/>
-</map>

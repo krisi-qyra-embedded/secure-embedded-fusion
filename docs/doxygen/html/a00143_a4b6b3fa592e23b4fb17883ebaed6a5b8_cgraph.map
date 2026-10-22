@@ -1,7 +1,0 @@
-<map id="esp32_uart_elapsed_ms" name="esp32_uart_elapsed_ms">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,168,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="52,29,46,21,51,11,64,5,87,3,110,5,124,14,119,14,109,10,86,8,66,10,54,15,52,20,57,29"/>
-<area shape="rect" id="Node000002" href="$a00143.html#a2d74d31337958e735e079ce88c974e9d" title=" " alt="" coords="216,29,357,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="168,40,202,43,197,43,168,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="252,28,246,21,250,11,264,5,286,3,310,5,324,14,319,14,309,10,286,8,265,10,254,15,252,20,257,30"/>
-</map>

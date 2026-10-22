@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/sig_sensors.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/sig_sensors.h">
-<area shape="rect" id="Node000001" title="BME680 setup, gas reference and IAQ scoring declarations." alt="" coords="328,5,668,128"/>
-<area shape="rect" id="Node000002" href="$a00116.html" title="BME680 sensor driver and measurement handling." alt="" coords="5,176,324,299"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="366,134,286,178,284,173,361,137"/>
-<area shape="rect" id="Node000003" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="348,176,648,299"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="500,142,500,177,496,174,496,146"/>
-<area shape="rect" id="Node000004" href="$a00182.html" title="BME680 setup, gas reference and IAQ scoring." alt="" coords="672,176,1014,299"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="637,133,721,176,716,175,636,138"/>
-</map>

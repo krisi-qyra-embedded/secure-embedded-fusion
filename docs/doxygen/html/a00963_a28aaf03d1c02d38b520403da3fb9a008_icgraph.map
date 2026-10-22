@@ -1,6 +1,0 @@
-<map id="nonce_simple_get_last" name="nonce_simple_get_last">
-<area shape="rect" id="Node000001" title="Get the last generated nonce." alt="" coords="197,29,351,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="306,14,296,10,274,8,253,10,242,15,240,20,245,30,240,28,234,21,238,11,252,5,274,3,297,5,311,14"/>
-<area shape="rect" id="Node000002" href="$a00960.html#a7d93edcb89071bebc220d556a863db5f" title="Fill a buffer from an optional platform entropy source." alt="" coords="5,21,149,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="179,43,149,45,149,40,184,42"/>
-</map>

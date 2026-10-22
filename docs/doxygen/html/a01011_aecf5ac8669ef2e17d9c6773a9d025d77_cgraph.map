@@ -1,7 +1,0 @@
-<map id="cmsis_flash_lock" name="cmsis_flash_lock">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,128,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="34,29,28,21,32,11,45,5,67,3,89,5,103,14,97,14,88,10,66,8,47,10,36,15,34,20,39,29"/>
-<area shape="rect" id="Node000002" href="$a01011.html#af8acd732d2b90607faf6aa51d8adef2c" title=" " alt="" coords="176,29,337,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="128,40,162,42,157,43,128,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="224,28,218,21,222,11,235,5,256,3,279,5,293,14,287,14,277,10,256,8,237,10,226,15,223,20,229,30"/>
-</map>

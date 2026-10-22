@@ -1,6 +1,0 @@
-<map id="hash_jitter_accum" name="hash_jitter_accum">
-<area shape="rect" id="Node000001" title="Hash the captured timer&#45;jitter samples." alt="" coords="203,29,330,56"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="297,14,287,10,266,8,247,10,237,15,234,20,239,30,234,28,229,21,233,11,246,5,266,3,289,5,302,14"/>
-<area shape="rect" id="Node000002" href="$a00767.html#a9a370a6c845138edea4bd31a95a1d072" title="Hash the global timer&#45;jitter capture into its global digest." alt="" coords="5,21,155,64"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,43,155,45,155,40,190,42"/>
-</map>

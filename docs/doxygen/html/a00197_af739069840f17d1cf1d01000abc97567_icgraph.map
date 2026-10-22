@@ -1,8 +1,0 @@
-<map id="iwdg_init" name="iwdg_init">
-<area shape="rect" id="Node000001" title="Initialize the independent watchdog." alt="" coords="200,29,272,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="253,13,247,10,236,8,226,10,220,14,218,20,221,30,217,28,213,20,215,11,223,5,236,3,250,5,258,14"/>
-<area shape="rect" id="Node000002" href="$a00912.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,29,152,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="181,43,153,45,152,40,187,43"/>
-<area shape="rect" id="Node000003" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="84,44,55,45,55,40,89,42"/>
-</map>

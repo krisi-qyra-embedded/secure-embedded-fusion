@@ -1,7 +1,0 @@
-<map id="heartbeat_signal_spi" name="heartbeat_signal_spi">
-<area shape="rect" id="Node000001" title="Signal SPI/MAX31865 DMA activity to the supervisor." alt="" coords="244,29,384,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="349,14,338,10,314,8,291,10,279,15,277,20,282,30,277,28,271,21,276,11,290,5,314,3,339,5,354,14"/>
-<area shape="rect" id="Node000002" href="$a00227.html#aaf6ce196dde98712e1223b99766e06c0" title=" " alt="" coords="5,29,196,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="226,43,196,45,196,40,231,43"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="136,14,124,10,100,8,78,10,66,15,63,20,69,29,64,29,58,21,62,11,77,5,101,3,126,5,141,14"/>
-</map>

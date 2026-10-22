@@ -1,7 +1,0 @@
-<map id="store_adc_byte_values" name="store_adc_byte_values">
-<area shape="rect" id="Node000001" title="Store the latest ADC channel values." alt="" coords="209,43,364,69"/>
-<area shape="rect" id="Node000002" href="$a01002.html#a60a282738b0c3016969afdbe1e3e6924" title="Consume DMA&#45;complete events until all three ADC byte buffers are full." alt="" coords="11,5,155,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,43,155,40,155,34,196,42"/>
-<area shape="rect" id="Node000003" href="$a01002.html#adc2dd216f72fe9136ffb9c9d09a597e7" title="Store the low byte from one PC4/PC5/PB0 ADC sample triplet." alt="" coords="5,72,161,99"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="191,70,162,77,161,71,196,69"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="wifi_app_set_softap_last_client_disconnected_callback" name="wifi_app_set_softap_last_client_disconnected_callback">
-<area shape="rect" id="Node000001" title="Set the callback for the last SoftAP client disconnect." alt="" coords="131,29,302,88"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="242,14,233,10,216,8,202,10,192,14,187,21,187,31,182,28,182,19,189,10,200,5,216,3,235,5,247,15"/>
-<area shape="rect" id="Node000002" href="$a00906.html#a630544a7f0a2cc40d8a7fefab7e2fe70" title="Initialize NVS, supervision, crypto, sensors and Wi&#45;Fi services." alt="" coords="5,45,83,72"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,59,83,61,83,56,118,58"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="72,31,63,26,44,24,26,26,17,31,14,36,19,44,14,46,9,37,13,27,25,21,44,19,65,21,77,30"/>
-</map>

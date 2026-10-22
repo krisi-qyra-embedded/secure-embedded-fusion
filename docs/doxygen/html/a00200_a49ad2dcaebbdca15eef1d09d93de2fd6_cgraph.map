@@ -1,7 +1,0 @@
-<map id="heartbeat_signal_bme680" name="heartbeat_signal_bme680">
-<area shape="rect" id="Node000001" title="Signal BME680 driver activity." alt="" coords="5,29,175,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="61,28,56,21,60,11,71,5,90,3,110,5,122,14,116,14,108,10,90,8,73,10,64,15,62,20,66,29"/>
-<area shape="rect" id="Node000002" href="$a00254.html#a6adabebd3e04e1df33f71c3762492620" title="Get the monotonic millisecond tick." alt="" coords="223,29,287,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="175,40,209,43,204,43,175,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="226,28,221,21,225,11,236,5,255,3,275,5,287,15,281,14,273,10,255,8,238,10,229,15,227,20,231,30"/>
-</map>

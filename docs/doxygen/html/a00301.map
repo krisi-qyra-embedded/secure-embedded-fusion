@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/stm32_telemetry_public.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/stm32_telemetry_public.h">
-<area shape="rect" id="Node000001" title="Access to the latest authenticated STM32 telemetry." alt="" coords="213,5,524,112"/>
-<area shape="rect" id="Node000002" href="$a00257.html" title="AWS MQTT connection and combined sensor telemetry." alt="" coords="5,160,225,267"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="270,119,204,162,201,157,266,121"/>
-<area shape="rect" id="Node000003" href="$a00275.html" title="HTTPS dashboard, Wi&#45;Fi control and ESP32 firmware updates." alt="" coords="249,160,488,267"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="370,125,371,161,366,158,367,129"/>
-<area shape="rect" id="Node000004" href="$a00281.html" title="AES&#45;GCM UART runtime, persistent TX sessions and RX replay checks." alt="" coords="511,160,791,267"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="480,117,556,160,551,159,479,122"/>
-</map>

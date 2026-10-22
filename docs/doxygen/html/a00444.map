@@ -1,5 +1,0 @@
-<map id="PMS25_App_t" name="PMS25_App_t">
-<area shape="rect" id="Node000001" title="PM2.5 application state and bounded recovery tracking." alt="" coords="8,104,113,131"/>
-<area shape="rect" id="Node000002" href="$a00442.html" title="Parsed PMS5003 measurement frame." alt="" coords="5,5,116,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="63,46,63,104,58,103,58,49"/>
-</map>

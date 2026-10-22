@@ -1,7 +1,0 @@
-<map id="telemetry_publish_ds18b20" name="telemetry_publish_ds18b20">
-<area shape="rect" id="Node000001" title="Publish the latest DS18B20 temperature set." alt="" coords="5,29,185,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="57,29,50,21,55,11,70,5,95,3,122,5,137,14,132,14,120,10,95,8,71,10,59,15,56,20,62,29"/>
-<area shape="rect" id="Node000002" href="$a00209.html#aa891c98d9faefbdb171bf6d9ea70ec17" title="Advance a telemetry generation counter." alt="" coords="233,29,407,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,40,220,43,214,43,185,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="282,28,275,21,280,11,295,5,320,3,346,5,362,14,357,14,345,10,320,8,296,10,283,15,280,20,287,30"/>
-</map>

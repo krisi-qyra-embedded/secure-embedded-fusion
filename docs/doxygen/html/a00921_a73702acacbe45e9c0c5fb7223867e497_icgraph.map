@@ -1,6 +1,0 @@
-<map id="assign_private_and_public_key_from_hex" name="assign_private_and_public_key_from_hex">
-<area shape="rect" id="Node000001" title="Load the fixed development Ed25519 key material into the signing context." alt="" coords="103,29,254,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="200,13,193,10,178,8,165,10,157,14,153,20,154,30,150,27,148,19,153,11,163,5,178,3,195,5,206,14"/>
-<area shape="rect" id="Node000002" href="$a00891.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,37,55,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="85,52,55,53,55,48,89,50"/>
-</map>

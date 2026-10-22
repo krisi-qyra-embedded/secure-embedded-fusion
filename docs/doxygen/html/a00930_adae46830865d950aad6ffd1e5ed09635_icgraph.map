@@ -1,6 +1,0 @@
-<map id="combine_all_hashed_entropy" name="combine_all_hashed_entropy">
-<area shape="rect" id="Node000001" title="Combine the individual entropy hashes into one final hash." alt="" coords="238,29,377,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="340,13,328,10,307,8,288,10,276,15,271,21,272,30,268,27,266,19,272,10,286,5,307,3,330,5,345,14"/>
-<area shape="rect" id="Node000002" href="$a00999.html#af0894fb4752b832df3ae10c169592bc9" title="Build the final conditioned entropy value in the global entropy buffer." alt="" coords="5,29,190,72"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="219,51,190,53,190,48,225,50"/>
-</map>

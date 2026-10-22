@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/sntp_time_sync.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/sntp_time_sync.h">
-<area shape="rect" id="Node000001" title="SNTP task and local&#45;time interface." alt="" coords="245,5,510,112"/>
-<area shape="rect" id="Node000002" href="$a00275.html" title="HTTPS dashboard, Wi&#45;Fi control and ESP32 firmware updates." alt="" coords="5,160,244,267"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="280,119,213,162,211,157,275,121"/>
-<area shape="rect" id="Node000003" href="$a00652.html" title="ESP32 startup, service modes and STM32 crypto bring&#45;up." alt="" coords="268,160,488,267"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="380,125,380,161,376,158,376,129"/>
-<area shape="rect" id="Node000004" href="$a00293.html" title="SNTP clock checks and local&#45;time formatting." alt="" coords="512,160,777,267"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="484,117,555,160,550,159,483,123"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="compute_adc_pc5_hashed_global" name="compute_adc_pc5_hashed_global">
-<area shape="rect" id="Node000001" title=" " alt="" coords="230,35,406,77"/>
-<area shape="rect" id="Node000002" href="$a00971.html#aa5d2aeb7eb4e97639fc7c68071618614" title="Hash the global PC5 ADC buffer into its global digest." alt="" coords="5,5,182,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,43,182,41,182,36,217,42"/>
-<area shape="rect" id="Node000003" href="$a00971.html#ad1e96c35442f7a0892d3e5b51be28914" title="Condition all three ADC entropy buffers with bounded retries." alt="" coords="9,72,178,99"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,70,179,77,178,72,217,69"/>
-</map>

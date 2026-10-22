@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/stm32_gcm_nvm.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/stm32_gcm_nvm.h">
-<area shape="rect" id="Node000001" title="Flash journal for AES&#45;GCM TX sessions and RAM replay tracking." alt="" coords="294,5,665,128"/>
-<area shape="rect" id="Node000002" href="$a00760.html" title="ECDH and AES&#45;GCM handling for the STM32 link." alt="" coords="5,176,306,299"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="351,135,273,178,271,173,347,137"/>
-<area shape="rect" id="Node000003" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="329,176,630,299"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="481,142,482,177,477,174,478,146"/>
-<area shape="rect" id="Node000004" href="$a00194.html" title="Flash journal for AES&#45;GCM session state and RAM replay tracking." alt="" coords="653,176,1026,299"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="624,133,712,176,707,175,623,138"/>
-</map>

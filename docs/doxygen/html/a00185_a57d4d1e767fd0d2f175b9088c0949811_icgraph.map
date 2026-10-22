@@ -1,7 +1,0 @@
-<map id="ESP32_UART_IRQHandler" name="ESP32_UART_IRQHandler">
-<area shape="rect" id="Node000001" title="Handle USART6 RX, TX and UART errors." alt="" coords="203,29,384,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="328,14,317,10,293,8,271,10,259,15,256,20,262,30,257,28,251,21,255,11,270,5,293,3,319,5,334,14"/>
-<area shape="rect" id="Node000002" href="$a00185.html#a12c827857d907ad0cccd586fd934d446" title=" " alt="" coords="5,29,155,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="184,43,155,45,155,40,190,43"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="115,14,104,10,80,8,58,10,46,15,43,20,49,29,43,29,37,21,42,11,56,5,80,3,105,5,120,14"/>
-</map>

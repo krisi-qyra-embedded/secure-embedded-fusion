@@ -1,6 +1,0 @@
-<map id="uart_log_irq_handler" name="uart_log_irq_handler">
-<area shape="rect" id="Node000001" title="Handle USART2 RXNE and TXE events for logging and echo." alt="" coords="203,29,340,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="303,14,293,10,271,8,251,10,241,15,238,20,243,30,238,28,233,21,237,11,250,5,271,3,294,5,308,14"/>
-<area shape="rect" id="Node000002" href="$a01062.html#a0ca6fd0e6f77921dd1123539857ba0a8" title="USART2 interrupt vector." alt="" coords="5,29,155,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="185,43,155,45,155,40,190,43"/>
-</map>

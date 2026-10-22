@@ -1,4 +1,0 @@
-<map id="BMP280_get_latest_reading" name="BMP280_get_latest_reading">
-<area shape="rect" id="Node000001" title="Copy the latest BMP280/BME280 reading under the sensor lock." alt="" coords="5,29,190,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="66,28,60,21,64,11,77,5,98,3,120,5,133,14,127,14,118,10,97,8,78,10,68,15,66,20,71,29"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="systick_selftest" name="systick_selftest">
-<area shape="rect" id="Node000001" title="Verify that the SysTick counter advances." alt="" coords="200,29,313,56"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="277,13,271,10,257,8,244,10,237,14,235,20,238,30,234,28,230,21,233,11,242,5,257,3,273,5,282,15"/>
-<area shape="rect" id="Node000002" href="$a00909.html#a840291bc02cba5474a4cb46a9b9566fe" title="Initialize the application and start the FreeRTOS scheduler." alt="" coords="103,29,152,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,43,153,45,153,40,187,43"/>
-<area shape="rect" id="Node000003" href="$a00906.html#a840291bc02cba5474a4cb46a9b9566fe" title="Run the secure&#45;boot provisioning and verification sequence." alt="" coords="5,29,55,56"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="84,44,55,45,55,40,89,42"/>
-</map>

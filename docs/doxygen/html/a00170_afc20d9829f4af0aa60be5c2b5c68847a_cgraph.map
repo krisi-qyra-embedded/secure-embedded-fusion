@@ -1,7 +1,0 @@
-<map id="esp32_uart_clear_sem_if_rtos" name="esp32_uart_clear_sem_if_rtos">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,158,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="43,28,42,19,48,10,62,5,82,3,103,5,117,13,112,14,101,10,81,8,63,10,52,15,47,21,49,29"/>
-<area shape="rect" id="Node000002" href="$a00170.html#a126596cfae6029485f18ba3a5695e0f3" title=" " alt="" coords="206,29,354,72"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="158,48,193,50,188,51,158,53"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="242,27,240,19,247,10,260,5,280,3,301,5,316,14,310,13,300,10,280,8,261,10,250,15,246,21,247,30"/>
-</map>

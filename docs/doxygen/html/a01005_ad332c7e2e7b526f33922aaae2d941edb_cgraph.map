@@ -1,6 +1,0 @@
-<map id="adc_byte_buffers_init" name="adc_byte_buffers_init">
-<area shape="rect" id="Node000001" title="Reset the three ADC byte buffers and their write indices." alt="" coords="5,29,150,56"/>
-<area shape="rect" id="Node000002" href="$a01008.html#ad332c7e2e7b526f33922aaae2d941edb" title="Reset the ADC byte buffers." alt="" coords="198,29,342,56"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="150,40,185,43,180,43,150,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="237,28,231,21,235,11,248,5,270,3,293,5,306,14,301,14,291,10,270,8,250,10,239,15,236,20,242,30"/>
-</map>

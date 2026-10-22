@@ -1,7 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/max31865.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/max31865.h">
-<area shape="rect" id="Node000001" title="MAX31865 configuration, SPI access and runtime API declarations." alt="" coords="160,5,490,128"/>
-<area shape="rect" id="Node000002" href="$a00658.html" title="Application startup, sensor tasks, supervision and encrypted ESP32 link." alt="" coords="5,176,306,299"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="255,138,218,177,215,173,251,141"/>
-<area shape="rect" id="Node000003" href="$a00158.html" title="MAX31865 SPI/DMA driver and runtime handling." alt="" coords="329,176,662,299"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="398,137,437,176,431,175,396,142"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/ccs811_sensor.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/ccs811_sensor.h">
-<area shape="rect" id="Node000001" title="CCS811 task and cached gas reading interface." alt="" coords="5,5,266,112"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="57,160,121,187"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="116,110,102,147,98,144,112,114"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="145,160,219,187"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="159,110,174,146,169,145,156,114"/>
-</map>

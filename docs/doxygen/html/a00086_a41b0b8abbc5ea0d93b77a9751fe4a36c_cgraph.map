@@ -1,7 +1,0 @@
-<map id="system_fault_mark_active_from_isr" name="system_fault_mark_active_from_isr">
-<area shape="rect" id="Node000001" title="Mark one subsystem fault as active from an ISR." alt="" coords="5,29,180,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="51,28,49,19,56,10,71,5,93,3,116,5,132,13,126,14,115,10,92,8,72,10,59,15,54,21,56,29"/>
-<area shape="rect" id="Node000002" href="$a00191.html#abb260eeda1da4afb6c3df4de8f97db63" title="Convert a fault owner ID to its mask bit." alt="" coords="228,29,396,72"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="180,48,214,50,209,51,180,53"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="270,27,268,19,275,10,290,5,312,3,335,5,351,14,346,13,334,10,312,8,291,10,279,15,274,21,275,30"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/http_server.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/esp32_mqtt_https_AES_GCM_completed/main/http_server.h">
-<area shape="rect" id="Node000001" title="HTTPS server control and monitor events." alt="" coords="111,5,349,112"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,160,148,187"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,112,107,153,104,148,156,113"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="172,160,288,187"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,110,232,146,228,143,228,114"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="312,160,388,187"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="287,110,328,149,323,149,285,115"/>
-</map>

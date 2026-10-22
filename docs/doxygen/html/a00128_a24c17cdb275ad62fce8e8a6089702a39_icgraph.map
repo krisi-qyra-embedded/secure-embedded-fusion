@@ -1,7 +1,0 @@
-<map id="gpioa5_init" name="gpioa5_init">
-<area shape="rect" id="Node000001" title="Initialize PA5 for the timer test path." alt="" coords="159,29,242,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="223,14,216,10,200,8,186,10,178,14,176,20,180,30,175,28,171,21,174,11,184,5,200,3,218,5,228,15"/>
-<area shape="rect" id="Node000002" href="$a00128.html#a2ee7ad6c09f01af9b8c137c28e12a3b1" title="Apply the fixed 1 s TIM2 delay." alt="" coords="5,29,111,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="140,43,111,45,111,40,146,42"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="80,14,73,10,58,8,44,10,36,14,34,20,38,29,33,29,29,21,32,11,42,5,58,3,75,5,86,14"/>
-</map>

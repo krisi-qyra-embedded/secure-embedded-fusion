@@ -1,5 +1,0 @@
-<map id="uart2_transmit" name="uart2_transmit">
-<area shape="rect" id="Node000001" title="Transmit one character on USART2." alt="" coords="158,5,262,32"/>
-<area shape="rect" id="Node000002" href="$a00975.html#a31a8489e9d0ab81d933ff629d1e1ae7e" title="Transmit one character through USART2." alt="" coords="5,5,110,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="140,19,110,21,110,16,145,18"/>
-</map>

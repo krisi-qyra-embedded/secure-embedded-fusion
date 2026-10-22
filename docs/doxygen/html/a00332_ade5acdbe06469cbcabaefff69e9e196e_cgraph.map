@@ -1,7 +1,0 @@
-<map id="esp32_ecdh_print_derived_keys" name="esp32_ecdh_print_derived_keys">
-<area shape="rect" id="Node000001" title="Log directional key diagnostics under the debug switch." alt="" coords="5,29,213,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="74,28,68,21,72,11,86,5,109,3,133,5,148,14,142,14,132,10,109,8,88,10,76,15,73,20,79,29"/>
-<area shape="rect" id="Node000002" href="$a00332.html#af9121e7b9f96f1a4a9944ccf7ab515ea" title="Log a labeled buffer in bounded hexadecimal chunks." alt="" coords="261,29,366,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="213,40,248,43,242,43,213,45"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="278,28,272,21,277,11,291,5,313,3,338,5,352,14,347,14,336,10,313,8,292,10,280,15,278,20,283,30"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="bytes_to_float" name="bytes_to_float">
-<area shape="rect" id="Node000001" title="Rebuild one float from four raw bytes." alt="" coords="167,29,270,56"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="243,14,235,10,218,8,202,10,194,15,192,20,196,30,191,28,186,21,190,11,201,5,218,3,237,5,249,15"/>
-<area shape="rect" id="Node000002" href="$a00224.html#a152817ec57d2cfdccce41f4acb3fdf47" title="Read one float previously stored in Flash." alt="" coords="5,29,119,56"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="148,43,119,45,119,40,154,42"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="87,14,79,10,62,8,46,10,37,15,35,20,40,29,34,29,30,21,33,11,44,5,62,3,81,5,92,14"/>
-</map>

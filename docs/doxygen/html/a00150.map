@@ -1,9 +1,0 @@
-<map id="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/tim.h" name="C:/Users/user/Documents/secure_embedded_fusion_project/secure_embedded_fusion_project/secure_embedded_fusion/secure_embedded_fusion_ESP32_UART_AES_GCM_FULL_DUPLEX_RECEIVER_TRANSMITTER/Core/Inc/tim.h">
-<area shape="rect" id="Node000001" title="TIM2 delay, one&#45;shot and interrupt helper declarations." alt="" coords="37,5,326,128"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,176,99,203"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,127,78,167,75,163,114,129"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="123,176,240,203"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="183,126,184,162,179,159,180,130"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="264,176,328,203"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="240,126,276,165,271,164,238,131"/>
-</map>
