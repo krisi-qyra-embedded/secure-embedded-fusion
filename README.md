@@ -62,3 +62,10 @@ and secure bootloader source code.
 
 \[View Runtime Demonstrations](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/runtime-demonstrations.md)
 
+Wiring Schematic
+
+The figure below shows the hardware wiring connections between the STM32F411RE Nucleo, ESP32-WROOM32, and connected sensors.
+\[View full hardware schematic](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/stm32-esp32-wiring-schematic.png)
+
+
+
