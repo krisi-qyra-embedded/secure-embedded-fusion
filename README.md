@@ -1,16 +1,12 @@
-System Architecture
+# Secure STM32–ESP32 IoT Sensor Platform
 
-The diagram below illustrates the STM32–ESP32 platform,
+## System Architecture
 
-including sensor acquisition, secure boot, AES-GCM
+The diagram below illustrates the STM32–ESP32 platform, including sensor acquisition, secure boot, AES-GCM communication, fault recovery, and cloud integration.
 
-communication, fault recovery, and cloud integration.
+[STM32–ESP32 System Architecture](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/system-architecture.svg)
 
-\[STM32–ESP32 System Architecture](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/system-architecture.svg)
-
-
-
-Technical Implementation
+## Technical Implementation
 
 I implemented secure boot using STM32CryptoLib with Ed25519 signature verification and SHA-256 integrity checks. On reset, I verify the signed manifest in sector 7 (0x08060000) and hash the application in sectors 5–6 (0x08020000–0x0805FFFF, 256 KiB). Both checks must pass before execution. The public and private keys are stored in OTP at 0x1FFF7800, with 512 data bytes and 16 lock bytes. Before jumping, I validate the stack pointer and reset handler, stop SysTick, clear interrupt state and configure the vector table. I tested firmware, signature and public-key corruption to confirm execution is blocked when verification fails.
 
@@ -22,65 +18,46 @@ On the ESP32, I publish combined sensor readings as JSON to AWS IoT Core over MQ
 
 The local HTTPS dashboard displays live sensor readings through JSON endpoints and supports Wi-Fi configuration and ESP32 OTA updates. To manage TLS memory use, I stop AWS before enabling HTTPS for an access-point client, then switch back to cloud mode after the last client disconnects and the station connection is available.
 
-
-
-Interactive Doxygen Documentation
-
-Complete STM32–ESP32 firmware documentation, including
-
-function references, source-code navigation, call graphs,
-
-dependency diagrams, and cryptographic interfaces.
-
-\[View Interactive Doxygen Documentation](https://secure-fusion-doxygen-598a13.gitlab.io)
-
-
-
-Engineering Evidence
-
-Firmware Development Evolution
-
-Ten selected engineering milestones documenting the evolution
-
-of the STM32–ESP32 firmware, with historical Git revisions
-
-and corresponding demonstration evidence.
-
-\[View Development Evolution](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/development-evolution.md)
-
-
-
-Complete System Runtime Demonstrations
-
-Twelve runtime demonstrations covering secure boot, OTP,
-
-AES-GCM communication, fault injection, replay protection,
-
-watchdog recovery, AWS IoT, HTTPS monitoring, and OTA.
-
-Includes links to the STM32 application, ESP32 application,
-
-and secure bootloader source code.
-
-\[View Runtime Demonstrations](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/runtime-demonstrations.md)
-
-
-
-Wiring Schematic
+## Hardware Connections and Wiring Schematic
 
 The figure below shows the hardware wiring connections between the STM32F411RE Nucleo, ESP32-WROOM32, and connected sensors.
 
-\[View full hardware schematic](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/stm32-esp32-wiring-schematic.png)
+![STM32–ESP32 Wiring Schematic](docs/hardware_connections/stm32-esp32-wiring-schematic.png)
 
+[View Full Hardware Schematic](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware_connections/stm32-esp32-wiring-schematic.png)
 
+## Physical Hardware Prototype
 
-Hardware Picture
-\[View full hardware picture](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/hardware\_image.jpeg)
+The photograph below shows the physical STM32–ESP32 prototype, including the connected sensor modules, breadboards, jumper wires, and microcontroller development boards used during testing.
 
+![STM32–ESP32 Hardware Prototype](docs/hardware_connections/hardware_image.jpeg)
 
+[View Full Hardware Picture](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware_connections/hardware_image.jpeg)
 
-Hardware Video
-\[View full hardware video](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/hardware\_vid.mp4)
+### Hardware Video
 
+The following video shows the physical hardware assembly and its connections.
 
+[Watch Hardware Video](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware_connections/hardware_vid.mp4)
 
+## Interactive Doxygen Documentation
+
+Complete STM32–ESP32 firmware documentation, including function references, source-code navigation, call graphs, dependency diagrams, and cryptographic interfaces.
+
+[View Interactive Doxygen Documentation](https://secure-fusion-doxygen-598a13.gitlab.io)
+
+## Engineering Evidence
+
+### Firmware Development Evolution
+
+Ten selected engineering milestones documenting the evolution of the STM32–ESP32 firmware, with historical Git revisions and corresponding demonstration evidence.
+
+[View Development Evolution](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/development-evolution.md)
+
+### Complete System Runtime Demonstrations
+
+Twelve runtime demonstrations covering secure boot, OTP, AES-GCM communication, fault injection, replay protection, watchdog recovery, AWS IoT, HTTPS monitoring, and OTA.
+
+Includes links to the STM32 application, ESP32 application, and secure bootloader source code.
+
+[View Runtime Demonstrations](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/runtime-demonstrations.md)
