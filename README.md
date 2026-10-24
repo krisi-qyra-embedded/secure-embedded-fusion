@@ -11,7 +11,9 @@ communication, fault recovery, and cloud integration.
 
 
 Technical Implementation
+
 I implemented secure boot using STM32CryptoLib with Ed25519 signature verification and SHA-256 integrity checks. On reset, I verify the signed manifest in sector 7 (0x08060000) and hash the application in sectors 5–6 (0x08020000–0x0805FFFF, 256 KiB). Both checks must pass before execution. The public and private keys are stored in OTP at 0x1FFF7800, with 512 data bytes and 16 lock bytes. Before jumping, I validate the stack pointer and reset handler, stop SysTick, clear interrupt state and configure the vector table. I tested firmware, signature and public-key corruption to confirm execution is blocked when verification fails.
+
 On the STM32, I use BME680 and MPU9250 over I²C, MAX31865/PT100 over SPI, PMS5003 over UART and five DS18B20 sensors over 1-Wire. FreeRTOS tasks send readings through queues, DMA interrupts signal binary semaphores, and a mutex protects USART2 logging. I²C recovery stops DMA, clears the bus state and applies SWRST or an APB reset when needed before reinitialization. Persistent failures after three recovery attempts, or missed heartbeats, escalate to a watchdog reset.
 
 The USART6 link uses full-duplex AES-256-GCM with STM32CryptoLib and mbedTLS. Telemetry and encrypted ACK/NACK replies undergo authentication, sequence and replay checks. I allow three transaction attempts with timeouts, UART cleanup and fresh nonces, advancing the request sequence only after a valid ACK. Successful transactions refresh the heartbeat; exhausted retries escalate to the watchdog. Nonce state persists in nonvolatile memory, and every reset repeats secure boot. I tested corruption, replay and counter/session mismatches.
@@ -62,10 +64,23 @@ and secure bootloader source code.
 
 \[View Runtime Demonstrations](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/runtime-demonstrations.md)
 
+
+
 Wiring Schematic
 
 The figure below shows the hardware wiring connections between the STM32F411RE Nucleo, ESP32-WROOM32, and connected sensors.
+
 \[View full hardware schematic](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/stm32-esp32-wiring-schematic.png)
+
+
+
+Hardware Picture
+\[View full hardware picture](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/hardware\_image.jpeg)
+
+
+
+Hardware Video
+\[View full hardware video](https://github.com/krisiqyra/secure-embedded-fusion/blob/main/docs/hardware\_connections/hardware\_vid.mp4)
 
 
 
