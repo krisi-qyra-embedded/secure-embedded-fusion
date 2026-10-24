@@ -44,8 +44,10 @@ development snapshots.
 
 | 10 | STM32,ESP32 aes gcm full duplex (ACK/NACK) | \[View code STM32 side](https://github.com/krisiqyra/secure-embedded-fusion/commit/c5e59a88d30e1c19142d14988f9974c528a31050) / \[View code ESP32 side](https://github.com/krisiqyra/secure-embedded-fusion/commit/8cce652a555db862ac5d9c9faf1c1f2c3e4a554e) | \[Watch](https://youtu.be/XUEpRf50c44) |
 
+| 11 |  ECDH encryption decryption AES CTR local test stm32 | \[View code](https://github.com/krisiqyra/secure-embedded-fusion/commit/d3f5512fb3bdba2069b5cb2908c7a63159d5c528#diff-1ecf3dc4b3d9f4d7bee2e0babe50a8071e65a490d09ae2d7a331ea0fa351f18c) | \[Watch](https://youtu.be/ALXkqJiAp6Y) |
 
 
+| 12 |  ECDH encryption decryption AES GCM local test stm32 | \[View code](https://github.com/krisiqyra/secure-embedded-fusion/commit/41eb89e414828efa52c832ce7ce60de5adbb0b88#diff-9cb5bef2c9c784f94d1146a2d2d9da1b864917679dabed3fb38bafa69ec25b25) | \[Watch](https://youtu.be/wGMmiBjE90Q) |
 
 
 
