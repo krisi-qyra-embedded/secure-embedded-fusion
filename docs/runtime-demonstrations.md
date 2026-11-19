@@ -20,27 +20,25 @@ The recordings demonstrate system operation, authenticated communication, securi
 
 | 01 | aes gcm stm32 esp32 stm32 usart6 rx tx physical fault inject | \[Watch](https://youtu.be/X7eZtsBszC8) |
 
-| 02 | stm32 OTP provisioning | \[Watch](https://youtu.be/wdaOvRgBG60) |
+| 02 | stm32 secure boot authenticity fault injection — firmware integrity fault injection | \[Watch](https://youtu.be/ile1lusTBxY) |
 
-| 03 | stm32 secure boot authenticity fault injection — firmware integrity fault injection | \[Watch](https://youtu.be/ile1lusTBxY) |
+| 03 | stm32 multiple sensor fault injections diagnostics | \[Watch](https://youtu.be/KOrZ5UCTcxE) |
 
-| 04 | stm32 multiple sensor fault injections diagnostics | \[Watch](https://youtu.be/KOrZ5UCTcxE) |
+| 04 | aes gcm stm32 esp32 max31865 fault injection diagnostics | \[Watch](https://youtu.be/660VmY-hY60) |
 
-| 05 | aes gcm stm32 esp32 max31865 fault injection diagnostics | \[Watch](https://youtu.be/660VmY-hY60) |
+| 05 | aes gcm stm32 esp32 replay previous complete packet (replay protection) | \[Watch](https://youtu.be/L9\_u7nxjYHs) |
 
-| 06 | aes gcm stm32 esp32 replay previous complete packet (replay protection) | \[Watch](https://youtu.be/L9\_u7nxjYHs) |
+| 06 | ESP32 OTA: Firmware Update Through the HTTPS Dashboard | \[Watch](https://youtu.be/FNKGb12FPp8) |
 
-| 07 | ESP32 OTA: Firmware Update Through the HTTPS Dashboard | \[Watch](https://youtu.be/FNKGb12FPp8) |
+| 07 | ESP32 AWS IoT: MQTT Publish and Subscribe | \[Watch](https://youtu.be/moGgV8YiYu8) |
 
-| 08 | ESP32 AWS IoT: MQTT Publish and Subscribe | \[Watch](https://youtu.be/moGgV8YiYu8) |
+| 08 | STM32–ESP32 AES-GCM: Ciphertext Corruption Fault Injection | \[Watch](https://youtu.be/-JlaIp6BnVY) |
 
-| 09 | STM32–ESP32 AES-GCM: Ciphertext Corruption Fault Injection | \[Watch](https://youtu.be/-JlaIp6BnVY) |
+| 9 | STM32–ESP32: AWS IoT and HTTPS Dashboard Demonstration | \[Watch](https://youtu.be/Hf6foBqTHxE) |
 
-| 10 | STM32–ESP32: AWS IoT and HTTPS Dashboard Demonstration | \[Watch](https://youtu.be/Hf6foBqTHxE) |
+| 10 | STM32–ESP32 HTTPS Dashboard: Live Sensor Monitoring | \[Watch](https://youtu.be/cFucC2f8QIc) |
 
-| 11 | STM32–ESP32 HTTPS Dashboard: Live Sensor Monitoring | \[Watch](https://youtu.be/cFucC2f8QIc) |
-
-| 12 | STM32 Secure Boot: Firmware Integrity Fault Injection | \[Watch](https://youtu.be/wribxSScLYQ) |
+| 11 | STM32 Secure Boot: Firmware Integrity Fault Injection | \[Watch](https://youtu.be/wribxSScLYQ) |
 
 
 
