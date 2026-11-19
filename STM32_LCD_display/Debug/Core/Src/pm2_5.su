@@ -1,0 +1,8 @@
+../Core/Src/pm2_5.c:101:13:PMS25_AppSleepMs	16	static,ignoring_inline_asm
+../Core/Src/pm2_5.c:185:23:PMS25_ReadInternal	72	static
+../Core/Src/pm2_5.c:22:28:heartbeat_signal_pm25	0	static
+../Core/Src/pm2_5.c:86:13:PMS25_StatusStr	0	static
+../Core/Src/pm2_5.c:299:16:PMS25_Read	0	static
+../Core/Src/pm2_5.c:313:26:PMS25_AppInit	24	static
+../Core/Src/pm2_5.c:355:6:telemetry_publish_pm25	56	static
+../Core/Src/pm2_5.c:413:26:PMS25_AppRun	72	static

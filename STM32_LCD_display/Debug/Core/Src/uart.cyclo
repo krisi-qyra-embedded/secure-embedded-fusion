@@ -1,0 +1,9 @@
+../Core/Src/uart.c:34:6:uart2_tx_rx_init	1
+../Core/Src/uart.c:62:6:uart_set_baudrate	1
+../Core/Src/uart.c:72:10:compute_uart_div	1
+../Core/Src/uart.c:81:6:log_write_bytes	7
+../Core/Src/uart.c:119:6:log_puts	2
+../Core/Src/uart.c:130:6:log_putc	1
+../Core/Src/uart.c:138:6:log_printf	2
+../Core/Src/uart.c:157:6:uart_log_irq_handler	5
+../Core/Src/uart.c:181:6:USART2_IRQHandler	1

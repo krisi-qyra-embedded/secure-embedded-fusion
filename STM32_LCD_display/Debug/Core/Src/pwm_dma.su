@@ -1,0 +1,12 @@
+../Core/Src/pwm_dma.c:18:24:jitter_wait_dma_disable	0	static,ignoring_inline_asm
+../Core/Src/pwm_dma.c:55:17:jitter_init	16	static,ignoring_inline_asm
+../Core/Src/pwm_dma.c:120:17:jitter_prepare_dma_sample	8	static,ignoring_inline_asm
+../Core/Src/pwm_dma.c:138:6:jitter_trigger_capture_event	0	static,ignoring_inline_asm
+../Core/Src/pwm_dma.c:189:17:jitter_compute_differences	12	static
+../Core/Src/pwm_dma.c:148:17:jitter_collect_samples	32	static,ignoring_inline_asm
+../Core/Src/pwm_dma.c:211:17:jitter_rearm_dma	8	static,ignoring_inline_asm
+../Core/Src/pwm_dma.c:225:10:jitter_assess_entropy	16	static
+../Core/Src/pwm_dma.c:251:10:jitter_get_capture_size	0	static
+../Core/Src/pwm_dma.c:259:17:JITTER_CAPTURE_INIT	8	static
+../Core/Src/pwm_dma.c:277:6:DMA2_Stream6_IRQHandler	0	static
+../Core/Src/pwm_dma.c:291:6:TIM1_UP_TIM10_IRQHandler	0	static

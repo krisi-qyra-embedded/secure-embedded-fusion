@@ -1,0 +1,2 @@
+../Drivers/lvgl/src/draw/lv_draw.c:41:6:lv_draw_init	1
+../Drivers/lvgl/src/draw/lv_draw.c:46:6:lv_draw_wait_for_finish	2

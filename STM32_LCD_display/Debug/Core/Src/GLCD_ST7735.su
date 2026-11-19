@@ -1,0 +1,11 @@
+../Core/Src/GLCD_ST7735.c:186:26:send_command	24	static
+../Core/Src/GLCD_ST7735.c:220:26:write_rectangle	40	static
+../Core/Src/GLCD_ST7735.c:290:19:ST7789_FillRect	16	static
+../Core/Src/GLCD_ST7735.c:296:19:ST7789_FillScreen	16	static
+../Core/Src/GLCD_ST7735.c:252:19:ST7789_Init	56	static
+../Core/Src/GLCD_ST7735.c:301:19:ST7789_DrawImage	24	static
+../Core/Src/GLCD_ST7735.c:310:13:draw_char	144	static
+../Core/Src/GLCD_ST7735.c:341:10:ST7789_DrawString	40	static
+../Core/Src/GLCD_ST7735.c:361:6:ST7789_Drawaxes	48	static
+../Core/Src/GLCD_ST7735.c:402:6:ST7789_PlotPoint	32	static
+../Core/Src/GLCD_ST7735.c:419:6:ST7789_PlotIncrement	16	static

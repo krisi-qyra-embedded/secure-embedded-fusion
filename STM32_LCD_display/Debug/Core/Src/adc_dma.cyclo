@@ -1,0 +1,2 @@
+../Core/Src/adc_dma.c:44:6:adc_tim_dma_init	2
+../Core/Src/adc_dma.c:160:6:adc_dma_init	2

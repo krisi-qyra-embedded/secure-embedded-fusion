@@ -1,0 +1,3 @@
+../Core/Src/cmox_low_level.c:33:6:RCC_CRC_CLK_ENABLE	1
+../Core/Src/cmox_low_level.c:45:20:cmox_ll_init	1
+../Core/Src/cmox_low_level.c:61:20:cmox_ll_deInit	1

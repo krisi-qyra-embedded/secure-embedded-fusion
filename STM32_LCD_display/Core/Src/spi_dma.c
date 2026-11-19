@@ -1,0 +1,900 @@
+/**
+ * @file spi_dma.c
+ * @brief SPI4 DMA handling, synchronization and recovery for MAX31865.
+ */
+#include "spi_dma.h"
+#include "i2c_dma.h"
+#include "tim.h"
+#include "uart.h"
+#include "systick.h"
+#include "iwdg.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include <stdint.h>
+#ifndef SPI_DMA_LOG_PRINTF
+#define SPI_DMA_LOG_PRINTF(...)                                                    \\
+    do {                                                                           \\
+        if ((xTaskGetSchedulerState() == taskSCHEDULER_RUNNING) &&                 \\
+            (xSerialSemaphore != NULL)) {                                          \\
+            if (xSemaphoreTake(xSerialSemaphore, pdMS_TO_TICKS(100U)) == pdTRUE) {  \\
+                log_printf(__VA_ARGS__);                                           \\
+                xSemaphoreGive(xSerialSemaphore);                                  \\
+            }                                                                      \\
+        } else {                                                                   \\
+            log_printf(__VA_ARGS__);                                               \\
+        }                                                                          \\
+    } while (0)
+#endif
+#ifndef SPI4_SYSCLK_HZ
+#define SPI4_SYSCLK_HZ              (96000000UL)
+#endif
+/* SPI4 runs from APB2, so baud selection is based on PCLK2. */
+#ifndef SPI4_PCLK2_HZ
+#define SPI4_PCLK2_HZ               (96000000UL)
+#endif
+/* Keep MAX31865 SPI clock around 3 MHz. */
+#ifndef SPI4_TARGET_SCK_HZ
+#define SPI4_TARGET_SCK_HZ          (3000000UL)
+#endif
+#if   ((SPI4_PCLK2_HZ / 2UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x0U)
+    #define SPI4_BAUD_DIV           (2UL)
+#elif ((SPI4_PCLK2_HZ / 4UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x1U)
+    #define SPI4_BAUD_DIV           (4UL)
+#elif ((SPI4_PCLK2_HZ / 8UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x2U)
+    #define SPI4_BAUD_DIV           (8UL)
+#elif ((SPI4_PCLK2_HZ / 16UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x3U)
+    #define SPI4_BAUD_DIV           (16UL)
+#elif ((SPI4_PCLK2_HZ / 32UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x4U)
+    #define SPI4_BAUD_DIV           (32UL)
+#elif ((SPI4_PCLK2_HZ / 64UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x5U)
+    #define SPI4_BAUD_DIV           (64UL)
+#elif ((SPI4_PCLK2_HZ / 128UL) <= SPI4_TARGET_SCK_HZ)
+    #define SPI4_BR_CODE            (0x6U)
+    #define SPI4_BAUD_DIV           (128UL)
+#else
+    #define SPI4_BR_CODE            (0x7U)
+    #define SPI4_BAUD_DIV           (256UL)
+#endif
+#define SPI4_EFFECTIVE_SCK_HZ       (SPI4_PCLK2_HZ / SPI4_BAUD_DIV)
+#ifndef SPI4_DMA_CHANNEL
+#define SPI4_DMA_CHANNEL       4U
+#endif
+#define SPI_DMA_STREAM_RX      DMA2_Stream0
+#define SPI_DMA_STREAM_TX      DMA2_Stream1
+#ifndef DMA_LIFCR_ALL_FLAGS_STREAM0
+#define DMA_LIFCR_ALL_FLAGS_STREAM0 (DMA_LIFCR_CTCIF0 | DMA_LIFCR_CHTIF0 | DMA_LIFCR_CTEIF0 | DMA_LIFCR_CDMEIF0 | DMA_LIFCR_CFEIF0)
+#endif
+#ifndef DMA_LIFCR_ALL_FLAGS_STREAM1
+#define DMA_LIFCR_ALL_FLAGS_STREAM1 (DMA_LIFCR_CTCIF1 | DMA_LIFCR_CHTIF1 | DMA_LIFCR_CTEIF1 | DMA_LIFCR_CDMEIF1 | DMA_LIFCR_CFEIF1)
+#endif
+#ifndef SPI4_AF_SCK_MISO
+#define SPI4_AF_SCK_MISO   6U
+#endif
+#ifndef SPI4_AF_MOSI_PA1
+#define SPI4_AF_MOSI_PA1   5U
+#endif
+#ifndef SPI_DMA_SHORT_WAIT_COUNT
+#define SPI_DMA_SHORT_WAIT_COUNT 10000U
+#endif
+#ifndef SPI_DMA_FORCE_DISABLE_SETTLE_LOOPS
+#define SPI_DMA_FORCE_DISABLE_SETTLE_LOOPS 2000U
+#endif
+volatile spi_dma_transfer_state_t max31865_spi_dma_rx_cmplt = SPI_DMA_TRANSFER_IDLE;
+volatile spi_dma_transfer_state_t max31865_spi_dma_tx_cmplt = SPI_DMA_TRANSFER_IDLE;
+SemaphoreHandle_t max31865_spi_rx_sem = NULL;
+SemaphoreHandle_t max31865_spi_tx_sem = NULL;
+spi_dma_diag_t g_spi_dma_diag = {0};
+static void gpio_config_spi4_pins(void);
+static void dma_clear_all_flags(void);
+static void spi4_log_diag_snapshot(const char *tag);
+static inline void spi_dma_give_sem_from_isr(SemaphoreHandle_t sem);
+static inline void spi_dma_drain_sem(SemaphoreHandle_t sem);
+static void spi_dma_mark_fault_owner_task(void);
+static void spi_dma_mark_fault_owner_from_isr(void);
+static spi_dma_status_t wait_dma_stream_disabled(volatile __IO uint32_t *stream_cr,
+                                                 volatile __IO uint32_t *flag_reg,
+                                                 uint32_t cr_en_mask,
+                                                 uint32_t clear_mask);
+/* Short delay helper used by SPI recovery paths. */
+void spi4_short_delay_ms(uint32_t ms)
+{
+#ifdef systick_delay_ms
+    systick_delay_ms(ms);
+#elif defined(tim2_delay_ms)
+    tim2_delay_ms(ms);
+#else
+    volatile uint32_t loops = ms * 1000U;
+    while (loops--) { __asm__ volatile("nop"); }
+#endif
+}
+#ifdef HAVE_CPU_SLEEP
+#include "pwr.h"
+#else
+/* Sleep until the next interrupt in the fallback path. */
+static inline void cpu_sleep_until_irq(void)
+{
+    __DSB();
+    __ISB();
+    __WFI();
+}
+#endif
+/* Update RX completion state atomically. */
+static inline void set_rx_complete(spi_dma_transfer_state_t state)
+{
+    uint32_t prim = __get_PRIMASK();
+    __disable_irq();
+    max31865_spi_dma_rx_cmplt = state;
+    if (!prim) {
+        __enable_irq();
+    }
+}
+/* Update TX completion state atomically. */
+static inline void set_tx_complete(spi_dma_transfer_state_t state)
+{
+    uint32_t prim = __get_PRIMASK();
+    __disable_irq();
+    max31865_spi_dma_tx_cmplt = state;
+    if (!prim) {
+        __enable_irq();
+    }
+}
+/* Mark MAX31865 fault ownership from task context. */
+static void spi_dma_mark_fault_owner_task(void)
+{
+    if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+        return;
+    }
+    system_fault_mark_active(SYSTEM_FAULT_OWNER_MAX31865);
+}
+/* Mark MAX31865 fault ownership from ISR context. */
+static void spi_dma_mark_fault_owner_from_isr(void)
+{
+    if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+        return;
+    }
+    system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_MAX31865);
+}
+/**
+ * @brief Create SPI4 DMA completion semaphores.
+ * @return 1 on success, otherwise 0.
+ */
+int spi4_dma_rtos_sync_init(void)
+{
+    /* Create both completion semaphores once before the sensor task starts. */
+    if (max31865_spi_rx_sem == NULL) {
+        max31865_spi_rx_sem = xSemaphoreCreateBinary();
+    }
+    if (max31865_spi_tx_sem == NULL) {
+        max31865_spi_tx_sem = xSemaphoreCreateBinary();
+    }
+    if ((max31865_spi_rx_sem == NULL) ||
+        (max31865_spi_tx_sem == NULL)) {
+        return 0;
+    }
+    /* Drain stale tokens so repeated init starts from a known state. */
+    (void)xSemaphoreTake(max31865_spi_rx_sem, 0U);
+    (void)xSemaphoreTake(max31865_spi_tx_sem, 0U);
+    return 1;
+}
+/* Give a DMA completion semaphore from ISR context. */
+static inline void spi_dma_give_sem_from_isr(SemaphoreHandle_t sem)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    if (sem != NULL) {
+        (void)xSemaphoreGiveFromISR(sem, &xHigherPriorityTaskWoken);
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+}
+/* Clear a stale DMA semaphore token. */
+static inline void spi_dma_drain_sem(SemaphoreHandle_t sem)
+{
+    if ((sem != NULL) && (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)) {
+        (void)xSemaphoreTake(sem, 0U);
+    }
+}
+/* Mark MAX31865 fault state for the current DMA error path. */
+static void spi_dma_mark_fault_owner(void)
+{
+    if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING) {
+        return;
+    }
+    system_fault_mark_active_from_isr(SYSTEM_FAULT_OWNER_MAX31865);
+}
+/**
+ * @brief Initialize SPI4 and DMA2 streams for MAX31865.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_dma_init(void)
+{
+    /* Enable GPIO clocks before configuring SPI4 pins. */
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOBEN;
+    __DSB();
+    __ISB();
+    /* SPI4 uses PB13 SCK, PA11 MISO and PA1 MOSI. */
+    gpio_config_spi4_pins();
+#ifdef RCC_APB2ENR_SPI4EN
+    RCC->APB2ENR |= RCC_APB2ENR_SPI4EN;
+#else
+    RCC->APB2ENR |= (1U << 13);
+#endif
+    __DSB();
+    __ISB();
+    /* Start SPI4 configuration from a clean register state. */
+    SPI4->CR1 = 0U;
+    SPI4->CR2 = 0U;
+    SPI4->SR  = 0U;
+    {
+        uint32_t cr1 = 0U;
+#ifdef SPI_CR1_BIDIMODE
+        cr1 = SPI4->CR1 & ~(SPI_CR1_BIDIMODE | SPI_CR1_BIDIOE);
+#else
+        cr1 = SPI4->CR1;
+#endif
+#ifdef SPI_CR1_CRCEN
+        cr1 &= ~SPI_CR1_CRCEN;
+#endif
+#ifdef SPI_CR1_DFF
+        cr1 &= ~SPI_CR1_DFF;
+#endif
+        cr1 &= ~SPI_CR1_LSBFIRST;
+        /* Master mode with software NSS and MAX31865 CPOL/CPHA settings. */
+        cr1 |= SPI_CR1_MSTR;
+        cr1 |= SPI_CR1_SSM;
+        cr1 |= SPI_CR1_SSI;
+#ifdef SPI_CR1_BIDIMODE
+        cr1 &= ~SPI_CR1_BIDIMODE;
+#endif
+        cr1 &= ~SPI_CR1_RXONLY;
+        cr1 &= ~SPI_CR1_CPOL;
+        cr1 |= SPI_CR1_CPHA;
+        cr1 &= ~SPI_CR1_BR;
+        /* BR code is selected from PCLK2 and the target SCK. */
+        cr1 |= (SPI4_BR_CODE << SPI_CR1_BR_Pos);
+        SPI4->CR1 = cr1;
+#ifdef SPI_CR2_FRF
+        SPI4->CR2 &= ~SPI_CR2_FRF;
+#endif
+#ifdef SPI_CR2_DS
+        SPI4->CR2 &= ~SPI_CR2_DS;
+        SPI4->CR2 |= (0x7U << SPI_CR2_DS_Pos);
+#endif
+        SPI4->CR2 &= ~(SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN);
+        /* Both SPI directions are serviced through DMA. */
+        SPI4->CR2 |= (SPI_CR2_RXDMAEN | SPI_CR2_TXDMAEN);
+    }
+    SPI4->CR1 |= SPI_CR1_SPE;
+#ifdef RCC_AHB1ENR_DMA2EN
+    RCC->AHB1ENR |= RCC_AHB1ENR_DMA2EN;
+#else
+    RCC->AHB1ENR |= (1U << 22);
+#endif
+    __DSB();
+    __ISB();
+    /* Reset RX/TX stream control before applying channel configuration. */
+    DMA2_Stream0->CR = 0U;
+    DMA2_Stream1->CR = 0U;
+    if (wait_dma_stream_disabled(&DMA2_Stream0->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM0) != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][INIT] DMA RX stream disable timeout | stream=DMA2_Stream0 channel=%u\r\n",
+                           (unsigned)SPI4_DMA_CHANNEL);
+        spi4_log_diag_snapshot("init_stream0_disable_timeout");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
+    }
+    if (wait_dma_stream_disabled(&DMA2_Stream1->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM1) != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][INIT] DMA TX stream disable timeout | stream=DMA2_Stream1 channel=%u\r\n",
+                           (unsigned)SPI4_DMA_CHANNEL);
+        spi4_log_diag_snapshot("init_stream1_disable_timeout");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
+    }
+    {
+        /* Stream0 is peripheral-to-memory for SPI4 RX. */
+        uint32_t s0cr = 0U;
+        s0cr |= (SPI4_DMA_CHANNEL << 25);
+        s0cr &= ~((3U << 6) | (1U << 7));
+        s0cr |= (1U << 10);
+        s0cr &= ~(1U << 9);
+        s0cr &= ~((3U << 11) | (3U << 13));
+        s0cr |= (2U << 16);
+        s0cr |= DMA_SxCR_TCIE;
+        DMA2_Stream0->CR = s0cr;
+        DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM0;
+    }
+    {
+        /* Stream1 is memory-to-peripheral for SPI4 TX. */
+        uint32_t s1cr = 0U;
+        s1cr |= (SPI4_DMA_CHANNEL << 25);
+        s1cr |= (1U << 6);
+        s1cr |= (1U << 10);
+        s1cr &= ~(1U << 9);
+        s1cr &= ~((3U << 11) | (3U << 13));
+        s1cr |= (2U << 16);
+        s1cr |= DMA_SxCR_TCIE;
+        DMA2_Stream1->CR = s1cr;
+        DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM1;
+    }
+    {
+        /* Read the programmed streams back before enabling IRQs. */
+        const uint32_t s0cr_read = DMA2_Stream0->CR;
+        const uint32_t s1cr_read = DMA2_Stream1->CR;
+        const uint32_t dir1 = (s1cr_read >> 6) & 0x3U;
+        const uint32_t ch0  = (s0cr_read >> 25) & 0x7U;
+        const uint32_t ch1  = (s1cr_read >> 25) & 0x7U;
+        if (ch0 != SPI4_DMA_CHANNEL || ch1 != SPI4_DMA_CHANNEL || dir1 != 1U) {
+            spi_dma_mark_fault_owner();
+            SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][INIT] DMA configuration mismatch | rx_stream=DMA2_Stream0 tx_stream=DMA2_Stream1 expected_channel=%u read_ch0=%lu read_ch1=%lu tx_dir=%lu\r\n",
+                               (unsigned)SPI4_DMA_CHANNEL,
+                               (unsigned long)ch0,
+                               (unsigned long)ch1,
+                               (unsigned long)dir1);
+            spi4_log_diag_snapshot("init_dma_config_mismatch");
+            app_fault_delay_ms(20U);
+            return SPI_DMA_STATUS_CONFIG_MISMATCH;
+        }
+    }
+    NVIC_ClearPendingIRQ(DMA2_Stream0_IRQn);
+    /* Priority 5 allows the DMA IRQs to use FreeRTOS semaphore APIs. */
+    NVIC_SetPriority(DMA2_Stream0_IRQn, 5);
+    NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+    NVIC_ClearPendingIRQ(DMA2_Stream1_IRQn);
+    NVIC_SetPriority(DMA2_Stream1_IRQn, 5);
+    NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+    g_spi_dma_diag.rx_tc_count = 0U;
+    g_spi_dma_diag.tx_tc_count = 0U;
+    g_spi_dma_diag.rx_err_count = 0U;
+    g_spi_dma_diag.tx_err_count = 0U;
+    g_spi_dma_diag.rx_ht_count = 0U;
+    g_spi_dma_diag.tx_ht_count = 0U;
+    hb_spi_ts = 0U;
+    set_rx_complete(SPI_DMA_TRANSFER_IDLE);
+    set_tx_complete(SPI_DMA_TRANSFER_IDLE);
+    return SPI_DMA_STATUS_OK;
+}
+/* Configure SPI4 SCK, MISO and MOSI pins. */
+static void gpio_config_spi4_pins(void)
+{
+    const uint32_t pb13 = 13U;
+    const uint32_t pa11 = 11U;
+    const uint32_t pa1  = 1U;
+    GPIOB->MODER &= ~(3U << (pb13 * 2U));
+    GPIOB->MODER |=  (2U << (pb13 * 2U));
+    GPIOB->AFR[1] = (GPIOB->AFR[1] & ~(0xFU << ((pb13 - 8U) * 4U))) | (SPI4_AF_SCK_MISO << ((pb13 - 8U) * 4U));
+    GPIOB->OSPEEDR = (GPIOB->OSPEEDR & ~(3U << (pb13 * 2U))) | (2U << (pb13 * 2U));
+    GPIOB->PUPDR &= ~(3U << (pb13 * 2U));
+    GPIOA->MODER &= ~(3U << (pa11 * 2U));
+    GPIOA->MODER |=  (2U << (pa11 * 2U));
+    GPIOA->AFR[1] = (GPIOA->AFR[1] & ~(0xFU << ((pa11 - 8U) * 4U))) | (SPI4_AF_SCK_MISO << ((pa11 - 8U) * 4U));
+    GPIOA->OSPEEDR = (GPIOA->OSPEEDR & ~(3U << (pa11 * 2U))) | (2U << (pa11 * 2U));
+    GPIOA->PUPDR &= ~(3U << (pa11 * 2U));
+    GPIOA->MODER &= ~(3U << (pa1 * 2U));
+    GPIOA->MODER |=  (2U << (pa1 * 2U));
+    GPIOA->AFR[0] = (GPIOA->AFR[0] & ~(0xFU << (pa1 * 4U))) | (SPI4_AF_MOSI_PA1 << (pa1 * 4U));
+    GPIOA->OSPEEDR = (GPIOA->OSPEEDR & ~(3U << (pa1 * 2U))) | (2U << (pa1 * 2U));
+    GPIOA->PUPDR &= ~(3U << (pa1 * 2U));
+    __DSB();
+    __ISB();
+}
+/**
+ * @brief Change the SPI4 baud-rate prescaler.
+ * @param br_code SPI BR field value from 0 to 7.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_set_baudrate_prescaler(uint8_t br_code)
+{
+    if (br_code > 7U) {
+        return SPI_DMA_STATUS_INVALID_ARG;
+    }
+    /* Preserve SPI enable state while changing the BR bits. */
+    const uint32_t was_enabled = ((SPI4->CR1 & SPI_CR1_SPE) != 0U) ? 1U : 0U;
+    const uint32_t prim = __get_PRIMASK();
+    __disable_irq();
+    SPI4->CR1 &= ~SPI_CR1_SPE;
+    __DSB();
+    __ISB();
+    SPI4->CR1 &= ~SPI_CR1_BR;
+    SPI4->CR1 |= ((uint32_t)br_code << SPI_CR1_BR_Pos);
+    if (was_enabled != 0U) {
+        __DSB();
+        __ISB();
+        SPI4->CR1 |= SPI_CR1_SPE;
+    }
+    if (!prim) {
+        __enable_irq();
+    }
+    return SPI_DMA_STATUS_OK;
+}
+/* Drain any unread SPI4 RX data. */
+void spi4_flush_rx(void)
+{
+    uint32_t limit = 64U;
+    /* Drain stale RX words before starting another transfer. */
+    while (((SPI4->SR & SPI_SR_RXNE) != 0U) && (limit-- != 0U)) {
+        volatile uint32_t tmp = SPI4->DR;
+        (void)tmp;
+        __DSB();
+        __ISB();
+    }
+}
+/* Clear SPI4 overrun state when set. */
+void spi4_check_and_clear_ovr(void)
+{
+    /* OVR is cleared by reading DR followed by SR. */
+    if ((SPI4->SR & SPI_SR_OVR) != 0U) {
+        volatile uint32_t tmp = SPI4->DR;
+        (void)tmp;
+        tmp = SPI4->SR;
+        (void)tmp;
+        __DSB();
+        __ISB();
+    }
+}
+/* Clear RX and TX DMA2 stream flags. */
+static void dma_clear_all_flags(void)
+{
+    DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM0;
+    DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM1;
+}
+/* Print one SPI4/DMA diagnostic snapshot. */
+static void spi4_log_diag_snapshot(const char *tag)
+{
+	SPI_DMA_LOG_PRINTF("[SPI4][DIAG][%s] SR=0x%08lX CR1=0x%08lX CR2=0x%08lX LISR=0x%08lX S0CR=0x%08lX S1CR=0x%08lX RX_STATE=%u TX_STATE=%u RX_TC=%lu TX_TC=%lu RX_ERR=%lu TX_ERR=%lu\r\n",
+               tag ? tag : "unknown",
+               (unsigned long)SPI4->SR,
+               (unsigned long)SPI4->CR1,
+               (unsigned long)SPI4->CR2,
+               (unsigned long)DMA2->LISR,
+               (unsigned long)DMA2_Stream0->CR,
+               (unsigned long)DMA2_Stream1->CR,
+               (unsigned)max31865_spi_dma_rx_cmplt,
+               (unsigned)max31865_spi_dma_tx_cmplt,
+               (unsigned long)g_spi_dma_diag.rx_tc_count,
+               (unsigned long)g_spi_dma_diag.tx_tc_count,
+               (unsigned long)g_spi_dma_diag.rx_err_count,
+               (unsigned long)g_spi_dma_diag.tx_err_count);
+    tim2_delay_ms(2U);
+}
+/**
+ * @brief Start one SPI4 DMA transmit.
+ * @param tx_buf TX buffer.
+ * @param len Number of bytes.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_dma_transmit(uint8_t *tx_buf, uint32_t len)
+{
+    if ((tx_buf == NULL) || (len == 0U)) {
+    	SPI_DMA_LOG_PRINTF("spi4_dma_transmit: invalid args\r\n");
+        return SPI_DMA_STATUS_INVALID_ARG;
+    }
+    spi4_flush_rx();
+    spi4_check_and_clear_ovr();
+    /* TX stream must be stopped before its buffer and count are replaced. */
+    DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+    if (wait_dma_stream_disabled(&DMA2_Stream1->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM1) != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][TX] DMA TX stream disable timeout | stream=DMA2_Stream1 channel=%u\r\n",
+                           (unsigned)SPI4_DMA_CHANNEL);
+        spi4_log_diag_snapshot("tx_stream1_disable_timeout");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
+    }
+    DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM1;
+    DMA2_Stream1->PAR  = (uint32_t)&(SPI4->DR);
+    DMA2_Stream1->M0AR = (uint32_t)tx_buf;
+    DMA2_Stream1->NDTR = len;
+    __DSB();
+    __ISB();
+    /* Clear old completion state before enabling the TX stream. */
+    spi_dma_drain_sem(max31865_spi_tx_sem);
+    set_tx_complete(SPI_DMA_TRANSFER_IDLE);
+    DMA2_Stream1->CR |= DMA_SxCR_EN;
+    return SPI_DMA_STATUS_OK;
+}
+/**
+ * @brief Start one SPI4 DMA receive.
+ * @param rx_buf RX buffer.
+ * @param len Number of bytes.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_dma_receive(uint8_t *rx_buf, uint32_t len)
+{
+    if ((rx_buf == NULL) || (len == 0U)) {
+    	SPI_DMA_LOG_PRINTF("spi4_dma_receive: invalid args\r\n");
+        return SPI_DMA_STATUS_INVALID_ARG;
+    }
+    spi4_flush_rx();
+    spi4_check_and_clear_ovr();
+    DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+    if (wait_dma_stream_disabled(&DMA2_Stream0->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM0) != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][RX] DMA RX stream disable timeout | stream=DMA2_Stream0 channel=%u\r\n",
+                           (unsigned)SPI4_DMA_CHANNEL);
+        spi4_log_diag_snapshot("rx_stream0_disable_timeout");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
+    }
+    DMA2->LIFCR = DMA_LIFCR_ALL_FLAGS_STREAM0;
+    DMA2_Stream0->PAR  = (uint32_t)&(SPI4->DR);
+    DMA2_Stream0->M0AR = (uint32_t)rx_buf;
+    DMA2_Stream0->NDTR = len;
+    __DSB();
+    __ISB();
+    /* Clear old completion state before enabling the RX stream. */
+    spi_dma_drain_sem(max31865_spi_rx_sem);
+    set_rx_complete(SPI_DMA_TRANSFER_IDLE);
+    DMA2_Stream0->CR |= DMA_SxCR_EN;
+    return SPI_DMA_STATUS_OK;
+}
+/**
+ * @brief Start one full-duplex SPI4 DMA transfer.
+ * @param tx_buf TX buffer.
+ * @param rx_buf RX buffer.
+ * @param len Number of bytes.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_dma_transmit_receive(uint8_t *tx_buf, uint8_t *rx_buf, uint32_t len)
+{
+    if ((tx_buf == NULL) || (rx_buf == NULL) || (len == 0U)) {
+    	SPI_DMA_LOG_PRINTF("spi4_dma_transmit_receive: invalid args\r\n");
+        return SPI_DMA_STATUS_INVALID_ARG;
+    }
+    spi4_flush_rx();
+    spi4_check_and_clear_ovr();
+    DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+    DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+    if (wait_dma_stream_disabled(&DMA2_Stream1->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM1) != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][TXRX] DMA TX stream disable timeout | stream=DMA2_Stream1 channel=%u\r\n",
+                           (unsigned)SPI4_DMA_CHANNEL);
+        spi4_log_diag_snapshot("txrx_stream1_disable_timeout");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
+    }
+    if (wait_dma_stream_disabled(&DMA2_Stream0->CR, &DMA2->LIFCR, DMA_SxCR_EN, DMA_LIFCR_ALL_FLAGS_STREAM0) != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][TXRX] DMA RX stream disable timeout | stream=DMA2_Stream0 channel=%u\r\n",
+                           (unsigned)SPI4_DMA_CHANNEL);
+        spi4_log_diag_snapshot("txrx_stream0_disable_timeout");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT;
+    }
+    /* Full-duplex transfer starts with both DMA flag sets clean. */
+    dma_clear_all_flags();
+    DMA2_Stream0->PAR  = (uint32_t)&(SPI4->DR);
+    DMA2_Stream0->M0AR = (uint32_t)rx_buf;
+    DMA2_Stream0->NDTR = len;
+    DMA2_Stream1->PAR  = (uint32_t)&(SPI4->DR);
+    DMA2_Stream1->M0AR = (uint32_t)tx_buf;
+    DMA2_Stream1->NDTR = len;
+    __DSB();
+    __ISB();
+    spi_dma_drain_sem(max31865_spi_rx_sem);
+    spi_dma_drain_sem(max31865_spi_tx_sem);
+    set_rx_complete(SPI_DMA_TRANSFER_IDLE);
+    set_tx_complete(SPI_DMA_TRANSFER_IDLE);
+    /* Arm RX first, then TX, so incoming bytes cannot be missed. */
+    DMA2_Stream0->CR |= DMA_SxCR_EN;
+    DMA2_Stream1->CR |= DMA_SxCR_EN;
+    return SPI_DMA_STATUS_OK;
+}
+/* Wait for a DMA stream to stop, then force-disable if needed. */
+static spi_dma_status_t wait_dma_stream_disabled(volatile __IO uint32_t *stream_cr,
+                                                 volatile __IO uint32_t *flag_reg,
+                                                 uint32_t cr_en_mask,
+                                                 uint32_t clear_mask)
+{
+    /* Give hardware a short normal-disable window first. */
+    uint32_t short_wait = SPI_DMA_SHORT_WAIT_COUNT;
+    while (((*stream_cr & cr_en_mask) != 0U) && (short_wait-- != 0U)) {
+        cpu_sleep_until_irq();
+    }
+    if (((*stream_cr & cr_en_mask) == 0U)) {
+        return SPI_DMA_STATUS_OK;
+    }
+    /* Force-clear EN and stale flags if the normal wait did not finish. */
+    *(volatile uint32_t *)stream_cr = (*stream_cr & ~cr_en_mask);
+    *flag_reg = clear_mask;
+    for (volatile uint32_t i = 0U; i < SPI_DMA_FORCE_DISABLE_SETTLE_LOOPS; ++i) {
+        __asm__ volatile("nop");
+    }
+    return (((*stream_cr & cr_en_mask) == 0U) ? SPI_DMA_STATUS_OK : SPI_DMA_STATUS_STREAM_DISABLE_TIMEOUT);
+}
+/* Wait for DMA completion using RTOS semaphore or startup polling. */
+static spi_dma_status_t spi_dma_wait_complete(volatile spi_dma_transfer_state_t *state,
+                                                SemaphoreHandle_t sem,
+                                                uint32_t timeout_ms)
+{
+    if (state == NULL) {
+        return SPI_DMA_STATUS_INVALID_ARG;
+    }
+    /* Runtime path blocks on the matching DMA completion semaphore. */
+    if ((sem != NULL) && (xTaskGetSchedulerState() == taskSCHEDULER_RUNNING)) {
+        if (xSemaphoreTake(sem, pdMS_TO_TICKS(timeout_ms)) != pdTRUE) {
+            spi4_log_diag_snapshot("dma_wait_sem_timeout");
+            return SPI_DMA_STATUS_TIMEOUT;
+        }
+        if (*state == SPI_DMA_TRANSFER_SUCCESS) {
+            return SPI_DMA_STATUS_OK;
+        }
+        spi4_log_diag_snapshot("dma_wait_sem_transfer_error");
+        return SPI_DMA_STATUS_TRANSFER_ERROR;
+    }
+    {
+        /* Startup fallback waits on the state flag with a bounded timeout. */
+        const uint32_t start_ms = ms_get();
+        while (*state == SPI_DMA_TRANSFER_IDLE) {
+#ifdef USE_IWDG
+            IWDG_Refresh();
+#endif
+            cpu_sleep_until_irq();
+            if ((ms_get() - start_ms) >= timeout_ms) {
+                spi4_log_diag_snapshot("dma_wait_poll_timeout");
+                return SPI_DMA_STATUS_TIMEOUT;
+            }
+        }
+    }
+    if (*state == SPI_DMA_TRANSFER_SUCCESS) {
+        return SPI_DMA_STATUS_OK;
+    }
+    spi4_log_diag_snapshot("dma_wait_poll_transfer_error");
+    return SPI_DMA_STATUS_TRANSFER_ERROR;
+}
+/**
+ * @brief Wait for SPI4 RX DMA completion.
+ * @param timeout_ms Timeout in milliseconds.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi_dma_stream0_wait_complete(uint32_t timeout_ms)
+{
+    return spi_dma_wait_complete(&max31865_spi_dma_rx_cmplt,
+                                 max31865_spi_rx_sem,
+                                 timeout_ms);
+}
+/**
+ * @brief Wait for SPI4 TX DMA completion.
+ * @param timeout_ms Timeout in milliseconds.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi_dma_stream1_wait_complete(uint32_t timeout_ms)
+{
+    return spi_dma_wait_complete(&max31865_spi_dma_tx_cmplt,
+                                 max31865_spi_tx_sem,
+                                 timeout_ms);
+}
+/* Read and clear the TIM2 one-second flag. */
+uint8_t tim2_1s_check_flag(void)
+{
+    if (tim2_1s_flag != 0U) {
+        tim2_1s_flag = 0U;
+        return 1U;
+    }
+    return 0U;
+}
+//void TIM2_IRQHandler(void)
+//{
+//    if ((TIM2->SR & TIM_SR_UIF) != 0U) {
+//        TIM2->SR &= ~TIM_SR_UIF;
+//        TIM2->CR1 &= ~TIM_CR1_CEN;
+//        TIM2->DIER &= ~TIM_DIER_UIE;
+//        tim2_1s_flag = 1U;
+//    }
+//}
+/* SPI4 RX DMA interrupt. */
+void DMA2_Stream0_IRQHandler(void)
+{
+    const uint32_t lisr = DMA2->LISR;
+    /* RX transfer complete updates state and wakes the waiting task. */
+    if ((lisr & DMA_LISR_TCIF0) != 0U) {
+        g_spi_dma_diag.rx_tc_count++;
+        heartbeat_signal_spi();
+        DMA2->LIFCR = DMA_LIFCR_CTCIF0;
+        DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+        __DSB();
+        __ISB();
+        set_rx_complete(SPI_DMA_TRANSFER_SUCCESS);
+        spi_dma_give_sem_from_isr(max31865_spi_rx_sem);
+        spi4_check_and_clear_ovr();
+        return;
+    }
+    if ((lisr & DMA_LISR_HTIF0) != 0U) {
+        g_spi_dma_diag.rx_ht_count++;
+        DMA2->LIFCR = DMA_LIFCR_CHTIF0;
+        return;
+    }
+    /* Any RX DMA error stops the stream and reports transfer failure. */
+    if ((lisr & (DMA_LISR_TEIF0 | DMA_LISR_DMEIF0 | DMA_LISR_FEIF0)) != 0U) {
+        g_spi_dma_diag.rx_err_count++;
+        DMA2->LIFCR = ((lisr & DMA_LISR_TEIF0)  ? DMA_LIFCR_CTEIF0  : 0U) |
+                      ((lisr & DMA_LISR_DMEIF0) ? DMA_LIFCR_CDMEIF0 : 0U) |
+                      ((lisr & DMA_LISR_FEIF0)  ? DMA_LIFCR_CFEIF0  : 0U);
+        DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+        __DSB();
+        __ISB();
+        spi_dma_mark_fault_owner();
+        set_rx_complete(SPI_DMA_TRANSFER_ERROR);
+        spi_dma_give_sem_from_isr(max31865_spi_rx_sem);
+        return;
+    }
+}
+/* SPI4 TX DMA interrupt. */
+void DMA2_Stream1_IRQHandler(void)
+{
+    const uint32_t lisr = DMA2->LISR;
+    /* TX transfer complete updates state and wakes the waiting task. */
+    if ((lisr & DMA_LISR_TCIF1) != 0U) {
+        g_spi_dma_diag.tx_tc_count++;
+        DMA2->LIFCR = DMA_LIFCR_CTCIF1;
+        DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+        __DSB();
+        __ISB();
+        set_tx_complete(SPI_DMA_TRANSFER_SUCCESS);
+        spi_dma_give_sem_from_isr(max31865_spi_tx_sem);
+        return;
+    }
+    if ((lisr & DMA_LISR_HTIF1) != 0U) {
+        g_spi_dma_diag.tx_ht_count++;
+        DMA2->LIFCR = DMA_LIFCR_CHTIF1;
+        return;
+    }
+    /* Any TX DMA error stops the stream and reports transfer failure. */
+    if ((lisr & (DMA_LISR_TEIF1 | DMA_LISR_DMEIF1 | DMA_LISR_FEIF1)) != 0U) {
+        g_spi_dma_diag.tx_err_count++;
+        DMA2->LIFCR = ((lisr & DMA_LISR_TEIF1)  ? DMA_LIFCR_CTEIF1  : 0U) |
+                      ((lisr & DMA_LISR_DMEIF1) ? DMA_LIFCR_CDMEIF1 : 0U) |
+                      ((lisr & DMA_LISR_FEIF1)  ? DMA_LIFCR_CFEIF1  : 0U);
+        DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+        __DSB();
+        __ISB();
+        spi_dma_mark_fault_owner();
+        set_tx_complete(SPI_DMA_TRANSFER_ERROR);
+        spi_dma_give_sem_from_isr(max31865_spi_tx_sem);
+        return;
+    }
+}
+/* Weak device reinit hook used by recovery. */
+__attribute__((weak)) int spi4_device_reinit(void)
+{
+    return 0;
+}
+/* Weak SPI4 self-test hook used by recovery. */
+__attribute__((weak)) int spi4_selftest(void)
+{
+    return 0;
+}
+/**
+ * @brief Recover SPI4/DMA state after a transfer fault.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_recover(void)
+{
+    /* First try to recover without resetting the SPI peripheral. */
+    SPI_DMA_LOG_PRINTF("[INFO][SPI_DMA][SPI4][MAX31865][RECOVER] start\r\n");
+    DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+    DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+    __DSB();
+    __ISB();
+    dma_clear_all_flags();
+    spi4_short_delay_ms(2U);
+    spi4_flush_rx();
+    spi4_check_and_clear_ovr();
+    SPI4->CR1 &= ~SPI_CR1_SPE;
+    __DSB();
+    __ISB();
+    {
+        uint32_t timeout = 1000U;
+        /* Give SPI4 a bounded window to leave BSY after DMA is stopped. */
+        while (((SPI4->SR & SPI_SR_BSY) != 0U) && (timeout-- != 0U)) {
+            __asm__ volatile("nop");
+        }
+    }
+    /* Use APB reset only when the graceful stop did not fully settle. */
+    if (((DMA2_Stream0->CR & DMA_SxCR_EN) == 0U) &&
+        ((DMA2_Stream1->CR & DMA_SxCR_EN) == 0U) &&
+        ((SPI4->SR & SPI_SR_BSY) == 0U)) {
+        SPI_DMA_LOG_PRINTF("[INFO][SPI_DMA][SPI4][MAX31865][RECOVER] graceful disable succeeded\r\n");
+    } else {
+        spi_dma_mark_fault_owner_task();
+        SPI_DMA_LOG_PRINTF("[WARN][SPI_DMA][SPI4][MAX31865][RECOVER] graceful disable failed -> toggling SPI APB reset\r\n");
+        spi4_log_diag_snapshot("recover_graceful_disable_failed");
+        app_fault_delay_ms(20U);
+#ifdef RCC_APB2RSTR_SPI4RST
+        RCC->APB2RSTR |= RCC_APB2RSTR_SPI4RST;
+        spi4_short_delay_ms(1U);
+        RCC->APB2RSTR &= ~RCC_APB2RSTR_SPI4RST;
+#else
+        RCC->APB2RSTR |= (1U << 13);
+        spi4_short_delay_ms(1U);
+        RCC->APB2RSTR &= ~(1U << 13);
+#endif
+        __DSB();
+        __ISB();
+        dma_clear_all_flags();
+        DMA2_Stream0->CR = 0U;
+        DMA2_Stream1->CR = 0U;
+        spi4_short_delay_ms(2U);
+    }
+    dma_clear_all_flags();
+    DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+    DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+    __DSB();
+    __ISB();
+    spi4_flush_rx();
+    spi4_check_and_clear_ovr();
+    SPI4->CR1 |= SPI_CR1_SPE;
+    __DSB();
+    __ISB();
+    /* Restore device-level MAX31865 state after the bus is healthy. */
+    if (spi4_device_reinit() != 0) {
+        spi_dma_mark_fault_owner_task();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][RECOVER] spi4_device_reinit failed\r\n");
+        spi4_log_diag_snapshot("recover_device_reinit_failed");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_DEVICE_REINIT_FAILED;
+    }
+    /* Final self-test confirms the recovered path before returning. */
+    if (spi4_selftest() != 0) {
+        spi_dma_mark_fault_owner_task();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][RECOVER] spi4_selftest failed\r\n");
+        spi4_log_diag_snapshot("recover_selftest_failed");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_SELFTEST_FAILED;
+    }
+    SPI_DMA_LOG_PRINTF("[INFO][SPI_DMA][SPI4][MAX31865][RECOVER] lightweight restore OK\r\n");
+    return SPI_DMA_STATUS_OK;
+}
+/**
+ * @brief Run a full SPI4/DMA restore and initialization.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_restore_and_init(void)
+{
+    SPI_DMA_LOG_PRINTF("[INFO][SPI_DMA][SPI4][MAX31865][RESTORE] starting full restore/init\r\n");
+    /* Full restore rebuilds SPI4 and both DMA streams from scratch. */
+    if (spi4_dma_init() != SPI_DMA_STATUS_OK) {
+        spi_dma_mark_fault_owner_task();
+        SPI_DMA_LOG_PRINTF("[ERROR][SPI_DMA][SPI4][MAX31865][RESTORE] spi4_dma_init failed during full restore/init\r\n");
+        spi4_log_diag_snapshot("restore_spi4_dma_init_failed");
+        app_fault_delay_ms(20U);
+        return SPI_DMA_STATUS_INIT_FAILED;
+    }
+    spi4_short_delay_ms(2U);
+    spi4_flush_rx();
+    spi4_check_and_clear_ovr();
+    DMA2_Stream1->CR &= ~DMA_SxCR_EN;
+    DMA2_Stream0->CR &= ~DMA_SxCR_EN;
+    __DSB();
+    __ISB();
+    SPI_DMA_LOG_PRINTF("[INFO][SPI_DMA][SPI4][MAX31865][RESTORE] restore & init completed OK\r\n");
+    return SPI_DMA_STATUS_OK;
+}
+/**
+ * @brief Wait for the SPI4 BSY flag to clear.
+ * @param timeout_ms Timeout in milliseconds.
+ * @return SPI DMA status.
+ */
+spi_dma_status_t spi4_wait_bsy_clear_ms(uint32_t timeout_ms)
+{
+    const uint32_t start_ms = ms_get();
+    if ((SPI4->CR1 & SPI_CR1_SPE) == 0U) {
+        return SPI_DMA_STATUS_INVALID_ARG;
+    }
+    /* Wait for the final SPI shift to finish before continuing. */
+    while ((SPI4->SR & SPI_SR_BSY) != 0U) {
+#ifdef USE_IWDG
+        IWDG_Refresh();
+#endif
+        cpu_sleep_until_irq();
+        if ((ms_get() - start_ms) >= timeout_ms) {
+            return SPI_DMA_STATUS_TIMEOUT;
+        }
+    }
+    return SPI_DMA_STATUS_OK;
+}

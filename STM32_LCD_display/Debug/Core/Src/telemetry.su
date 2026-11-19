@@ -1,0 +1,4 @@
+../Core/Src/telemetry.c:24:11:telemetry_next_generation	0	static
+../Core/Src/telemetry.c:38:6:telemetry_queues_init	24	static
+../Core/Src/telemetry.c:64:6:telemetry_peek_fresh_snapshot	16	static
+../Core/Src/telemetry.c:141:6:telemetry_commit_snapshot	0	static

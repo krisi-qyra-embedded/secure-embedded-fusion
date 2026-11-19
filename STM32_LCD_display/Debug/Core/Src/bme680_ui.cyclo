@@ -1,0 +1,7 @@
+../Core/Src/bme680_ui.c:58:18:make_text	2
+../Core/Src/bme680_ui.c:74:18:make_value	2
+../Core/Src/bme680_ui.c:26:13:set_one_decimal	2
+../Core/Src/bme680_ui.c:86:6:bme680_ui_init	12
+../Core/Src/bme680_ui.c:140:6:bme680_ui_update	3
+../Core/Src/bme680_ui.c:157:6:bme680_ui_waiting	2
+../Core/Src/bme680_ui.c:165:6:bme680_ui_error	2

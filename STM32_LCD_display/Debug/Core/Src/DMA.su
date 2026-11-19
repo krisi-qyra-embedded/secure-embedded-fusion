@@ -1,0 +1,7 @@
+../Core/Src/DMA.c:49:6:dma2_ADC_pc45	24	static,ignoring_inline_asm
+../Core/Src/DMA.c:251:6:adc_byte_buffers_init	16	static
+../Core/Src/DMA.c:274:6:store_adc_byte_values	12	static
+../Core/Src/DMA.c:307:6:adc_get_latest_triplet	12	static
+../Core/Src/DMA.c:331:5:collect_adc_samples_until_full	32	static,ignoring_inline_asm
+../Core/Src/DMA.c:386:5:ADC_DMA_INIT	32	static,ignoring_inline_asm
+../Core/Src/DMA.c:447:6:DMA2_Stream4_IRQHandler	0	static

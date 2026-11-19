@@ -1,0 +1,7 @@
+../Core/Src/systick.c:18:28:systick_error_hook	0	static
+../Core/Src/systick.c:25:6:SysTick_Handler	8	static
+../Core/Src/systick.c:55:18:systick_init	8	static,ignoring_inline_asm
+../Core/Src/systick.c:98:6:systick_deinit	0	static
+../Core/Src/systick.c:110:10:ms_get	0	static
+../Core/Src/systick.c:118:6:systick_delay_ms	8	static,ignoring_inline_asm
+../Core/Src/systick.c:140:18:systick_selftest	8	static,ignoring_inline_asm

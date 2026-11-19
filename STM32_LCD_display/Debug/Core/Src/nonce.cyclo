@@ -1,0 +1,15 @@
+../Core/Src/nonce.c:147:5:nonce_compute_static_entropy.part.0	2
+../Core/Src/nonce.c:38:7:secure_zero	2
+../Core/Src/nonce.c:50:16:nonce_simple_init	2
+../Core/Src/nonce.c:79:6:nonce_increment_message_counter	1
+../Core/Src/nonce.c:84:10:nonce_get_message_counter	1
+../Core/Src/nonce.c:89:13:nonce_get_counter_string	1
+../Core/Src/nonce.c:96:10:counter_string_to_uint32	2
+../Core/Src/nonce.c:118:10:read_tim1_hashed_loop	3
+../Core/Src/nonce.c:147:5:nonce_compute_static_entropy	5
+../Core/Src/nonce.c:172:11:nonce_simple_generate	3
+../Core/Src/nonce.c:206:12:nonce_simple_generate_to_buffer	3
+../Core/Src/nonce.c:218:18:nonce_simple_get_last	1
+../Core/Src/nonce.c:223:8:nonce_simple_print	2
+../Core/Src/nonce.c:235:8:nonce_simple_print_detailed	4
+../Core/Src/nonce.c:288:11:nonce_simple_verify_unique	6

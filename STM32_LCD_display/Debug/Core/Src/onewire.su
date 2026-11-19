@@ -1,0 +1,16 @@
+../Core/Src/onewire.c:12:16:OneWire_IsConfigValid	0	static
+../Core/Src/onewire.c:50:13:OneWire_EnterCritical	8	static,ignoring_inline_asm
+../Core/Src/onewire.c:38:13:OneWire_Pin_Level	0	static
+../Core/Src/onewire.c:19:13:OneWire_Pin_Mode	40	static
+../Core/Src/onewire.c:62:13:OneWire_ExitCritical	8	static,ignoring_inline_asm
+../Core/Src/onewire.c:74:13:OneWire_WriteBitBlocking	16	static
+../Core/Src/onewire.c:102:18:OneWire_ReadBit	16	static
+../Core/Src/onewire.c:128:18:OneWire_WriteByte	16	static
+../Core/Src/onewire.c:148:18:OneWire_ReadByte	32	static
+../Core/Src/onewire.c:176:18:OneWire_Reset	8	static
+../Core/Src/onewire.c:202:18:OneWire_Search	40	static
+../Core/Src/onewire.c:323:18:OneWire_GetDevRom	0	static
+../Core/Src/onewire.c:341:18:OneWire_Init	8	static
+../Core/Src/onewire.c:375:18:OneWire_SelectWithPointer	16	static
+../Core/Src/onewire.c:400:6:OneWire_TimerElapsedCallback	0	static
+../Core/Src/onewire.c:411:9:OneWire_CRC8	12	static

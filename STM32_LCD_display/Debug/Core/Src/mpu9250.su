@@ -1,0 +1,17 @@
+../Core/Src/mpu9250.c:79:25:mpu9250_wait_for_dma_completion	24	static,ignoring_inline_asm
+../Core/Src/mpu9250.c:69:13:mpu9250_clear_dma_semaphore_if_rtos	8	static
+../Core/Src/mpu9250.c:143:25:mpu9250_write_single_reg_blocking	40	static
+../Core/Src/mpu9250.c:171:25:mpu9250_read_blocking.constprop	40	static
+../Core/Src/mpu9250.c:209:18:mpu9250_accel_config	16	static
+../Core/Src/mpu9250.c:265:18:MPU9250_beginGyro	16	static
+../Core/Src/mpu9250.c:319:18:mpu9250_accel_update_blocking	16	static,ignoring_inline_asm
+../Core/Src/mpu9250.c:340:18:mpu9250_gyro_update_blocking	16	static,ignoring_inline_asm
+../Core/Src/mpu9250.c:362:18:MPU9250_accelGet	16	static
+../Core/Src/mpu9250.c:389:18:MPU9250_gyroGet	16	static
+../Core/Src/mpu9250.c:472:18:mpu9250_calibrateGyro	64	static
+../Core/Src/mpu9250.c:415:15:app_mpu9250_sensor_stack_init	40	static
+../Core/Src/mpu9250.c:610:14:app_mpu9250_peripherals_init	24	static,ignoring_inline_asm
+../Core/Src/mpu9250.c:709:6:telemetry_publish_mpu9250	64	static
+../Core/Src/mpu9250.c:515:18:MPU_readProcessedData	48	static
+../Core/Src/mpu9250.c:742:30:app_mpu9250_runtime_process	40	static
+../Core/Src/mpu9250.c:781:18:MPU_calcAttitude	32	static

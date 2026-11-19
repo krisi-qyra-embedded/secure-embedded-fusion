@@ -1,0 +1,12 @@
+../Drivers/lvgl/src/core/lv_refr.c:1312:13:call_flush_cb	1
+../Drivers/lvgl/src/core/lv_refr.c:807:19:lv_refr_get_top_obj	8
+../Drivers/lvgl/src/core/lv_refr.c:105:6:_lv_refr_init	1
+../Drivers/lvgl/src/core/lv_refr.c:132:6:lv_obj_redraw	7
+../Drivers/lvgl/src/core/lv_refr.c:966:6:refr_obj	28
+../Drivers/lvgl/src/core/lv_refr.c:847:13:refr_obj_and_children	6
+../Drivers/lvgl/src/core/lv_refr.c:698:13:refr_area_part	58
+../Drivers/lvgl/src/core/lv_refr.c:207:6:_lv_inv_area	14
+../Drivers/lvgl/src/core/lv_refr.c:268:13:_lv_refr_get_disp_refreshing	1
+../Drivers/lvgl/src/core/lv_refr.c:279:6:_lv_refr_set_disp_refreshing	1
+../Drivers/lvgl/src/core/lv_refr.c:288:6:_lv_disp_refr_timer	45
+../Drivers/lvgl/src/core/lv_refr.c:115:6:lv_refr_now	5

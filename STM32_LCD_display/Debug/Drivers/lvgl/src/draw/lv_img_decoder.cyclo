@@ -1,0 +1,15 @@
+../Drivers/lvgl/src/draw/lv_img_decoder.c:274:10:lv_img_decoder_built_in_info	10
+../Drivers/lvgl/src/draw/lv_img_decoder.c:517:6:lv_img_decoder_built_in_close	5
+../Drivers/lvgl/src/draw/lv_img_decoder.c:481:10:lv_img_decoder_built_in_read_line	27
+../Drivers/lvgl/src/draw/lv_img_decoder.c:327:10:lv_img_decoder_built_in_open	26
+../Drivers/lvgl/src/draw/lv_img_decoder.c:84:10:lv_img_decoder_get_info	7
+../Drivers/lvgl/src/draw/lv_img_decoder.c:108:10:lv_img_decoder_open	12
+../Drivers/lvgl/src/draw/lv_img_decoder.c:177:10:lv_img_decoder_read_line	2
+../Drivers/lvgl/src/draw/lv_img_decoder.c:189:6:lv_img_decoder_close	4
+../Drivers/lvgl/src/draw/lv_img_decoder.c:205:20:lv_img_decoder_create	2
+../Drivers/lvgl/src/draw/lv_img_decoder.c:57:6:_lv_img_decoder_init	2
+../Drivers/lvgl/src/draw/lv_img_decoder.c:221:6:lv_img_decoder_delete	1
+../Drivers/lvgl/src/draw/lv_img_decoder.c:232:6:lv_img_decoder_set_info_cb	1
+../Drivers/lvgl/src/draw/lv_img_decoder.c:242:6:lv_img_decoder_set_open_cb	1
+../Drivers/lvgl/src/draw/lv_img_decoder.c:252:6:lv_img_decoder_set_read_line_cb	1
+../Drivers/lvgl/src/draw/lv_img_decoder.c:262:6:lv_img_decoder_set_close_cb	1

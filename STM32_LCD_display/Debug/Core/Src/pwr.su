@@ -1,0 +1,6 @@
+../Core/Src/pwr.c:9:6:PWR_ClearAllPendingIRQs	0	static
+../Core/Src/pwr.c:20:6:PWR_ClearAllEXTIPending	0	static
+../Core/Src/pwr.c:29:6:PWR_PrepareForSleep	8	static,ignoring_inline_asm
+../Core/Src/pwr.c:45:6:sleep_mode_configure_once	0	static
+../Core/Src/pwr.c:55:6:PWR_EnterSleep_WFI	8	static,ignoring_inline_asm
+../Core/Src/pwr.c:66:6:PWR_EnterSleep_WFE	8	static,ignoring_inline_asm

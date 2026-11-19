@@ -1,0 +1,14 @@
+./../Drivers/lvgl/../lvgl/src/core/../../../lvgl/src/core/../../../lvgl/src/core/lv_obj_style_gen.h:553:31:lv_obj_get_style_blend_mode	1
+./../Drivers/lvgl/../lvgl/src/core/../../../lvgl/src/core/../../../lvgl/src/core/lv_obj_style_gen.h:145:26:lv_obj_get_style_bg_color_filtered	1
+./../Drivers/lvgl/../lvgl/src/core/../../../lvgl/src/core/../../../lvgl/src/core/lv_obj_style_gen.h:451:26:lv_obj_get_style_text_color_filtered	1
+../Drivers/lvgl/src/core/lv_obj_draw.c:40:6:lv_obj_init_draw_rect_dsc	23
+../Drivers/lvgl/src/core/lv_obj_draw.c:192:6:lv_obj_init_draw_label_dsc	6
+../Drivers/lvgl/src/core/lv_obj_draw.c:224:6:lv_obj_init_draw_img_dsc	7
+../Drivers/lvgl/src/core/lv_obj_draw.c:253:6:lv_obj_init_draw_line_dsc	8
+../Drivers/lvgl/src/core/lv_obj_draw.c:286:6:lv_obj_init_draw_arc_dsc	7
+../Drivers/lvgl/src/core/lv_obj_draw.c:314:12:lv_obj_calculate_ext_draw_size	6
+../Drivers/lvgl/src/core/lv_obj_draw.c:348:6:lv_obj_draw_dsc_init	1
+../Drivers/lvgl/src/core/lv_obj_draw.c:354:6:lv_obj_draw_part_check_type	2
+../Drivers/lvgl/src/core/lv_obj_draw.c:384:12:_lv_obj_get_ext_draw_size	2
+../Drivers/lvgl/src/core/lv_obj_draw.c:360:6:lv_obj_refresh_ext_draw_size	5
+../Drivers/lvgl/src/core/lv_obj_draw.c:390:17:_lv_obj_get_layer_type	2

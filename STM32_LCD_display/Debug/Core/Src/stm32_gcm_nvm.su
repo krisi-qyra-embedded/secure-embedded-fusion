@@ -1,0 +1,9 @@
+../Core/Src/stm32_gcm_nvm.c:37:17:stm32_gcm_crc32.constprop	12	static
+../Core/Src/stm32_gcm_nvm.c:84:13:stm32_gcm_record_valid	8	static
+../Core/Src/stm32_gcm_nvm.c:341:24:stm32_gcm_nvm_init	32	static
+../Core/Src/stm32_gcm_nvm.c:424:24:stm32_gcm_nvm_reserve_tx_session	112	static
+../Core/Src/stm32_gcm_nvm.c:497:31:stm32_gcm_nvm_check_and_commit_rx	16	static
+../Core/Src/stm32_gcm_nvm.c:548:10:stm32_gcm_nvm_current_tx_session	8	static
+../Core/Src/stm32_gcm_nvm.c:560:10:stm32_gcm_nvm_current_rx_session	8	static
+../Core/Src/stm32_gcm_nvm.c:572:10:stm32_gcm_nvm_current_rx_counter	8	static
+../Core/Src/stm32_gcm_nvm.c:584:10:stm32_gcm_nvm_remaining_record_slots	8	static

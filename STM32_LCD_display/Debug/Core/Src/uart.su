@@ -1,0 +1,9 @@
+../Core/Src/uart.c:34:6:uart2_tx_rx_init	0	static
+../Core/Src/uart.c:62:6:uart_set_baudrate	0	static
+../Core/Src/uart.c:72:10:compute_uart_div	0	static
+../Core/Src/uart.c:81:6:log_write_bytes	32	static,ignoring_inline_asm
+../Core/Src/uart.c:119:6:log_puts	8	static
+../Core/Src/uart.c:130:6:log_putc	16	static
+../Core/Src/uart.c:138:6:log_printf	272	static
+../Core/Src/uart.c:157:6:uart_log_irq_handler	8	static
+../Core/Src/uart.c:181:6:USART2_IRQHandler	0	static
